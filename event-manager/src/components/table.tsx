@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import DropdownMenu from "./dropdown-menu";
 
+
 interface Column {
   header: string;
   accessor: string;
@@ -17,7 +18,6 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const tableRef = useRef<HTMLDivElement | null>(null);
 
-  // 📌 Click ngoài -> đóng menu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
