@@ -1,12 +1,12 @@
-import './App.css'
+import AdminUsers from "./views/Admin/admin-list-account";
 
 function App() {
   return (
     <div>
-      <h1>Xin chào ReactJS 🚀</h1>
-      <p>Đây là ứng dụng đầu tiên với Vite</p>
+      <AdminUsers />
     </div>
   );
 }
 
 export default App;
+
