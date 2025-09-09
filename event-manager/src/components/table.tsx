@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import DropdownMenu from "./dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 
 interface Column {
@@ -17,6 +18,11 @@ interface TableProps {
 const Table: React.FC<TableProps> = ({ columns, data, className }) => {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const tableRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
+
+  const handleEdit = (email: string) => {
+    navigate("/admin/users/edit", { state: { email } }); 
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -80,7 +86,9 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
                               openMenuIndex === rowIndex ? null : rowIndex
                             )
                           }
-                          onEdit={() => console.log("Sửa", row)}
+                          email={row["email"]}
+                          ViewDetail={(email) => console.log(email)}
+                          onEdit={handleEdit}
                           onDelete={() => console.log("Xóa", row)}
                         />
                       </div>
