@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createPopper } from "@popperjs/core";
 import type { Instance } from "@popperjs/core";
+import ReactDOM from "react-dom";
+
 
 interface ActionMenuProps {
   isOpen: boolean;
   onToggle: () => void;
-  onEdit: () => void;
+  onEdit: (email: string) => void;
   onDelete: () => void;
+  ViewDetail: (email: string) => void;
+  email: string;
 }
 
 const DropdownMenu: React.FC<ActionMenuProps> = ({
@@ -14,6 +18,8 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
   onToggle,
   onEdit,
   onDelete,
+  ViewDetail,
+  email
 }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -23,6 +29,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
     if (isOpen && buttonRef.current && menuRef.current) {
       popperInstance.current = createPopper(buttonRef.current, menuRef.current, {
         placement: "bottom-end",
+        strategy: "fixed",
         modifiers: [
           { name: "offset", options: { offset: [0, 8] } },
           { name: "preventOverflow", options: { padding: 8 } },
@@ -72,7 +79,16 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
         >
           <button
             onClick={() => {
-              onEdit();
+              ViewDetail(email);
+              onToggle();
+            }}
+            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+          >
+            Xem chi tiết
+          </button>
+          <button
+            onClick={() => {
+              onEdit(email);
               onToggle();
             }}
             className="block w-full text-left px-4 py-2 hover:bg-gray-100"
