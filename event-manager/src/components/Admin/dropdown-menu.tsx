@@ -8,7 +8,7 @@ interface ActionMenuProps {
   isOpen: boolean;
   onToggle: () => void;
   onEdit: (email: string) => void;
-  onDelete: () => void;
+  onDelete: (email: string) => void;
   ViewDetail: (email: string) => void;
   email: string;
 }
@@ -97,7 +97,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
           </button>
           <button
             onClick={() => {
-              onDelete();
+              onDelete(email);
               onToggle();
             }}
             className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
