@@ -1,7 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
-import Table from "../../components/table";
+import Table from "../../components/Admin/table";
 import { useNavigate } from "react-router-dom";
+import FilterSidebar from "../../components/Admin/filter-sidebar";
+import {applyUserFilters} from "../../utils/Admin/filter-user";
+import type { FilterState } from "../../utils/Admin/filter-user";
 
 const AdminUsers: React.FC = () => {
   const { users } = useUserViewModel();
@@ -17,9 +20,19 @@ const AdminUsers: React.FC = () => {
     { header: "Thac tác", accessor: "actions", type: "action" as const },
   ];
 
+  const [filters, setFilters] = useState<FilterState>({
+    name: "",
+    email: "",
+    phone: "",
+    role: "",
+    sortOrder: "",
+  });
+
+  const filteredUsers = applyUserFilters(users, filters);
+
   return (
     <div className="p-6">
-      
+      {/* Header chung */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Quản lý tài khoản</h2>
         <button
@@ -30,11 +43,18 @@ const AdminUsers: React.FC = () => {
         </button>
       </div>
 
-      <Table
-        columns={columns}
-        data={users}
-        className="rounded-lg shadow-md"
-      />
+      {/* Bảng và Filter ngang hàng */}
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <Table
+            columns={columns}
+            data={filteredUsers}
+            className="rounded-lg shadow-md"
+          />
+        </div>
+
+        <FilterSidebar onFilter={setFilters} />
+      </div>
     </div>
   );
 };
