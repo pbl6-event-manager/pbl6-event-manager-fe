@@ -1,5 +1,5 @@
 import React from "react";
-import AccountForm from "../../components/account-form";
+import AccountForm from "../../components/Admin/account-form";
 import { useLocation } from "react-router-dom";
 
 

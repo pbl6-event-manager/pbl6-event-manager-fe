@@ -6,7 +6,6 @@ import ConfirmDialog from "./confirm-dialog";
 const AdminSidebar: React.FC = () => {
   const location = useLocation();
   const [openDialog, setOpenDialog] = useState(false);
-  const [openUsersMenu, setOpenUsersMenu] = useState(false);
 
   const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: <Home size={18} /> },
