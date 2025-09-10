@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import DropdownMenu from "./dropdown-menu";
 import { useNavigate } from "react-router-dom";
-
+import ConfirmDialog from "./confirm-dialog";
 
 interface Column {
   header: string;
@@ -19,10 +19,16 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const tableRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-
+  const [openDialog, setOpenDialog] = useState(false);
+  const selectedUserEmail = useRef<string>("");
   const handleEdit = (email: string) => {
     navigate("/admin/users/edit", { state: { email } }); 
   };
+
+  const handleDelete = () => {
+    console.log(selectedUserEmail.current);
+    setOpenDialog(false);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -89,7 +95,10 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
                           email={row["email"]}
                           ViewDetail={(email) => console.log(email)}
                           onEdit={handleEdit}
-                          onDelete={() => console.log("Xóa", row)}
+                          onDelete={(email) => {
+                            selectedUserEmail.current = email;
+                            setOpenDialog(true);
+                          }}
                         />
                       </div>
                     ) : (
@@ -111,6 +120,15 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
           )}
         </tbody>
       </table>
+      <ConfirmDialog
+          open={openDialog}
+          onOpenChange={setOpenDialog}
+          title="Xác nhận"
+          description="Bạn có chắc muốn xóa tài khoản này không?"
+          confirmText="Xóa"
+          cancelText="Hủy"
+          onConfirm={handleDelete}
+        />
     </div>
   );
 };
