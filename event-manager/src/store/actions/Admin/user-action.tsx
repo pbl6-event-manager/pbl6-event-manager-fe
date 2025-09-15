@@ -1,4 +1,7 @@
 export const FETCH_USERS = "FETCH_USERS";
+export const SET_SELECTED_USER = "SET_SELECTED_USER";
+export const CLEAR_SELECTED_USER = "CLEAR_SELECTED_USER";
+ 
 
 export const getUsers = () => {
   // Dummy data
@@ -13,3 +16,12 @@ export const getUsers = () => {
     payload: dummyUsers,
   };
 };
+
+export const setSelectedUser = (payload: { email?: string }) => ({
+  type: SET_SELECTED_USER,
+  payload,
+});
+
+export const clearSelectedUser = () => ({
+  type: CLEAR_SELECTED_USER,
+});
