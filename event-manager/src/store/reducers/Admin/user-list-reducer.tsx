@@ -8,7 +8,7 @@ const initialState: UserState = {
   users: [],
 };
 
-export const userReducer = (state = initialState, action: any): UserState => {
+export const userListReducer = (state = initialState, action: any): UserState => {
   switch (action.type) {
     case FETCH_USERS:
       return { ...state, users: action.payload };

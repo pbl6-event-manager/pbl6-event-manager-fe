@@ -1,9 +1,13 @@
 import { legacy_createStore as createStore, combineReducers, applyMiddleware } from "redux";
 import { thunk } from "redux-thunk";
-import { userReducer } from "./reducers/Admin/user-reducer";
+import { userListReducer } from "./reducers/Admin/user-list-reducer";
+import userDetailReducer from "./reducers/Admin/user-detail-reducers";
+import eventReducer from "./reducers/Admin/event-reducer";
 
 const allReducer = combineReducers({
-  user: userReducer,
+  userList: userListReducer,
+  userDetail : userDetailReducer,
+  event: eventReducer,
 }); 
 
 export type RootState = ReturnType<typeof allReducer>;

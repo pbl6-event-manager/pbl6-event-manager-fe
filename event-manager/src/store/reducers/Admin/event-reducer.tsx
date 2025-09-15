@@ -1,0 +1,40 @@
+import { FETCH_EVENTS_BY_USER, CLEAR_EVENTS } from "../../actions/Admin/event-action";
+
+interface Event {
+  id: string;
+  name: string;
+  date: string;
+  location: string;
+}
+
+interface EventState {
+  eventsByUser: {
+    [email: string]: Event[]; 
+  };
+}
+
+const initialState: EventState = {
+  eventsByUser: {},
+};
+
+const eventReducer = (state = initialState, action: any): EventState => {
+  switch (action.type) {
+    case FETCH_EVENTS_BY_USER:
+      return {
+        ...state,
+        eventsByUser: {
+          ...state.eventsByUser,
+          [action.payload.email]: action.payload.events,
+        },
+      };
+    case CLEAR_EVENTS:
+      return {
+        ...state,
+        eventsByUser: {},
+      };
+    default:
+      return state;
+  }
+};
+
+export default eventReducer;
