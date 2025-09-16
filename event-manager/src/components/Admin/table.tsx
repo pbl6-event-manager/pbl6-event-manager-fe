@@ -130,10 +130,10 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
       <ConfirmDialog
           open={openDialog}
           onOpenChange={setOpenDialog}
-          title="Xác nhận"
-          description="Bạn có chắc muốn xóa tài khoản này không?"
-          confirmText="Xóa"
-          cancelText="Hủy"
+          title="Confirm"
+          description="Are you sure you want to delete this account?"
+          confirmText="Delete"
+          cancelText="Cancel"
           onConfirm={handleDelete}
         />
     </div>

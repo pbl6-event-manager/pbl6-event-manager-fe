@@ -84,7 +84,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
             }}
             className="block w-full text-left px-4 py-2 hover:bg-gray-100"
           >
-            Xem chi tiết
+            Details
           </button>
           <button
             onClick={() => {
@@ -93,7 +93,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
             }}
             className="block w-full text-left px-4 py-2 hover:bg-gray-100"
           >
-            Sửa
+            Update
           </button>
           <button
             onClick={() => {
@@ -102,7 +102,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
             }}
             className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
           >
-            Xóa
+            Delete
           </button>
         </div>
       )}
