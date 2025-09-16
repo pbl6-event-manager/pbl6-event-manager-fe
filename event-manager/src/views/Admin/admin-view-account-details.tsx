@@ -22,7 +22,7 @@ const UserViewDetailPage: React.FC = () => {
   return (
     <div className="p-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold mb-6">Chi tiết tài khoản</h2>
+      <h2 className="text-2xl font-bold mb-6">Details</h2>
 
       {/* Thông tin chi tiết */}
       <div className="bg-white shadow-md rounded-lg p-6 mb-6 relative">
@@ -50,8 +50,8 @@ const UserViewDetailPage: React.FC = () => {
             <h3 className="text-xl font-semibold">{userInfo.name}</h3>
             <p className="text-gray-600">{userInfo.email}</p>
             <p className="text-gray-600">{userInfo.phone}</p>
-            <p className="text-gray-600">Vai trò: {userInfo.role}</p>
-            <p className="text-gray-600">Trạng thái: {userInfo.status}</p>
+            <p className="text-gray-600">Role: {userInfo.role}</p>
+            <p className="text-gray-600">Status: {userInfo.status}</p>
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@ const UserViewDetailPage: React.FC = () => {
               : "text-gray-600"
           }`}
         >
-          Người tham dự
+          Attendee
         </button>
         <button
           onClick={() => setActiveTab("organizer")}
@@ -76,7 +76,7 @@ const UserViewDetailPage: React.FC = () => {
               : "text-gray-600"
           }`}
         >
-          Người tổ chức
+          Organizer
         </button>
       </div>
 

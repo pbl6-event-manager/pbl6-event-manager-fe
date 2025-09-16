@@ -9,10 +9,10 @@ const AdminSidebar: React.FC = () => {
 
   const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: <Home size={18} /> },
-    { path: "/admin/systems", label: "Quản lý hệ thống", icon: <Settings size={18} /> },
-    { path: "/admin/users", label: "Quản lý tài khoản", icon: <Users size={18} /> },
-    { path: "/admin/events", label: "Quản lý sự kiện", icon: <Ticket size={18} /> },
-    { path: "/admin/payments", label: "Quản lý giao dịch", icon: <Banknote size={18} /> },
+    { path: "/admin/systems", label: "System Management", icon: <Settings size={18} /> },
+    { path: "/admin/users", label: "Account Management", icon: <Users size={18} /> },
+    { path: "/admin/events", label: "Event Management", icon: <Ticket size={18} /> },
+    { path: "/admin/payments", label: "Transaction Management", icon: <Banknote size={18} /> },
   ];
 
   const handleLogout = () => {
@@ -67,10 +67,10 @@ const AdminSidebar: React.FC = () => {
         <ConfirmDialog
           open={openDialog}
           onOpenChange={setOpenDialog}
-          title="Xác nhận"
-          description="Bạn có chắc muốn đăng xuất không?"
-          confirmText="Đăng xuất"
-          cancelText="Hủy"
+          title="Confirm"
+          description="Are you sure you want to log out?"
+          confirmText="Log out"
+          cancelText="Cancel"
           onConfirm={handleLogout}
         />
       </div>

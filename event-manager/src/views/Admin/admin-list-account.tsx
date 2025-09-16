@@ -13,11 +13,11 @@ const AdminUsers: React.FC = () => {
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
     { header: "Avatar", accessor: "avatar", type: "image" as const },
-    { header: "Tên", accessor: "name", type: "text" as const },
+    { header: "Full Name", accessor: "name", type: "text" as const },
     { header: "Email", accessor: "email", type: "text" as const },
-    { header: "SDT", accessor: "phone", type: "text" as const },
-    { header: "Vai trò", accessor: "role", type: "text" as const },
-    { header: "Thac tác", accessor: "actions", type: "action" as const },
+    { header: "Phone", accessor: "phone", type: "text" as const },
+    { header: "Role", accessor: "role", type: "text" as const },
+    { header: "Actions", accessor: "actions", type: "action" as const },
   ];
 
   const [filters, setFilters] = useState<FilterState>({
@@ -34,16 +34,15 @@ const AdminUsers: React.FC = () => {
     <div className="p-6">
       {/* Header chung */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Quản lý tài khoản</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Accounts</h2>
         <button
           onClick={() => navigate("/admin/users/create")}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
-          Tạo tài khoản
+          Create an account
         </button>
       </div>
 
-      {/* Bảng và Filter ngang hàng */}
       <div className="flex gap-4">
         <div className="flex-1">
           <Table

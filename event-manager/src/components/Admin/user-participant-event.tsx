@@ -19,14 +19,14 @@ const UserParticipantEvents: React.FC = () => {
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
-    { header: "Tên sự kiện", accessor: "name", type: "text" as const },
-    { header: "Ngày diễn ra", accessor: "date", type: "text" as const },
-    { header: "Địa điểm", accessor: "location", type: "text" as const },
+    { header: "Event name", accessor: "name", type: "text" as const },
+    { header: "Date", accessor: "date", type: "text" as const },
+    { header: "Location", accessor: "location", type: "text" as const },
   ];
 
   return (
     <div className="mt-4">
-      <h3 className="text-xl font-semibold mb-3">Danh sách sự kiện tham gia</h3>
+      <h3 className="text-xl font-semibold mb-3">List of events</h3>
       <Table
         columns={columns}
         data={userEvents}
