@@ -55,13 +55,13 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
 
   return (
     <div ref={tableRef} className={`overflow-x-auto ${className}`}>
-      <table className="min-w-full border border-gray-200 text-sm text-left table-fixed">
-        <thead className="bg-gray-100">
+      <table className="min-w-full border border-[var(--border-secondary)] text-sm text-left table-fixed">
+        <thead className="bg-[var(--primary)]">
           <tr>
             {columns.map((col, index) => (
               <th
                 key={index}
-                className="px-4 py-2 border-b border-gray-200 font-medium text-gray-700"
+                className="px-4 py-2 border-b border-[var(--border-secondary)] font-medium text-[var(--containertext)]"
               >
                 {col.header}
               </th>
@@ -78,7 +78,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
                 {columns.map((col, colIndex) => (
                   <td
                     key={colIndex}
-                    className="px-4 py-2 border-b border-gray-200 text-gray-800"
+                    className="px-4 py-2 border-b border-[var(--border-secondary)] text-[var(--defaulttext)]"
                   >
                     {col.type === "image" ? (
                       <img
@@ -119,7 +119,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
             <tr>
               <td
                 colSpan={columns.length}
-                className="px-4 py-4 text-center text-gray-500"
+                className="px-4 py-4 text-center text-[var(--text-secondary)]"
               >
                 Không có dữ liệu
               </td>

@@ -66,7 +66,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
       <button
         ref={buttonRef}
         onClick={onToggle}
-        className="px-2 py-1 rounded hover:bg-gray-200"
+        className="px-2 py-1 rounded hover:bg-[var(--border-secondary)]"
       >
         ...
       </button>
@@ -74,7 +74,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
       {isOpen && (
         <div
           ref={menuRef}
-          className="z-50 bg-white shadow-lg border rounded w-32"
+          className="z-50 bg-[var(--containertext)] shadow-lg border border-[var(--border-secondary)] rounded w-32"
           style={{ position: "absolute" }}
         >
           <button
@@ -82,7 +82,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
               ViewDetail(email);
               onToggle();
             }}
-            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            className="block w-full text-left px-4 py-2 hover:bg-[var(--surface-secondary)]"
           >
             Details
           </button>
@@ -91,7 +91,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
               onEdit(email);
               onToggle();
             }}
-            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            className="block w-full text-left px-4 py-2 hover:bg-[var(--surface-secondary)]"
           >
             Update
           </button>
@@ -100,7 +100,7 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
               onDelete(email);
               onToggle();
             }}
-            className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+            className="block w-full text-left px-4 py-2 text-red-500 hover:bg-[var(--surface-secondary)]"
           >
             Delete
           </button>

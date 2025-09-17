@@ -34,10 +34,10 @@ const AdminUsers: React.FC = () => {
     <div className="p-6">
       {/* Header chung */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Accounts</h2>
+        <h2 className="text-2xl font-bold text-[var(--defaulttext)]">Accounts</h2>
         <button
           onClick={() => navigate("/admin/users/create")}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
         >
           Create an account
         </button>
