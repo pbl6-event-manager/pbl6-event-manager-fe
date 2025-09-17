@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import DropdownMenu from "./dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "./confirm-dialog";
+import { useUserDetailViewModel } from "../../viewmodels/Admin/user-detail-view-model";
 
 interface Column {
   header: string;
@@ -21,6 +22,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const selectedUserEmail = useRef<string>("");
+  const { selectUser } = useUserDetailViewModel();
   const handleEdit = (email: string) => {
     navigate("/admin/users/edit", { state: { email } }); 
   };
@@ -28,6 +30,11 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
   const handleDelete = () => {
     console.log(selectedUserEmail.current);
     setOpenDialog(false);
+  }
+
+  const handleViewDetail = (email: string) => {
+    selectUser(email);
+    navigate("/admin/users/details");
   }
 
   useEffect(() => {
@@ -93,7 +100,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
                             )
                           }
                           email={row["email"]}
-                          ViewDetail={(email) => console.log(email)}
+                          ViewDetail={() => handleViewDetail(row["email"])}
                           onEdit={handleEdit}
                           onDelete={(email) => {
                             selectedUserEmail.current = email;
@@ -123,10 +130,10 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
       <ConfirmDialog
           open={openDialog}
           onOpenChange={setOpenDialog}
-          title="Xác nhận"
-          description="Bạn có chắc muốn xóa tài khoản này không?"
-          confirmText="Xóa"
-          cancelText="Hủy"
+          title="Confirm"
+          description="Are you sure you want to delete this account?"
+          confirmText="Delete"
+          cancelText="Cancel"
           onConfirm={handleDelete}
         />
     </div>

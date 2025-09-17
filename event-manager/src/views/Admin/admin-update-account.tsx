@@ -19,7 +19,7 @@ const UpdateAccountView: React.FC = () => {
             role: "user",
             password: "123456",
         }}
-        onSubmit={(data) => console.log("Cập nhật:", data)}
+        onSubmit={(data) => console.log("Update:", data)}
       />
     </div>
   );

@@ -1,12 +1,16 @@
 import { legacy_createStore as createStore, combineReducers, applyMiddleware } from "redux";
 import { thunk } from "redux-thunk";
-import { userReducer } from "./reducers/Admin/user-reducer";
+import { userListReducer } from "./reducers/Admin/user-list-reducer";
 import { authReducer } from "./reducers/common/auth-reducer";
+import userDetailReducer from "./reducers/Admin/user-detail-reducers";
 import { navigationReducer } from "./reducers/common/navigation-reducer";
 import { authFlowReducer } from "./reducers/common/auth-flow-reducer";
+import eventReducer from "./reducers/Admin/event-reducer";
 
 const allReducer = combineReducers({
-  user: userReducer,
+  userList: userListReducer,
+  userDetail : userDetailReducer,
+  event: eventReducer,
   auth: authReducer,
   navigation: navigationReducer,
   authFlow: authFlowReducer, 

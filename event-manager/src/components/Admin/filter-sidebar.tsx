@@ -47,11 +47,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilter }) => {
 
   return (
     <div className="p-4 w-64 bg-gray-100 rounded-lg shadow-md text-sm">
-      <h2 className="text-base font-semibold mb-4">Bộ lọc</h2>
+      <h2 className="text-base font-semibold mb-4">Filter</h2>
 
-      {/* Tên */}
       <div className="mb-3">
-        <label className="block font-medium">Tên</label>
+        <label className="block font-medium">Full Name</label>
         <input
           type="text"
           name="name"
@@ -75,7 +74,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilter }) => {
 
       {/* Số điện thoại */}
       <div className="mb-3">
-        <label className="block font-medium">Số điện thoại</label>
+        <label className="block font-medium">Phone</label>
         <input
           type="text"
           name="phone"
@@ -88,29 +87,28 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilter }) => {
       {/* Vai trò + Sắp xếp */}
       <div className="flex gap-2 mb-3">
         <div className="flex-1">
-          <label className="block font-medium">Vai trò</label>
+          <label className="block font-medium">Role</label>
           <select
             name="role"
             value={filters.role}
             onChange={handleChange}
             className="w-full border rounded px-2 py-1"
           >
-            <option value="">-- Tất cả --</option>
+            <option value="">-- All --</option>
             <option value="admin">Admin</option>
-            <option value="user">Người dùng</option>
-            <option value="manager">Quản lý</option>
+            <option value="user">User</option>
           </select>
         </div>
 
         <div className="flex-1">
-          <label className="block font-medium">Sắp xếp</label>
+          <label className="block font-medium">Order</label>
           <select
             name="sortOrder"
             value={filters.sortOrder}
             onChange={handleChange}
             className="w-full border rounded px-2 py-1"
           >
-            <option value="">-- Không --</option>
+            <option value="">-- None --</option>
             <option value="asc">ASC</option>
             <option value="desc">DESC</option>
           </select>
@@ -123,13 +121,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilter }) => {
           onClick={handleSubmit}
           className="flex-1 bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600"
         >
-          Áp dụng
+          Apply
         </button>
         <button
           onClick={handleClear}
           className="flex-1 bg-gray-300 px-3 py-2 rounded hover:bg-gray-400"
         >
-          Xóa
+          Reset
         </button>
       </div>
     </div>

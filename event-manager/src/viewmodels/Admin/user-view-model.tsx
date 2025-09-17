@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export const useUserViewModel = () => {
   const dispatch = useDispatch();
-  const users = useSelector((state: RootState) => state.user.users);
+  const users = useSelector((state: RootState) => state.userList.users);
 
   useEffect(() => {
     dispatch(getUsers());
