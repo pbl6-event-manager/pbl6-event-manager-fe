@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, Users, Settings, LogOut, Banknote, Ticket, ChevronDown, ChevronRight } from "lucide-react";
 import ConfirmDialog from "./confirm-dialog";
+import Logo from "../../assets/Logo.svg";
 
 const AdminSidebar: React.FC = () => {
   const location = useLocation();
@@ -23,7 +24,7 @@ const AdminSidebar: React.FC = () => {
     <div className="h-screen w-64 bg-white flex flex-col text-gray-800 border-r border-gray-200">
       {/* Logo */}
       <div className="px-6 py-4 text-lg font-bold border-b border-gray-200">
-        Admin Panel
+        <img src={Logo} alt="Logo" className="h-8 w-auto" />
       </div>
 
       {/* Menu */}
