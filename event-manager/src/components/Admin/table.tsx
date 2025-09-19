@@ -3,6 +3,7 @@ import DropdownMenu from "./dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "./confirm-dialog";
 import { useUserDetailViewModel } from "../../viewmodels/Admin/user-detail-view-model";
+import { truncateText } from "../../utils/Admin/table-handle";
 
 interface Column {
   header: string;
@@ -78,7 +79,8 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
                 {columns.map((col, colIndex) => (
                   <td
                     key={colIndex}
-                    className="px-4 py-2 border-b border-[var(--border-secondary)] text-[var(--defaulttext)]"
+                    className="px-4 py-2 border-b border-[var(--border-secondary)] text-[var(--defaulttext)] max-w-[200px] truncate"
+                    title={row[col.accessor]} 
                   >
                     {col.type === "image" ? (
                       <img
@@ -109,7 +111,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
                         />
                       </div>
                     ) : (
-                      row[col.accessor]
+                      truncateText(row[col.accessor], 30)
                     )}
                   </td>
                 ))}
