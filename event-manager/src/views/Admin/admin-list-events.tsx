@@ -1,22 +1,23 @@
 import React, {useState} from "react";
-import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
 import Table from "../../components/Admin/table";
 import { useNavigate } from "react-router-dom";
 import FilterSidebar from "../../components/Admin/filter-sidebar";
 import {applyUserFilters} from "../../utils/Admin/filter-user";
 import type { FilterState } from "../../utils/Admin/filter-user";
+import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 
-const AdminUsers: React.FC = () => {
-  const { users } = useUserViewModel();
+const AdminEvents: React.FC = () => {
+  const { events } = useEventViewModel();
   const navigate = useNavigate();
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
-    { header: "Avatar", accessor: "avatar", type: "image" as const },
-    { header: "Full Name", accessor: "name", type: "text" as const },
-    { header: "Email", accessor: "email", type: "text" as const },
-    { header: "Phone", accessor: "phone", type: "text" as const },
-    { header: "Role", accessor: "role", type: "text" as const },
+    { header: "Title", accessor: "title", type: "text" as const },
+    { header: "Description", accessor: "description", type: "text" as const },
+    { header: "Location", accessor: "location", type: "text" as const },
+    { header: "Start", accessor: "starttime", type: "text" as const },
+    { header: "End", accessor: "endtime", type: "text" as const },
+    { header: "Status", accessor: "status", type: "text" as const },
     { header: "Actions", accessor: "actions", type: "action" as const },
   ];
 
@@ -28,18 +29,18 @@ const AdminUsers: React.FC = () => {
     sortOrder: "",
   });
 
-  const filteredUsers = applyUserFilters(users, filters);
+  const filteredUsers = applyUserFilters(events, filters);
 
   return (
     <div className="p-6">
       {/* Header chung */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-[var(--defaulttext)]">Accounts</h2>
+        <h2 className="text-2xl font-bold text-[var(--defaulttext)]">Events</h2>
         <button
           onClick={() => navigate("/admin/users/create")}
           className="px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
         >
-          Create an account
+          Create an event
         </button>
       </div>
 
@@ -58,4 +59,5 @@ const AdminUsers: React.FC = () => {
   );
 };
 
-export default AdminUsers;
+export default AdminEvents;
+ 

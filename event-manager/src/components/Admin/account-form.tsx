@@ -64,7 +64,7 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-[var(--surface)]">
       <form
         onSubmit={handleSubmit(onSubmitHandler)}
         className="bg-white p-6 rounded-2xl shadow-md w-80"
@@ -87,7 +87,7 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
 
             <label
               htmlFor="avatarUpload"
-              className="absolute bottom-1 right-1 bg-blue-500 text-white w-6 h-6 flex items-center justify-center rounded-full cursor-pointer shadow-md hover:bg-blue-600 text-sm"
+              className="absolute bottom-1 right-1 bg-[var(--primary)] text-white w-6 h-6 flex items-center justify-center rounded-full cursor-pointer shadow-md hover:bg-[var(--primary-hover)] text-sm"
             >
               +
             </label>
@@ -110,10 +110,10 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
             {...register("fullName")}
             type="text"
             placeholder="Enter full name"
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-[var(--placeholder)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
           {errors.fullName && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className="text-[var(--error)] text-xs mt-1">
               {errors.fullName.message}
             </p>
           )}
@@ -126,10 +126,10 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
             {...register("email")}
             type="email"
             placeholder="Enter email"
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-[var(--placeholder)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
           {errors.email && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className="text-[var(--error)] text-xs mt-1">
               {errors.email.message}
             </p>
           )}
@@ -143,10 +143,10 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
               {...register("phone")}
               type="tel"
               placeholder="Enter phone number"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full px-3 py-2 border border-[var(--placeholder)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             />
             {errors.phone && (
-              <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
+              <p className="text-[var(--error)] text-xs mt-1">{errors.phone.message}</p>
             )}
           </div>
 
@@ -154,14 +154,14 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
             <label className="block mb-1 font-medium text-sm">Role</label>
             <select
               {...register("role")}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full px-3 py-2 border border-[var(--placeholder)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             >
               <option value="">-- Option --</option>
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
             {errors.role && (
-              <p className="text-red-500 text-xs mt-1">{errors.role.message}</p>
+              <p className="text-[var(--error)] text-xs mt-1">{errors.role.message}</p>
             )}
           </div>
         </div>
@@ -173,10 +173,10 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
             {...register("password")}
             type="password"
             placeholder="Enter password"
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-[var(--placeholder)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
           {errors.password && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className="text-[var(--error)] text-xs mt-1">
               {errors.password.message}
             </p>
           )}
@@ -185,7 +185,7 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition text-sm"
+          className="w-full bg-[var(--primary)] text-white py-2 rounded-lg hover:bg-[var(--primary-hover)] transition text-sm"
         >
           {initialData ? "Update" : "Create" }
         </button>
