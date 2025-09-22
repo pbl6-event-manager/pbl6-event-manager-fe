@@ -68,6 +68,17 @@ export const authFlowReducer = (state = initialState, action: any):
                     ? state.stepHistory
                     : [...(state.stepHistory, action.payload)], // Append only if not already in history
             };
+        case AUTH_FLOW_ACTION.GO_BACK:
+            const currentIndex = state.stepHistory?.indexOf(state.currentStep) ?? -1;
+
+            const previousStep =
+                currentIndex > 0 ? state.stepHistory![currentIndex - 1] : state.currentStep;
+
+            return {
+                ...state,
+                currentStep: previousStep || state.currentStep,
+                stepHistory: state.stepHistory?.slice(0, currentIndex), // Remove the last step from history
+            };
         case AUTH_FLOW_ACTION.SET_LOADING:
             return {
                 ...state,
