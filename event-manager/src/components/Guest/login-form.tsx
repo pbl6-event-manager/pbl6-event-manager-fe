@@ -51,11 +51,11 @@ const LoginForm: React.FC = () => {
                 <div className="mt-5">
                     <p className="text-xs text-[#6f7287] leading-relaxed m-0">
                         By clicking Continue or the Apple, Google, or Facebook icons, you agree to Eventbrite's{" "}
-                        <a href="#" className="text-[#3659e3] no-underline hover:underline">
+                        <a href="#" className="text-blue-600 hover:text-blue-700 underline">
                             Terms of Service
                         </a>{" "}
                         and{" "}
-                        <a href="#" className="text-[#3659e3] no-underline hover:underline">
+                        <a href="#" className="text-blue-600 hover:text-blue-700 underline">
                             Privacy Policy
                         </a>
                     </p>
