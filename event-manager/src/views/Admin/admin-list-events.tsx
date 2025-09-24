@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import Table from "../../components/Admin/table";
 import { useNavigate } from "react-router-dom";
-import FilterSidebar from "../../components/Admin/filter-sidebar";
-import {applyUserFilters} from "../../utils/Admin/filter-user";
-import type { FilterState } from "../../utils/Admin/filter-user";
+import FilterEventSidebar from "../../components/Admin/filter-event-sidebar";
+import { applyEventFilters } from "../../utils/Admin/filter-event";
+import type { EventFilterState } from "../../utils/Admin/filter-event";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 
 const AdminEvents: React.FC = () => {
@@ -21,15 +21,20 @@ const AdminEvents: React.FC = () => {
     { header: "Actions", accessor: "actions", type: "action" as const },
   ];
 
-  const [filters, setFilters] = useState<FilterState>({
-    name: "",
-    email: "",
-    phone: "",
-    role: "",
+  const [filters, setFilters] = useState<EventFilterState>({
+    title: "",
+    description: "",
+    location: "",
+    status: "",
     sortOrder: "",
   });
 
-  const filteredUsers = applyUserFilters(events, filters);
+  const handleFilter = (newFilters: any) => {
+    console.log("Filters:", newFilters); // Debug
+    setFilters(newFilters);
+  };
+
+  const filteredEvents = applyEventFilters(events, filters);
 
   return (
     <div className="p-6">
@@ -48,12 +53,12 @@ const AdminEvents: React.FC = () => {
         <div className="flex-1">
           <Table
             columns={columns}
-            data={filteredUsers}
+            data={filteredEvents}
             className="rounded-lg shadow-md"
           />
         </div>
 
-        <FilterSidebar onFilter={setFilters} />
+        <FilterEventSidebar onFilter={setFilters} />
       </div>
     </div>
   );

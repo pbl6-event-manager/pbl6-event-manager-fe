@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
 import Table from "../../components/Admin/table";
 import { useNavigate } from "react-router-dom";
-import FilterSidebar from "../../components/Admin/filter-sidebar";
+import FilterUserSidebar from "../../components/Admin/filter-user-sidebar";
 import {applyUserFilters} from "../../utils/Admin/filter-user";
 import type { FilterState } from "../../utils/Admin/filter-user";
 
@@ -52,7 +52,7 @@ const AdminUsers: React.FC = () => {
           />
         </div>
 
-        <FilterSidebar onFilter={setFilters} />
+        <FilterUserSidebar onFilter={setFilters} />
       </div>
     </div>
   );
