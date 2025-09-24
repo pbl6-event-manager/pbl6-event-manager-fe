@@ -15,9 +15,9 @@ export const fetchEventsByUser = (email: string) => {
 
 export const getEvents = () => {
   const dummyEvents = [
-    { id: "e1", title: "Event A", description: "Đây là mô tả cơ bản dành cho sự kiện A", location: "Đà Nẵng", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
-    { id: "e2", title: "Event B", description: "Đây là mô tả cơ bản dành cho sự kiện B", location: "Đà Nẵng", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
-    { id: "e3", title: "Event C", description: "Đây là mô tả cơ bản dành cho sự kiện C", location: "Đà Nẵng", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
+    { id: "e1", title: "Event A", description: "Đây là mô tả cơ bản dành cho sự kiện A", location: "Da Nang, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
+    { id: "e2", title: "Event B", description: "Đây là mô tả cơ bản dành cho sự kiện B", location: "Ho Chi Minh City, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
+    { id: "e3", title: "Event C", description: "Đây là mô tả cơ bản dành cho sự kiện C", location: "Hanoi, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
   ];
   
   return {

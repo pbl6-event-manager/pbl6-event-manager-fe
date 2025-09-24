@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-interface FilterSidebarProps {
+interface FilterUserSidebarProps {
   onFilter: (filters: {
     name: string;
     email: string;
@@ -10,7 +10,7 @@ interface FilterSidebarProps {
   }) => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilter }) => {
+const FilterUserSidebar: React.FC<FilterUserSidebarProps> = ({ onFilter }) => {
   const [filters, setFilters] = useState({
     name: "",
     email: "",
@@ -134,4 +134,4 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilter }) => {
   );
 };
 
-export default FilterSidebar;
+export default FilterUserSidebar;
