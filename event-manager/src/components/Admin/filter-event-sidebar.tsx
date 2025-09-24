@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CountryCitySelect from "./country-city-select";
-
+import { validateFromTo } from "../../utils/Admin/validate-from-to-date";
 interface FilterEventSidebarProps {
   onFilter: (filters: {
     title: string;
@@ -10,6 +10,10 @@ interface FilterEventSidebarProps {
     sortOrder: "asc" | "desc" | "";
     country: string;
     city: string;
+    startDateFrom: string;
+    startDateTo: string;
+    endDateFrom: string;
+    endDateTo: string;
   }) => void;
 }
 
@@ -22,6 +26,10 @@ const FilterEventSidebar: React.FC<FilterEventSidebarProps> = ({ onFilter }) => 
     sortOrder: "" as "asc" | "desc" | "",
     country: "",
     city: "",
+    startDateFrom: "",
+    startDateTo: "",
+    endDateFrom: "",
+    endDateTo: ""
   });
 
 
@@ -35,10 +43,20 @@ const FilterEventSidebar: React.FC<FilterEventSidebarProps> = ({ onFilter }) => 
   };
 
   const handleSubmit = () => {
+    if(validateFromTo(filters.startDateFrom, filters.startDateTo).error) {
+      alert("Start Date To must be greater than or equal to Start Date From")
+    }
+
+    if(validateFromTo(filters.endDateFrom, filters.endDateTo).error) {
+      alert("End Date To must be greater than or equal to End Date From")
+    }
+    
     const location =
     filters.city && filters.country
       ? `${filters.city}, ${filters.country}`
       : filters.country || filters.city || "";
+    
+
     onFilter({...filters,
       location
     });
@@ -53,6 +71,10 @@ const FilterEventSidebar: React.FC<FilterEventSidebarProps> = ({ onFilter }) => 
         sortOrder: "",
         country: "",
         city: "",
+        startDateFrom: "",
+        startDateTo: "",
+        endDateFrom: "",
+        endDateTo: "",
     });
     onFilter({
         title: "",
@@ -62,6 +84,10 @@ const FilterEventSidebar: React.FC<FilterEventSidebarProps> = ({ onFilter }) => 
         sortOrder: "",
         country: "",
         city: "",
+        startDateFrom: "",
+        startDateTo: "",
+        endDateFrom: "",
+        endDateTo: "",
     });
 
   };
@@ -90,6 +116,46 @@ const FilterEventSidebar: React.FC<FilterEventSidebarProps> = ({ onFilter }) => 
         />
       </div>
 
+      <div className="mb-3">
+        <label className="block font-medium">Start Date</label>
+        <div className="grid grid-cols-2 gap-2">
+          <input
+            type="date"
+            name="startDateFrom"
+            value={filters.startDateFrom}
+            onChange={handleChange}
+            className="w-full border border-[var(--placeholder)] rounded px-2 py-1"
+          />
+          <input
+            type="date"
+            name="startDateTo"
+            value={filters.startDateTo}
+            onChange={handleChange}
+            className="w-full border border-[var(--placeholder)] rounded px-2 py-1"
+          />
+        </div>
+      </div>
+
+      <div className="mb-3">
+        <label className="block font-medium">End Date</label>
+        <div className="grid grid-cols-2 gap-2">
+          <input
+            type="date"
+            name="endDateFrom"
+            value={filters.endDateFrom}
+            onChange={handleChange}
+            className="w-full border border-[var(--placeholder)] rounded px-2 py-1"
+          />
+          <input
+            type="date"
+            name="endDateTo"
+            value={filters.endDateTo}
+            onChange={handleChange}
+            className="w-full border border-[var(--placeholder)] rounded px-2 py-1"
+          />
+        </div>
+      </div>
+
       {/* Vai trò + Sắp xếp */}
       <div className="flex gap-2 mb-3">
         <div className="flex-1">
@@ -101,8 +167,8 @@ const FilterEventSidebar: React.FC<FilterEventSidebarProps> = ({ onFilter }) => 
             className="w-full border border-[var(--placeholder)] rounded px-2 py-1"
           >
             <option value="">-- All --</option>
-            <option value="admin">Public</option>
-            <option value="user">Passed</option>
+            <option value="Public">Public</option>
+            <option value="Passed">Passed</option>
           </select>
         </div>
 

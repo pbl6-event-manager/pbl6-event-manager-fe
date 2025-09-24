@@ -29,10 +29,6 @@ const AdminEvents: React.FC = () => {
     sortOrder: "",
   });
 
-  const handleFilter = (newFilters: any) => {
-    console.log("Filters:", newFilters); // Debug
-    setFilters(newFilters);
-  };
 
   const filteredEvents = applyEventFilters(events, filters);
 

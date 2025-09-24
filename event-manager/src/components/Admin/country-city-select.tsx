@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
+import { useLocationViewModel } from "../../viewmodels/Admin/location-view-model";
 
 interface CountryCitySelectProps {
   country: string;
@@ -8,43 +8,7 @@ interface CountryCitySelectProps {
 }
 
 const CountryCitySelect: React.FC<CountryCitySelectProps> = ({ country, city, onChange }) => {
-  const [countries, setCountries] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
-
-  // Lấy danh sách quốc gia khi component mount
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const res = await axios.get("https://countriesnow.space/api/v0.1/countries");
-        const names = res.data.data.map((item: any) => item.country);
-        setCountries(names);
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-      }
-    };
-
-    fetchCountries();
-  }, []);
-
-  // Khi chọn country thì load city
-  useEffect(() => {
-    const fetchCities = async () => {
-      if (country) {
-        try {
-          const res = await axios.post(
-            "https://countriesnow.space/api/v0.1/countries/cities",
-            { country }
-          );
-          setCities(res.data.data || []);
-        } catch (error) {
-          console.error("Error fetching cities:", error);
-        }
-      } else {
-        setCities([]);
-      }
-    };
-    fetchCities();
-  }, [country]);
+  const { countries, cities, loading, error } = useLocationViewModel(country);
 
   return (
     <div className="flex flex-col gap-3">
@@ -80,6 +44,8 @@ const CountryCitySelect: React.FC<CountryCitySelectProps> = ({ country, city, on
           ))}
         </select>
       </div>
+
+      {loading && <p>Loading...</p>}
     </div>
   );
 };

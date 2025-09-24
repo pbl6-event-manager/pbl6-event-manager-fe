@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEventsByUser, clearEvents, getEvents } from "../../store/actions/Admin/event-action";
+import { fetchCountries, fetchCities } from "../../store/actions/Admin/location-action";
 import { useEffect } from "react";
 import type { RootState } from "../../store/store";
 
@@ -11,7 +12,8 @@ export const useEventViewModel = () => {
   useEffect(() => {
       dispatch(getEvents());
     }, [dispatch]);
-
+  
+  
   const getEventsForUser = (email: string) => {
     dispatch(fetchEventsByUser(email));
   };
