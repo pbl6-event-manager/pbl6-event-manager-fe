@@ -1,11 +1,10 @@
 "use-client"
 
-import type React from "react"
 
 import { Outlet } from "react-router-dom"
 import OrganizerSidebar from "../../components/Organizer/organizer-sidebar"
 import OrganizerNavbar from "../../components/Organizer/organizer-navbar"
-import { OrganizerRightSidebar } from "../../components/Organizer/organizer-right-sidebar"
+//import { OrganizerRightSidebar } from "../../components/Organizer/organizer-right-sidebar"
 
 
 export default function OrganizerLayout() {
@@ -13,10 +12,10 @@ export default function OrganizerLayout() {
     <div className="min-h-screen bg-gray-50">
       <OrganizerNavbar />
 
-      <div className="flex">
+      <div className="flex min-h-[calc(100vh-4rem)]">
         <OrganizerSidebar />
 
-        <main className="flex-1">
+        <main className="flex-1"> 
           <Outlet />
         </main>
         {/* <OrganizerRightSidebar /> */}

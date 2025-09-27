@@ -15,7 +15,7 @@ export default function OrganizerNavbar() {
     <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6">
         {/* Left side - Logo */}
         <div className="flex items-center">
-          <div className="text-2xl font-bold text-[#f05537]">eventbrite</div>
+          <EventbriteLogo className="h-5 w-auto" />
         </div>
 
         {/* Right side - Actions and User */}
