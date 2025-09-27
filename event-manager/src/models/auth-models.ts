@@ -21,3 +21,31 @@ export interface RegisterRequest {
     lastName: string;
 }
 
+
+export interface AuthResponse {
+    user: User;
+    token: string;
+    refreshToken: string;
+    expiresIn: number; // in seconds
+}
+
+export interface AuthState {
+    user: User | null;
+    token: string | null;
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    error: string | null;
+}
+
+export interface AuthFlowState {
+    currentStep: "email" | "password" | "user-info" | "create-password";
+    email: string;
+    isExistingUser: boolean;
+    userInfo: {
+        firstName: string;
+        lastName: string;
+    };
+    stepHistory: string[]; // To manage back navigation
+    isLoading: boolean;
+    error: string | null;
+}
