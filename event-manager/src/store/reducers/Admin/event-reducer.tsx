@@ -1,4 +1,4 @@
-import { FETCH_EVENTS_BY_USER, CLEAR_EVENTS, FETCH_EVENTS } from "../../actions/Admin/event-action";
+import { FETCH_EVENTS_BY_USER, CLEAR_EVENTS, FETCH_PUBLIC_EVENTS, FETCH_PENDING_EVENTS } from "../../actions/Admin/event-action";
 
 interface Event {
   id: string;
@@ -11,12 +11,14 @@ interface EventState {
   eventsByUser: {
     [email: string]: Event[]; 
   };
-  events: any[];
+  publicEvents: any[];
+  pendingEvents: any[];
 }
 
 const initialState: EventState = {
   eventsByUser: {},
-  events: [],
+  publicEvents: [],
+  pendingEvents: [],
 };
 
 const eventReducer = (state = initialState, action: any): EventState => {
@@ -34,10 +36,15 @@ const eventReducer = (state = initialState, action: any): EventState => {
         ...state,
         eventsByUser: {},
       };
-    case FETCH_EVENTS:
+    case FETCH_PUBLIC_EVENTS:
       return {
         ...state,
-        events: action.payload
+        publicEvents: action.payload
+      };
+    case FETCH_PENDING_EVENTS:
+      return {
+        ...state,
+        pendingEvents: action.payload
       };
     default:
       return state;
