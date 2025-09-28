@@ -1,16 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEventsByUser, clearEvents, getEvents } from "../../store/actions/Admin/event-action";
-import { fetchCountries, fetchCities } from "../../store/actions/Admin/location-action";
+import { fetchEventsByUser, clearEvents, getPublicEvents, getPendingEvents } from "../../store/actions/Admin/event-action";
 import { useEffect } from "react";
 import type { RootState } from "../../store/store";
 
 export const useEventViewModel = () => {
   const dispatch = useDispatch();
   const eventsByUser = useSelector((state: any) => state.event.eventsByUser);
-  const events = useSelector((state: RootState) => state.event.events);
+  const publicEvents = useSelector((state: RootState) => state.event.publicEvents);
+  const pendingEvents = useSelector((state: RootState) => state.event.pendingEvents)
 
   useEffect(() => {
-      dispatch(getEvents());
+      dispatch(getPublicEvents());
+      dispatch(getPendingEvents());
     }, [dispatch]);
   
   
@@ -24,7 +25,8 @@ export const useEventViewModel = () => {
 
 
   return {
-    events,
+    publicEvents,
+    pendingEvents,
     eventsByUser,
     getEventsForUser,
     resetEvents,
