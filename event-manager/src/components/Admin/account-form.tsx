@@ -64,10 +64,10 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[var(--surface)]">
+    <div className="w-full flex items-center justify-center min-h-screen bg-[var(--surface)]">
       <form
         onSubmit={handleSubmit(onSubmitHandler)}
-        className="bg-white p-6 rounded-2xl shadow-md w-80"
+        className="bg-[var(--surface)] p-6 rounded-2xl w-80 border border-[var(--border-primary)]"
       >
         <h2 className="text-xl font-bold mb-4 text-center">
           {initialData ? "Update an account" : "Create an account"}
