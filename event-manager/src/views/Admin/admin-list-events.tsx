@@ -59,7 +59,7 @@ const AdminEvents: React.FC = () => {
 
         <button
           onClick={() => navigate("/admin/events/create")}
-          className="px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
+          className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
         >
           Create an event
         </button>

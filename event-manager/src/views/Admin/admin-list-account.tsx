@@ -37,7 +37,7 @@ const AdminUsers: React.FC = () => {
         <h2 className="text-2xl font-bold text-[var(--defaulttext)]">Accounts</h2>
         <button
           onClick={() => navigate("/admin/users/create")}
-          className="px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
+          className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
         >
           Create an account
         </button>

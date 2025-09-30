@@ -35,8 +35,8 @@ const AdminSidebar: React.FC = () => {
             to={item.path}
             className={`flex items-center gap-2 px-4 py-2 rounded-md transition ${
               location.pathname.startsWith(item.path)
-                ? "bg-[var(--primary)] text-white"
-                : "hover:bg-[var(--primary)] hover:text-white"
+                ? "bg-[var(--primary-admin)] text-white"
+                : "hover:bg-[var(--primary-admin)] hover:text-white"
             }`}
           >
             {item.icon}

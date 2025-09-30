@@ -45,7 +45,7 @@ const ImageUploadBox: React.FC<ImageUploadBoxProps> = ({
         <button
           type="button"
           onClick={onButtonClick}
-          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)]"
         >
           Upload
         </button>
