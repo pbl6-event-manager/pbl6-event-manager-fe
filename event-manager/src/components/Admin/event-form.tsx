@@ -5,6 +5,7 @@ import { useEventFormViewModel } from "../../viewmodels/Admin/event-form-view-mo
 import ImageUploadBox from "./event-image-form";
 import { useImageUploadViewModel } from "../../viewmodels/Admin/image-upload-view-model";
 import TicketList from "./event-ticket-form";
+import ReviewInfo from "./event-confirm-form";
 
 const EventForm: React.FC = () => {
   const {formData, step, error, handleChange, handleSubmit, handleCountryCityChange, handleBack, handleNext, handleTicketChange, addTicket, removeTicket, resetForm} = useEventFormViewModel();
@@ -48,23 +49,7 @@ const EventForm: React.FC = () => {
 
       {/* Step 4: Xác nhận */}
       {step === 4 && (
-        <div>
-          <h3 className="font-semibold mb-3">Xem lại thông tin</h3>
-          <p><b>Tiêu đề:</b> {formData.title}</p>
-          <p><b>Mô tả:</b> {formData.description}</p>
-          <p><b>Địa điểm:</b> {formData.location}</p>
-          <p>
-            <b>Thời gian:</b> {formData.startDate} → {formData.endDate}
-          </p>
-          <p><b>Vé:</b></p>
-          <ul className="list-disc list-inside">
-            {formData.tickets.map((t, i) => (
-              <li key={i}>
-                {t.name} - {t.price}đ ({t.quantity} vé)
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ReviewInfo formData={formData}/>
       )}
 
       {/* Buttons */}
@@ -75,7 +60,7 @@ const EventForm: React.FC = () => {
             onClick={handleBack}
             className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
           >
-            Quay lại
+            Back
           </button>
         )}
         {step < 4 ? (
@@ -84,7 +69,7 @@ const EventForm: React.FC = () => {
             onClick={handleNext}
             className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
           >
-            Tiếp tục
+            Next
           </button>
         ) : (
           <button
@@ -92,7 +77,7 @@ const EventForm: React.FC = () => {
             onClick={handleSubmit}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            Xuất bản sự kiện
+            Publish
           </button>
         )}
       </div>

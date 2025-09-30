@@ -39,3 +39,7 @@ export interface EventInfoFormProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onCountryCityChange: (country: string, city: string) => void
 }
+
+export interface ReviewInfoProps {
+  formData: EventFormData;
+}
