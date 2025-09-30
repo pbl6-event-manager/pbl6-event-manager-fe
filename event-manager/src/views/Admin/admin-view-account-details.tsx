@@ -11,6 +11,7 @@ import UserInformationCard from "../../components/Admin/user-information-card";
 const UserViewDetailPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"participant" | "organizer">(
     "participant"
+    
   );
   const { selectedUserEmail } = useUserDetailViewModel();
   const navigate  = useNavigate();

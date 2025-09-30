@@ -5,6 +5,7 @@
 
 :root {
   --primary: oklch(0.21 0.034 264.665); 
+  --primary-admin: #f05537;
   --primary-hover: #c0442c ; 
   --secondary: oklch(0.967 0.003 264.542); 
   --surface: #f7f6f3;   

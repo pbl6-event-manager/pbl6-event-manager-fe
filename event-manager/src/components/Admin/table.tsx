@@ -57,7 +57,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
   return (
     <div ref={tableRef} className={`overflow-x-auto ${className}`}>
       <table className="min-w-full border border-[var(--border-secondary)] text-sm text-left table-fixed">
-        <thead className="bg-[var(--primary)]">
+        <thead className="bg-[var(--primary-admin)]">
           <tr>
             {columns.map((col, index) => (
               <th

@@ -87,7 +87,7 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
 
             <label
               htmlFor="avatarUpload"
-              className="absolute bottom-1 right-1 bg-[var(--primary)] text-white w-6 h-6 flex items-center justify-center rounded-full cursor-pointer shadow-md hover:bg-[var(--primary-hover)] text-sm"
+              className="absolute bottom-1 right-1 bg-[var(--primary-admin)] text-white w-6 h-6 flex items-center justify-center rounded-full cursor-pointer shadow-md hover:bg-[var(--primary-admin-hover)] text-sm"
             >
               +
             </label>
@@ -185,7 +185,7 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-[var(--primary)] text-white py-2 rounded-lg hover:bg-[var(--primary-hover)] transition text-sm"
+          className="w-full bg-[var(--primary-admin)] text-white py-2 rounded-lg hover:bg-[var(--primary-admin-hover)] transition text-sm"
         >
           {initialData ? "Update" : "Create" }
         </button>

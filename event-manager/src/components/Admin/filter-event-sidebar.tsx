@@ -191,7 +191,7 @@ const FilterEventSidebar: React.FC<FilterEventSidebarProps> = ({ onFilter }) => 
       <div className="flex gap-2 mt-4">
         <button
           onClick={handleSubmit}
-          className="flex-1 bg-[var(--primary)] text-white px-3 py-2 rounded hover:bg-[var(--primary-hover)]"
+          className="flex-1 bg-[var(--primary-admin)] text-white px-3 py-2 rounded hover:bg-[var(--primary-hover)]"
         >
           Apply
         </button>

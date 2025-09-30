@@ -67,7 +67,7 @@ const EventForm: React.FC = () => {
           <button
             type="button"
             onClick={handleNext}
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)]"
           >
             Next
           </button>
@@ -75,7 +75,7 @@ const EventForm: React.FC = () => {
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)]"
           >
             Publish
           </button>

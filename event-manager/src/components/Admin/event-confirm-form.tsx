@@ -4,7 +4,7 @@ import type { ReviewInfoProps } from "../../models/Admin/event-models";
 const ReviewInfo: React.FC<ReviewInfoProps> = ({ formData }) => {
   return (
     <div>
-      <h3 className="font-semibold mb-3">Xem lại thông tin</h3>
+      <h3 className="font-semibold mb-3">Review</h3>
       <p>
         <b>Title:</b> {formData.title}
       </p>

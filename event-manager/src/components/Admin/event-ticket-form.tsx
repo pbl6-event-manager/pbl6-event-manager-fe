@@ -14,7 +14,7 @@ const TicketList: React.FC<TicketListProps> = ({
         <button
           type="button"
           onClick={addTicket}
-          className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+          className="px-3 py-1 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)]"
         >
           + Add
         </button>
