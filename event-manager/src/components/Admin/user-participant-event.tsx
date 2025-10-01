@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { useUserDetailViewModel } from "../../viewmodels/Admin/user-detail-view-model";
+import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import Table from "../../components/Admin/table";
 
 const UserParticipantEvents: React.FC = () => {
-  const { selectedUserEmail } = useUserDetailViewModel();
+  const { selectedUserEmail } = useUserViewModel();
   const { eventsByUser, getEventsForUser } = useEventViewModel();
 
   useEffect(() => {

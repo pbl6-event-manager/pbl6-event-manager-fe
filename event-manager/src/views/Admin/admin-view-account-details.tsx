@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { useUserDetailViewModel } from "../../viewmodels/Admin/user-detail-view-model";
+import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
 import UserParticipantEvents from "../../components/Admin/user-participant-event";
-import { Pencil, Lock, Unlock, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
 import TabGroup from "../../components/Admin/tab-group";
@@ -13,7 +12,7 @@ const UserViewDetailPage: React.FC = () => {
     "participant"
     
   );
-  const { selectedUserEmail } = useUserDetailViewModel();
+  const { selectedUserEmail } = useUserViewModel();
   const navigate  = useNavigate();
   const [openDelDialog, setOpenDelDialog] = useState(false);
   const [openBanDialog, setOpenBanDialog] = useState(false);

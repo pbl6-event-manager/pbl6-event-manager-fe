@@ -1,14 +1,13 @@
 import React, {useState} from "react";
 import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
 import Table from "../../components/Admin/table";
-import { useNavigate } from "react-router-dom";
 import FilterUserSidebar from "../../components/Admin/filter-user-sidebar";
 import {applyUserFilters} from "../../utils/Admin/filter-user";
 import type { FilterState } from "../../utils/Admin/filter-user";
+import ConfirmDialog from "../../components/Admin/confirm-dialog";
 
 const AdminUsers: React.FC = () => {
-  const { users } = useUserViewModel();
-  const navigate = useNavigate();
+  const { users, openDialog, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDialog, handleCreate } = useUserViewModel();
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
@@ -36,7 +35,7 @@ const AdminUsers: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-[var(--defaulttext)]">Accounts</h2>
         <button
-          onClick={() => navigate("/admin/users/create")}
+          onClick={handleCreate}
           className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
         >
           Create an account
@@ -49,11 +48,29 @@ const AdminUsers: React.FC = () => {
             columns={columns}
             data={filteredUsers}
             className="rounded-lg shadow-md"
+            getRowActions={(row) => [
+              { label: "Details", onClick: () => handleViewDetail(row.email) },
+              { label: "Update", onClick: () => handleEdit(row.email) },
+              {
+                label: "Delete",
+                onClick: () => handleDelete(row.email),
+                danger: true,
+              },
+            ]}
           />
         </div>
 
         <FilterUserSidebar onFilter={setFilters} />
       </div>
+      <ConfirmDialog
+            open={openDialog}
+            onOpenChange={setOpenDialog}
+            title="Confirm"
+            description="Are you sure you want to delete this account?"
+            confirmText="Delete"
+            cancelText="Cancel"
+            onConfirm={confirmDelete}
+          />
     </div>
   );
 };
