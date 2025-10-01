@@ -1,23 +1,47 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, Settings, LogOut, Banknote, Ticket, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Home,
+  Users,
+  Settings,
+  LogOut,
+  Banknote,
+  Ticket,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import ConfirmDialog from "./confirm-dialog";
 import Logo from "../../assets/Logo.svg";
 
 const AdminSidebar: React.FC = () => {
   const location = useLocation();
   const [openDialog, setOpenDialog] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: <Home size={18} /> },
     { path: "/admin/systems", label: "System Management", icon: <Settings size={18} /> },
     { path: "/admin/users", label: "Account Management", icon: <Users size={18} /> },
-    { path: "/admin/events", label: "Event Management", icon: <Ticket size={18} /> },
+    {
+      path: "/admin/events",
+      label: "Event Management",
+      icon: <Ticket size={18} />,
+      children: [
+        {
+          path: "/admin/events/categories",
+          label: "Category Management",
+        },
+      ],
+    },
     { path: "/admin/payments", label: "Transaction Management", icon: <Banknote size={18} /> },
   ];
 
   const handleLogout = () => {
     setOpenDialog(false);
+  };
+
+  const toggleSubmenu = (label: string) => {
+    setOpenSubmenu((prev) => (prev === label ? null : label));
   };
 
   return (
@@ -29,20 +53,71 @@ const AdminSidebar: React.FC = () => {
 
       {/* Menu */}
       <nav className="flex-1 px-2 py-4 space-y-2">
-        {menuItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md transition ${
-              location.pathname.startsWith(item.path)
-                ? "bg-[var(--primary-admin)] text-white"
-                : "hover:bg-[var(--primary-admin)] hover:text-white"
-            }`}
-          >
-            {item.icon}
-            {item.label}
-          </Link>
-        ))}
+        {menuItems.map((item) =>
+          item.children ? (
+            <div key={item.path}>
+              {/* Parent item có submenu */}
+              <div
+                className={`flex items-center justify-between px-4 py-2 rounded-md transition ${
+                  location.pathname.startsWith(item.path)
+                    ? "bg-[var(--primary-admin)] text-white"
+                    : "hover:bg-[var(--primary-admin)] hover:text-white"
+                }`}
+              >
+                {/* Link để điều hướng */}
+                <Link to={item.path} className="flex items-center gap-2 flex-1">
+                  {item.icon}
+                  {item.label}
+                </Link>
+
+                {/* Icon toggle submenu */}
+                <button
+                  type="button"
+                  onClick={() => toggleSubmenu(item.label)}
+                  className="p-1 rounded hover:bg-[var(--primary-admin)]"
+                >
+                  {openSubmenu === item.label ? (
+                    <ChevronDown size={16} />
+                  ) : (
+                    <ChevronRight size={16} />
+                  )}
+                </button>
+              </div>
+
+              {/* Submenu */}
+              {openSubmenu === item.label && (
+                <div className="ml-6 mt-1 space-y-1">
+                  {item.children.map((child) => (
+                    <Link
+                      key={child.path}
+                      to={child.path}
+                      className={`block px-3 py-1 rounded-md text-sm transition ${
+                        location.pathname === child.path
+                          ? "bg-[var(--primary-admin)] text-white"
+                          : "hover:bg-[var(--primary-admin)] hover:text-white"
+                      }`}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md transition ${
+                location.pathname.startsWith(item.path)
+                  ? "bg-[var(--primary-admin)] text-white"
+                  : "hover:bg-[var(--primary-admin)] hover:text-white"
+              }`}
+            >
+              {item.icon}
+              {item.label}
+            </Link>
+          )
+        )}
       </nav>
 
       {/* User + Logout */}

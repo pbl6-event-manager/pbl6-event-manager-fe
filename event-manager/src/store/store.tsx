@@ -7,6 +7,7 @@ import { navigationReducer } from "./reducers/common/navigation-reducer";
 import { authFlowReducer } from "./reducers/common/auth-flow-reducer";
 import eventReducer from "./reducers/Admin/event-reducer";
 import { locationReducer } from "./reducers/Admin/location-reducer";
+import categoryReducer from "./reducers/Admin/category-reducer";
 
 const allReducer = combineReducers({
   userList: userListReducer,
@@ -15,7 +16,8 @@ const allReducer = combineReducers({
   auth: authReducer,
   navigation: navigationReducer,
   authFlow: authFlowReducer, 
-  location: locationReducer
+  location: locationReducer,
+  category: categoryReducer,
 }); 
 
 export type RootState = ReturnType<typeof allReducer>;

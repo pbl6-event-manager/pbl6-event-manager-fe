@@ -6,6 +6,7 @@ import UpdateAccountView from "../../views/Admin/admin-update-account";
 import UserDetail from "../../views/Admin/admin-view-account-details";
 import AdminEvents from "../../views/Admin/admin-list-events";
 import CreateEventView from "../../views/Admin/admin-create-event-form";
+import CategoryManagementView from "../../views/Admin/admin-list-category";
 
 const adminRoutes: RouteObject = {
   path: "/admin",
@@ -17,6 +18,7 @@ const adminRoutes: RouteObject = {
     { path: "users/details", element: <UserDetail /> },
     { path: "events", element: <AdminEvents /> },
     { path: "events/create", element: <CreateEventView /> },
+    { path: "events/categories", element: <CategoryManagementView /> },
   ],
 };
 
