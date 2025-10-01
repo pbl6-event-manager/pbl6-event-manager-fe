@@ -56,7 +56,7 @@ const CategoryManagementView: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={handleAddCategory}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-green-700"
               >
                 Save
               </button>

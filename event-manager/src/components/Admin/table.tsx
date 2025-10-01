@@ -97,17 +97,26 @@ const Table: React.FC<TableProps> = ({ columns, data, className }) => {
                         <DropdownMenu
                           isOpen={openMenuIndex === rowIndex}
                           onToggle={() =>
-                            setOpenMenuIndex(
-                              openMenuIndex === rowIndex ? null : rowIndex
-                            )
+                            setOpenMenuIndex(openMenuIndex === rowIndex ? null : rowIndex)
                           }
-                          email={row["email"]}
-                          ViewDetail={() => handleViewDetail(row["email"])}
-                          onEdit={handleEdit}
-                          onDelete={(email) => {
-                            selectedUserEmail.current = email;
-                            setOpenDialog(true);
-                          }}
+                          items={[
+                            {
+                              label: "Details",
+                              onClick: () => handleViewDetail(row.email),
+                            },
+                            {
+                              label: "Update",
+                              onClick: () => handleEdit(row.email),
+                            },
+                            {
+                              label: "Delete",
+                              onClick: () => {
+                                selectedUserEmail.current = row.email;
+                                setOpenDialog(true);
+                              },
+                              danger: true,
+                            },
+                          ]}
                         />
                       </div>
                     ) : (

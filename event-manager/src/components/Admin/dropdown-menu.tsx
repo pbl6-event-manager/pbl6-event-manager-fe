@@ -1,25 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { createPopper } from "@popperjs/core";
 import type { Instance } from "@popperjs/core";
-import ReactDOM from "react-dom";
+import type { DropdownItem, DropdownMenuProps } from "../../models/Admin/dropdown-menu-models";
 
 
-interface ActionMenuProps {
-  isOpen: boolean;
-  onToggle: () => void;
-  onEdit: (email: string) => void;
-  onDelete: (email: string) => void;
-  ViewDetail: (email: string) => void;
-  email: string;
-}
 
-const DropdownMenu: React.FC<ActionMenuProps> = ({
+const DropdownMenu: React.FC<DropdownMenuProps> = ({
   isOpen,
   onToggle,
-  onEdit,
-  onDelete,
-  ViewDetail,
-  email
+  items
 }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -77,33 +66,20 @@ const DropdownMenu: React.FC<ActionMenuProps> = ({
           className="z-50 bg-[var(--containertext)] shadow-lg border border-[var(--border-secondary)] rounded w-32"
           style={{ position: "absolute" }}
         >
-          <button
-            onClick={() => {
-              ViewDetail(email);
-              onToggle();
-            }}
-            className="block w-full text-left px-4 py-2 hover:bg-[var(--surface-secondary)]"
-          >
-            Details
-          </button>
-          <button
-            onClick={() => {
-              onEdit(email);
-              onToggle();
-            }}
-            className="block w-full text-left px-4 py-2 hover:bg-[var(--surface-secondary)]"
-          >
-            Update
-          </button>
-          <button
-            onClick={() => {
-              onDelete(email);
-              onToggle();
-            }}
-            className="block w-full text-left px-4 py-2 text-red-500 hover:bg-[var(--surface-secondary)]"
-          >
-            Delete
-          </button>
+          {items.map((item, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                item.onClick();
+                onToggle();
+              }}
+              className={`block w-full text-left px-4 py-2 hover:bg-[var(--surface-secondary)] ${
+                item.danger ? "text-red-500" : ""
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       )}
     </div>
