@@ -10,6 +10,7 @@ export const useCategoryViewModel = () => {
   const categories = useSelector((state: RootState) => state.category.categories);
   const [newCategory, setNewCategory] = useState(CATEGORY_FORM_DEFAULT);
   const [isAdding, setIsAdding] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
@@ -28,10 +29,15 @@ export const useCategoryViewModel = () => {
 
   const handleDeleteCategory = (id: number) => {
     // setCategories(categories.filter((c) => c.id !== id));
+    setOpenDeleteDialog(true);
   };
+
+  const confirmDelete = () => {
+    setOpenDeleteDialog(false);
+  }
 
   const handleUpdateCategory = (id: number) => {
 
   }
-  return { categories, handleAddCategory, handleDeleteCategory, handleUpdateCategory, setIsAdding, setNewCategory, isAdding, newCategory };
+  return { categories, openDeleteDialog, setOpenDeleteDialog, handleAddCategory, handleDeleteCategory, handleUpdateCategory, setIsAdding, setNewCategory, isAdding, newCategory, confirmDelete };
 };

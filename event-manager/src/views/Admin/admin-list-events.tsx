@@ -1,19 +1,15 @@
 import React, {useState} from "react";
 import Table from "../../components/Admin/table";
-import { useNavigate } from "react-router-dom";
 import FilterEventSidebar from "../../components/Admin/filter-event-sidebar";
 import { applyEventFilters } from "../../utils/Admin/filter-event";
 import type { EventFilterState } from "../../utils/Admin/filter-event";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import TabGroup from "../../components/Admin/tab-group";
 import TabItem from "../../components/Admin/tab-item";
+import ConfirmDialog from "../../components/Admin/confirm-dialog";
 
 const AdminEvents: React.FC = () => {
-  const { publicEvents, pendingEvents } = useEventViewModel();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"pending" | "public">(
-      "public"
-    );
+  const { publicEvents, pendingEvents, openDeleteDialog, openAcceptDialog, openRejectDialog, activeTab, setActiveTab, setOpenDeleteDialog, setOpenAcceptDialog, setOpenRejectDialog, handleDelete, handleViewDetail, confirmDelete, handleAccept, handleReject, confirmAccept, confirmReject } = useEventViewModel();
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
@@ -56,13 +52,6 @@ const AdminEvents: React.FC = () => {
             onClick={() => setActiveTab("pending")}
           />
         </TabGroup>
-
-        <button
-          onClick={() => navigate("/admin/events/create")}
-          className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
-        >
-          Create an event
-        </button>
       </div>
 
       <div>
@@ -73,6 +62,14 @@ const AdminEvents: React.FC = () => {
                 columns={columns}
                 data={filteredPublicEvents}
                 className="rounded-lg shadow-md"
+                getRowActions={(row) => [
+                  { label: "Details", onClick: () => handleViewDetail(row.id) },
+                  {
+                    label: "Delete",
+                    onClick: () => handleDelete(row.id),
+                    danger: true,
+                  },
+                ]}
               />
             </div>
 
@@ -86,6 +83,21 @@ const AdminEvents: React.FC = () => {
                 columns={columns}
                 data={filteredPendingEvents}
                 className="rounded-lg shadow-md"
+                getRowActions={(row) => [
+                  { 
+                    label: "Details", 
+                    onClick: () => handleViewDetail(row.id) 
+                  },
+                  {
+                    label: "Accept",
+                    onClick: () => handleAccept(row.id),
+                  },
+                  {
+                    label: "Reject",
+                    onClick: () => handleReject(row.id),
+                    danger: true,
+                  },
+                ]}
               />
             </div>
 
@@ -93,6 +105,34 @@ const AdminEvents: React.FC = () => {
           </div>
         )}
       </div>
+      <ConfirmDialog
+            open={openDeleteDialog}
+            onOpenChange={setOpenDeleteDialog}
+            title="Confirm"
+            description="Are you sure you want to delete this events?"
+            confirmText="Delete"
+            cancelText="Cancel"
+            onConfirm={confirmDelete}
+          />
+      <ConfirmDialog
+            open={openAcceptDialog}
+            onOpenChange={setOpenAcceptDialog}
+            title="Confirm"
+            description="Are you sure you want to approve this events?"
+            confirmText="Approve"
+            cancelText="Cancel"
+            onConfirm={confirmAccept}
+            danger = {false}
+          />
+      <ConfirmDialog
+            open={openRejectDialog}
+            onOpenChange={setOpenRejectDialog}
+            title="Confirm"
+            description="Are you sure you want to reject this events?"
+            confirmText="Reject"
+            cancelText="Cancel"
+            onConfirm={confirmReject}
+          />
     </div>
   );
 };

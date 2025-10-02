@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Plus } from "lucide-react";
 import Table from "../../components/Admin/table";
 import { useCategoryViewModel } from "../../viewmodels/Admin/category-view-model";
+import ConfirmDialog from "../../components/Admin/confirm-dialog";
 
 
 const CategoryManagementView: React.FC = () => {
-  const { categories, isAdding, newCategory, setNewCategory, handleAddCategory, handleDeleteCategory, handleUpdateCategory, setIsAdding } = useCategoryViewModel();
+  const { categories, isAdding, newCategory, openDeleteDialog, setOpenDeleteDialog, setNewCategory, handleAddCategory, handleDeleteCategory, confirmDelete, handleUpdateCategory, setIsAdding } = useCategoryViewModel();
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
@@ -33,6 +34,17 @@ const CategoryManagementView: React.FC = () => {
         columns={columns}
         data={categories}
         className="rounded-lg shadow-md"
+        getRowActions={(row) => [
+          {
+            label: "Update",
+            onClick: () => handleUpdateCategory(row.id),
+          },
+          {
+            label: "Delete",
+            onClick: () => handleDeleteCategory(row.id),
+            danger: true,
+          },
+        ]}
       />
 
       {/* Add Category Form */}
@@ -56,7 +68,7 @@ const CategoryManagementView: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={handleAddCategory}
-                className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-green-700"
+                className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)]"
               >
                 Save
               </button>
@@ -70,6 +82,15 @@ const CategoryManagementView: React.FC = () => {
           </div>
         </div>
       )}
+      <ConfirmDialog
+            open={openDeleteDialog}
+            onOpenChange={setOpenDeleteDialog}
+            title="Confirm"
+            description="Are you sure you want to delete this category?"
+            confirmText="Delete"
+            cancelText="Cancel"
+            onConfirm={confirmDelete}
+          />
     </div>
   );
 };
