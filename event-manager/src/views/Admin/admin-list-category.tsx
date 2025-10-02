@@ -74,4 +74,6 @@ const CategoryManagementView: React.FC = () => {
   );
 };
 
+
+
 export default CategoryManagementView;
