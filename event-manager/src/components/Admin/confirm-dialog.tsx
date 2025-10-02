@@ -1,15 +1,7 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import type { ConfirmDialogProps } from "../../models/Admin/confirm-dialog-model";
 
-interface ConfirmDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  description: string;
-  onConfirm: () => void;
-  confirmText?: string;
-  cancelText?: string;
-}
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   open,
@@ -17,8 +9,9 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   title,
   description,
   onConfirm,
-  confirmText = "Xác nhận",
-  cancelText = "Hủy",
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  danger = true,
 }) => {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -37,7 +30,11 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
               </button>
             </Dialog.Close>
             <button
-              className="px-3 py-1 rounded bg-red-500 text-white"
+              className={`px-3 py-1 rounded text-white ${
+                danger
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
               onClick={onConfirm}
             >
               {confirmText}
