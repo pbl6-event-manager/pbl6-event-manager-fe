@@ -1,5 +1,5 @@
 export interface Category {
-  id: number;
+  id?: number;
   name: string;
   description: string;
 }
@@ -8,6 +8,14 @@ export interface CategoryFormData {
     name: string;
     description: string;
 }
+
+export interface CategoryFormProps {
+  initialData?: Category;
+  onSave: (data: Category) => void;
+  onCancel: () => void;
+  isUpdate?: boolean;
+}
+
 
 export interface CategoryState {
     categories: Category[]

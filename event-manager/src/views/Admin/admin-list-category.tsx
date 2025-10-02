@@ -3,10 +3,11 @@ import { Plus } from "lucide-react";
 import Table from "../../components/Admin/table";
 import { useCategoryViewModel } from "../../viewmodels/Admin/category-view-model";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
+import CategoryForm from "../../components/Admin/category-form";
 
 
 const CategoryManagementView: React.FC = () => {
-  const { categories, isAdding, newCategory, openDeleteDialog, setOpenDeleteDialog, setNewCategory, handleAddCategory, handleDeleteCategory, confirmDelete, handleUpdateCategory, setIsAdding } = useCategoryViewModel();
+  const { categories, isAdding, isEditing, selectedCategory, openDeleteDialog, handleEditCategory, setIsEditing, setOpenDeleteDialog, handleAddCategory, handleDeleteCategory, confirmDelete, handleUpdateCategory, setIsAdding } = useCategoryViewModel();
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
@@ -37,7 +38,7 @@ const CategoryManagementView: React.FC = () => {
         getRowActions={(row) => [
           {
             label: "Update",
-            onClick: () => handleUpdateCategory(row.id),
+            onClick: () => handleEditCategory(row.id),
           },
           {
             label: "Delete",
@@ -49,38 +50,19 @@ const CategoryManagementView: React.FC = () => {
 
       {/* Add Category Form */}
       {isAdding && (
-        <div className="mt-6 bg-white p-4 rounded shadow border">
-          <h3 className="font-semibold mb-3">Add New Category</h3>
-          <div className="space-y-3">
-            <input
-              type="text"
-              placeholder="Category Name"
-              value={newCategory.name}
-              onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-              className="w-full border rounded p-2"
-            />
-            <textarea
-              placeholder="Description"
-              value={newCategory.description}
-              onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-              className="w-full border rounded p-2"
-            />
-            <div className="flex gap-2">
-              <button
-                onClick={handleAddCategory}
-                className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)]"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => setIsAdding(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <CategoryForm
+          onSave={handleAddCategory}
+          onCancel={() => setIsAdding(false)}
+        />
+      )}
+      {/* Update Category Form */}
+      {isEditing && selectedCategory && (
+        <CategoryForm
+          initialData={selectedCategory}
+          isUpdate
+          onSave={handleUpdateCategory}
+          onCancel={() => setIsEditing(false)}
+        />
       )}
       <ConfirmDialog
             open={openDeleteDialog}
