@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { loginService } from "../../service/Admin/auth-service";
 
 const LoginPage: React.FC = () => {
