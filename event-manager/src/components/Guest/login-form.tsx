@@ -1,10 +1,12 @@
 "use client";
 import EventbriteLogo from "../even-brite-logo";
 import SocialLoginButtons from "./social-login-buttons";
-
+import { useLoginViewModel } from "../../viewmodels/login-view-model";
 import type React from "react";
 
 const LoginForm: React.FC = () => {
+    const { email, setEmail, password, setPassword, loading, handleSubmit } = useLoginViewModel();
+
     return (
         <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
             <div className="text-center mb-[30px] w-[120px] h-[24px] mx-auto">
@@ -15,7 +17,7 @@ const LoginForm: React.FC = () => {
                 <h1 className="text-[32px] font-bold text-[#1e0a3c] mb-2 leading-[1.2] text-left">Welcome!</h1>
                 <h2 className="text-[32px] font-bold text-[#1e0a3c] mb-[30px] leading-[1.2] text-left">What's your email?</h2>
 
-                <form className="mb-[30px]">
+                <form className="mb-[30px]" onSubmit={handleSubmit}>
                     <div className="mb-5 text-left">
                         <label htmlFor="email" className="block text-sm text-[#6f7287] mb-2 font-medium">
                             Email
@@ -23,6 +25,8 @@ const LoginForm: React.FC = () => {
                         <input
                             id="email"
                             type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="example@gmail.com"
                             className="w-full px-4 py-3 border-2 border-[#d9dbe9] rounded text-base text-[#1e0a3c] bg-white 
          transition-colors duration-200 focus:outline-none focus:border-[#f05537] box-border"
@@ -30,9 +34,29 @@ const LoginForm: React.FC = () => {
                         />
                     </div>
 
-                    <button type="submit" className="w-full bg-[#f05537] text-white py-[14px] px-5 rounded text-base font-semibold cursor-pointer 
-         transition-colors duration-200 hover:bg-[#e04527] disabled:opacity-60 disabled:cursor-not-allowed mt-6" >
-                        {"Continue"}
+                    <div className="mb-5 text-left">
+                        <label htmlFor="email" className="block text-sm text-[#6f7287] mb-2 font-medium">
+                            Password
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full px-4 py-3 border-2 border-[#d9dbe9] rounded text-base text-[#1e0a3c] bg-white 
+         transition-colors duration-200 focus:outline-none focus:border-[#f05537] box-border"
+                            required
+                        />
+                    </div>
+
+                    <button type="submit" 
+                            className="w-full bg-[#f05537] text-white py-[14px] px-5 rounded text-base font-semibold cursor-pointer 
+         transition-colors duration-200 hover:bg-[#e04527] disabled:opacity-60 disabled:cursor-not-allowed mt-6"
+                            disabled={loading}
+                            
+                             >
+                        {loading ? "Loading..." : "Log In"}
                     </button>
                 </form>
 
