@@ -6,3 +6,6 @@ export * from './api-models';
 
 //Navigation Models
 export * from './navigation-models';
+
+//Event Models
+export * from './event-models';
