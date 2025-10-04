@@ -7,11 +7,13 @@ import UserDetail from "../../views/Admin/admin-view-account-details";
 import AdminEvents from "../../views/Admin/admin-list-events";
 import CreateEventView from "../../views/Admin/admin-create-event-form";
 import CategoryManagementView from "../../views/Admin/admin-list-category";
+import LoginPage from "../../views/Admin/login";
 
 const adminRoutes: RouteObject = {
   path: "/admin",
   element: <AdminLayout />,
   children: [
+    { path: "loginAdmin", element: <LoginPage /> },
     { path: "users", element: <AdminUsers /> },
     { path: "users/create", element: <CreateAccountView /> },
     { path: "users/edit", element: <UpdateAccountView /> },

@@ -9,7 +9,7 @@ const LoginPage: React.FC = () => {
                 <img src="/public/images/yoga-background.jpg" alt="Yoga class background" className="w-full h-full object-cover" />
             </div>
             <div className="relative z-20 flex justify-center items-center w-full h-full">
-                <AuthFlow />
+                <LoginForm />
             </div>
         </div>
     );
