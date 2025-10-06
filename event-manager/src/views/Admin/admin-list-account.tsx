@@ -7,7 +7,7 @@ import type { FilterState } from "../../utils/Admin/filter-user";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
 
 const AdminUsers: React.FC = () => {
-  const { users, openDialog, accessToken, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDialog, handleCreate } = useUserViewModel();
+  const { users, openDialog, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDialog, handleCreate } = useUserViewModel();
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
     { header: "Avatar", accessor: "avatar", type: "image" as const },

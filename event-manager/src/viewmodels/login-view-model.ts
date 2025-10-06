@@ -20,7 +20,6 @@ export const useLoginViewModel = () => {
     setError(null);
     try {
       const res = await dispatch<any>(login(email, password));
-      console.log("loginvm");
       if (res && res.accessToken) {
         if (email === "admin@event.com") {
           navigate("/admin/users");
