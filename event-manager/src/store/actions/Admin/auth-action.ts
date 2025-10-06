@@ -6,11 +6,12 @@ import { loginService, refreshTokenService } from "../../../service/Admin/auth-s
 
 export const login = (email: string, password: string) => async (dispatch: any) => {
   try {
-    const data = await loginService(email, password);
+    const { data } = await loginService(email, password);
     dispatch({
       type: LOGIN_SUCCESS,
       payload: data,
     });
+    return data;
   } catch (error) {
     console.error("Login failed:", error);
   }

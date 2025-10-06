@@ -12,18 +12,25 @@ export const useLoginViewModel = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
-      await dispatch<any>(login(email, password));
-
-      if (email === "admin@event.com") {
-        navigate("/admin/users"); // ví dụ: admin page
+      const res = await dispatch<any>(login(email, password));
+      console.log("loginvm");
+      if (res && res.accessToken) {
+        if (email === "admin@event.com") {
+          navigate("/admin/users");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
-        navigate("/dashboard"); // ví dụ: user dashboard
+        setError("Wrong password or email");
       }
+
     } catch (error) {
       console.error("Login error:", error);
     } finally {
