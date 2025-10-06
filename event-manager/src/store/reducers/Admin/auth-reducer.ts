@@ -3,6 +3,7 @@ import { LOGIN_SUCCESS, LOGOUT, REFRESH_TOKEN_SUCCESS } from "../../actions/Admi
 const initialState = {
   accessToken: null,
   refreshToken: null,
+  user: null,
 };
 
 export const _authReducer = (state = initialState, action: any) => {
@@ -12,6 +13,7 @@ export const _authReducer = (state = initialState, action: any) => {
         ...state,
         accessToken: action.payload.accessToken,
         refreshToken: action.payload.refreshToken,
+        user: action.payload.user,
       };
     case REFRESH_TOKEN_SUCCESS:
       return {
