@@ -6,8 +6,9 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux"
 import { goBack, setLoading } from "../../store/actions/common/auth-flow-action"
 import { loginSuccess } from "../../store/actions/common/auth-action"
 import { setCurrentPage } from "../../store/actions/common/navigation-action"
-import { MOCK_USERS } from "../../store/reducers/common/auth-flow-reducer"
+// import { MOCK_USERS } from "../../store/reducers/common/auth-flow-reducer"
 import EventbriteLogo from "../even-brite-logo"
+import { useSignUpViewModel } from "../../viewmodels/signup-view-model"
 
 const PasswordStep: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -16,30 +17,30 @@ const PasswordStep: React.FC = () => {
   const [error, setError] = useState("")
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!password.trim()) return
+    // e.preventDefault()
+    // if (!password.trim()) return
 
-    dispatch(setLoading(true))
+    // dispatch(setLoading(true))
 
-    setTimeout(() => {
-      const mockUser = MOCK_USERS.find((user) => user.email.toLowerCase() === email.toLowerCase())
+    // setTimeout(() => {
+    //   const mockUser = ;
 
-      if (mockUser && mockUser.password === password) {
-        const user = {
-          email: mockUser.email,
-          firstName: mockUser.firstName,
-          lastName: mockUser.lastName,
-          name: `${mockUser.firstName} ${mockUser.lastName}`,
-        }
-        dispatch(loginSuccess({ email, user }))
-        dispatch(setCurrentPage("overview"))
-      } else {
-        setError("Incorrect password. Please try again.")
-      }
+    //   if (mockUser && mockUser.password === password) {
+    //     const user = {
+    //       email: mockUser.email,
+    //       firstName: mockUser.firstName,
+    //       lastName: mockUser.lastName,
+    //       name: `${mockUser.firstName} ${mockUser.lastName}`,
+    //     }
+    //     dispatch(loginSuccess({ email, user }))
+    //     dispatch(setCurrentPage("overview"))
+    //   } else {
+    //     setError("Incorrect password. Please try again.")
+    //   }
 
-      dispatch(setCurrentPage("overview"))
-      dispatch(setLoading(false))
-    }, 1000)
+    //   dispatch(setCurrentPage("overview"))
+    //   dispatch(setLoading(false))
+    // }, 1000)
   }
 
   const handleBack = () => {

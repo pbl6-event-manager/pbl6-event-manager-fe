@@ -1,5 +1,3 @@
-// src/viewmodels/Auth/useLoginViewModel.ts
-"use client";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";

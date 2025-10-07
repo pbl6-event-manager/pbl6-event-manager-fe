@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useAppSelector } from "../../hooks/redux"
 import EmailStep from "../../components/Guest/email-step"
