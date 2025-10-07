@@ -2,7 +2,7 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_SUCCESS";
 export const LOGOUT = "LOGOUT";
 
-import { loginService, refreshTokenService } from "../../../service/Admin/auth-service";
+import { loginService, refreshTokenService } from "../../../service/auth-service";
 
 export const login = (email: string, password: string) => async (dispatch: any) => {
   try {

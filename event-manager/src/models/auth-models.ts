@@ -1,3 +1,4 @@
+import type { AuthStep } from "../store/actions/common/auth-flow-action";
 export interface User {
     id: string;
     email: string;
@@ -38,14 +39,28 @@ export interface AuthState {
 }
 
 export interface AuthFlowState {
-    currentStep: "email" | "password" | "user-info" | "create-password";
-    email: string;
-    isExistingUser: boolean;
+    currentStep: AuthStep,
+    email: string,
+    isExistingUser: boolean,
     userInfo: {
-        firstName: string;
-        lastName: string;
-    };
-    stepHistory: string[]; // To manage back navigation
-    isLoading: boolean;
-    error: string | null;
+        firstName: string,
+        lastName: string,
+    },
+    isLoading: boolean,
+    error: string | null,
+    stepHistory?: AuthStep[], // Optional: To track the history of steps
 }
+
+export const DEFAULT_AUTH_FLOW_STATE : AuthFlowState = {
+    currentStep: "email",
+    email: "",
+    isExistingUser: false,
+    userInfo: {
+        firstName: "",
+        lastName: "",
+    },
+    isLoading: false,
+    error: null,
+    stepHistory: ["email"],
+}
+

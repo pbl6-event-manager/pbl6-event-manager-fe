@@ -1,6 +1,6 @@
 import axios from "axios";
-import { store } from "../../store/store";
-import { refreshAccessToken, logout } from "../../store/actions/Admin/auth-action";
+import { store } from "../store/store";
+import { refreshAccessToken, logout } from "../store/actions/Admin/auth-action";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:3000/api", // URL backend

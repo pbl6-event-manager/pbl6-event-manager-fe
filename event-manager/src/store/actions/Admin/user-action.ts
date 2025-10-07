@@ -2,7 +2,7 @@ export const FETCH_USERS = "FETCH_USERS";
 export const SET_SELECTED_USER = "SET_SELECTED_USER";
 export const CLEAR_SELECTED_USER = "CLEAR_SELECTED_USER";
 
-import { fetchUsersService } from "../../../service/Admin/user-service";
+import { fetchUsersService } from "../../../service/user-service";
  
 
 export const getUsers = () => async (dispatch: any) => {

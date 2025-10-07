@@ -1,29 +1,10 @@
-"use client"
-
 import type React from "react"
-import { useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../hooks/redux"
-import { setEmail, checkEmailExists, setLoading } from "../../store/actions/common/auth-flow-action"
 import EventbriteLogo from "../even-brite-logo"
 import SocialLoginButtons from "./social-login-buttons"
+import { useSignUpViewModel } from "../../viewmodels/signup-view-model"
 
 const EmailStep: React.FC = () => {
-  const dispatch = useAppDispatch()
-  const { email, isLoading } = useAppSelector((state) => state.authFlow)
-  const [localEmail, setLocalEmail] = useState(email)
-
-  const handleContinue = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!localEmail.trim()) return
-
-    dispatch(setLoading(true))
-    dispatch(setEmail(localEmail))
-
-    setTimeout(() => {
-      dispatch(checkEmailExists())
-      dispatch(setLoading(false))
-    }, 1000)
-  }
+  const { localEmail, setLocalEmail, handleContinue, isLoading } = useSignUpViewModel();
 
   return (
     <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
