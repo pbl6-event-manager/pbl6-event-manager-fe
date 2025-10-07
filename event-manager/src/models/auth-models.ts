@@ -1,4 +1,4 @@
-import type { AuthStep } from "../store/actions/common/auth-flow-action";
+import type { AuthStep } from "../store/actions/auth-flow-action";
 export interface User {
     id: string;
     email: string;
@@ -15,7 +15,7 @@ export interface LoginRequest {
     password: string;
 }
 
-export interface RegisterRequest {
+export interface SignUpDto {
     email: string;
     password: string;
     firstName: string;

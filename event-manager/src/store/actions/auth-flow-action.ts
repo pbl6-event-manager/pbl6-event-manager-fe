@@ -1,4 +1,4 @@
-import { checkEmailService } from "../../../service/auth-service";
+import { checkEmailService } from "../../service/auth-service";
 
 export type AuthStep = "email" | "password" | "user-info" | "create-password";
 

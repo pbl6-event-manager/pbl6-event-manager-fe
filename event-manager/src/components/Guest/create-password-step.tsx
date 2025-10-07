@@ -1,54 +1,37 @@
-"use client"
-
 import type React from "react"
-import { useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../hooks/redux"
-import { setLoading, goBack } from "../../store/actions/common/auth-flow-action"
-import { loginSuccess } from "../../store/actions/common/auth-action"
-import { setCurrentPage } from "../../store/actions/common/navigation-action"
 import EventbriteLogo from "../even-brite-logo"
+import { useSignUpViewModel } from "../../viewmodels/signup-view-model"
+import { CheckCircle } from "lucide-react"
 
 const CreatePasswordStep: React.FC = () => {
-  const dispatch = useAppDispatch()
-  const { email, userInfo, isLoading } = useAppSelector((state) => state.authFlow)
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState("")
+  const {password, setPassword, confirmPassword, setConfirmPassword, error, setError, handleSignUpBack, firstName, handleCreateAccount, isLoading, isSuccess, handleGoToLogin} = useSignUpViewModel()
 
-  const handleBack = () => {
-    dispatch(goBack())
-  }
-
-  const handleCreateAccount = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-
-    if (!password.trim() || !confirmPassword.trim()) return
-
-    if (password !== confirmPassword) {
-      setError("Passwords don't match")
-      return
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters")
-      return
-    }
-
-    dispatch(setLoading(true))
-
-    setTimeout(() => {
-      const user = {
-        email,
-        firstName: userInfo.firstName,
-        lastName: userInfo.lastName,
-        name: `${userInfo.firstName} ${userInfo.lastName}`,
-      }
-
-      dispatch(loginSuccess({ email, user }))
-      dispatch(setCurrentPage("overview"))
-      dispatch(setLoading(false))
-    }, 1000)
+  if (isSuccess) {
+    return (
+      <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)] text-center">
+        <div className="flex justify-center mb-6">
+          <CheckCircle className="w-16 h-16 text-green-500 animate-bounce" />
+        </div>
+        <h1 className="text-[28px] font-bold text-[#1e0a3c] mb-2">Account Created!</h1>
+        <p className="text-[#6f7287] mb-8 text-sm">
+          Your account has been successfully created. Welcome aboard!
+        </p>
+        <button
+          onClick={handleGoToLogin}
+          className="flex items-center justify-center w-full bg-[#f05537] text-white py-[12px] rounded text-base font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#e04527]"
+        >
+          Go to Login
+          <svg
+            className="w-5 h-5 ml-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -59,7 +42,7 @@ const CreatePasswordStep: React.FC = () => {
 
       <div className="text-center">
         <button
-          onClick={handleBack}
+          onClick={handleSignUpBack}
           className="flex items-center text-[#6f7287] hover:text-[#1e0a3c] mb-4 text-sm font-medium transition-colors duration-200"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +52,7 @@ const CreatePasswordStep: React.FC = () => {
         </button>
         <h1 className="text-[32px] font-bold text-[#1e0a3c] mb-2 leading-[1.2] text-left">Create your password</h1>
         <h2 className="text-[20px] font-normal text-[#6f7287] mb-[30px] leading-[1.2] text-left">
-          Almost done, {userInfo.firstName}!
+          Almost done, {firstName}!
         </h2>
 
         <form onSubmit={handleCreateAccount} className="mb-[30px]">

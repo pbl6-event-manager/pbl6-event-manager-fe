@@ -12,7 +12,7 @@ export const useUserViewModel = () => {
   const selectedUserEmail = useSelector(
     (state: RootState) => state.userDetail.selectedUserEmail
   );
-  const accessToken = useSelector((state: any) => state._auth.accessToken);
+  const accessToken = useSelector((state: any) => state.auth.accessToken);
 
   // useEffect(() => {
   //   dispatch(getUsers());
