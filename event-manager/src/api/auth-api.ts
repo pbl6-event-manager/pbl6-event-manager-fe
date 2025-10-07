@@ -1,3 +1,4 @@
+import type { SignUpDto } from "../models";
 import apiClient from "./api-config";
 
 
@@ -9,3 +10,6 @@ export const refreshTokenApi = (refreshToken: string) =>
 
 export const checkEmailExist = (email : string) => 
   apiClient.post("/auth/check-email", { email });
+
+export const signupApi = (body: SignUpDto) =>
+  apiClient.post("/auth/signup", body);

@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../store/actions/Admin/auth-action";
+import { login } from "../store/actions/auth-action";
+import type { RootState } from "../store/store";
 
 export const useLoginViewModel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
+  const { email } = useSelector((state: RootState) => state.authFlow);
+  const [localEmail, setLocalEmail] = useState(email);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,10 +17,11 @@ export const useLoginViewModel = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    if (!password.trim() || !localEmail.trim()) return;
     try {
-      const res = await dispatch<any>(login(email, password));
+      const res = await dispatch<any>(login(localEmail, password));
       if (res && res.accessToken) {
-        if (email === "admin@event.com") {
+        if (localEmail === "admin@event.com") {
           navigate("/admin/users");
         } else {
           navigate("/dashboard");
@@ -36,11 +38,14 @@ export const useLoginViewModel = () => {
   };
 
   return {
-    email,
-    setEmail,
+    localEmail,
+    setLocalEmail,
     password,
     setPassword,
     loading,
     handleSubmit,
+    error,
+    setError,
+    setLoading
   };
 };

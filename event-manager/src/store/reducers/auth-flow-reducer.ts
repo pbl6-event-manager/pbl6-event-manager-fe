@@ -1,6 +1,6 @@
-import { AUTH_FLOW_ACTION } from "../../actions/common/auth-flow-action";
-import type { AuthFlowState } from "../../../models";
-import { DEFAULT_AUTH_FLOW_STATE } from "../../../models";
+import { AUTH_FLOW_ACTION } from "../actions/auth-flow-action";
+import type { AuthFlowState } from "../../models";
+import { DEFAULT_AUTH_FLOW_STATE } from "../../models";
 
 export const authFlowReducer = (state = DEFAULT_AUTH_FLOW_STATE, action: any) : AuthFlowState => {
     switch (action.type) {

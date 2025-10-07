@@ -1,4 +1,4 @@
-import { LOGIN_SUCCESS, LOGOUT, REFRESH_TOKEN_SUCCESS } from "../../actions/Admin/auth-action";
+import { LOGIN_SUCCESS, LOGOUT, REFRESH_TOKEN_SUCCESS, SIGNUP_SUCCESS } from "../actions/auth-action";
 
 const initialState = {
   accessToken: localStorage.getItem("accessToken") || null,
@@ -24,6 +24,8 @@ export const _authReducer = (state = initialState, action: any) => {
         accessToken: action.payload.accessToken,
         refreshToken: action.payload.refreshToken,
       };
+    case SIGNUP_SUCCESS:
+      return initialState;
     case LOGOUT:
       return initialState;
     default:

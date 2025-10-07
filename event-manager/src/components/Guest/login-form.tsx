@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import type React from "react";
 
 const LoginForm: React.FC = () => {
-    const { email, setEmail, password, setPassword, loading, handleSubmit } = useLoginViewModel();
+    const { localEmail, setLocalEmail, password, setPassword, loading, handleSubmit } = useLoginViewModel();
 
     return (
         <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
@@ -26,8 +26,8 @@ const LoginForm: React.FC = () => {
                         <input
                             id="email"
                             type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={localEmail}
+                            onChange={(e) => setLocalEmail(e.target.value)}
                             placeholder="example@gmail.com"
                             className="w-full px-4 py-3 border-2 border-[#d9dbe9] rounded text-base text-[#1e0a3c] bg-white 
          transition-colors duration-200 focus:outline-none focus:border-[#f05537] box-border"
