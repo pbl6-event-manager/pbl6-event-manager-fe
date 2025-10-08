@@ -77,7 +77,7 @@ export default function AllEventsPage() {
   }
 
   const handleViewEvent = (eventId: string) => {
-    navigate(`/organizer/events/${eventId}`)
+    navigate(`/organizer/events/dashboard/${eventId}`)
   }
 
   const filteredEvents = events.filter((event) => {

@@ -52,7 +52,7 @@ export function OverviewCard({ description, onUpdate }: OverviewCardProps) {
     return (
       <Card
         ref={cardRef}
-        className={`cursor-pointer transition-all hover:border-primary ${isValid ? "border-green-500" : ""}`}
+        className="border-2 border-gray-300 hover:border-blue-700 transition-colors duration-300 cursor-pointer"
         onClick={() => setIsExpanded(true)}
       >
         <CardHeader>
@@ -81,7 +81,7 @@ export function OverviewCard({ description, onUpdate }: OverviewCardProps) {
 
   // Expanded state
   return (
-    <Card ref={cardRef} className="border-2 border-primary">
+    <Card ref={cardRef} className="border-2 border-blue-700 transition-colors duration-300 cursor-pointer">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Overview</CardTitle>
@@ -98,14 +98,11 @@ export function OverviewCard({ description, onUpdate }: OverviewCardProps) {
           <p className="text-sm text-muted-foreground mb-4">
             Add more details about your event and include what people can expect if they attend.
           </p>
-          <p className="text-sm text-muted-foreground mb-4">
-            Use arrow keys to navigate between modules. Use the up and down buttons to reorder modules.
-          </p>
         </div>
 
         <div className="border rounded-lg overflow-hidden">
           {/* Toolbar */}
-          <div className="flex items-center gap-2 p-2 border-b bg-muted/30">
+          {/* <div className="flex items-center gap-2 p-2 border-b bg-muted/30">
             <Select defaultValue="normal">
               <SelectTrigger className="w-32 h-8">
                 <SelectValue />
@@ -134,7 +131,7 @@ export function OverviewCard({ description, onUpdate }: OverviewCardProps) {
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive">
               <Trash2 className="h-4 w-4" />
             </Button>
-          </div>
+          </div> */}
 
           {/* Text Area */}
           <Textarea
@@ -152,25 +149,6 @@ export function OverviewCard({ description, onUpdate }: OverviewCardProps) {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>{localDescription.length} characters</span>
           {isValid && <span className="text-green-600">• Minimum reached</span>}
-        </div>
-
-        <Button variant="link" className="text-primary p-0 h-auto">
-          ⚡ Suggest description
-        </Button>
-
-        <div className="flex gap-2 pt-4 border-t">
-          <Button variant="outline" size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Add text
-          </Button>
-          <Button variant="outline" size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Add image
-          </Button>
-          <Button variant="outline" size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Add video
-          </Button>
         </div>
       </CardContent>
     </Card>
