@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { loginService } from "../../service/Admin/auth-service";
+import { loginService } from "../../service/auth-service";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("admin@event.com");

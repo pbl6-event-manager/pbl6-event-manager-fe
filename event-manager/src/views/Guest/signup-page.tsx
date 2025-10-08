@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import SignUpForm from "../../components/Guest/signup-form"
+// import SignUpForm from "../../components/Guest/signup-form"
+import AuthFlow from "./auth-flow"
 
 const SignUpPage: React.FC = () => {
   return (
@@ -10,7 +11,7 @@ const SignUpPage: React.FC = () => {
                 <img src="/public/images/yoga-background.jpg" alt="Yoga class background" className="w-full h-full object-cover" />
             </div>
             <div className="relative z-20 flex justify-center items-center w-full h-full">
-                <SignUpForm />
+                <AuthFlow />
             </div>
         </div>
   )

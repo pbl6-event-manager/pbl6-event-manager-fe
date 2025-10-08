@@ -2,10 +2,11 @@
 import EventbriteLogo from "../even-brite-logo";
 import SocialLoginButtons from "./social-login-buttons";
 import { useLoginViewModel } from "../../viewmodels/login-view-model";
+import { Link } from "react-router-dom";
 import type React from "react";
 
 const LoginForm: React.FC = () => {
-    const { email, setEmail, password, setPassword, loading, handleSubmit } = useLoginViewModel();
+    const { localEmail, setLocalEmail, password, setPassword, loading, handleSubmit } = useLoginViewModel();
 
     return (
         <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
@@ -25,8 +26,8 @@ const LoginForm: React.FC = () => {
                         <input
                             id="email"
                             type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={localEmail}
+                            onChange={(e) => setLocalEmail(e.target.value)}
                             placeholder="example@gmail.com"
                             className="w-full px-4 py-3 border-2 border-[#d9dbe9] rounded text-base text-[#1e0a3c] bg-white 
          transition-colors duration-200 focus:outline-none focus:border-[#f05537] box-border"
@@ -59,6 +60,15 @@ const LoginForm: React.FC = () => {
                         {loading ? "Loading..." : "Log In"}
                     </button>
                 </form>
+                <p className="text-sm text-[#6f7287] mt-2">
+                    Don’t have an account?{" "}
+                    <Link
+                        to="/signup"
+                        className="text-[#3659e3] font-medium hover:underline"
+                    >
+                        Click here to sign up
+                    </Link>
+                </p>
 
                 <div className="relative my-8 text-[#6f7287] text-sm before:content-[''] before:absolute before:top-1/2 before:left-0 before:right-0 before:h-px before:bg-[#d9dbe9] before:z-0">
                     <span className="relative z-10 bg-white px-4">Or sign in with</span>
@@ -72,7 +82,7 @@ const LoginForm: React.FC = () => {
                     </a>
                 </div>
 
-                <div className="mt-5">
+                {/* <div className="mt-5">
                     <p className="text-xs text-[#6f7287] leading-relaxed m-0">
                         By clicking Continue or the Apple, Google, or Facebook icons, you agree to Eventbrite's{" "}
                         <a href="#" className="text-blue-600 hover:text-blue-700 underline">
@@ -83,7 +93,7 @@ const LoginForm: React.FC = () => {
                             Privacy Policy
                         </a>
                     </p>
-                </div>
+                </div> */}
             </div>
         </div>
     )

@@ -1,32 +1,9 @@
-"use client"
-
 import type React from "react"
-import { useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../hooks/redux"
-import { setUserInfo, goBack } from "../../store/actions/common/auth-flow-action"
 import EventbriteLogo from "../even-brite-logo"
+import { useSignUpViewModel } from "../../viewmodels/signup-view-model"
 
 const UserInfoStep: React.FC = () => {
-  const dispatch = useAppDispatch()
-  const { email } = useAppSelector((state) => state.authFlow)
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-
-  const handleContinue = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!firstName.trim() || !lastName.trim()) return
-
-    dispatch(setUserInfo({ firstName: firstName.trim(), lastName: lastName.trim() }))
-  }
-
-  const handleBack = () => {
-    dispatch(goBack())
-  }
-
-  const handleEditEmail = () => {
-    dispatch(goBack())
-  }
-
+  const {firstName, setFirstName, lastName, setLastName, localEmail, handleSignUpBack, handleUserInfoContinue, handleEditEmail} = useSignUpViewModel();
   return (
     <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
       <div className="text-center mb-[30px] w-[120px] h-[24px] mx-auto">
@@ -34,7 +11,7 @@ const UserInfoStep: React.FC = () => {
       </div>
 
       <button
-        onClick={handleBack}
+        onClick={handleSignUpBack}
         className="flex items-center text-[#6f7287] hover:text-[#1e0a3c] mb-4 text-sm font-medium transition-colors duration-200"
       >
         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,13 +27,13 @@ const UserInfoStep: React.FC = () => {
           </h1>
         </div>
 
-        <form onSubmit={handleContinue} className="space-y-4">
+        <form onSubmit={handleUserInfoContinue} className="space-y-4">
           {/* Email field with edit button */}
           <div className="space-y-1">
             <div className="flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 bg-gray-50">
               <input
                 type="email"
-                value={email}
+                value={localEmail}
                 className="flex-1 bg-transparent border-none outline-none text-gray-700"
                 readOnly
               />

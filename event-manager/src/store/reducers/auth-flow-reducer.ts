@@ -1,43 +1,8 @@
-//Mockdata for authentication flow
-const MOCK_USERS = [
-    { email: "john@example.com", password: "123456", firstName: "John", lastName: "Doe" },
-    { email: "jane@example.com", password: "password", firstName: "Jane", lastName: "Smith" },
-    { email: "test@eventbrite.com", password: "test123", firstName: "Test", lastName: "User" },
-    { email: "user@gmail.com", password: "user123", firstName: "Demo", lastName: "User" },
-]
+import { AUTH_FLOW_ACTION } from "../actions/auth-flow-action";
+import type { AuthFlowState } from "../../models";
+import { DEFAULT_AUTH_FLOW_STATE } from "../../models";
 
-const MOCK_EXISTING_EMAILS = MOCK_USERS.map(user => user.email.toLowerCase());
-
-import { AUTH_FLOW_ACTION, type AuthStep } from "../../actions/common/auth-flow-action";
-
-interface AuthFlowState {
-    currentStep: AuthStep,
-    email: string,
-    isExistingUser: boolean,
-    userInfo: {
-        firstName: string,
-        lastName: string,
-    },
-    isLoading: boolean,
-    error: string | null,
-    stepHistory?: AuthStep[], // Optional: To track the history of steps
-}
-
-const initialState: AuthFlowState = {
-    currentStep: "email",
-    email: "",
-    isExistingUser: false,
-    userInfo: {
-        firstName: "",
-        lastName: "",
-    },
-    isLoading: false,
-    error: null,
-    stepHistory: ["email"], // Initialize with the first step
-};
-
-export const authFlowReducer = (state = initialState, action: any):
-    AuthFlowState => {
+export const authFlowReducer = (state = DEFAULT_AUTH_FLOW_STATE, action: any) : AuthFlowState => {
     switch (action.type) {
         case AUTH_FLOW_ACTION.SET_EMAIL:
             return {
@@ -45,7 +10,7 @@ export const authFlowReducer = (state = initialState, action: any):
                 email: action.payload,
             };
         case AUTH_FLOW_ACTION.CHECK_EMAIL_EXISTS:
-            const isExistingUser = MOCK_EXISTING_EMAILS.includes(state.email.toLowerCase());
+            const isExistingUser = action.payload
             const nextStep = isExistingUser ? "password" : "user-info";
             return {
                 ...state,
@@ -90,11 +55,10 @@ export const authFlowReducer = (state = initialState, action: any):
                 error: action.payload,
             };
         case AUTH_FLOW_ACTION.RESET_AUTH_FLOW:
-            return initialState;
+            return DEFAULT_AUTH_FLOW_STATE;
         default:
             return state;
     }
 };
 
-export { MOCK_USERS }
 export default authFlowReducer;

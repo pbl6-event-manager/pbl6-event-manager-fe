@@ -1,4 +1,4 @@
-import { getAllUsersApi } from "../../api/Admin/user-api";
+import { getAllUsersApi } from "../api/user-api";
 
 export const fetchUsersService = async () => {
   const { data } = await getAllUsersApi();

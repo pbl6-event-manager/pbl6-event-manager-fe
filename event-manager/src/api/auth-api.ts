@@ -1,54 +1,15 @@
-import type { ApiResponse } from "../models/api-models";
+import type { SignUpDto } from "../models";
+import apiClient from "./api-config";
 
-export interface CheckEmailResponse extends ApiResponse<{ exists: boolean }> { }
 
-const MOCK_USERS = [
-    { id: "1", email: "john@example.com", password: "123456", firstName: "John", lastName: "Doe" },
-    { id: "2", email: "jane@example.com", password: "password", firstName: "Jane", lastName: "Smith" },
-    { id: "3", email: "test@eventbrite.com", password: "test123", firstName: "Test", lastName: "User" },
-    { id: "4", email: "user@gmail.com", password: "user123", firstName: "Demo", lastName: "User" },
-]
+export const loginApi = (email: string, password: string) =>
+  apiClient.post("/auth/login", { email, password });
 
-//Simulate API delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export const refreshTokenApi = (refreshToken: string) =>
+  apiClient.post("/auth/refresh-token", { refreshToken });
 
-export const authService = {
-    // Check if email exists
-    checkEmail: async (email: string): Promise<CheckEmailResponse> => {
-        await delay(500); // Simulate network delay
-        try {
-            //Mock API call - replace with real API call
-            const exists = MOCK_USERS.some(user => user.email.toLowerCase() === email.toLowerCase());
-            return {
-                success: true,
-                data: { exists },
-                message: "Email check successful",
-            }
-        } catch (error) {
-            return {
-                success: false,
-                data: { exists: false },
-                message: "Failed to check email",
-            }
-        }
-    },
+export const checkEmailExist = (email : string) => 
+  apiClient.post("/auth/check-email", { email });
 
-    // Login user
-    login:
-    {
-
-    },
-    
-    // register user
-    register:
-    {
-
-    },
-
-    // logout user
-    logout:
-    {
-
-    },
-
-}
+export const signupApi = (body: SignUpDto) =>
+  apiClient.post("/auth/signup", body);

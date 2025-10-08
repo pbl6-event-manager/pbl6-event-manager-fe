@@ -12,10 +12,11 @@ export const useUserViewModel = () => {
   const selectedUserEmail = useSelector(
     (state: RootState) => state.userDetail.selectedUserEmail
   );
+  const accessToken = useSelector((state: any) => state.auth.accessToken);
 
-  useEffect(() => {
-    dispatch(getUsers());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getUsers());
+  // }, [dispatch]);
 
   
   const selectUser = useCallback(
@@ -54,7 +55,8 @@ export const useUserViewModel = () => {
   }
   
 
-  return { 
+  return {
+    accessToken, 
     users,
     selectedUserEmail,
     openDialog,

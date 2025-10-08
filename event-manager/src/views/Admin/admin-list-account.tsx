@@ -8,7 +8,6 @@ import ConfirmDialog from "../../components/Admin/confirm-dialog";
 
 const AdminUsers: React.FC = () => {
   const { users, openDialog, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDialog, handleCreate } = useUserViewModel();
-
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
     { header: "Avatar", accessor: "avatar", type: "image" as const },

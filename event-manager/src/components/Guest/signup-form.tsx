@@ -5,7 +5,7 @@ import { useState } from "react"
 import EventbriteLogo from "../even-brite-logo"
 
 const SignUpForm: React.FC = () => {
-    const [email, setEmail] = useState("letonthanhan0409@gmail.com")
+    const [email, setEmail] = useState("")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [isLoading, setIsLoading] = useState(false)
@@ -17,10 +17,6 @@ const SignUpForm: React.FC = () => {
         setTimeout(() => setIsLoading(false), 1000)
     }
 
-    const handleEditEmail = () => {
-        // Navigate back to login or email edit
-        console.log("Edit email clicked")
-    }
 
     return (
         <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
@@ -36,22 +32,14 @@ const SignUpForm: React.FC = () => {
                 <form onSubmit={handleContinue} className="space-y-4">
                     {/* Email field with edit button */}
                     <div className="space-y-1">
-                        <div className="flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 bg-gray-50">
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="flex-1 bg-transparent border-none outline-none text-gray-700"
-                                readOnly
-                            />
-                            <button
-                                type="button"
-                                onClick={handleEditEmail}
-                                className="text-blue-600 hover:text-blue-700 font-medium text-sm ml-2"
-                            >
-                                Edit
-                            </button>
-                        </div>
+                        <input
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            required
+                        />
                     </div>
 
                     {/* First name field */}

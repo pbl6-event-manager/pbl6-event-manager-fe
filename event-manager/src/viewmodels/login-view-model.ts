@@ -1,29 +1,35 @@
-// src/viewmodels/Auth/useLoginViewModel.ts
-"use client";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../store/actions/Admin/auth-action";
+import { login } from "../store/actions/auth-action";
+import type { RootState } from "../store/store";
 
 export const useLoginViewModel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
+  const { email } = useSelector((state: RootState) => state.authFlow);
+  const [localEmail, setLocalEmail] = useState(email);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+    if (!password.trim() || !localEmail.trim()) return;
     try {
-      await dispatch<any>(login(email, password));
-
-      if (email === "admin@event.com") {
-        navigate("/admin/users"); // ví dụ: admin page
+      const res = await dispatch<any>(login(localEmail, password));
+      if (res && res.accessToken) {
+        if (localEmail === "admin@event.com") {
+          navigate("/admin/users");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
-        navigate("/dashboard"); // ví dụ: user dashboard
+        setError("Wrong password or email");
       }
+
     } catch (error) {
       console.error("Login error:", error);
     } finally {
@@ -32,11 +38,14 @@ export const useLoginViewModel = () => {
   };
 
   return {
-    email,
-    setEmail,
+    localEmail,
+    setLocalEmail,
     password,
     setPassword,
     loading,
     handleSubmit,
+    error,
+    setError,
+    setLoading
   };
 };

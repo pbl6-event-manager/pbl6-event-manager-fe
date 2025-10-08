@@ -1,29 +1,10 @@
-"use client"
-
 import type React from "react"
-import { useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../hooks/redux"
-import { setEmail, checkEmailExists, setLoading } from "../../store/actions/common/auth-flow-action"
 import EventbriteLogo from "../even-brite-logo"
 import SocialLoginButtons from "./social-login-buttons"
+import { useSignUpViewModel } from "../../viewmodels/signup-view-model"
 
 const EmailStep: React.FC = () => {
-  const dispatch = useAppDispatch()
-  const { email, isLoading } = useAppSelector((state) => state.authFlow)
-  const [localEmail, setLocalEmail] = useState(email)
-
-  const handleContinue = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!localEmail.trim()) return
-
-    dispatch(setLoading(true))
-    dispatch(setEmail(localEmail))
-
-    setTimeout(() => {
-      dispatch(checkEmailExists())
-      dispatch(setLoading(false))
-    }, 1000)
-  }
+  const { localEmail, setLocalEmail, handleEmailContinue, isLoading, handleGoToLogin } = useSignUpViewModel();
 
   return (
     <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
@@ -35,7 +16,7 @@ const EmailStep: React.FC = () => {
         <h1 className="text-[32px] font-bold text-[#1e0a3c] mb-2 leading-[1.2] text-left">Welcome!</h1>
         <h2 className="text-[32px] font-bold text-[#1e0a3c] mb-[30px] leading-[1.2] text-left">What's your email?</h2>
 
-        <form onSubmit={handleContinue} className="mb-[30px]">
+        <form onSubmit={handleEmailContinue} className="mb-[30px]">
           <div className="mb-5 text-left">
             <label htmlFor="email" className="block text-sm text-[#6f7287] mb-2 font-medium">
               Email
@@ -60,6 +41,18 @@ const EmailStep: React.FC = () => {
           >
             {isLoading ? "Checking..." : "Continue"}
           </button>
+          <div className="mt-4 text-center">
+            <span className="text-sm text-[#6f7287]">
+              Already have an account?{" "}
+              <a
+                href="/login"
+                onClick={handleGoToLogin}
+                className="text-[#3659e3] font-medium hover:underline cursor-pointer"
+              >
+                Back to login
+              </a>
+            </span>
+          </div>
         </form>
 
         <div className="relative my-8 text-[#6f7287] text-sm before:content-[''] before:absolute before:top-1/2 before:left-0 before:right-0 before:h-px before:bg-[#d9dbe9] before:z-0">
