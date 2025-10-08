@@ -2,9 +2,8 @@
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Calendar, Users } from "lucide-react"
+import { ArrowLeft} from "lucide-react"
 import { Button } from "../../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
 import { EventTitleCard } from "../../../components/Organizer/event-title-card"
 import { DateLocationCard } from "../../../components/Organizer/date-location-card"
 import { CreateEventSidebar } from "../../../components/Organizer/create-event-sidebar"
@@ -16,14 +15,23 @@ import type { EventData, EventFormErrors, MediaFile, GoodToKnowData } from "../.
 
 export default function CreateEventPage() {
   const [eventData, setEventData] = useState<EventData>({
-    mediaFile: null,            // ban đầu chưa có media
+    mediaFile: null,          
     title: "",
     summary: "",
     description: "",
-    date: "",
+    startDate: "",
     startTime: "10:00",
+    endDate: "",
     endTime: "12:00",
-    location: "",
+    location: {
+      type: "venue",
+      country: "",
+      city: "",
+      venueName: "",
+      address1: "",
+      address2: "",
+      stateProvince: "",
+    },
     goodToKnowData: {
       doorTime: null,
       ageInfo: null,
@@ -35,7 +43,8 @@ export default function CreateEventPage() {
     ticketType: null,          
     capacity: "",
     category: [],               
-    timezone: "GMT+7",
+    timezone: "",
+    language: "en-US"
   })
   const [errors, setErrors] = useState<EventFormErrors>({})
   const [uploadedMedia, setUploadedMedia] = useState<MediaFile[]>([])

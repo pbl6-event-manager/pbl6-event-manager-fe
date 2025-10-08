@@ -37,8 +37,8 @@ export function CreateEventSidebar({ eventData, currentStep }: CreateEventSideba
                 {eventData.summary && <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{eventData.summary}</p>}
                 <div className="flex items-center text-sm text-muted-foreground mt-2">
                     <Calendar className="h-4 w-4 mr-1" />
-                    {eventData.date
-                        ? new Date(eventData.date).toLocaleDateString("en-US", {
+                    {eventData.startDate
+                        ? new Date(eventData.startDate).toLocaleDateString("en-US", {
                             weekday: "short",
                             month: "short",
                             day: "numeric",

@@ -1,24 +1,26 @@
-import type { TicketType } from "./ticket-models";
+import type { TicketType } from "./ticket-models"
 
-export interface EventData{
+export interface EventData {
     mediaFile: MediaFile[] | null;
     title: string;
     summary: string;
     description: string;
-    date: string;
+    startDate: string;
     startTime: string;
+    endDate: string;
     endTime: string;
-    location: string;
+    location: LocationData;
     goodToKnowData: GoodToKnowData;
     lineUp: LineUpItem[];
-    agenda: AgendaItem[];
+    agenda: AgendaSection[];
     ticketType: TicketType[] | null;
     capacity: string;
     category: string[];
     timezone: string;
+    language: string
 }
 
-export interface MediaFile{
+export interface MediaFile {
     id: string;
     file: File;
     preview: string;
@@ -26,7 +28,7 @@ export interface MediaFile{
     uploadedAt: Date;
 }
 
-export interface EventFormErrors{
+export interface EventFormErrors {
     title?: string;
     summary?: string;
     description?: string;
@@ -62,7 +64,24 @@ export interface LineUpItem {
 }
 
 export interface AgendaItem {
-  time: string;
-  title: string;       
-  description: string | null;
+    time: string;
+    title: string;
+    description: string | null;
+    host: string | null;
+}
+
+export interface AgendaSection {
+    id: string
+    name: string
+    items: AgendaItem[]
+}
+
+export interface LocationData {
+    type: "venue" | "online" | "tba"
+    country: string
+    city: string
+    venueName: string
+    address1: string
+    address2: string
+    stateProvince: string
 }

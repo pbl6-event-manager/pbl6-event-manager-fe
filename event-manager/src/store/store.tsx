@@ -8,6 +8,7 @@ import { authFlowReducer } from "./reducers/auth-flow-reducer";
 import eventReducer from "./reducers/Admin/event-reducer";
 import { locationReducer } from "./reducers/Admin/location-reducer";
 import categoryReducer from "./reducers/Admin/category-reducer";
+import organizerEventReducer from "./reducers/Organizer/event-reducer";
 
 const allReducer = combineReducers({
   userList: userListReducer,
@@ -17,11 +18,13 @@ const allReducer = combineReducers({
   authFlow: authFlowReducer, 
   location: locationReducer,
   category: categoryReducer,
+  _auth: _authReducer,
+  organizerEvent: organizerEventReducer
   auth: _authReducer,
 }); 
 
+export const store = createStore(allReducer, applyMiddleware(thunk));
+
 export type RootState = ReturnType<typeof allReducer>;
 export type AppDispatch = typeof store.dispatch;
-
-export const store = createStore(allReducer, applyMiddleware(thunk));
 

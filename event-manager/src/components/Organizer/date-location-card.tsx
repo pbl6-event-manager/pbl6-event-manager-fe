@@ -1,15 +1,17 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import { Calendar, MapPin, Plus, Check, AlertCircle, Clock, Globe } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { Badge } from "../ui/badge"
 import { Switch } from "../ui/switch"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import type { EventData } from "../../models"
+import { useDateLocationViewModel } from "../../viewmodels/Organizer/date-location-view-model"
+import { TIMEZONES, LANGUAGES } from "../../utils/Organizer/timezone-language"
 
 interface DateLocationCardProps {
   eventData: EventData
@@ -17,30 +19,25 @@ interface DateLocationCardProps {
 }
 
 export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [isValid, setIsValid] = useState(false)
-  const [errors, setErrors] = useState<{ date?: string; location?: string }>({})
-  const [eventType, setEventType] = useState("single")
-  const [locationType, setLocationType] = useState("venue")
+  const {
+    isExpanded,
+    setIsExpanded,
+    isValid,
+    errors,
+    setErrors,
+    eventType,
+    setEventType,
+    showLocationDetails,
+    setShowLocationDetails,
+    countries,
+    cities,
+    loading,
+    validateFields,
+    updateLocation,
+    formatDateTime,
+    formatLocation,
+  } = useDateLocationViewModel(eventData, onUpdate)
   const cardRef = useRef<HTMLDivElement>(null)
-
-  // Validate fields
-  const validateFields = () => {
-    const newErrors: { date?: string; location?: string } = {}
-
-    if (!eventData.date.trim()) {
-      newErrors.date = "Date is required"
-    }
-
-    if (locationType === "venue" && !eventData.location.trim()) {
-      newErrors.location = "Location is required"
-    }
-
-    setErrors(newErrors)
-    const valid = Object.keys(newErrors).length === 0
-    setIsValid(valid)
-    return valid
-  }
 
   // Handle click outside
   useEffect(() => {
@@ -55,38 +52,12 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
 
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isExpanded, eventData, locationType])
-
-  // Check if card has valid data
-  useEffect(() => {
-    if (eventData.date && (locationType !== "venue" || eventData.location)) {
-      setIsValid(true)
-    }
-  }, [eventData.date, eventData.location, locationType])
+  }, [isExpanded, eventData, eventType])
 
   const handleCardClick = () => {
     if (!isExpanded) {
       setIsExpanded(true)
     }
-  }
-
-  const formatDateTime = () => {
-    if (!eventData.date) return "Enter date and time"
-
-    const date = new Date(eventData.date)
-    const dateStr = date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    })
-
-    return `${dateStr} · ${eventData.startTime} - ${eventData.endTime} ${eventData.timezone}`
-  }
-
-  const formatLocation = () => {
-    if (locationType === "online") return "Online event"
-    if (locationType === "tba") return "To be announced"
-    return eventData.location || "Enter a location"
   }
 
   if (!isExpanded) {
@@ -95,7 +66,7 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
         {/* Date and Time Card - Collapsed */}
         <Card
           ref={cardRef}
-          className="cursor-pointer hover:border-primary transition-colors relative"
+          className="border-2 border-gray-300 hover:border-blue-700 transition-colors duration-300 cursor-pointer"
           onClick={handleCardClick}
         >
           <CardContent className="p-6">
@@ -104,11 +75,11 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
                 <h3 className="text-lg font-semibold mb-2">Date and time</h3>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Calendar className="h-4 w-4" />
-                  <span className="text-sm">{formatDateTime()}</span>
+                  <span className="text-sm">{formatDateTime()} {eventData.timezone}</span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {isValid && eventData.date && (
+                {isValid && eventData.startDate && (
                   <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
                     <Check className="h-5 w-5 text-white" />
                   </div>
@@ -122,7 +93,10 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
         </Card>
 
         {/* Location Card - Collapsed */}
-        <Card className="cursor-pointer hover:border-primary transition-colors" onClick={handleCardClick}>
+        <Card
+          className="border-2 border-gray-300 hover:border-blue-700 transition-colors duration-300 cursor-pointer"
+          onClick={handleCardClick}
+        >
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -133,7 +107,7 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {isValid && (locationType !== "venue" || eventData.location) && (
+                {isValid && (eventData.location.type !== "venue" || (eventData.location.country && eventData.location.city)) && (
                   <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
                     <Check className="h-5 w-5 text-white" />
                   </div>
@@ -152,7 +126,7 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
   return (
     <div ref={cardRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Date and Time Card - Expanded */}
-      <Card className="border-primary">
+      <Card className="border-2 border-blue-700 transition-colors duration-300 cursor-pointer">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -167,58 +141,92 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
         <CardContent className="space-y-4">
           <div>
             <Label className="text-sm font-medium">Type of event</Label>
-            <RadioGroup value={eventType} onValueChange={setEventType} className="mt-2 space-y-2">
+            <RadioGroup
+              value={eventType}
+              onValueChange={(value: "single" | "multi") => setEventType(value)}
+              className="mt-2 space-y-2"
+            >
               <div className="flex items-center space-x-2 p-3 border rounded-lg">
                 <RadioGroupItem value="single" id="single" />
                 <div className="flex-1">
                   <Label htmlFor="single" className="text-sm font-medium cursor-pointer">
-                    Single event
+                    Single day event
                   </Label>
-                  <p className="text-xs text-muted-foreground">An event that happens once</p>
+                  <p className="text-xs text-muted-foreground">An event that happens in just one day</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                <RadioGroupItem value="recurring" id="recurring" />
+                <RadioGroupItem value="multi" id="multi" />
                 <div className="flex-1">
-                  <Label htmlFor="recurring" className="text-sm font-medium cursor-pointer">
-                    Recurring event
+                  <Label htmlFor="multi" className="text-sm font-medium cursor-pointer">
+                    Multi days event
                   </Label>
-                  <p className="text-xs text-muted-foreground">For events every day and multiple days</p>
+                  <p className="text-xs text-muted-foreground">An event that happens continuously for many consecutive days.</p>
                 </div>
-                <Badge variant="secondary" className="text-xs">
-                  New
-                </Badge>
               </div>
             </RadioGroup>
           </div>
 
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="date" className="flex items-center gap-1">
-                Date
-                <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                type="date"
-                id="date"
-                className={`mt-1 ${errors.date ? "border-destructive" : ""}`}
-                value={eventData.date}
-                onChange={(e) => {
-                  onUpdate({ ...eventData, date: e.target.value })
-                  if (errors.date) {
-                    setErrors({ ...errors, date: undefined })
-                  }
-                }}
-                onBlur={validateFields}
-              />
-              {errors.date && (
-                <div className="flex items-center gap-1 mt-1 text-sm text-destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>{errors.date}</span>
+            <div className="grid grid-cols-2 gap-2">
+              {/* Start date */}
+              <div>
+                <Label htmlFor="date" className="flex items-center gap-1">
+                  Start date
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  type="date"
+                  id="date"
+                  className={`mt-1 ${errors.date ? "border-destructive" : ""}`}
+                  value={eventData.startDate}
+                  onChange={(e) => {
+                    onUpdate({ ...eventData, startDate: e.target.value })
+                    if (errors.date) {
+                      setErrors({ ...errors, date: undefined })
+                    }
+                  }}
+                  onBlur={validateFields}
+                />
+                {errors.date && (
+                  <div className="flex items-center gap-1 mt-1 text-sm text-destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <span>{errors.date}</span>
+                  </div>
+                )}
+              </div>
+              {/* End date */}
+              {eventType === "multi" && (
+                <div>
+                  <Label htmlFor="endDate" className="flex items-center gap-1">
+                    End date
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    type="date"
+                    id="endDate"
+                    className={`mt-1 ${errors.endDate ? "border-destructive" : ""}`}
+                    value={eventData.endDate}
+                    onChange={(e) => {
+                      onUpdate({ ...eventData, endDate: e.target.value })
+                      if (errors.endDate) {
+                        setErrors({ ...errors, endDate: undefined })
+                      }
+                    }}
+                    onBlur={validateFields}
+                  />
+                  {errors.endDate && (
+                    <div className="flex items-center gap-1 mt-1 text-sm text-destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <span>{errors.endDate}</span>
+                    </div>
+                  )}
                 </div>
               )}
+
             </div>
             <div className="grid grid-cols-2 gap-2">
+              {/* Start time */}
               <div>
                 <Label htmlFor="startTime">Start time</Label>
                 <Input
@@ -229,6 +237,7 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
                   onChange={(e) => onUpdate({ ...eventData, startTime: e.target.value })}
                 />
               </div>
+              {/* End time */}
               <div>
                 <Label htmlFor="endTime">End time</Label>
                 <Input
@@ -242,21 +251,57 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
             </div>
           </div>
 
-          {eventData.date && (
+          {eventData.startDate && (
             <div className="flex items-center gap-2 text-sm text-primary bg-primary/10 p-3 rounded-lg">
               <Clock className="h-4 w-4" />
               <span>{formatDateTime()}</span>
             </div>
           )}
+          {/* More option */}
+          <div className="space-y-4 pt-4 border-t">
+            <h4 className="text-sm font-medium">More options</h4>
 
-          <Button variant="link" className="text-primary p-0 h-auto">
-            More options
-          </Button>
+            <div>
+              <Label htmlFor="timezone" className="text-sm font-medium">
+                Event timezone
+              </Label>
+              <Select value={eventData.timezone} onValueChange={(value) => onUpdate({ ...eventData, timezone: value })}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select timezone" ></SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {TIMEZONES.map((tz) => (
+                    <SelectItem key={tz} value={tz}>
+                      {tz}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="language" className="text-sm font-medium">
+                Event page language
+              </Label>
+              <Select value={eventData.language} onValueChange={(value) => onUpdate({ ...eventData, language: value })}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select language" />
+                </SelectTrigger>
+                <SelectContent>
+                  {LANGUAGES.map((lang) => (
+                    <SelectItem key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
       {/* Location Card - Expanded */}
-      <Card className="border-primary">
+      <Card className="border-2 border-blue-700 transition-colors duration-300 cursor-pointer">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -269,7 +314,10 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <RadioGroup value={locationType} onValueChange={setLocationType}>
+          <RadioGroup
+            value={eventData.location.type}
+            onValueChange={(value: "venue" | "online" | "tba") => updateLocation({ type: value })}
+          >
             <div className="flex items-center space-x-2 p-3 border rounded-lg">
               <RadioGroupItem value="venue" id="venue" />
               <div className="flex items-center gap-2">
@@ -299,43 +347,146 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
             </div>
           </RadioGroup>
 
-          {locationType === "venue" && (
-            <div>
-              <Label htmlFor="location" className="flex items-center gap-1">
-                Location
-                <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="location"
-                placeholder="Search for a venue or address"
-                className={`mt-1 ${errors.location ? "border-destructive" : ""}`}
-                value={eventData.location}
-                onChange={(e) => {
-                  onUpdate({ ...eventData, location: e.target.value })
-                  if (errors.location) {
-                    setErrors({ ...errors, location: undefined })
-                  }
-                }}
-                onBlur={validateFields}
-              />
+          {eventData.location.type === "venue" && (
+            <div className="space-y-4">
+              <div className="grid gỉd-cols-2 gap-3">
+                {/* Select country */}
+                <div>
+                  <Label htmlFor="country" className="flex items-center gap-1">
+                    Country
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Select
+                    value={eventData.location.country}
+                    onValueChange={(value) => {
+                      updateLocation({ country: value, city: "" })
+                      if (errors.location) {
+                        setErrors({ ...errors, location: undefined })
+                      }
+                    }}
+                  >
+                    <SelectTrigger className={`mt-1 ${errors.location ? "border-destructive" : ""}`}>
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loading ? (
+                        <SelectItem value="loading" disabled>
+                          Loading...
+                        </SelectItem>
+                      ) : (
+                        countries.map((country) => (
+                          <SelectItem key={country} value={country}>
+                            {country}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {/* Select city */}
+                <div>
+                  <Label htmlFor="city" className="flex items-center gap-1">
+                    City
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Select
+                    value={eventData.location.city}
+                    onValueChange={(value) => {
+                      updateLocation({ city: value })
+                      if (errors.location) {
+                        setErrors({ ...errors, location: undefined })
+                      }
+                    }}
+                    disabled={!eventData.location.country}
+                  >
+                    <SelectTrigger className={`mt-1 ${errors.location ? "border-destructive" : ""}`}>
+                      <SelectValue placeholder={eventData.location.country ? "Select city" : "Select country first"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loading ? (
+                        <SelectItem value="loading" disabled>
+                          Loading...
+                        </SelectItem>
+                      ) : (
+                        cities.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               {errors.location && (
-                <div className="flex items-center gap-1 mt-1 text-sm text-destructive">
+                <div className="flex items-center gap-1 text-sm text-destructive">
                   <AlertCircle className="h-4 w-4" />
                   <span>{errors.location}</span>
                 </div>
               )}
-              <Button variant="link" className="text-primary p-0 h-auto mt-2">
-                + Add location details
-              </Button>
+
+              {/* Add location details */}
+              <div>
+                <Button
+                  variant="link"
+                  className="text-primary p-0 h-auto"
+                  onClick={() => setShowLocationDetails(!showLocationDetails)}
+                >
+                  {showLocationDetails ? "- Hide location details" : "+ Add location details"}
+                </Button>
+
+                {showLocationDetails && (
+                  <div className="mt-4 space-y-3">
+                    <div>
+                      <Label htmlFor="venueName">Venue Name</Label>
+                      <Input
+                        id="venueName"
+                        placeholder="Enter venue name"
+                        className="mt-1"
+                        value={eventData.location.venueName}
+                        onChange={(e) => updateLocation({ venueName: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="address1">Address 1</Label>
+                        <Input
+                          id="address1"
+                          placeholder="Street address"
+                          className="mt-1"
+                          value={eventData.location.address1}
+                          onChange={(e) => updateLocation({ address1: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="address2">Address 2</Label>
+                        <Input
+                          id="address2"
+                          placeholder="Apt, suite, etc."
+                          className="mt-1"
+                          value={eventData.location.address2}
+                          onChange={(e) => updateLocation({ address2: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="stateProvince">State/Province</Label>
+                      <Input
+                        id="stateProvince"
+                        placeholder="e.g. California"
+                        className="mt-1"
+                        value={eventData.location.stateProvince}
+                        onChange={(e) => updateLocation({ stateProvince: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
-          <div className="h-32 bg-muted rounded-lg flex items-center justify-center border-2 border-dashed">
-            <div className="text-center">
-              <MapPin className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">Map will appear here</p>
-            </div>
-          </div>
 
           <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
             <div>
