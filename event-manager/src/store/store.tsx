@@ -19,7 +19,7 @@ const allReducer = combineReducers({
   location: locationReducer,
   category: categoryReducer,
   _auth: _authReducer,
-  organizerEvent: organizerEventReducer
+  organizerEvent: organizerEventReducer,
   auth: _authReducer,
 }); 
 
