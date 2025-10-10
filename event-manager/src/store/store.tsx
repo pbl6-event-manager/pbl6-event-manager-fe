@@ -18,7 +18,6 @@ const allReducer = combineReducers({
   authFlow: authFlowReducer, 
   location: locationReducer,
   category: categoryReducer,
-  _auth: _authReducer,
   organizerEvent: organizerEventReducer,
   auth: _authReducer,
 }); 
