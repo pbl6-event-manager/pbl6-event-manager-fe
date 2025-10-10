@@ -2,31 +2,12 @@ import React, {useState} from "react";
 import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
 import Table from "../../components/Admin/table";
 import FilterUserSidebar from "../../components/Admin/filter-user-sidebar";
-import {applyUserFilters} from "../../utils/Admin/filter-user";
-import type { FilterState } from "../../utils/Admin/filter-user";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
+import TabGroup from "../../components/Admin/tab-group";
+import TabItem from "../../components/Admin/tab-item";
 
 const AdminUsers: React.FC = () => {
-  const { users, openDialog, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDialog, handleCreate } = useUserViewModel();
-  const columns = [
-    { header: "ID", accessor: "id", type: "text" as const },
-    { header: "Avatar", accessor: "avatar", type: "image" as const },
-    { header: "Full Name", accessor: "name", type: "text" as const },
-    { header: "Email", accessor: "email", type: "text" as const },
-    { header: "Phone", accessor: "phone", type: "text" as const },
-    { header: "Role", accessor: "role", type: "text" as const },
-    { header: "Actions", accessor: "actions", type: "action" as const },
-  ];
-
-  const [filters, setFilters] = useState<FilterState>({
-    name: "",
-    email: "",
-    phone: "",
-    role: "",
-    sortOrder: "",
-  });
-
-  const filteredUsers = applyUserFilters(users, filters);
+  const {  filteredActiveUsers, filteredInActiveUsers, columns, openDialog, activeTab, setActiveTab, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDialog, handleCreate, setFilters, handleRecover } = useUserViewModel();
 
   return (
     <div className="p-6">
@@ -41,25 +22,66 @@ const AdminUsers: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <Table
-            columns={columns}
-            data={filteredUsers}
-            className="rounded-lg shadow-md"
-            getRowActions={(row) => [
-              { label: "Details", onClick: () => handleViewDetail(row.email) },
-              { label: "Update", onClick: () => handleEdit(row.email) },
-              {
-                label: "Delete",
-                onClick: () => handleDelete(row.email),
-                danger: true,
-              },
-            ]}
+      <div className="flex justify-between items-center mb-4">
+        <TabGroup>
+          <TabItem
+            label="Active"
+            active={activeTab === "active"}
+            onClick={() => setActiveTab("active")}
           />
-        </div>
+          <TabItem
+            label="Deleted"
+            active={activeTab === "deleted"}
+            onClick={() => setActiveTab("deleted")}
+          />
+        </TabGroup>
+      </div>     
+      <div>
+        {activeTab === "active" && (
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Table
+                columns={columns}
+                data={filteredActiveUsers}
+                className="rounded-lg shadow-md"
+                getRowActions={(row) => [
+                  { label: "Details", onClick: () => handleViewDetail(row.email) },
+                  { label: "Update", onClick: () => handleEdit(row.email) },
+                  {
+                    label: "Delete",
+                    onClick: () => handleDelete(row.email),
+                    danger: true,
+                  },
+                ]}
+              />
+            </div>
 
-        <FilterUserSidebar onFilter={setFilters} />
+            <FilterUserSidebar onFilter={setFilters} />
+          </div>
+        )}
+        {activeTab === "deleted" && (
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Table
+                columns={columns}
+                data={filteredInActiveUsers}
+                className="rounded-lg shadow-md"
+                getRowActions={(row) => [
+                  { 
+                    label: "Details", 
+                    onClick: () => handleViewDetail(row.id) 
+                  },
+                  {
+                    label: "Recover",
+                    onClick: () => handleRecover(row.id),
+                  }
+                ]}
+              />
+            </div>
+
+            <FilterUserSidebar onFilter={setFilters} />
+          </div>
+        )}
       </div>
       <ConfirmDialog
             open={openDialog}

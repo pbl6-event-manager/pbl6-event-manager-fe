@@ -7,8 +7,8 @@ import { fetchUsersService } from "../../../service/user-service";
 
 export const getUsers = () => async (dispatch: any) => {
   try {
-    const users = await fetchUsersService();
-    dispatch({type: FETCH_USERS, payload: users})
+    const res = await fetchUsersService();
+    dispatch({type: FETCH_USERS, payload: res})
   } catch (error) {
     console.error("Failed to fetch users:", error);
   }

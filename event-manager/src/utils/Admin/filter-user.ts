@@ -6,13 +6,21 @@ export interface FilterState {
   sortOrder: "asc" | "desc" | "";
 }
 
+export const FILTER_STATE_DEFAULT : FilterState = {
+  name: "",
+  email: "",
+  phone: "",
+  role: "",
+  sortOrder: "",
+}
+
 export function applyUserFilters(users: any[], filters: FilterState) {
   let result = [...users];
 
   // Lọc theo tên
   if (filters.name) {
     result = result.filter((u) =>
-      u.name.toLowerCase().includes(filters.name.toLowerCase())
+      u.fullName.toLowerCase().includes(filters.name.toLowerCase())
     );
   }
 
@@ -36,14 +44,16 @@ export function applyUserFilters(users: any[], filters: FilterState) {
   }
 
   // Sắp xếp theo tên (có thể mở rộng)
-  if (filters.sortOrder) {
+  if (filters.sortOrder === "asc" || filters.sortOrder === "desc") {
     result.sort((a, b) => {
-      const nameA = a.name.toLowerCase();
-      const nameB = b.name.toLowerCase();
+      const nameA = a.fullName?.toLowerCase() || "";
+      const nameB = b.fullName?.toLowerCase() || "";
       return filters.sortOrder === "asc"
         ? nameA.localeCompare(nameB)
         : nameB.localeCompare(nameA);
     });
+  } else {
+    result.sort((a, b) => a.id - b.id);
   }
 
   return result;
