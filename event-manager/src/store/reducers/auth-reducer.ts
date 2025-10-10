@@ -6,7 +6,7 @@ const initialState = {
   user: JSON.parse(localStorage.getItem("user") || "null"),
 };
 
-export const _authReducer = (state = initialState, action: any) => {
+export const authReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
       localStorage.setItem("accessToken", action.payload.accessToken);
@@ -27,6 +27,9 @@ export const _authReducer = (state = initialState, action: any) => {
     case SIGNUP_SUCCESS:
       return initialState;
     case LOGOUT:
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
       return initialState;
     default:
       return state;

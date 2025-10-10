@@ -47,11 +47,4 @@ export const refreshAccessToken = (refreshToken: string) => async (dispatch: any
   }
 };
 
-export const logout = () => (dispatch: any) => {
-  const navigate = useNavigate();
-  navigate("/login");
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("user");
-  dispatch({type: LOGOUT});
-};
+export const logout = () => ({type: LOGOUT});
