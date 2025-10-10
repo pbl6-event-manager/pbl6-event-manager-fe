@@ -1,7 +1,7 @@
 import { legacy_createStore as createStore, combineReducers, applyMiddleware } from "redux";
 import { thunk } from "redux-thunk";
 import { userListReducer } from "./reducers/Admin/user-list-reducer";
-import { _authReducer } from "./reducers/auth-reducer";
+import { authReducer } from "./reducers/auth-reducer";
 import userDetailReducer from "./reducers/Admin/user-detail-reducers";
 import { navigationReducer } from "./reducers/common/navigation-reducer";
 import { authFlowReducer } from "./reducers/auth-flow-reducer";
@@ -19,7 +19,7 @@ const allReducer = combineReducers({
   location: locationReducer,
   category: categoryReducer,
   organizerEvent: organizerEventReducer,
-  auth: _authReducer,
+  auth: authReducer,
 }); 
 
 export const store = createStore(allReducer, applyMiddleware(thunk));
