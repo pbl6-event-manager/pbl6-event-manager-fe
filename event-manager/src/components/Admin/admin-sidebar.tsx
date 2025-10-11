@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
+import { useSideBarViewModel } from "../../viewmodels/Admin/sidebar-view-model";
 import {
   Home,
   Users,
@@ -14,10 +15,7 @@ import ConfirmDialog from "./confirm-dialog";
 import Logo from "../../assets/Logo.svg";
 
 const AdminSidebar: React.FC = () => {
-  const location = useLocation();
-  const [openDialog, setOpenDialog] = useState(false);
-  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-
+  const {openDialog, openSubmenu, setOpenDialog, setOpenSubmenu, handleLogout, toggleSubmenu} = useSideBarViewModel();
   const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: <Home size={18} /> },
     { path: "/admin/systems", label: "System Management", icon: <Settings size={18} /> },
@@ -36,13 +34,6 @@ const AdminSidebar: React.FC = () => {
     { path: "/admin/payments", label: "Transaction Management", icon: <Banknote size={18} /> },
   ];
 
-  const handleLogout = () => {
-    setOpenDialog(false);
-  };
-
-  const toggleSubmenu = (label: string) => {
-    setOpenSubmenu((prev) => (prev === label ? null : label));
-  };
 
   return (
     <div className="h-screen w-64 bg-[var(--surface)] flex flex-col text-[var(--defaulttext)] border-r border-[var(--border-sidebar)]">
