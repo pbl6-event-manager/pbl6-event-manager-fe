@@ -5,18 +5,20 @@ import { useNavigate } from "react-router-dom"
 import { useCallback, useEffect, useState } from "react"
 import type { RootState, AppDispatch } from "../../store/store"
 import type { OrganizerFormData } from "../../models/organizer-models"
-import { 
+import {
   fetchOrganizers,
   fetchOrganizerDetail,
   createOrganizer,
   updateOrganizer,
   deleteOrganizer,
-  followOrganizer
- } from "../../store/actions/Organizer/organizer-action"
+  followOrganizer,
+} from "../../store/actions/Organizer/organizer-action"
+
 export const useOrganizerViewModel = () => {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { organizers, currentOrganizer, loading, error } = useSelector((state: RootState) => state.organizer)
+
   const [formData, setFormData] = useState<OrganizerFormData>({
     name: "",
     website: "",
