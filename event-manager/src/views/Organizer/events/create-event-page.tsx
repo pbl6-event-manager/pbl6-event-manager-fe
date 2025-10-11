@@ -81,7 +81,7 @@ export default function CreateEventPage() {
 
   const navigate = useNavigate()
   const handleBackClick = () => {
-    const confirmed = window.confirm("Bạn đã chắc rời khỏi trang?")
+    const confirmed = window.confirm("Are you sure to leave the page?")
     if (confirmed) {
       navigate("/organizer/events/all")
     }

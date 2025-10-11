@@ -9,18 +9,20 @@ import eventReducer from "./reducers/Admin/event-reducer";
 import { locationReducer } from "./reducers/Admin/location-reducer";
 import categoryReducer from "./reducers/Admin/category-reducer";
 import organizerEventReducer from "./reducers/Organizer/event-reducer";
+import organizerReducer from "./reducers/Organizer/organizer-reducer"
 
 const allReducer = combineReducers({
   userList: userListReducer,
   userDetail : userDetailReducer,
   event: eventReducer,
+  //auth: authReducer,
   navigation: navigationReducer,
   authFlow: authFlowReducer, 
   location: locationReducer,
   category: categoryReducer,
   _auth: _authReducer,
-  organizerEvent: organizerEventReducer
-  auth: _authReducer,
+  organizerEvent: organizerEventReducer,
+  organizer: organizerReducer,
 }); 
 
 export const store = createStore(allReducer, applyMiddleware(thunk));
