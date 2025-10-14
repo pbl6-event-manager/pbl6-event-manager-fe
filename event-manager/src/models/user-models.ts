@@ -1,5 +1,5 @@
 import type { RoleModel } from "./role-models";
-
+import type { ListUserDto } from "../dtos/user-dto";
 export interface UserModel {
   id: number;
   email: string;
@@ -12,3 +12,13 @@ export interface UserModel {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface UserState {
+  users: ListUserDto[];
+  selectedUserEmail: string | null; 
+}
+
+export const DEFAULT_USERS_STATE: UserState = {
+  users: [],
+  selectedUserEmail: null,
+};

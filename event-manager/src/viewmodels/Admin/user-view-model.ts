@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import { getUsers, setSelectedUser, clearSelectedUser } from "../../store/actions/Admin/user-action";
+import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser } from "../../store/actions/Admin/user-action";
 import { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {applyUserFilters} from "../../utils/Admin/filter-user";
@@ -10,11 +10,11 @@ import { FILTER_STATE_DEFAULT } from "../../utils/Admin/filter-user";
 export const useUserViewModel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const users = useSelector((state: RootState) => state.userList.users);
+  const users = useSelector((state: RootState) => state.userReducer.users);
   const [openDialog, setOpenDialog] = useState(false);
   const [activeTab, setActiveTab] = useState<"active" | "deleted">("active");
   const selectedUserEmail = useSelector(
-    (state: RootState) => state.userDetail.selectedUserEmail
+    (state: RootState) => state.userReducer.selectedUserEmail
   );
 
   useEffect(() => {
@@ -66,7 +66,11 @@ export const useUserViewModel = () => {
   }
 
   const confirmDelete = () => {
-    console.log(selectedUserEmail);
+    if(!selectedUserEmail) {
+      setOpenDialog(false);
+      return;
+    }
+    dispatch<any>(updateStatusUser(selectedUserEmail, false))
     setOpenDialog(false);
   };
   
@@ -75,7 +79,18 @@ export const useUserViewModel = () => {
   }
 
   const handleRecover = (email: string) => {
+    clearUser();
+    selectUser(email);
+    setOpenDialog(true);  
+  }
 
+  const confirmRecover = () => {
+    if(!selectedUserEmail) {
+      setOpenDialog(false);
+      return;
+    }
+    dispatch<any>(updateStatusUser(selectedUserEmail, true))
+    setOpenDialog(false);
   }
   
 
@@ -97,6 +112,7 @@ export const useUserViewModel = () => {
     setOpenDialog,
     handleCreate,
     setFilters,
-    setActiveTab
+    setActiveTab,
+    confirmRecover
   };
 };
