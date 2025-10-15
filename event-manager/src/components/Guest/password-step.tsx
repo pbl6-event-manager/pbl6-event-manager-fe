@@ -1,5 +1,5 @@
 import type React from "react"
-import EventbriteLogo from "../even-brite-logo"
+import EventbriteLogo from "../eventbrite-logo"
 import { useLoginViewModel } from "../../viewmodels/login-view-model"
 import { useSignUpViewModel } from "../../viewmodels/signup-view-model"
 

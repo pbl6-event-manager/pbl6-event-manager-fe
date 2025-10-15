@@ -1,4 +1,4 @@
-import EventbriteLogo from "../even-brite-logo";
+import EventbriteLogo from "../eventbrite-logo";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
