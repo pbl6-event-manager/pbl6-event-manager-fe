@@ -1,4 +1,4 @@
-import { FETCH_USERS, DELETE_USER, SET_SELECTED_USER, CLEAR_SELECTED_USER } from "../../actions/Admin/user-action";
+import { FETCH_USERS, DELETE_USER, SET_SELECTED_USER, CLEAR_SELECTED_USER, ADD_USER_SUCCESS, ADD_USER_FAIL, ADD_USER_REQUEST } from "../../actions/Admin/user-action";
 import { DEFAULT_USERS_STATE, type UserState } from "../../../models/user-models";
 
 const userReducer = (state = DEFAULT_USERS_STATE, action: any) : UserState => {
@@ -24,6 +24,14 @@ const userReducer = (state = DEFAULT_USERS_STATE, action: any) : UserState => {
                 ...state,
                 selectedUserEmail: null
             }
+        case ADD_USER_REQUEST:
+            return { ...state, loading: true, error: null };
+
+        case ADD_USER_SUCCESS:
+            return { ...state, loading: false, user: action.payload };
+
+        case ADD_USER_FAIL:
+            return { ...state, loading: false, error: action.payload };
         default:
             return state;
     }
