@@ -7,7 +7,7 @@ import TabGroup from "../../components/Admin/tab-group";
 import TabItem from "../../components/Admin/tab-item";
 
 const AdminUsers: React.FC = () => {
-  const {  filteredActiveUsers, filteredInActiveUsers, columns, openDialog, activeTab, setActiveTab, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDialog, handleCreate, setFilters, handleRecover, confirmRecover } = useUserViewModel();
+  const {  filteredActiveUsers, filteredInActiveUsers, columns, openDelDialog, openRecDialog, activeTab, setActiveTab, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDelDialog, setOpenRecDialog, handleCreate, setFilters, handleRecover, confirmRecover } = useUserViewModel();
 
   return (
     <div className="p-6">
@@ -84,8 +84,8 @@ const AdminUsers: React.FC = () => {
         )}
       </div>
       <ConfirmDialog
-            open={openDialog}
-            onOpenChange={setOpenDialog}
+            open={openDelDialog}
+            onOpenChange={setOpenDelDialog}
             title="Confirm"
             description="Are you sure you want to delete this account?"
             confirmText="Delete"
@@ -93,8 +93,8 @@ const AdminUsers: React.FC = () => {
             onConfirm={confirmDelete}
           />
       <ConfirmDialog
-            open={openDialog}
-            onOpenChange={setOpenDialog}
+            open={openRecDialog}
+            onOpenChange={setOpenRecDialog}
             title="Confirm"
             description="Are you sure you want to recover this account?"
             confirmText="Recover"

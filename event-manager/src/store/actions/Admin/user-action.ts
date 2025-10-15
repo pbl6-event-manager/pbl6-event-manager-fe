@@ -2,8 +2,11 @@ export const FETCH_USERS = "FETCH_USERS";
 export const SET_SELECTED_USER = "SET_SELECTED_USER";
 export const CLEAR_SELECTED_USER = "CLEAR_SELECTED_USER";
 export const DELETE_USER = "DELETE_USER";
+export const ADD_USER_REQUEST = "ADD_USER_REQUEST";
+export const ADD_USER_SUCCESS = "ADD_USER_SUCCESS";
+export const ADD_USER_FAIL = "ADD_USER_FAIL";
 
-import { fetchUsersService, updateStatusUserService } from "../../../service/user-service";
+import { addUserService, fetchUsersService, updateStatusUserService } from "../../../service/user-service";
 import { store } from "../../store";
  
 
@@ -38,3 +41,25 @@ export const setSelectedUser = (payload: { email?: string }) => ({
 export const clearSelectedUser = () => ({
   type: CLEAR_SELECTED_USER,
 });
+
+
+export const addUser = (userData: any) => async (dispatch: any) => {
+  try {
+    dispatch({ type: ADD_USER_REQUEST });
+
+    const data = await addUserService(userData);
+
+    dispatch({
+      type: ADD_USER_SUCCESS,
+      payload: data.data,
+    });
+    return data;
+  } catch (error: any) {
+    dispatch({
+      type: ADD_USER_FAIL,
+      payload:
+        error.response?.data?.message || error.message || "Add user failed",
+    });
+    throw error;
+  }
+};

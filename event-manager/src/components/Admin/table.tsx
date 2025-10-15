@@ -4,9 +4,19 @@ import { truncateText } from "../../utils/Admin/table-handle";
 import type { TableProps } from "../../models/Admin/table-models";
 import { useTableViewModel } from "../../viewmodels/Admin/table-view-model";
 
-
 const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }) => {
-  const { tableRef, openMenuIndex, setOpenMenuIndex } = useTableViewModel();
+  const {
+    tableRef,
+    openMenuIndex,
+    setOpenMenuIndex,
+    handleNext,
+    handlePrev,
+    totalPages,
+    currentPage,
+    goToPage,
+    currentData,
+  } = useTableViewModel(data);
+
   return (
     <div ref={tableRef} className={`overflow-x-auto ${className}`}>
       <table className="min-w-full border border-[var(--border-secondary)] text-sm text-left table-fixed">
@@ -23,8 +33,8 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }
           </tr>
         </thead>
         <tbody>
-          {data.length > 0 ? (
-            data.map((row, rowIndex) => (
+          {currentData.length > 0 ? (
+            currentData.map((row: any, rowIndex: any) => (
               <tr
                 key={rowIndex}
                 className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"}
@@ -33,7 +43,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }
                   <td
                     key={colIndex}
                     className="px-4 py-2 border-b border-[var(--border-secondary)] text-[var(--defaulttext)] max-w-[200px] truncate"
-                    title={row[col.accessor]} 
+                    title={row[col.accessor]}
                   >
                     {col.type === "image" ? (
                       <img
@@ -46,17 +56,15 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     ) : col.type === "action" ? (
-                      <div className="">
-                        <DropdownMenu
-                          isOpen={openMenuIndex === rowIndex}
-                          onToggle={() =>
-                            setOpenMenuIndex(
-                              openMenuIndex === rowIndex ? null : rowIndex
-                            )
-                          }
-                          items={getRowActions ? getRowActions(row, rowIndex) : []}
-                        />
-                      </div>
+                      <DropdownMenu
+                        isOpen={openMenuIndex === rowIndex}
+                        onToggle={() =>
+                          setOpenMenuIndex(
+                            openMenuIndex === rowIndex ? null : rowIndex
+                          )
+                        }
+                        items={getRowActions ? getRowActions(row, rowIndex) : []}
+                      />
                     ) : (
                       truncateText(row[col.accessor], 30)
                     )}
@@ -76,6 +84,37 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }
           )}
         </tbody>
       </table>
+
+      {/* ⚙️ Thanh phân trang cố định */}
+      {totalPages > 1 && (
+        <div className="sticky bottom-0 left-0 right-0 bg-white py-3 flex items-center justify-center gap-4 text-[var(--defaulttext)] border-t border-[var(--border-secondary)] select-none shadow-sm">
+          <span
+            onClick={currentPage > 1 ? handlePrev : undefined}
+            className={`cursor-pointer ${
+              currentPage === 1
+                ? "opacity-40 cursor-default"
+                : "hover:text-[var(--primary-admin)] transition-colors"
+            }`}
+          >
+            ← Prev
+          </span>
+
+          <span>
+            Trang <strong>{currentPage}</strong> / {totalPages}
+          </span>
+
+          <span
+            onClick={currentPage < totalPages ? handleNext : undefined}
+            className={`cursor-pointer ${
+              currentPage === totalPages
+                ? "opacity-40 cursor-default"
+                : "hover:text-[var(--primary-admin)] transition-colors"
+            }`}
+          >
+            Next →
+          </span>
+        </div>
+      )}
     </div>
   );
 };

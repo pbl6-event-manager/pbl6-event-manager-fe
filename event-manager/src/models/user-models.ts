@@ -15,10 +15,16 @@ export interface UserModel {
 
 export interface UserState {
   users: ListUserDto[];
+  user: any;
   selectedUserEmail: string | null; 
+  loading: boolean;
+  error: string | null;
 }
 
 export const DEFAULT_USERS_STATE: UserState = {
   users: [],
+  user: null,
   selectedUserEmail: null,
+  loading: false,
+  error: null
 };

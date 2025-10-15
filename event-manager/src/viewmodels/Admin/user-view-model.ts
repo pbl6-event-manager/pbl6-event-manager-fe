@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser } from "../../store/actions/Admin/user-action";
+import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser } from "../../store/actions/Admin/user-action";
 import { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {applyUserFilters} from "../../utils/Admin/filter-user";
@@ -10,8 +10,9 @@ import { FILTER_STATE_DEFAULT } from "../../utils/Admin/filter-user";
 export const useUserViewModel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const users = useSelector((state: RootState) => state.userReducer.users);
-  const [openDialog, setOpenDialog] = useState(false);
+  const {user, users, loading, error}= useSelector((state: RootState) => state.userReducer);
+  const [openDelDialog, setOpenDelDialog] = useState(false);
+  const [openRecDialog, setOpenRecDialog] = useState(false);
   const [activeTab, setActiveTab] = useState<"active" | "deleted">("active");
   const selectedUserEmail = useSelector(
     (state: RootState) => state.userReducer.selectedUserEmail
@@ -21,10 +22,14 @@ export const useUserViewModel = () => {
     dispatch<any>(getUsers());
   }, [dispatch]);
 
+
+
+
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
     { header: "Avatar", accessor: "avatar", type: "image" as const },
-    { header: "Full Name", accessor: "fullName", type: "text" as const },
+    { header: "First Name", accessor: "firstName", type: "text" as const },
+    { header: "Last Name", accessor: "lastName", type: "text" as const },
     { header: "Email", accessor: "email", type: "text" as const },
     { header: "Phone", accessor: "phone", type: "text" as const },
     { header: "Role", accessor: "roles", type: "text" as const },
@@ -56,22 +61,25 @@ export const useUserViewModel = () => {
   }
 
   const handleEdit = (email: string) => {
-    navigate("/admin/users/edit", { state: { email } }); 
+    const user = users.find((u) => u.email === email);
+    if(user) {
+      navigate("/admin/users/edit", { state: { user } }); 
+    }
   };
 
   const handleDelete = (email: string) => {
     clearUser();
     selectUser(email);
-    setOpenDialog(true);
+    setOpenDelDialog(true);
   }
 
   const confirmDelete = () => {
     if(!selectedUserEmail) {
-      setOpenDialog(false);
+      setOpenDelDialog(false);
       return;
     }
     dispatch<any>(updateStatusUser(selectedUserEmail, false))
-    setOpenDialog(false);
+    setOpenDelDialog(false);
   };
   
   const handleCreate = () => {
@@ -81,16 +89,34 @@ export const useUserViewModel = () => {
   const handleRecover = (email: string) => {
     clearUser();
     selectUser(email);
-    setOpenDialog(true);  
+    setOpenRecDialog(true);  
   }
 
   const confirmRecover = () => {
     if(!selectedUserEmail) {
-      setOpenDialog(false);
+      setOpenRecDialog(false);
       return;
     }
     dispatch<any>(updateStatusUser(selectedUserEmail, true))
-    setOpenDialog(false);
+    setOpenRecDialog(false);
+  }
+
+  const handleUpdate = (data: any) => {
+    console.log(data);
+  }
+
+  const handleAdd = async (data: any) => {
+    try {
+    const res = await dispatch<any>(addUser(data));
+    alert("User has beed added to database");
+  } catch (err: any) {
+    console.log(err);
+    alert(err.message || "Something went wrong");
+  }
+  }
+  
+  const handleBack = () => {
+    navigate(-1);
   }
   
 
@@ -100,8 +126,10 @@ export const useUserViewModel = () => {
     columns,
     users,
     selectedUserEmail,
-    openDialog,
+    openDelDialog,
+    openRecDialog,
     activeTab,
+    loading,
     handleRecover,
     selectUser,
     clearUser,
@@ -109,10 +137,14 @@ export const useUserViewModel = () => {
     handleEdit,
     handleDelete,
     confirmDelete,
-    setOpenDialog,
+    setOpenDelDialog,
+    setOpenRecDialog,
     handleCreate,
     setFilters,
     setActiveTab,
-    confirmRecover
+    confirmRecover,
+    handleBack,
+    handleUpdate,
+    handleAdd
   };
 };
