@@ -1,5 +1,5 @@
 "use client";
-import EventbriteLogo from "../even-brite-logo";
+import EventbriteLogo from "../eventbrite-logo";
 import SocialLoginButtons from "./social-login-buttons";
 import { useLoginViewModel } from "../../viewmodels/login-view-model";
 import { Link } from "react-router-dom";

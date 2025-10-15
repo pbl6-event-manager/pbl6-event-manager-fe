@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import EventbriteLogo from "../even-brite-logo"
+import EventbriteLogo from "../eventbrite-logo"
 
 const SignUpForm: React.FC = () => {
     const [email, setEmail] = useState("")
