@@ -1,8 +1,11 @@
 import { checkEmailExist } from "../api/auth-api";
+import { getOrgOfAnUserApi } from "../api/organizer-api";
 import { updateStatusUserApi, getAllUsersApi, createUserApi } from "../api/user-api";
+import { convertOrgModelToListOrgDto } from "../converters/organizer-converter";
 import { convertUserModelToListUserDto, convertUserDataToSignUpDto, convertUserDataToCreateUserDto } from "../converters/user-converter";
+import type { ListOrganizerDto } from "../dtos/organizer-dto";
+import { mapToOrganizerModel } from "../mappers/organizer-mapper";
 import { mapToUserModel } from "../mappers/user-mapper";
-import { addUser } from "../store/actions/Admin/user-action";
 import { signupService } from "./auth-service";
 
 export const fetchUsersService = async () => {
@@ -29,7 +32,6 @@ export const addUserService = async (userData: any) => {
 
     await signupService(signUpDto);
     const data = await createUserApi(addUserEmail, createUserDto);
-    console.log(data.data);
     return data.data;
  } catch (error: any) {
     if (error.response) {
@@ -38,4 +40,25 @@ export const addUserService = async (userData: any) => {
       throw new Error(error.message || "Unexpected error occurred");
     }
  }
+}
+
+export const fetchActiveOrgOfAnUserService = async (userId: any) => {
+  try {
+    const data = await getOrgOfAnUserApi(userId);
+    const organizers = data.data.data.map(mapToOrganizerModel);
+    const organizersListDto = organizers.map(convertOrgModelToListOrgDto);
+    const activeOrgsListDto = organizersListDto.filter((o : ListOrganizerDto) => o.isActive === true);
+    const inActiveOrgsListDto = organizersListDto.filter((o : ListOrganizerDto) => o.isActive === false);
+    return {
+      organizers,
+      activeOrgsListDto,
+      inActiveOrgsListDto
+    };
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
 }

@@ -9,7 +9,7 @@ export const convertUserModelToListUserDto = (user: UserModel): ListUserDto => (
   email: user.email,
   phone: user.phone == null ? "Not Updated" : user.phone,
   avatarUrl: user.avatarUrl,
-  roles: user.roles.length === 2 ? "Attendee/Organizer" : "Admin",
+  roles: user.roles[0].name === "user" ? "User" : "Admin",
   isActive: user.isActive, 
 });
 

@@ -6,9 +6,8 @@ import { ArrowLeft } from "lucide-react";
 
 
 const UpdateAccountView: React.FC = () => {
-  const location = useLocation();
+  const {handleUpdate, handleBack, location} = useUserViewModel();
   const user = location.state?.user;
-  const {handleUpdate, handleBack} = useUserViewModel();
 
   return (
     <div className="relative flex items-center justify-center h-full bg-gray-100 overflow-hidden">

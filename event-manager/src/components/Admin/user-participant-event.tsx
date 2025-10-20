@@ -4,18 +4,7 @@ import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import Table from "../../components/Admin/table";
 
 const UserParticipantEvents: React.FC = () => {
-  const { selectedUserEmail } = useUserViewModel();
-  const { eventsByUser, getEventsForUser } = useEventViewModel();
-
-  useEffect(() => {
-    if (selectedUserEmail) {
-      getEventsForUser(selectedUserEmail); 
-    }
-  }, [selectedUserEmail]);
-
-  const userEvents = selectedUserEmail
-    ? eventsByUser[selectedUserEmail] || []
-    : [];
+  const { userEvents } = useEventViewModel();
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },

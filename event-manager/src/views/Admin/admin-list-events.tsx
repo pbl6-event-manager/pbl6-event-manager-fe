@@ -9,18 +9,9 @@ import TabItem from "../../components/Admin/tab-item";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
 
 const AdminEvents: React.FC = () => {
-  const { publicEvents, pendingEvents, openDeleteDialog, openAcceptDialog, openRejectDialog, activeTab, setActiveTab, setOpenDeleteDialog, setOpenAcceptDialog, setOpenRejectDialog, handleDelete, handleViewDetail, confirmDelete, handleAccept, handleReject, confirmAccept, confirmReject } = useEventViewModel();
+  const { publicEvents, pendingEvents, openDeleteDialog, openAcceptDialog, openRejectDialog, activeTab, eventColumns, setActiveTab, setOpenDeleteDialog, setOpenAcceptDialog, setOpenRejectDialog, handleDelete, handleViewDetail, confirmDelete, handleAccept, handleReject, confirmAccept, confirmReject } = useEventViewModel();
 
-  const columns = [
-    { header: "ID", accessor: "id", type: "text" as const },
-    { header: "Title", accessor: "title", type: "text" as const },
-    { header: "Description", accessor: "description", type: "text" as const },
-    { header: "Location", accessor: "location", type: "text" as const },
-    { header: "Start", accessor: "starttime", type: "text" as const },
-    { header: "End", accessor: "endtime", type: "text" as const },
-    { header: "Status", accessor: "status", type: "text" as const },
-    { header: "Actions", accessor: "actions", type: "action" as const },
-  ];
+  
 
   const [filters, setFilters] = useState<EventFilterState>({
     title: "",
@@ -59,7 +50,7 @@ const AdminEvents: React.FC = () => {
           <div className="flex gap-4">
             <div className="flex-1">
               <Table
-                columns={columns}
+                columns={eventColumns}
                 data={filteredPublicEvents}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
@@ -80,7 +71,7 @@ const AdminEvents: React.FC = () => {
           <div className="flex gap-4">
             <div className="flex-1">
               <Table
-                columns={columns}
+                columns={eventColumns}
                 data={filteredPendingEvents}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [

@@ -1,5 +1,5 @@
 import * as yup from "yup";
-
+import type { ListUserDto } from "../../dtos/user-dto";
 export const userFormSchema = (isUpdated = false) => yup.object().shape({
   firstName: yup.string().required("First name is required"),
   lastName: yup.string().required("Last name is required"),
@@ -35,4 +35,10 @@ export type UserFormData = {
 export interface RegisterFormProps {
   initialData?: Partial<UserFormData>; 
   onSubmit: (data: UserFormData) => void;
+}
+
+export interface UserInformationCardProps {
+  user: ListUserDto;
+  onEdit: (email: string) => void;
+  onDelete: (email: string) => void;
 }
