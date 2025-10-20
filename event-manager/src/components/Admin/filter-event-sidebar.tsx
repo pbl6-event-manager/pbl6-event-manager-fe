@@ -93,7 +93,7 @@ const FilterEventSidebar: React.FC<FilterEventSidebarProps> = ({ onFilter }) => 
   };
 
   return (
-    <div className="p-4 w-64 bg-white rounded-lg shadow-md text-sm">
+    <div className="p-4 w-64 bg-white rounded-lg shadow-md text-sm self-start">
       <h2 className="text-base font-semibold mb-4">Filter</h2>
 
       <div className="mb-3">

@@ -5,6 +5,7 @@ import type { RootState } from "../../store/store";
 
 export const useEventViewModel = () => {
   const dispatch = useDispatch();
+  const selectedUserEmail = useSelector((state: RootState) => state.userReducer.selectedUserEmail);
   const eventsByUser = useSelector((state: any) => state.event.eventsByUser);
   const publicEvents = useSelector((state: RootState) => state.event.publicEvents);
   const pendingEvents = useSelector((state: RootState) => state.event.pendingEvents);
@@ -13,11 +14,33 @@ export const useEventViewModel = () => {
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
   const [activeTab, setActiveTab] = useState<"pending" | "public">("public");
 
+  const eventColumns = [
+      { header: "ID", accessor: "id", type: "text" as const },
+      { header: "Title", accessor: "title", type: "text" as const },
+      { header: "Description", accessor: "description", type: "text" as const },
+      { header: "Location", accessor: "location", type: "text" as const },
+      { header: "Start", accessor: "starttime", type: "text" as const },
+      { header: "End", accessor: "endtime", type: "text" as const },
+      { header: "Status", accessor: "status", type: "text" as const },
+      { header: "Actions", accessor: "actions", type: "action" as const },
+    ];
+  const eventColumnsDelView = [
+    { header: "ID", accessor: "id", type: "text" as const },
+    { header: "Title", accessor: "title", type: "text" as const },
+    { header: "Location", accessor: "location", type: "text" as const },
+    { header: "Organizer", accessor: "organizer", type: "text" as const },
+    { header: "Actions", accessor: "actions", type: "action" as const },
+  ]
+
   useEffect(() => {
       dispatch(getPublicEvents());
       dispatch(getPendingEvents());
+      if(selectedUserEmail) getEventsForUser(selectedUserEmail);
     }, [dispatch]);
   
+  const userEvents = selectedUserEmail
+    ? eventsByUser[selectedUserEmail] || []
+    : [];
   
   const getEventsForUser = (email: string) => {
     dispatch(fetchEventsByUser(email));
@@ -60,6 +83,7 @@ export const useEventViewModel = () => {
     pendingEvents,
     eventsByUser,
     activeTab,
+    eventColumns,
     setActiveTab,
     getEventsForUser,
     resetEvents,
@@ -75,6 +99,8 @@ export const useEventViewModel = () => {
     setOpenAcceptDialog,
     setOpenRejectDialog,
     confirmAccept,
-    confirmReject
+    confirmReject,
+    userEvents,
+    eventColumnsDelView
   };
 };

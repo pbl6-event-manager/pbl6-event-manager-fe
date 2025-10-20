@@ -1,24 +1,10 @@
 import React from "react";
-import { Pencil, Lock, Unlock, Trash } from "lucide-react";
-
-interface UserInformationCardProps {
-  user: {
-    name: string;
-    email: string;
-    phone: string;
-    role: string;
-    status: string;
-    avatar: string;
-  };
-  onEdit: (email: string) => void;
-  onBan: (email: string) => void;
-  onDelete: (email: string) => void;
-}
+import { Pencil, Trash } from "lucide-react";
+import type { UserInformationCardProps } from "../../models/Admin/form-models";
 
 const UserInformationCard: React.FC<UserInformationCardProps> = ({
   user,
   onEdit,
-  onBan,
   onDelete,
 }) => {
   return (
@@ -28,21 +14,6 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
         <button className="hover:text-blue-500" onClick={() => onEdit(user.email)}>
           <Pencil size={20} />
         </button>
-        {user.status === "Active" ? (
-          <button
-            className="hover:text-yellow-500"
-            onClick={() => onBan(user.email)}
-          >
-            <Lock size={20} />
-          </button>
-        ) : (
-          <button
-            className="hover:text-green-500"
-            onClick={() => onBan(user.email)}
-          >
-            <Unlock size={20} />
-          </button>
-        )}
         <button className="hover:text-red-500" onClick={() => onDelete(user.email)}>
           <Trash size={20} />
         </button>
@@ -53,15 +24,27 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
         {/* Avatar + tên */}
         <div className="flex flex-col items-center w-1/4">
           <img
-            src={user.avatar}
+            src={user.avatarUrl ? user.avatarUrl : undefined}
             alt="avatar"
             className="w-28 h-28 rounded-full object-cover shadow-md mb-3"
           />
-          <h3 className="text-xl font-bold">{user.name}</h3>
         </div>
-
+        
         {/* Thông tin chi tiết */}
-        <div className="flex-1 grid grid-cols-2 gap-8">
+        <div className="flex-1 grid grid-cols-3 gap-8">
+          <div>
+            <p className="font-semibold text-gray-700 text-lg">First Name</p>
+            <p className="flex items-center text-gray-800 mt-1">
+              <span className="w-2 h-2 bg-gray-500 rounded-full mr-2"></span>
+              {user.firstName}
+            </p>
+
+            <p className="font-semibold text-gray-700 text-lg mt-4">Last Name</p>
+            <p className="flex items-center text-gray-800 mt-1">
+              <span className="w-2 h-2 bg-gray-500 rounded-full mr-2"></span>
+              {user.lastName}
+            </p>
+          </div>
           {/* Cột trái */}
           <div>
             <p className="font-semibold text-gray-700 text-lg">Email</p>
@@ -82,21 +65,21 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
             <p className="font-semibold text-gray-700 text-lg">Role</p>
             <p className="flex items-center text-gray-800 mt-1">
               <span className="w-2 h-2 bg-gray-500 rounded-full mr-2"></span>
-              {user.role}
+              {user.roles}
             </p>
 
             <p className="font-semibold text-gray-700 text-lg mt-4">Status</p>
             <p
               className={`flex items-center font-semibold mt-1 ${
-                user.status === "Active" ? "text-green-600" : "text-red-600"
+                user.isActive ? "text-green-600" : "text-red-600"
               }`}
             >
               <span
                 className={`w-2 h-2 rounded-full mr-2 ${
-                  user.status === "Active" ? "bg-green-500" : "bg-red-500"
+                  user.isActive ? "bg-green-500" : "bg-red-500"
                 }`}
               ></span>
-              {user.status}
+              {user.isActive ? "Active" : "Deleted"}
             </p>
           </div>
         </div>

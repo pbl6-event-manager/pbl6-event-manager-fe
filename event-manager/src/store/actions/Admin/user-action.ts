@@ -5,8 +5,15 @@ export const DELETE_USER = "DELETE_USER";
 export const ADD_USER_REQUEST = "ADD_USER_REQUEST";
 export const ADD_USER_SUCCESS = "ADD_USER_SUCCESS";
 export const ADD_USER_FAIL = "ADD_USER_FAIL";
+export const GET_ORGS_OF_AN_USER_REQUEST = "GET_ORGS_OF_AN_USER"
+export const GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS = "GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS"
+export const GET_ORGS_OF_AN_USER_SUCCESS = "GET_ORGS_OF_AN_USER_SUCCESS"
+export const GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS = "GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS"
+export const GET_ORGS_OF_AN_USER_FAILED = "GET_ORGS_OF_AN_USER_FAILED"
+
 
 import { addUserService, fetchUsersService, updateStatusUserService } from "../../../service/user-service";
+import { fetchActiveOrgOfAnUserService } from "../../../service/user-service";
 import { store } from "../../store";
  
 
@@ -63,3 +70,33 @@ export const addUser = (userData: any) => async (dispatch: any) => {
     throw error;
   }
 };
+
+export const getOrgOfAnUser = (id: any) => async (dispatch: any) => {
+    try {
+        dispatch({type:GET_ORGS_OF_AN_USER_REQUEST});
+
+        const data = await fetchActiveOrgOfAnUserService(id);
+        
+        dispatch({
+          type: GET_ORGS_OF_AN_USER_SUCCESS,
+          payload: data.organizers
+        })
+
+        dispatch({
+          type: GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS,
+          payload: data.activeOrgsListDto
+        })
+
+        dispatch({
+          type: GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS,
+          payload: data.inActiveOrgsListDto
+        })
+    } catch (error: any) {
+        dispatch({
+            type: GET_ORGS_OF_AN_USER_FAILED,
+            payload:
+            error.response?.data?.message || error.message || "Failed to get organizers of an user",
+        });
+        throw error;
+    }
+}

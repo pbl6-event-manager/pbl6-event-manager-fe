@@ -122,7 +122,7 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
               className="w-full px-3 py-2 border border-[var(--placeholder)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             >
               <option value="">-- Option --</option>
-              <option value="Attendee/Organizer">User</option>
+              <option value="User">User</option>
               <option value="Admin">Admin</option>
             </select>
             {errors.role && (

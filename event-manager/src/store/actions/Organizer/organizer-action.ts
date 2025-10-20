@@ -207,11 +207,11 @@ export const updateOrganizer = (organizerId: string, data: OrganizerFormData) =>
 }
 
 //Delete Organizer
-export const deleteOrganizer = (organizerId: string) => async (dispatch: Dispatch) => {
+export const deleteOrganizer = (organizerId: number) => async (dispatch: any) => {
   dispatch({ type: ORGANIZER_ACTIONS.DELETE_ORGANIZER_REQUEST })
   try {
     // TODO: Replace with actual API call
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    
 
     dispatch({
       type: ORGANIZER_ACTIONS.DELETE_ORGANIZER_SUCCESS,
