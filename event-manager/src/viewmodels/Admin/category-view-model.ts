@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import type { RootState } from "../../store/store";
-import { addCategory, getCategories } from "../../store/actions/Admin/category-action";
+import { addCategory, deleleCategory, getCategories } from "../../store/actions/Admin/category-action";
 import { useEffect } from "react";
 import { CATEGORY_FORM_DEFAULT, type Category } from "../../models/Admin/category-models";
 
 export const useCategoryViewModel = (initialData?: Category) => {
   const dispatch = useDispatch();
-  const categories = useSelector((state: RootState) => state.category.categories);
+  const {categories, activeCategories, inActiveCategories} = useSelector((state: RootState) => state.category);
   const [newCategory, setNewCategory] = useState(CATEGORY_FORM_DEFAULT);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -15,8 +15,9 @@ export const useCategoryViewModel = (initialData?: Category) => {
   const [category, setCategory] = useState<Category>(CATEGORY_FORM_DEFAULT);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [activeTab, setActiveTab] = useState<"active" | "deleted">("active");
   useEffect(() => {
-    dispatch(getCategories());
+    dispatch<any>(getCategories());
   }, [dispatch]);
 
   useEffect(() => {
@@ -24,6 +25,14 @@ export const useCategoryViewModel = (initialData?: Category) => {
       setCategory(initialData);
     }
   }, [initialData]);
+
+  const categoryColumns = [
+    { header: "ID", accessor: "id", type: "text" as const },
+    { header: "Name", accessor: "name", type: "text" as const },
+    { header: "Description", accessor: "description", type: "text" as const },
+    { header: "Action", accessor: "actions", type: "action" as const },
+  ];
+
 
   const handleChange = (field: keyof Category, value: string) => {
     setCategory((prev) => ({ ...prev, [field]: value }));
@@ -50,7 +59,7 @@ export const useCategoryViewModel = (initialData?: Category) => {
 
   const confirmDelete = () => {
     if (deleteId !== null) {
-      // setCategories((prev) => prev.filter((c) => c.id !== deleteId));
+      dispatch<any>(deleleCategory(deleteId));
       setDeleteId(null);
       setOpenDeleteDialog(false);
     }
@@ -78,6 +87,11 @@ export const useCategoryViewModel = (initialData?: Category) => {
     isEditing,
     selectedCategory,
     openDeleteDialog,
+    categoryColumns,
+    activeTab,
+    activeCategories,
+    inActiveCategories,
+    setActiveTab,
     setOpenDeleteDialog,
     handleAddCategory,
     handleEditCategory,
