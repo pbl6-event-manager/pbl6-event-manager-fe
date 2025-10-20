@@ -4,17 +4,12 @@ import Table from "../../components/Admin/table";
 import { useCategoryViewModel } from "../../viewmodels/Admin/category-view-model";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
 import CategoryForm from "../../components/Admin/category-form";
+import TabGroup from "../../components/Admin/tab-group";
+import TabItem from "../../components/Admin/tab-item";
 
 
 const CategoryManagementView: React.FC = () => {
-  const { categories, isAdding, isEditing, selectedCategory, openDeleteDialog, handleEditCategory, setIsEditing, setOpenDeleteDialog, handleAddCategory, handleDeleteCategory, confirmDelete, handleUpdateCategory, setIsAdding } = useCategoryViewModel();
-
-  const columns = [
-    { header: "ID", accessor: "id", type: "text" as const },
-    { header: "Name", accessor: "name", type: "text" as const },
-    { header: "Description", accessor: "description", type: "text" as const },
-    { header: "Action", accessor: "actions", type: "action" as const },
-  ];
+  const { categories, activeCategories, inActiveCategories, isAdding, isEditing, selectedCategory, openDeleteDialog, categoryColumns, activeTab, setActiveTab, handleEditCategory, setIsEditing, setOpenDeleteDialog, handleAddCategory, handleDeleteCategory, confirmDelete, handleUpdateCategory, setIsAdding } = useCategoryViewModel();
 
   return (
     <div className="flex-1 p-6 bg-[var(--surface)] overflow-auto">
@@ -30,23 +25,68 @@ const CategoryManagementView: React.FC = () => {
         </button>
       </div>
 
+      <div className="flex justify-between items-center mb-4">
+        <TabGroup>
+          <TabItem
+            label="Active"
+            active={activeTab === "active"}
+            onClick={() => setActiveTab("active")}
+          />
+          <TabItem
+            label="Deleted"
+            active={activeTab === "deleted"}
+            onClick={() => setActiveTab("deleted")}
+          />
+        </TabGroup>
+      </div>
+
       {/* Table */}
-      <Table
-        columns={columns}
-        data={categories}
-        className="rounded-lg shadow-md"
-        getRowActions={(row) => [
-          {
-            label: "Update",
-            onClick: () => handleEditCategory(row.id),
-          },
-          {
-            label: "Delete",
-            onClick: () => handleDeleteCategory(row.id),
-            danger: true,
-          },
-        ]}
-      />
+      <div>
+        {activeTab === "active" && (
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Table
+                columns={categoryColumns}
+                data={activeCategories}
+                className="rounded-lg shadow-md"
+                getRowActions={(row) => [
+                  {
+                    label: "Update",
+                    onClick: () => handleEditCategory(row.id),
+                  },
+                  {
+                    label: "Delete",
+                    onClick: () => handleDeleteCategory(row.id),
+                    danger: true,
+                  },
+                ]}
+              />
+            </div>
+          </div>
+        )}
+        {activeTab === "deleted" && (
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Table
+                columns={categoryColumns}
+                data={inActiveCategories}
+                className="rounded-lg shadow-md"
+                getRowActions={(row) => [
+                  {
+                    label: "Update",
+                    onClick: () => handleEditCategory(row.id),
+                  },
+                  {
+                    label: "Recover",
+                    onClick: () => handleDeleteCategory(row.id),
+                  },
+                ]}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+      
 
       {/* Add Category Form */}
       {isAdding && (
