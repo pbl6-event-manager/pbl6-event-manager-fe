@@ -9,6 +9,7 @@ import OrganizerListPage from "../../views/Organizer/settings/organizer-list-pag
 import AddOrganizerPage from "../../views/Organizer/settings/add-organizer-page";
 import EditOrganzerPage from "../../views/Organizer/settings/edit-organizer-page";
 import OrganizationSettingsPage from "../../views/Organizer/settings/organization-settings-page";
+import CreateTicketsPage from "../../views/Organizer/events/create-ticket-page";
 
 const OrganizerRoutes : RouteObject = {
     path: "/organizer",
@@ -22,7 +23,8 @@ const OrganizerRoutes : RouteObject = {
         { path: "settings", element: <OrganizationSettingsPage />}, // url:/organizer/settings
         { path: "info", element: <OrganizerListPage />}, // url/organizer/info
         { path: "settings/add", element: <AddOrganizerPage />}, // url:/organizer/settings/add
-        { path: "settings/edit/:organizerId", element: <EditOrganzerPage />} // url:/organizer/settings/edit/:organizerId
+        { path: "settings/edit/:organizerId", element: <EditOrganzerPage />}, // url:/organizer/settings/edit/:organizerId,
+        { path: "events/create-tickets/:eventId", element: <CreateTicketsPage />} // url/organizer/create-tickets/:eventId
     ]
 };
 
