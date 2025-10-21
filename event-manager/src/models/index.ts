@@ -9,3 +9,6 @@ export * from './navigation-models';
 
 //Event Models
 export * from './event-models';
+
+//Ticket Models
+export * from './ticket-models';

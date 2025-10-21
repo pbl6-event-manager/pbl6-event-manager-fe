@@ -6,7 +6,7 @@ import { ArrowLeft} from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { EventTitleCard } from "../../../components/Organizer/event-title-card"
 import { DateLocationCard } from "../../../components/Organizer/date-location-card"
-import { CreateEventSidebar } from "../../../components/Organizer/create-event-sidebar"
+import { EventSidebar } from "../../../components/Organizer/event-sidebar"
 import { MediaUploadCard } from "../../../components/Organizer/media-upload-card"
 import { OverviewCard } from "../../../components/Organizer/overview-card"
 import { GoodToKnowCard } from "../../../components/Organizer/good-to-know-card"
@@ -54,7 +54,7 @@ export default function CreateEventPage() {
     parkingInfo: null,
     faqs: [],
   })
-
+  const [currentStep, setCurrentStep] = useState(1)
 
   const validateForm = () => {
     const newErrors: EventFormErrors = {}
@@ -87,7 +87,11 @@ export default function CreateEventPage() {
     }
   }
 
-  const currentStep = 1
+  const handleStepClick = (stepId: number) => {
+    if (stepId <= currentStep) {
+      setCurrentStep(stepId)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -110,7 +114,12 @@ export default function CreateEventPage() {
             {/* Create Event Sidebar */}
             <div className="lg:col-span-1 hidden lg:block">
               <div className="sticky top-24 h-[calc(100vh-120px)] overflow-y-auto">
-                <CreateEventSidebar eventData={eventData} currentStep={currentStep} />
+                <EventSidebar 
+                  eventData={eventData} 
+                  currentStep={currentStep}
+                  isCreating={true}
+                  onStepClick={handleStepClick}
+                />
               </div>
             </div>
 
