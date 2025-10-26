@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { Switch } from "../ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import type { EventData } from "../../models"
-import { useDateLocationViewModel } from "../../viewmodels/Organizer/date-location-view-model"
+import { useDateLocationViewModel } from "../../viewmodels/Organizer/events/date-location-view-model"
 import { TIMEZONES, LANGUAGES } from "../../utils/Organizer/timezone-language"
 
 interface DateLocationCardProps {

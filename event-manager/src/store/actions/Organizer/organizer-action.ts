@@ -207,12 +207,10 @@ export const updateOrganizer = (organizerId: string, data: OrganizerFormData) =>
 }
 
 //Delete Organizer
-export const deleteOrganizer = (organizerId: number) => async (dispatch: any) => {
+export const deleteOrganizer = (organizerId: string) => async (dispatch: any) => {
   dispatch({ type: ORGANIZER_ACTIONS.DELETE_ORGANIZER_REQUEST })
   try {
     // TODO: Replace with actual API call
-    
-
     dispatch({
       type: ORGANIZER_ACTIONS.DELETE_ORGANIZER_SUCCESS,
       payload: organizerId,

@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { Button } from "../../../components/ui/button"
 import { ArrowLeft, Contact, ImageIcon, UserRound, Upload, X } from "lucide-react"
-import { useOrganizerViewModel } from "../../../viewmodels/Organizer/organizer-view-model"
+import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
 
 export default function EditOrganzerPage() {
     const navigate = useNavigate()
@@ -86,9 +86,6 @@ export default function EditOrganzerPage() {
                         <span className="text-blue-600 hover:underline">Organization Settings</span>
                     </Button>
                 </div>
-
-                {/* Header */}
-                <h1 className="mb-8 text-6xl font-bold text-gray-900">Edit Organizer Profile</h1>
 
                 {/* Organizer Profile Image Upload */}
                 <div className="mb-8 flex gap-6">

@@ -11,6 +11,9 @@ import { MediaUploadCard } from "../../../components/Organizer/media-upload-card
 import { OverviewCard } from "../../../components/Organizer/overview-card"
 import { GoodToKnowCard } from "../../../components/Organizer/good-to-know-card"
 import { LineupAndAgendaCard } from "../../../components/Organizer/lineup-and-agenda-card"
+import EventDashboardPage from "./event-dashboard-page"
+import EventTeamManagementPage from "./event-team-management-page"
+import CreateTicketsPage from "./create-ticket-page"
 import type { EventData, EventFormErrors, MediaFile, GoodToKnowData } from "../../../models"
 
 // Mock function to fetch event data - replace with actual API call
@@ -182,9 +185,14 @@ export default function EditEventPage() {
                 Back to events
               </Button>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Editing Event</span>
-            </div>
+            <div className="container mx-auto px-4 flex justify-end gap-3">
+          <Button size="sm" variant="outline" onClick={handleBackClick}>
+            Cancel
+          </Button>
+          <Button size="sm" onClick={handleSaveChanges} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
+            Save changes
+          </Button>
+        </div>
           </div>
         </div>
       </header>
@@ -195,10 +203,10 @@ export default function EditEventPage() {
             {/* Event Sidebar - Set isCreating to false to show all menu items */}
             <div className="lg:col-span-1 hidden lg:block">
               <div className="sticky top-24 h-[calc(100vh-120px)] overflow-y-auto">
-                <EventSidebar 
-                  eventData={eventData} 
+                <EventSidebar
+                  eventData={eventData}
                   currentStep={typeof currentSection === "number" ? currentSection : 1}
-                  isCreating={false} 
+                  isCreating={false}
                   onStepClick={handleStepClick}
                   onMenuItemClick={handleMenuItemClick}
                 />
@@ -210,31 +218,30 @@ export default function EditEventPage() {
                 {currentSection === 1 && (
                   <>
                     {/* Upload Card */}
-                <MediaUploadCard uploadedMedia={uploadedMedia} onUpdate={setUploadedMedia} />
+                    <MediaUploadCard uploadedMedia={uploadedMedia} onUpdate={setUploadedMedia} />
 
-                {/* Event Title Card */}
-                <EventTitleCard eventData={eventData} onUpdate={setEventData} />
+                    {/* Event Title Card */}
+                    <EventTitleCard eventData={eventData} onUpdate={setEventData} />
 
-                {/* Date and Location */}
-                <DateLocationCard eventData={eventData} onUpdate={setEventData} />
+                    {/* Date and Location */}
+                    <DateLocationCard eventData={eventData} onUpdate={setEventData} />
 
-                {/* Overview Section */}
-                <OverviewCard
-                  description={eventData.description}
-                  onUpdate={(description) => setEventData({ ...eventData, description })}
-                />
+                    {/* Overview Section */}
+                    <OverviewCard
+                      description={eventData.description}
+                      onUpdate={(description) => setEventData({ ...eventData, description })}
+                    />
 
-                {/* Good To Know Section */}
-                <GoodToKnowCard data={goodToKnowData} onUpdate={setGoodToKnowData} />
+                    {/* Good To Know Section */}
+                    <GoodToKnowCard data={goodToKnowData} onUpdate={setGoodToKnowData} />
 
-                {/* Additional Sections */}
-                <LineupAndAgendaCard eventData={eventData} onUpdate={setEventData} />
+                    {/* Additional Sections */}
+                    <LineupAndAgendaCard eventData={eventData} onUpdate={setEventData} />
                   </>
                 )}
                 {currentSection === 2 && (
-                  <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Add Tickets</h2>
-                    <p className="text-muted-foreground">Ticket management section will be displayed here.</p>
+                  <div className="bg-card rounded-lg border">
+                    <CreateTicketsPage />
                   </div>
                 )}
                 {currentSection === 3 && (
@@ -244,15 +251,18 @@ export default function EditEventPage() {
                   </div>
                 )}
                 {currentSection === "dashboard" && (
-                  <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
-                    <p className="text-muted-foreground">Event dashboard will be displayed here.</p>
+                  <div className="bg-card rounded-lg border">
+                    <EventDashboardPage />
+                  </div>
+                )}
+                {currentSection === "team-management" && (
+                  <div className="bg-card rounded-lg border">
+                    <EventTeamManagementPage />
                   </div>
                 )}
                 {currentSection === "order-options" && (
                   <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Order Options</h2>
-                    <p className="text-muted-foreground">Order options settings will be displayed here.</p>
+                    
                   </div>
                 )}
                 {currentSection === "payments" && (
@@ -265,12 +275,6 @@ export default function EditEventPage() {
                   <div className="bg-card rounded-lg p-6 border">
                     <h2 className="text-2xl font-bold mb-4">Marketing</h2>
                     <p className="text-muted-foreground">Marketing tools and settings will be displayed here.</p>
-                  </div>
-                )}
-                {currentSection === "team-management" && (
-                  <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Team Management</h2>
-                    <p className="text-muted-foreground">Team management section will be displayed here.</p>
                   </div>
                 )}
                 {currentSection === "manage-attendees" && (
@@ -291,7 +295,7 @@ export default function EditEventPage() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-card border-t py-4 z-50">
+      {/* <div className="fixed bottom-0 left-0 right-0 bg-card border-t py-4 z-50">
         <div className="container mx-auto px-4 flex justify-end gap-3">
           <Button size="lg" variant="outline" onClick={handleBackClick}>
             Cancel
@@ -300,7 +304,7 @@ export default function EditEventPage() {
             Save changes
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

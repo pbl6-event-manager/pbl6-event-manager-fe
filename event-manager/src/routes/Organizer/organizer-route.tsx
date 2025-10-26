@@ -1,31 +1,58 @@
-import type { RouteObject } from "react-router-dom";
-import OrganizerLayout from "../../layouts/Organizer/organizer-layout";
-import CreateEventPage from "../../views/Organizer/events/create-event-page";
-import OrganizerHomePage from "../../views/Organizer/organizer-home-page";
-import AllEventsPage from "../../views/Organizer/events/all-events-page";
-import EditEventPage from "../../views/Organizer/events/edit-event-page";
-import EventDashboardPage from "../../views/Organizer/events/event-dashboard-page";
-import OrganizerListPage from "../../views/Organizer/settings/organizer-list-page";
-import AddOrganizerPage from "../../views/Organizer/settings/add-organizer-page";
-import EditOrganzerPage from "../../views/Organizer/settings/edit-organizer-page";
-import OrganizationSettingsPage from "../../views/Organizer/settings/organization-settings-page";
-import CreateTicketsPage from "../../views/Organizer/events/create-ticket-page";
+import type { RouteObject } from "react-router-dom"
+import OrganizerLayout from "../../layouts/Organizer/organizer-layout"
+import CreateEventPage from "../../views/Organizer/events/create-event-page"
+import CreateTicketsPage from "../../views/Organizer/events/create-ticket-page"
+import EditEventPage from "../../views/Organizer/events/edit-event-page"
+import OrganizerHomePage from "../../views/Organizer/organizer-home-page"
+import AllEventsPage from "../../views/Organizer/events/all-events-page"
+import EventDashboardPage from "../../views/Organizer/events/event-dashboard-page"
+import OrganizationSettingsPage from "../../views/Organizer/settings/organization-settings-page" 
+import AddOrganizerPage from "../../views/Organizer/settings/add-organizer-page"
+import EditOrganizerPage from "../../views/Organizer/settings/edit-organizer-page"
+import TeamManagementPage from "../../views/Organizer/settings/team-management-page" 
+import UsersListPage from "../../views/Organizer/settings/users-list-page"
+import RolesListPage from "../../views/Organizer/settings/roles-list-page"
+import EventTeamManagementPage from "../../views/Organizer/events/event-team-management-page"
+import CreateRolePage from "../../views/Organizer/settings/create-role-page"
 
-const OrganizerRoutes : RouteObject = {
-    path: "/organizer",
-    element: <OrganizerLayout/>,
-    children: [
-        { path: "home", element: <OrganizerHomePage /> }, // url/organizer/home
-        { path: "events/all", element: <AllEventsPage /> }, // url/organizer/events
-        { path: "events/create-event", element: <CreateEventPage /> }, // url/organizer/create-event
-        { path: "events/edit/:eventId", element: <EditEventPage />}, // url/organizer/create-event/:id
-        { path: "events/dashboard/:eventId", element: <EventDashboardPage /> },
-        { path: "settings", element: <OrganizationSettingsPage />}, // url:/organizer/settings
-        { path: "info", element: <OrganizerListPage />}, // url/organizer/info
-        { path: "settings/add", element: <AddOrganizerPage />}, // url:/organizer/settings/add
-        { path: "settings/edit/:organizerId", element: <EditOrganzerPage />}, // url:/organizer/settings/edit/:organizerId,
-        { path: "events/create-tickets/:eventId", element: <CreateTicketsPage />} // url/organizer/create-tickets/:eventId
-    ]
-};
+const OrganizerRoutes: RouteObject = {
+  path: "/organizer",
+  element: <OrganizerLayout />,
+  children: [
+    { path: "home", element: <OrganizerHomePage /> },
+    { path: "events/all", element: <AllEventsPage /> },
+    { path: "events/create-event", element: <CreateEventPage /> },
+    { path: "events/create-tickets/:eventId", element: <CreateTicketsPage /> },
+    { path: "events/dashboard/:eventId", element: <EventDashboardPage /> },
+    { path: "events/team-management/:eventId", element: <EventTeamManagementPage /> },
+    { path: "events/edit/:eventId", element: <EditEventPage /> },
+    { path: "settings/members/roles/create", element: <CreateRolePage/>},
+    { path: "settings/add", element: <AddOrganizerPage/>},
+    { path: "settings/edit/:organizerId", element: <EditOrganizerPage/>},
+    {
+      path: "settings",
+      element: <OrganizationSettingsPage />,
+      children: [
+        { index: true, element: <OrganizationSettingsPage /> },
+        { path: "info", element: <OrganizationSettingsPage /> },
+        {
+          path: "members",
+          element: <TeamManagementPage />,
+          children: [
+            { index: true, element: <UsersListPage /> },
+            { path: "users", element: <UsersListPage /> },
+            { path: "roles", element: <RolesListPage /> },
+            { path: "roles/create", element: <CreateRolePage /> },
+          ],
+        },
+        { path: "fees", element: <OrganizationSettingsPage /> },
+        { path: "plan", element: <OrganizationSettingsPage /> },
+        { path: "extensions", element: <OrganizationSettingsPage /> },
+        { path: "add", element: <AddOrganizerPage /> },
+        { path: "edit/:organizerId", element: <EditOrganizerPage /> },
+      ],
+    },
+  ],
+}
 
-export default OrganizerRoutes;
+export default OrganizerRoutes
