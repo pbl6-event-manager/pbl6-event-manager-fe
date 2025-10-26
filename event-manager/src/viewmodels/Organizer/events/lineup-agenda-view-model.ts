@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import type { LineUpItem, AgendaItem } from "../../models"
+import type { LineUpItem, AgendaSection } from "../../../models"
 
 export interface LineupFormData {
   name: string
@@ -23,11 +23,13 @@ export interface AgendaFormData {
 
 export const useLineupAgendaViewModel = (
   initialLineup: LineUpItem[],
-  initialAgenda: AgendaItem[],
-  onUpdate: (lineup: LineUpItem[], agenda: AgendaItem[]) => void,
+  initialAgenda: AgendaSection[],
+  onUpdate: (lineup: LineUpItem[], agenda: AgendaSection[]) => void,
 ) => {
   const [lineupItems, setLineupItems] = useState<LineUpItem[]>(initialLineup)
-  const [agendaItems, setAgendaItems] = useState<AgendaItem[]>(initialAgenda)
+  const [agendaSections, setAgendaSections] = useState<AgendaSection[]>(
+    initialAgenda.length > 0 ? initialAgenda : [{ id: Date.now().toString(), name: "Agenda", items: [] }],
+  )
 
   const [lineupForms, setLineupForms] = useState<LineupFormData[]>([
     {
@@ -121,23 +123,31 @@ export const useLineupAgendaViewModel = (
     }))
 
     setLineupItems(newLineupItems)
-    onUpdate(newLineupItems, agendaItems)
+    onUpdate(newLineupItems, agendaSections)
     return true
-  }, [lineupForms, agendaItems, validateAllLineupForms, onUpdate])
+  }, [lineupForms, agendaSections, validateAllLineupForms, onUpdate])
 
-  const saveAgenda = useCallback(() => {
-    if (!validateAllAgendaForms()) return false
+  const saveAgenda = useCallback(
+    (sectionIndex: number) => {
+      if (!validateAllAgendaForms()) return false
 
-    const newAgendaItems: AgendaItem[] = agendaForms.map((form) => ({
-      time: `${form.startTime} - ${form.endTime}`,
-      title: form.title,
-      description: form.description || null,
-    }))
+      const newAgendaItems = agendaForms.map((form) => ({
+        time: `${form.startTime} - ${form.endTime}`,
+        title: form.title,
+        description: form.description || null,
+        host: form.hostOrArtist || null,
+      }))
 
-    setAgendaItems(newAgendaItems)
-    onUpdate(lineupItems, newAgendaItems)
-    return true
-  }, [agendaForms, lineupItems, validateAllAgendaForms, onUpdate])
+      const updatedSections = agendaSections.map((section, index) =>
+        index === sectionIndex ? { ...section, items: newAgendaItems } : section,
+      )
+
+      setAgendaSections(updatedSections)
+      onUpdate(lineupItems, updatedSections)
+      return true
+    },
+    [agendaForms, agendaSections, lineupItems, validateAllAgendaForms, onUpdate],
+  )
 
   const resetLineupForms = useCallback(() => {
     setLineupForms([
@@ -165,9 +175,23 @@ export const useLineupAgendaViewModel = (
     ])
   }, [])
 
+  const addAgendaSection = useCallback(() => {
+    const newSection: AgendaSection = {
+      id: Date.now().toString(),
+      name: `Agenda ${agendaSections.length + 1}`,
+      items: [],
+    }
+    setAgendaSections((prev) => [...prev, newSection])
+    return newSection
+  }, [agendaSections.length])
+
+  const updateAgendaSectionName = useCallback((index: number, name: string) => {
+    setAgendaSections((prev) => prev.map((section, i) => (i === index ? { ...section, name } : section)))
+  }, [])
+
   return {
     lineupItems,
-    agendaItems,
+    agendaSections,
     lineupForms,
     agendaForms,
     validateLineupForm,
@@ -184,5 +208,7 @@ export const useLineupAgendaViewModel = (
     saveAgenda,
     resetLineupForms,
     resetAgendaForms,
+    addAgendaSection,
+    updateAgendaSectionName,
   }
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useOrganizerViewModel } from "../../../viewmodels/Organizer/organizer-view-model"
+import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
 import type { OrganizerProfile } from "../../../models/organizer-models"
 
 export default function OrganizerListPage() {
@@ -77,7 +77,7 @@ export default function OrganizerListPage() {
         </div>
 
         {/* Organizers List */}
-        <div className="mb-8 overflow-hidden rounded-lg border border-gray-200 bg-white">
+        <div className="mb-8 overflow-visible rounded-lg border border-gray-200 bg-white">
           {loading ? (
             <div className="p-8 text-center text-gray-500">Loading...</div>
           ) : (

@@ -1,0 +1,91 @@
+{
+  "permissions": {
+    "event_creation": {
+      "description": "Allow users to enter event info, create tickets, and customize order forms.",
+      "permissions": [
+        "edit_event_details",
+        "manage_event_status",
+        "create_events_with_card_on_file_only",
+        "manage_card",
+        "manage_subscription",
+        "manage_card_and_subscriptions",
+        "edit_seat_maps",
+        "manage_tickets",
+        "view_ticket_holds",
+        "manage_ticket_holds",
+        "manage_collections"
+      ]
+    },
+    "venue_creation": {
+      "description": "Allow users to create new venues.",
+      "permissions": ["edit_venues"]
+    },
+    "marketing": {
+      "description": "Sell more tickets by creating campaigns, tracking engagement with analytics, and selling on Facebook.",
+      "permissions": [
+        "manage_studio",
+        "manage_campaigns",
+        "manage_contacts",
+        "manage_tracking_pixels",
+        "send_event_invitations",
+        "tracking_links",
+        "sell_on_facebook",
+        "create_discount_codes"
+      ]
+    },
+    "orders_and_attendees": {
+      "description": "Allow users to view, update and refund orders, manage attendee guest or waitlists and release tickets.",
+      "permissions": [
+        "add_attendees",
+        "manage_orders_refunds_transfers_and_attendees",
+        "manage_waitlist",
+        "view_list_of_attendees",
+        "check_in_attendees",
+        "create_attendee_name_badges",
+        "resend_confirmation_emails",
+        "override_ticket_restrictions",
+        "sell_tickets_at_the_door",
+        "toggle_royalties_on_off_when_selling_orders_at_the_door",
+        "email_attendees",
+        "revoke_and_reissue_barcodes",
+        "manage_pre_box_orders",
+        "view_guest_lists",
+        "manage_guest_lists"
+      ]
+    },
+    "reporting": {
+      "description": "Allow users to access, filter, and export data across your organization.",
+      "permissions": ["basic_reports", "advanced_reports"]
+    },
+    "payouts_and_billing": {
+      "description": "Users can configure payout methods, manage event payment options and track financials with reporting.",
+      "permissions": [
+        "view_payment_options",
+        "view_organization_financial_balances",
+        "manage_payments_and_payouts",
+        "view_payout_summary",
+        "view_and_manage_invoices",
+        "view_charges_and_credits",
+        "view_aggregate_financial_data"
+      ]
+    },
+    "organization": {
+      "description": "Keep your users organized with assigned permissions per user, and enable access to APIs and extensions.",
+      "permissions": [
+        "manage_artists",
+        "manage_organization_members_and_permissions",
+        "edit_organization_information",
+        "create_webhooks"
+      ]
+    },
+    "emails_team_members_can_receive": {
+      "description": "Keep your users in the loop. Select which emails you would like them to receive.",
+      "permissions": [
+        "order_confirmation_emails",
+        "monthly_invoice_emails",
+        "contact_the_organizer_emails",
+        "refund_request_emails"
+      ]
+    }
+  }
+}

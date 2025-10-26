@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../store/store";
+import type { RootState, AppDispatch } from "../../../store/store";
 import {
     setEventData,
     updateEventField,
@@ -12,8 +12,8 @@ import {
     saveEventStart,
     saveEventSuccess,
     saveEventFailure,
-} from "../../store/actions/Organizer/event-action"
-import type { EventData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models";
+} from "../../../store/actions/Organizer/event-action"
+import type { EventData, GoodToKnowData, LineUpItem, AgendaSection } from "../../../models";
 
 export const useEventViewModel = () => {
     const dispatch = useDispatch<AppDispatch>()

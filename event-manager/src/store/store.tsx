@@ -9,6 +9,9 @@ import categoryReducer from "./reducers/Admin/category-reducer";
 import organizerEventReducer from "./reducers/Organizer/event-reducer";
 import organizerReducer from "./reducers/Organizer/organizer-reducer"
 import userReducer from "./reducers/Admin/user-reducer";
+import eventTeamManagementReducer from "./reducers/Organizer/event-team-management-reducer";
+import organizerTeamManagementReducer from "./reducers/Organizer/organizer-team-management-reducer";
+import { roleReducer } from "./reducers/Organizer/role-reducer";
 
 const allReducer = combineReducers({
   userReducer: userReducer,
@@ -20,6 +23,9 @@ const allReducer = combineReducers({
   organizerEvent: organizerEventReducer,
   auth: authReducer,
   organizer: organizerReducer,
+  eventTeamManagement: eventTeamManagementReducer,
+  organizerTeamManagement: organizerTeamManagementReducer,
+  role: roleReducer,
 }); 
 
 export const store = createStore(allReducer, applyMiddleware(thunk));

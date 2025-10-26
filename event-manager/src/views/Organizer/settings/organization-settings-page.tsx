@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { cn } from "../../../lib/utils"
 import OrganizerListPage from "./organizer-list-page"
+import TeamManagementPage from "./team-management-page"
 
 type SettingsTab = "organizer-profile" | "team-management" | "ticket-fees" | "plan-management" | "app-extensions"
 
@@ -20,9 +21,6 @@ export default function OrganizationSettingsPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="mx-auto max-w-7xl px-6 py-8">
-        {/* Organization Name */}
-        
-
         {/* Page Title */}
         <h1 className="mb-6 text-5xl font-bold text-gray-900">Organization Settings</h1>
 
@@ -48,9 +46,7 @@ export default function OrganizationSettingsPage() {
         {/* Tab Content */}
         <div className="mt-8">
           {activeTab === "organizer-profile" && <OrganizerListPage />}
-          {activeTab === "team-management" && (
-            <div className="text-gray-600">Team Management content coming soon...</div>
-          )}
+          {activeTab === "team-management" && <TeamManagementPage />}
           {activeTab === "ticket-fees" && <div className="text-gray-600">Ticket Fees content coming soon...</div>}
           {activeTab === "plan-management" && (
             <div className="text-gray-600">Plan Management content coming soon...</div>

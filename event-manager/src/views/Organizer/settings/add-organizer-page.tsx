@@ -1,7 +1,7 @@
 "use client"
 import type React from "react"
 import { useState, useRef } from "react"
-import { useOrganizerViewModel } from "../../../viewmodels/Organizer/organizer-view-model"
+import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
 import { useNavigate } from "react-router-dom"
 import { Button } from "../../../components/ui/button"
 import { ArrowLeft, Contact, ImageIcon, UserRound, Upload, X } from "lucide-react"

@@ -3,8 +3,8 @@
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { useCallback, useEffect, useState } from "react"
-import type { RootState, AppDispatch } from "../../store/store"
-import type { OrganizerFormData } from "../../models/organizer-models"
+import type { RootState, AppDispatch } from "../../../store/store"
+import type { OrganizerFormData } from "../../../models/organizer-models"
 import {
   fetchOrganizers,
   fetchOrganizerDetail,
@@ -12,7 +12,7 @@ import {
   updateOrganizer,
   deleteOrganizer,
   followOrganizer,
-} from "../../store/actions/Organizer/organizer-action"
+} from "../../../store/actions/Organizer/organizer-action"
 
 export const useOrganizerViewModel = () => {
   const dispatch = useDispatch<AppDispatch>()
