@@ -9,7 +9,7 @@ import TabItem from "../../components/Admin/tab-item";
 
 
 const CategoryManagementView: React.FC = () => {
-  const { categories, activeCategories, inActiveCategories, isAdding, isEditing, selectedCategory, openDeleteDialog, categoryColumns, activeTab, setActiveTab, handleEditCategory, setIsEditing, setOpenDeleteDialog, handleAddCategory, handleDeleteCategory, confirmDelete, handleUpdateCategory, setIsAdding } = useCategoryViewModel();
+  const { newCategory, updateId, activeCategories, inActiveCategories, isAdding, isEditing, openDeleteDialog, categoryColumns, activeTab, category, openRecoverDialog, setOpenRecoverDialog, handleRecoverCategory, confirmRecover, setActiveTab, handleEditCategory, setIsEditing, setOpenDeleteDialog, handleAddCategory, handleDeleteCategory, confirmDelete, handleUpdateCategory, setIsAdding, handleAddChange, handleUpdateChange } = useCategoryViewModel();
 
   return (
     <div className="flex-1 p-6 bg-[var(--surface)] overflow-auto">
@@ -19,7 +19,7 @@ const CategoryManagementView: React.FC = () => {
         </h2>
         <button
           onClick={() => setIsAdding(true)}
-          className="flex items-center px-4 py-2 bg-[var(--primary-admin)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
+          className="flex items-center px-4 py-2 bg-[var(--primary-admin)] text-white rounded-lg hover:bg-[var(--primary-hover)] cursor-pointer"
         >
           <Plus size={18} /> Add Category
         </button>
@@ -73,12 +73,8 @@ const CategoryManagementView: React.FC = () => {
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
                   {
-                    label: "Update",
-                    onClick: () => handleEditCategory(row.id),
-                  },
-                  {
                     label: "Recover",
-                    onClick: () => handleDeleteCategory(row.id),
+                    onClick: () => handleRecoverCategory(row.id),
                   },
                 ]}
               />
@@ -91,16 +87,19 @@ const CategoryManagementView: React.FC = () => {
       {/* Add Category Form */}
       {isAdding && (
         <CategoryForm
+          category={newCategory}
+          handleChange={handleAddChange}
           onSave={handleAddCategory}
           onCancel={() => setIsAdding(false)}
         />
       )}
       {/* Update Category Form */}
-      {isEditing && selectedCategory && (
+      {isEditing && (
         <CategoryForm
-          initialData={selectedCategory}
+          category={category}
+          handleChange={handleUpdateChange}
           isUpdate
-          onSave={handleUpdateCategory}
+          onSave={() => handleUpdateCategory(updateId)}
           onCancel={() => setIsEditing(false)}
         />
       )}
@@ -112,6 +111,16 @@ const CategoryManagementView: React.FC = () => {
             confirmText="Delete"
             cancelText="Cancel"
             onConfirm={confirmDelete}
+          />
+      <ConfirmDialog
+            open={openRecoverDialog}
+            onOpenChange={setOpenRecoverDialog}
+            title="Confirm"
+            description="Are you sure you want to recover this category?"
+            confirmText="Recover"
+            cancelText="Cancel"
+            onConfirm={confirmRecover}
+            danger={false}
           />
     </div>
   );
