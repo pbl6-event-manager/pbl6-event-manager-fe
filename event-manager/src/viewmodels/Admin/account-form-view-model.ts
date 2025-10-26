@@ -11,6 +11,7 @@ export function useAccountFormViewModel(initialData?: Partial<UserFormData>, onS
     handleSubmit,
     formState: { errors },
     reset,
+    setValue
   } = useForm<UserFormData>({
     resolver: yupResolver(userFormSchema(isUpdated)) as any,
     defaultValues: initialData,
@@ -26,21 +27,34 @@ export function useAccountFormViewModel(initialData?: Partial<UserFormData>, onS
   }, [initialData, reset]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    console.log("Avatar selected:", e.target.files);
+    const file = e.target.files;
+    if (file && file[0]) {
+      setValue("avatar", file);
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result as string);
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file[0]);
     }
   };
 
   const onSubmitHandler: SubmitHandler<UserFormData> = (data) => {
-    if (isUpdated && !data.password) {
-      const { password, ...rest } = data;
-      onSubmit?.(rest as UserFormData);
-    } else {
-      onSubmit?.(data);
+    const formData = new FormData();
+
+    formData.append("firstName", data.firstName)
+    formData.append("lastName", data.lastName);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone ?? "");
+    formData.append("role", data.role);
+
+    if (!isUpdated || (isUpdated && data.password)) {
+      formData.append("password", data.password ?? "");
     }
+
+    if (data.avatar && data.avatar instanceof FileList && data.avatar[0]) {
+      formData.append("avatar", data.avatar[0]);
+    }
+
+    onSubmit?.(formData as any);
   };
 
   return {
@@ -50,6 +64,7 @@ export function useAccountFormViewModel(initialData?: Partial<UserFormData>, onS
     errors,
     preview,
     handleImageChange,
-    isUpdated
+    isUpdated,
+    setValue
   };
 }

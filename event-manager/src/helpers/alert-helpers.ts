@@ -45,3 +45,16 @@ export const showConfirmAlert = async (
 
   return result.isConfirmed;
 };
+
+export const showLoadingAlert = (title = "Processing...") => {
+  Swal.fire({
+    title,
+    text: "Please wait a moment.",
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+};
+
+export const closeLoadingAlert = () => Swal.close();

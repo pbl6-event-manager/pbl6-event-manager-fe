@@ -81,7 +81,7 @@ export const addCategory = (category: any) => async (dispatch: any) => {
 
     const data = await addNewCategoryService(category);
     const categories = store.getState().category.categories;
-    const updatedCategories = [ ...categories, data ].sort((a: any, b: any) => a.id - b.id);;
+    const updatedCategories = [ ...categories, data ].sort((a: any, b: any) => a.id - b.id);
     const updatedListActiveCategories = updatedCategories.filter((c: any) => c.isActive === true).map(convertCategoryModelToListCategoryDto);
 
     dispatch({

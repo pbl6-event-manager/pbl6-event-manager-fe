@@ -50,15 +50,8 @@ const CategoryManagementView: React.FC = () => {
                 data={activeCategories}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
-                  {
-                    label: "Update",
-                    onClick: () => handleEditCategory(row.id),
-                  },
-                  {
-                    label: "Delete",
-                    onClick: () => handleDeleteCategory(row.id),
-                    danger: true,
-                  },
+                  { type: "edit", onClick: () => handleEditCategory(row.id) },
+                  { type: "delete", onClick: () => handleDeleteCategory(row.id) },
                 ]}
               />
             </div>
@@ -72,10 +65,7 @@ const CategoryManagementView: React.FC = () => {
                 data={inActiveCategories}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
-                  {
-                    label: "Recover",
-                    onClick: () => handleRecoverCategory(row.id),
-                  },
+                  { type: "Recover", onClick: () => handleRecoverCategory(row.id) },
                 ]}
               />
             </div>
