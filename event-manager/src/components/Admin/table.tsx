@@ -1,19 +1,16 @@
 import React from "react";
-import DropdownMenu from "./dropdown-menu";
+import { Pencil, Trash, RotateCcw, Check, X } from "lucide-react"; 
 import { truncateText } from "../../utils/Admin/table-handle";
 import type { TableProps } from "../../models/Admin/table-models";
 import { useTableViewModel } from "../../viewmodels/Admin/table-view-model";
 
-const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }) => {
+const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions, onRowClick }) => {
   const {
     tableRef,
-    openMenuIndex,
-    setOpenMenuIndex,
     handleNext,
     handlePrev,
     totalPages,
     currentPage,
-    goToPage,
     currentData,
   } = useTableViewModel(data);
 
@@ -34,10 +31,13 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }
         </thead>
         <tbody>
           {currentData.length > 0 ? (
-            currentData.map((row: any, rowIndex: any) => (
+            currentData.map((row: any, rowIndex: number) => (
               <tr
                 key={rowIndex}
-                className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                onClick={() => onRowClick?.(row, rowIndex)}
+                className={`${
+                  rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"
+                } ${onRowClick ? "cursor-pointer hover:bg-gray-100" : ""}`} 
               >
                 {columns.map((col, colIndex) => (
                   <td
@@ -56,15 +56,45 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     ) : col.type === "action" ? (
-                      <DropdownMenu
-                        isOpen={openMenuIndex === rowIndex}
-                        onToggle={() =>
-                          setOpenMenuIndex(
-                            openMenuIndex === rowIndex ? null : rowIndex
-                          )
-                        }
-                        items={getRowActions ? getRowActions(row, rowIndex) : []}
-                      />
+                      <div className="flex items-center gap-3">
+                        {getRowActions &&
+                          getRowActions(row, rowIndex).map((action, i) => {
+                            switch (action.type) {
+                              case "edit":
+                                return (
+                                  <button className="hover:text-blue-500 cursor-pointer" onClick={action.onClick}>
+                                    <Pencil size={18} />
+                                  </button>
+                                );
+                              case "delete":
+                                return (
+                                  <button className="hover:text-red-500 cursor-pointer" onClick={action.onClick}>
+                                    <Trash size={18} />
+                                  </button>
+                                );
+                              case "recover":
+                                return (
+                                  <button className="hover:text-green-500 cursor-pointer" onClick={action.onClick}>
+                                    <RotateCcw size={18} />
+                                  </button>
+                                );
+                              case "accept":
+                                return (
+                                  <button className="hover:text-green-500 cursor-pointer" onClick={action.onClick}>
+                                    <Check size={18} />
+                                  </button>
+                                );
+                              case "reject":
+                                return (
+                                  <button className="hover:text-red-500 cursor-pointer" onClick={action.onClick}>
+                                    <X size={18} />
+                                  </button>
+                                );
+                              default:
+                                return null;
+                            }
+                          })}
+                      </div>
                     ) : (
                       truncateText(row[col.accessor], 30)
                     )}
@@ -78,14 +108,13 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions }
                 colSpan={columns.length}
                 className="px-4 py-4 text-center text-[var(--text-secondary)]"
               >
-                Không có dữ liệu
+                Nothing to show
               </td>
             </tr>
           )}
         </tbody>
       </table>
 
-      {/* ⚙️ Thanh phân trang cố định */}
       {totalPages > 1 && (
         <div className="sticky bottom-0 left-0 right-0 bg-white py-3 flex items-center justify-center gap-4 text-[var(--defaulttext)] border-t border-[var(--border-secondary)] select-none shadow-sm">
           <span

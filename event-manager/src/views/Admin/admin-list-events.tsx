@@ -54,13 +54,9 @@ const AdminEvents: React.FC = () => {
                 data={filteredPublicEvents}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
-                  { label: "Details", onClick: () => handleViewDetail(row.id) },
-                  {
-                    label: "Delete",
-                    onClick: () => handleDelete(row.id),
-                    danger: true,
-                  },
+                  { type: "delete", onClick: () => handleDelete(row.id) },
                 ]}
+                onRowClick={(row) => handleViewDetail(row.id)}
               />
             </div>
 
@@ -75,20 +71,10 @@ const AdminEvents: React.FC = () => {
                 data={filteredPendingEvents}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
-                  { 
-                    label: "Details", 
-                    onClick: () => handleViewDetail(row.id) 
-                  },
-                  {
-                    label: "Accept",
-                    onClick: () => handleAccept(row.id),
-                  },
-                  {
-                    label: "Reject",
-                    onClick: () => handleReject(row.id),
-                    danger: true,
-                  },
+                  { type: "accept", onClick: () => handleAccept(row.id) },
+                  { type: "reject", onClick: () => handleReject(row.id) },
                 ]}
+                onRowClick={(row) => handleViewDetail(row.id)}
               />
             </div>
 

@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getOrgOfAnUser } from "../../store/actions/Admin/user-action";
+import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getOrgOfAnUser, updateUser } from "../../store/actions/Admin/user-action";
 import { useEffect, useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {applyUserFilters} from "../../utils/Admin/filter-user";
 import {type FilterState} from "../../utils/Admin/filter-user";
 import { FILTER_STATE_DEFAULT } from "../../utils/Admin/filter-user";
+import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert } from "../../helpers/alert-helpers";
 
 export const useUserViewModel = () => {
   const dispatch = useDispatch();
@@ -21,25 +22,27 @@ export const useUserViewModel = () => {
   );
 
   useEffect(() => {
-    dispatch<any>(getUsers());
+    try {
+      dispatch<any>(getUsers());
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to fetch users");
+    }
   }, [dispatch]);
 
 
   useEffect(() => {
-  // Chỉ gọi API organizers khi tab organizer được chọn
-  if ((activeDetailTab === "active-organizer" || activeDetailTab === "deleted-organizer") && selectedUserEmail) {
-    const user = users.find((u) => u.email === selectedUserEmail);
-    if (user?.id) {
-      getOrganizersOfAnUser(user.id);
+    if ((activeDetailTab === "active-organizer" || activeDetailTab === "deleted-organizer") && selectedUserEmail) {
+      const user = users.find((u) => u.email === selectedUserEmail);
+      if (user?.id) {
+        getOrganizersOfAnUser(user.id);
+      }
     }
-  }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [activeDetailTab, selectedUserEmail]);
+  }, [activeDetailTab, selectedUserEmail]);
 
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
-    { header: "Avatar", accessor: "avatar", type: "image" as const },
+    { header: "Avatar", accessor: "avatarUrl", type: "image" as const },
     { header: "First Name", accessor: "firstName", type: "text" as const },
     { header: "Last Name", accessor: "lastName", type: "text" as const },
     { header: "Email", accessor: "email", type: "text" as const },
@@ -98,14 +101,22 @@ export const useUserViewModel = () => {
     setOpenDelDialog(true);
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if(!selectedUserEmail) {
       setOpenDelDialog(false);
+      showErrorAlert("Failed to delete user");
       return;
     }
-    dispatch<any>(updateStatusUser(selectedUserEmail, false))
-    clearUser();
-    setOpenDelDialog(false);
+    try {
+      setOpenDelDialog(false);
+      showLoadingAlert("Deleting user...");
+      await dispatch<any>(updateStatusUser(selectedUserEmail, false))
+      closeLoadingAlert();
+      await showSuccessAlert("Deleted user successfully");
+      clearUser();
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to delete user");
+    }
   };
   
   const handleCreate = () => {
@@ -118,28 +129,46 @@ export const useUserViewModel = () => {
     setOpenRecDialog(true);  
   }
 
-  const confirmRecover = () => {
+  const confirmRecover = async () => {
     if(!selectedUserEmail) {
       setOpenRecDialog(false);
+      showErrorAlert("Failed to recover user");
       return;
     }
-    dispatch<any>(updateStatusUser(selectedUserEmail, true));
-    clearUser();
-    setOpenRecDialog(false);
+    try {
+      setOpenRecDialog(false);
+      showLoadingAlert("Recovering user...");
+      await dispatch<any>(updateStatusUser(selectedUserEmail, true));
+      closeLoadingAlert();
+      await showSuccessAlert("Recovered user successfully");
+      clearUser();
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to recover user");
+    }
   }
 
-  const handleUpdate = (data: any) => {
-    console.log(data);
+  const handleUpdate = async (data: any) => {
+    try {
+      showLoadingAlert("Updating account...");
+      await dispatch<any>(updateUser(data));
+      closeLoadingAlert();
+      await showSuccessAlert("Updated account successfully");
+      navigate(-1);
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to update account");
+    }
   }
 
   const handleAdd = async (data: any) => {
     try {
-    const res = await dispatch<any>(addUser(data));
-    alert("User has beed added to database");
-  } catch (err: any) {
-    console.log(err);
-    alert(err.message || "Something went wrong");
-  }
+      showLoadingAlert("Creating account...");
+      await dispatch<any>(addUser(data));
+      closeLoadingAlert();
+      await showSuccessAlert("Added account successfully");
+      navigate(-1);
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to add account");
+    }
   }
   
   const handleBack = () => {

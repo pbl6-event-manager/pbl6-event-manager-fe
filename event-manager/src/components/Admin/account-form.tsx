@@ -10,7 +10,8 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
     errors,
     preview,
     handleImageChange,
-    isUpdated
+    isUpdated,
+    setValue
   } = useAccountFormViewModel(initialData, onSubmit);
 
   return (
@@ -46,8 +47,7 @@ const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => 
               id="avatarUpload"
               type="file"
               accept="image/*"
-              {...register("avatar")}
-              onChange={handleImageChange}
+              onChange={(e) => handleImageChange(e)}
               className="hidden"
             />
           </div>

@@ -10,5 +10,11 @@ export interface TableProps {
   columns: Column[];
   data: any[];
   className?: string;
-  getRowActions?: (row: any, rowIndex: number) => DropdownItem[];
+  getRowActions?: (row: any, rowIndex: number) => TableAction[];
+  onRowClick?: (row: any, rowIndex: number) => void;
+}
+
+export interface TableAction {
+  type: "edit" | "delete" | "recover" | string;
+  onClick: () => void;
 }

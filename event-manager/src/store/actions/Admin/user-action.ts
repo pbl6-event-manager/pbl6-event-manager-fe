@@ -1,7 +1,11 @@
-export const FETCH_USERS = "FETCH_USERS";
+export const FETCH_USERS_REQUEST = "FETCH_USERS_REQUEST";
+export const FETCH_USERS_SUCSESS = "FETCH_USERS_SUCCESS";
+export const FETCH_USERS_FAILED = "FETCH_USERS_FAILED";
 export const SET_SELECTED_USER = "SET_SELECTED_USER";
 export const CLEAR_SELECTED_USER = "CLEAR_SELECTED_USER";
-export const DELETE_USER = "DELETE_USER";
+export const UPDATE_STATUS_USER_REQUEST = "UPDATE_STATUS_USER_REQUEST";
+export const UPDATE_STATUS_USER_FAILED = "UPDATE_STATUS_USER_FAILED";
+export const UPDATE_STATUS_USER_SUCCESS = "UPDATE_STATUS_USER_SUCCESS";
 export const ADD_USER_REQUEST = "ADD_USER_REQUEST";
 export const ADD_USER_SUCCESS = "ADD_USER_SUCCESS";
 export const ADD_USER_FAIL = "ADD_USER_FAIL";
@@ -10,33 +14,62 @@ export const GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS = "GET_ACTIVE_ORGS_OF_AN_USER_SU
 export const GET_ORGS_OF_AN_USER_SUCCESS = "GET_ORGS_OF_AN_USER_SUCCESS"
 export const GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS = "GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS"
 export const GET_ORGS_OF_AN_USER_FAILED = "GET_ORGS_OF_AN_USER_FAILED"
+export const UPDATE_USER_REQUEST = "UPDATE_USER_REQUEST"
+export const UPDATE_USER_SUCCESS = "UPDATE_USER_SUCCESS"
+export const UPDATE_USER_FAILED = "UPDATE_USER_FAILED"
 
 
-import { addUserService, fetchUsersService, updateStatusUserService } from "../../../service/user-service";
+import { addUserService, fetchUsersService, updateStatusUserService, updateUserService } from "../../../service/user-service";
 import { fetchActiveOrgOfAnUserService } from "../../../service/user-service";
 import { store } from "../../store";
  
 
 export const getUsers = () => async (dispatch: any) => {
   try {
-    const res = await fetchUsersService();
-    dispatch({type: FETCH_USERS, payload: res})
-  } catch (error) {
-    console.error("Failed to fetch users:", error);
+    dispatch({
+      type: FETCH_USERS_REQUEST
+    })
+
+    const data = await fetchUsersService();
+    
+    dispatch({
+      type: FETCH_USERS_SUCSESS, 
+      payload: data
+    });
+  } catch (error: any) {
+    dispatch({
+      type: FETCH_USERS_FAILED,
+      payload:
+        error.response?.data?.message || error.message || "Fetch users failed",
+    });
+    throw error;
   }
 };
 
 export const updateStatusUser = (email: string, isActive: boolean) => async (dispatch: any) => {
   try {
-    const deletedUser = await updateStatusUserService(email, isActive);
-    const users  = store.getState().userReducer.users;
+    dispatch({
+      type: UPDATE_STATUS_USER_REQUEST
+    })
 
+    const updatedUser = await updateStatusUserService(email, isActive);
+    const users  = store.getState().userReducer.users;
+    
     const updatedList = users.map((user: any) =>
-      user.email === email ? { ...user, isActive: deletedUser.isActive } : user
+      user.email === email ? { ...user, isActive: updatedUser?.isActive } : user
     );
-    dispatch({type: DELETE_USER, payload: updatedList});
-  } catch (error) {
-    console.log("Failed to delete users: ", error)
+
+    dispatch({
+      type: UPDATE_STATUS_USER_SUCCESS, 
+      payload: updatedList
+    });
+  } catch (error: any) {
+    dispatch({
+      type: UPDATE_STATUS_USER_FAILED,
+      payload:
+        error.response?.data?.message || error.message || "Update status user failed",
+    });
+    throw error;
   }
 }
 
@@ -55,12 +88,13 @@ export const addUser = (userData: any) => async (dispatch: any) => {
     dispatch({ type: ADD_USER_REQUEST });
 
     const data = await addUserService(userData);
+    const users = store.getState().userReducer.users;
+    const updatedUsers = [ ...users, data].sort((a: any, b: any) => a.id - b.id);
 
     dispatch({
       type: ADD_USER_SUCCESS,
-      payload: data.data,
+      payload: updatedUsers
     });
-    return data;
   } catch (error: any) {
     dispatch({
       type: ADD_USER_FAIL,
@@ -70,6 +104,30 @@ export const addUser = (userData: any) => async (dispatch: any) => {
     throw error;
   }
 };
+
+export const updateUser = (userData: any) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: UPDATE_USER_REQUEST
+    });
+
+    const data = await updateUserService(userData);
+    const users = store.getState().userReducer.users;
+    const updatedUsers = users.map((u) => u.email === data?.email ? { ...u, ...data} : u)
+
+    dispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: updatedUsers
+    });
+  } catch (error: any) {
+    dispatch({
+      type: UPDATE_USER_FAILED,
+      payload:
+        error.response?.data?.message || error.message || "Update user failed",
+    });
+    throw error;
+  }
+}
 
 export const getOrgOfAnUser = (id: any) => async (dispatch: any) => {
     try {

@@ -16,9 +16,9 @@ const AdminUsers: React.FC = () => {
         <h2 className="text-2xl font-bold text-[var(--defaulttext)]">Accounts</h2>
         <button
           onClick={handleCreate}
-          className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded-lg hover:bg-[var(--primary-hover)]"
+          className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded-lg hover:bg-[var(--primary-hover)] cursor-pointer"
         >
-          Create an account
+          + Create an account
         </button>
       </div>
 
@@ -45,14 +45,10 @@ const AdminUsers: React.FC = () => {
                 data={filteredActiveUsers}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
-                  { label: "Details", onClick: () => handleViewDetail(row.email) },
-                  { label: "Update", onClick: () => handleEdit(row.email) },
-                  {
-                    label: "Delete",
-                    onClick: () => handleDelete(row.email),
-                    danger: true,
-                  },
+                  { type: "edit", onClick: () => handleEdit(row.email) },
+                  { type: "delete", onClick: () => handleDelete(row.email) },
                 ]}
+                onRowClick={(row) => handleViewDetail(row.email)}
               />
             </div>
 
@@ -67,15 +63,9 @@ const AdminUsers: React.FC = () => {
                 data={filteredInActiveUsers}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
-                  { 
-                    label: "Details", 
-                    onClick: () => handleViewDetail(row.id) 
-                  },
-                  {
-                    label: "Recover",
-                    onClick: () => handleRecover(row.email),
-                  }
+                  { type: "recover", onClick: () => handleRecover(row.email) }
                 ]}
+                onRowClick={(row) => handleViewDetail(row.email)}
               />
             </div>
 
