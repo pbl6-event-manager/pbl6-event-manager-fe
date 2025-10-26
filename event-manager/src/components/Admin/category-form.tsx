@@ -1,24 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import type { CategoryFormProps } from "../../models/Admin/category-models";
-import { useCategoryViewModel } from "../../viewmodels/Admin/category-view-model";
 
 const CategoryForm: React.FC<CategoryFormProps> = ({
-  initialData,
   onSave,
   onCancel,
+  handleChange,
+  category,
   isUpdate = false,
 }) => {
-  const { setCategory, category, handleChange } = useCategoryViewModel();
-
-  useEffect(() => {
-    if (initialData) {
-      setCategory(initialData);
-    }
-  }, [initialData]);
-
-  const handleSubmit = () => {
-    onSave(category);
-  };
 
   return (
     <div className="mt-6 bg-white p-4 rounded shadow border">
@@ -41,7 +30,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         />
         <div className="flex gap-2">
           <button
-            onClick={handleSubmit}
+            onClick={onSave}
             className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)]"
           >
             {isUpdate ? "Update" : "Save"}

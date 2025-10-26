@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import type { RootState } from "../../store/store";
-import { addCategory, deleleCategory, getCategories } from "../../store/actions/Admin/category-action";
+import { addCategory, deleleCategory, getCategories, recoverCategory, updateCategory } from "../../store/actions/Admin/category-action";
 import { useEffect } from "react";
 import { CATEGORY_FORM_DEFAULT, type Category } from "../../models/Admin/category-models";
+import { showSuccessAlert, showWarningAlert, showErrorAlert } from "../../helpers/alert-helpers";
 
 export const useCategoryViewModel = (initialData?: Category) => {
   const dispatch = useDispatch();
@@ -12,9 +13,11 @@ export const useCategoryViewModel = (initialData?: Category) => {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [category, setCategory] = useState<Category>(CATEGORY_FORM_DEFAULT);
+  const [openRecoverDialog, setOpenRecoverDialog] = useState(false);
+  const [category, setCategory] = useState(CATEGORY_FORM_DEFAULT);
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [recoverId, setRecoverId] = useState<number | null>(null);
+  const [updateId, setUpdateId] = useState(null);
   const [activeTab, setActiveTab] = useState<"active" | "deleted">("active");
   useEffect(() => {
     dispatch<any>(getCategories());
@@ -34,20 +37,33 @@ export const useCategoryViewModel = (initialData?: Category) => {
   ];
 
 
-  const handleChange = (field: keyof Category, value: string) => {
-    setCategory((prev) => ({ ...prev, [field]: value }));
+  const handleAddChange = (field: keyof Category, value: string) => {
+    setNewCategory((prev) => ({ ...prev, [field]: value }));
   };
-  
-  const handleAddCategory = () => {
-    if (!newCategory.name) return;
+
+  const handleUpdateChange = (field: keyof Category, value: string) => {
+    setCategory((prev) => ({ ...prev, [field]: value}));
+  }
+
+  const handleAddCategory = async () => {
+    if (!newCategory.name.trim()) {
+      showWarningAlert("Category name is required");
+      return;
+    }
+
     const _newCategory = {
-        id: Date.now(),
         name: newCategory.name,
         description: newCategory.description
     }
-    dispatch(addCategory(_newCategory));
-    setNewCategory(CATEGORY_FORM_DEFAULT);
-    setIsAdding(false);
+
+    try {
+      await dispatch<any>(addCategory(_newCategory));
+      showSuccessAlert("Category added successfully!");
+      setNewCategory(CATEGORY_FORM_DEFAULT);
+      setIsAdding(false);
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to add category");
+    }
   };
 
   
@@ -57,50 +73,97 @@ export const useCategoryViewModel = (initialData?: Category) => {
     setOpenDeleteDialog(true);
   };
 
-  const confirmDelete = () => {
-    if (deleteId !== null) {
-      dispatch<any>(deleleCategory(deleteId));
+  const handleRecoverCategory = (id: number) => {
+   setRecoverId(id);
+   setOpenRecoverDialog(true); 
+  }
+
+  const confirmDelete = async () => {
+    if (deleteId === null) {
+      showErrorAlert("Failed to delete category");
+      return;
+    }
+
+    try {
+      await dispatch<any>(deleleCategory(deleteId));
+      showSuccessAlert("Deleted category successfully");
       setDeleteId(null);
       setOpenDeleteDialog(false);
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to recover category");
     }
   };
 
-  const handleEditCategory = (categoryId: number) => {
+  const confirmRecover = async () => {
+    if (recoverId === null) {
+      showErrorAlert("Failed to recover category");
+      return;
+    }
+    try {
+      await dispatch<any>(recoverCategory(recoverId));
+      showSuccessAlert("Recovered category successfully");
+      setOpenRecoverDialog(false);
+      setRecoverId(null);
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to recover category");
+    }
+  }
+
+  const handleEditCategory = (categoryId: any) => {
+    setUpdateId(categoryId);
     const category = categories.find((c) => c.id === categoryId);
     if (category) {
-      setSelectedCategory(category);
+      const updateCategory = {
+        name: category.name,
+        description: category.description
+      }
+      setCategory(updateCategory);
       setIsEditing(true);
     }
   };
 
+  const handleUpdateCategory = async (id?: any) => {
+    if(!category.name) {
+      showWarningAlert("Category name is required");
+      return;
+    }
 
-  const handleUpdateCategory = (updated: Category) => {
-    // setCategories((prev) =>
-    //   prev.map((c) => (c.id === updated.id ? updated : c))
-    // );
-    setIsEditing(false);
-    setSelectedCategory(null);
-  };
+    try {
+      await dispatch<any>(updateCategory(id, category));
+      showSuccessAlert("Updated category successfully");
+      setUpdateId(null);
+      setIsEditing(false);
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to update category"); 
+    }
+  }
+
   return { 
     categories,
     isAdding,
     isEditing,
-    selectedCategory,
     openDeleteDialog,
+    openRecoverDialog,
     categoryColumns,
     activeTab,
     activeCategories,
     inActiveCategories,
+    newCategory,
+    updateId,
+    setOpenRecoverDialog,
+    handleRecoverCategory,
+    confirmRecover,
     setActiveTab,
     setOpenDeleteDialog,
     handleAddCategory,
-    handleEditCategory,
     handleUpdateCategory,
     handleDeleteCategory,
+    handleEditCategory,
     confirmDelete,
     setIsAdding,
     setIsEditing,
-    handleChange,
+    handleAddChange,
+    handleUpdateChange,
     category, 
     setCategory
   };

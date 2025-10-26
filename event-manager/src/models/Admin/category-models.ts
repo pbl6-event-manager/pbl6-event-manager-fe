@@ -12,8 +12,9 @@ export interface CategoryFormData {
 }
 
 export interface CategoryFormProps {
-  initialData?: Category;
-  onSave: (data: Category) => void;
+  category?: any;
+  handleChange: (field: keyof Category, value: string) => void;
+  onSave: () => void;
   onCancel: () => void;
   isUpdate?: boolean;
 }
