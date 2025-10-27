@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getOrgOfAnUser, updateUser } from "../../store/actions/Admin/user-action";
+import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getOrgOfAnUser, updateUser, getUserByEmail } from "../../store/actions/Admin/user-action";
 import { useEffect, useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {applyUserFilters} from "../../utils/Admin/filter-user";
@@ -12,9 +12,10 @@ export const useUserViewModel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const {users, loading, activeOrganizers, inActiveOrganizers}= useSelector((state: RootState) => state.userReducer);
+  const {user, users, loading, activeOrganizers, inActiveOrganizers}= useSelector((state: RootState) => state.userReducer);
   const [openDelDialog, setOpenDelDialog] = useState(false);
   const [openRecDialog, setOpenRecDialog] = useState(false);
+  const [detailEmail, setDetailEmail] = useState("");
   const [activeTab, setActiveTab] = useState<"active" | "deleted">("active");
   const [activeDetailTab, setActiveDetailTab] = useState<"participant" | "active-organizer" | "deleted-organizer">("participant");
   const selectedUserEmail = useSelector(
@@ -29,6 +30,19 @@ export const useUserViewModel = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    
+    if(detailEmail) {
+      try {
+        showLoadingAlert("Getting user information...");
+        dispatch<any>(getUserByEmail(detailEmail));
+        closeLoadingAlert();
+      } catch (error: any) {
+        showErrorAlert(error?.message || "Failed to fetch information of this user");
+      }
+    }
+  }, [detailEmail])
+
 
   useEffect(() => {
     if ((activeDetailTab === "active-organizer" || activeDetailTab === "deleted-organizer") && selectedUserEmail) {
@@ -38,7 +52,6 @@ export const useUserViewModel = () => {
       }
     }
   }, [activeDetailTab, selectedUserEmail]);
-
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
@@ -81,11 +94,8 @@ export const useUserViewModel = () => {
   }, [dispatch]);
 
   const handleViewDetail = (email: string) => {
-    selectUser(email);
-    const user = users.find((u) => u.email === email);
-    if(user) {
-      navigate("/admin/users/details", {state: {user}});
-    }
+    setDetailEmail(email);
+    navigate("/admin/users/details", {state: {email}});
   }
 
   const handleEdit = (email: string) => {
@@ -181,6 +191,7 @@ export const useUserViewModel = () => {
     filteredInActiveUsers, 
     columns,
     users,
+    user,
     selectedUserEmail,
     openDelDialog,
     openRecDialog,
@@ -191,6 +202,7 @@ export const useUserViewModel = () => {
     organizerColumns,
     activeOrganizers,
     inActiveOrganizers,
+    detailEmail,
     navigate,
     setActiveDetailTab,
     handleRecover,
@@ -208,6 +220,7 @@ export const useUserViewModel = () => {
     confirmRecover,
     handleBack,
     handleUpdate,
-    handleAdd
+    handleAdd,
+    setDetailEmail
   };
 };

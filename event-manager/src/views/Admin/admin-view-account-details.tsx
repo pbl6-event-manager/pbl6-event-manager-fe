@@ -7,29 +7,28 @@ import TabItem from "../../components/Admin/tab-item";
 import UserInformationCard from "../../components/Admin/user-information-card";
 import UserActiveOrganizerEvents from "../../components/Admin/user-active-organizer-event";
 import UserInActiveOrganizerEvents from "../../components/Admin/user-inactive-organizer-event";
+import { ArrowLeft } from "lucide-react";
 
 const UserViewDetailPage: React.FC = () => {
-  const { selectedUserEmail, location, navigate, openDelDialog, setOpenDelDialog, activeDetailTab, setActiveDetailTab } = useUserViewModel();
-  const user = location.state?.user;
-
-  const handleEdit = (email: string) => {
-    navigate("/admin/users/edit", { state: { email } }); 
-  };
-
-  const handleDelete = (email: string) => {
-    setOpenDelDialog(false);
-  }
-
+  const { user, openDelDialog, setOpenDelDialog, activeDetailTab, setActiveDetailTab, detailEmail, handleEdit, handleDelete, handleBack } = useUserViewModel();
 
   return (
     <div className="p-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold mb-6">Details</h2>
+      <div className="flex-cols items-center mb-6">
+        <button
+          onClick={handleBack}
+          className="flex items-center text-gray-600 hover:text-gray-900 transition cursor-pointer"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          <span className="font-medium">Back</span>
+        </button>
+      </div>
 
       <UserInformationCard
         user={user}
         onEdit={handleEdit}
-        onDelete={() => setOpenDelDialog(true)}
+        onChangeStatus={() => setOpenDelDialog(true)}
       />
 
       {/* Tabs */}
@@ -64,7 +63,7 @@ const UserViewDetailPage: React.FC = () => {
           description="Are you sure you want to delete this account?"
           confirmText="Delete"
           cancelText="Cancel"
-          onConfirm={() => handleDelete(user.email)}
+          onConfirm={() => handleDelete(detailEmail)}
         />
     </div>
   );
