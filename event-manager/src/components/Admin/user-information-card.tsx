@@ -1,22 +1,39 @@
 import React from "react";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, RotateCw, Trash } from "lucide-react";
 import type { UserInformationCardProps } from "../../models/Admin/form-models";
 
 const UserInformationCard: React.FC<UserInformationCardProps> = ({
   user,
   onEdit,
-  onDelete,
+  onChangeStatus,
 }) => {
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-6 relative">
-      {/* Icon actions góc phải */}
       <div className="absolute top-4 right-4 flex space-x-3 text-gray-600">
-        <button className="hover:text-blue-500" onClick={() => onEdit(user.email)}>
+        <button
+          className="hover:text-blue-500 cursor-pointer"
+          onClick={() => onEdit(user.email)}
+        >
           <Pencil size={20} />
         </button>
-        <button className="hover:text-red-500" onClick={() => onDelete(user.email)}>
-          <Trash size={20} />
-        </button>
+
+        {user.isActive ? (
+          <button
+            className="hover:text-red-500 cursor-pointer"
+            onClick={() => onChangeStatus(user.email)}
+            title="Delete account"
+          >
+            <Trash size={20} />
+          </button>
+        ) : (
+          <button
+            className="hover:text-green-500 cursor-pointer"
+            onClick={() => onChangeStatus(user.email)}
+            title="Recover account"
+          >
+            <RotateCw size={20} />
+          </button>
+        )}
       </div>
 
       {/* Nội dung user */}

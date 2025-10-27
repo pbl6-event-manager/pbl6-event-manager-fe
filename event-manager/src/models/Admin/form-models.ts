@@ -40,5 +40,5 @@ export interface RegisterFormProps {
 export interface UserInformationCardProps {
   user: ListUserDto;
   onEdit: (email: string) => void;
-  onDelete: (email: string) => void;
+  onChangeStatus: (email: string) => void;
 }

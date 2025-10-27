@@ -1,6 +1,6 @@
 import { checkEmailExist } from "../api/auth-api";
 import { getOrgOfAnUserApi } from "../api/organizer-api";
-import { updateStatusUserApi, getAllUsersApi, updateUserApi } from "../api/user-api";
+import { getAllUsersApi, getUserByEmailApi, updateUserApi } from "../api/user-api";
 import { convertOrgModelToListOrgDto } from "../converters/organizer-converter";
 import { convertUserModelToListUserDto } from "../converters/user-converter";
 import type { ListOrganizerDto } from "../dtos/organizer-dto";
@@ -127,6 +127,25 @@ export const fetchActiveOrgOfAnUserService = async (userId: any) => {
       activeOrgsListDto,
       inActiveOrgsListDto
     };
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
+export const getUserByEmailService = async (email: any) => {
+  try {
+    const data = await getUserByEmailApi(email);
+    if(data.data.message === "success") {
+      const user = mapToUserModel(data.data.data);
+      const userDto = convertUserModelToListUserDto(user)
+      return userDto;
+    } else {
+      return null;
+    }
   } catch (error: any) {
     if (error.response) {
       throw new Error(error.response.data?.message || "Server error");

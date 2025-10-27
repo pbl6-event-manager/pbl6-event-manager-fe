@@ -59,34 +59,35 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions, 
                       <div className="flex items-center gap-3">
                         {getRowActions &&
                           getRowActions(row, rowIndex).map((action, i) => {
+                            const key = `${action.type ?? "action"}-${i}`;
                             switch (action.type) {
                               case "edit":
                                 return (
-                                  <button className="hover:text-blue-500 cursor-pointer" onClick={action.onClick}>
+                                  <button key={key} className="hover:text-blue-500 cursor-pointer" onClick={action.onClick}>
                                     <Pencil size={18} />
                                   </button>
                                 );
                               case "delete":
                                 return (
-                                  <button className="hover:text-red-500 cursor-pointer" onClick={action.onClick}>
+                                  <button key={key} className="hover:text-red-500 cursor-pointer" onClick={action.onClick}>
                                     <Trash size={18} />
                                   </button>
                                 );
                               case "recover":
                                 return (
-                                  <button className="hover:text-green-500 cursor-pointer" onClick={action.onClick}>
+                                  <button key={key} className="hover:text-green-500 cursor-pointer" onClick={action.onClick}>
                                     <RotateCcw size={18} />
                                   </button>
                                 );
                               case "accept":
                                 return (
-                                  <button className="hover:text-green-500 cursor-pointer" onClick={action.onClick}>
+                                  <button key={key} className="hover:text-green-500 cursor-pointer" onClick={action.onClick}>
                                     <Check size={18} />
                                   </button>
                                 );
                               case "reject":
                                 return (
-                                  <button className="hover:text-red-500 cursor-pointer" onClick={action.onClick}>
+                                  <button key={key} className="hover:text-red-500 cursor-pointer" onClick={action.onClick}>
                                     <X size={18} />
                                   </button>
                                 );

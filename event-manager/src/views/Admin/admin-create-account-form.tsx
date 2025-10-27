@@ -8,15 +8,12 @@ const CreateAccountView: React.FC = () => {
 
   return (
     <div className="relative flex items-center justify-center h-full bg-[var(--surface)] overflow-hidden">
-      {/* 🔙 Nút Back cố định và nổi bật */}
       <button
         onClick={handleBack}
-        className="absolute top-6 left-6 flex items-center gap-2 px-5 py-2 rounded-xl 
-                   bg-[var(--primary-admin)] text-white font-semibold shadow-md 
-                   transition-all duration-300"
+        className="absolute top-6 left-6 flex items-center text-gray-600 hover:text-gray-900 transition cursor-pointer"
       >
-        <ArrowLeft size={20} />
-        Back
+        <ArrowLeft className="w-5 h-5 mr-2" />
+        <span className="font-medium">Back</span>
       </button>
 
       {/* 📋 Form căn giữa tuyệt đối */}
