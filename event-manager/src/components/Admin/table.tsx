@@ -63,31 +63,62 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions, 
                             switch (action.type) {
                               case "edit":
                                 return (
-                                  <button key={key} className="hover:text-blue-500 cursor-pointer" onClick={action.onClick}>
+                                  <button 
+                                    key={key} 
+                                    type="button"
+                                    className="hover:text-blue-500 cursor-pointer" 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      action.onClick?.();
+                                    }}>
                                     <Pencil size={18} />
                                   </button>
                                 );
                               case "delete":
                                 return (
-                                  <button key={key} className="hover:text-red-500 cursor-pointer" onClick={action.onClick}>
+                                  <button 
+                                    key={key} 
+                                    className="hover:text-red-500 cursor-pointer" 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      action.onClick?.();
+                                    }}>
                                     <Trash size={18} />
                                   </button>
                                 );
                               case "recover":
                                 return (
-                                  <button key={key} className="hover:text-green-500 cursor-pointer" onClick={action.onClick}>
+                                  <button 
+                                    key={key} 
+                                    className="hover:text-green-500 cursor-pointer" 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      action.onClick?.();
+                                    }}>
                                     <RotateCcw size={18} />
                                   </button>
                                 );
                               case "accept":
                                 return (
-                                  <button key={key} className="hover:text-green-500 cursor-pointer" onClick={action.onClick}>
+                                  <button 
+                                    key={key} 
+                                    className="hover:text-green-500 cursor-pointer" 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      action.onClick?.();
+                                    }}>
                                     <Check size={18} />
                                   </button>
                                 );
                               case "reject":
                                 return (
-                                  <button key={key} className="hover:text-red-500 cursor-pointer" onClick={action.onClick}>
+                                  <button 
+                                    key={key} 
+                                    className="hover:text-red-500 cursor-pointer" 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      action.onClick?.();
+                                    }}>
                                     <X size={18} />
                                   </button>
                                 );
