@@ -7,6 +7,8 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
   onEdit,
   onChangeStatus,
 }) => {
+  if(!user) return null;
+
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-6 relative">
       <div className="absolute top-4 right-4 flex space-x-3 text-gray-600">
