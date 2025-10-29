@@ -1,5 +1,6 @@
 export interface FilterState {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
   role: string;
@@ -7,7 +8,8 @@ export interface FilterState {
 }
 
 export const FILTER_STATE_DEFAULT : FilterState = {
-  name: "",
+  firstName: "",
+  lastName: "",
   email: "",
   phone: "",
   role: "",
@@ -17,37 +19,39 @@ export const FILTER_STATE_DEFAULT : FilterState = {
 export function applyUserFilters(users: any[], filters: FilterState) {
   let result = [...users];
 
-  // Lọc theo tên
-  if (filters.name) {
+  if (filters.firstName) {
     result = result.filter((u) =>
-      u.fullName.toLowerCase().includes(filters.name.toLowerCase())
+      u.firstName.toLowerCase().includes(filters.firstName.toLowerCase())
     );
   }
 
-  // Lọc theo email
+  if (filters.lastName) {
+    result = result.filter((u) =>
+      u.firstName.toLowerCase().includes(filters.lastName.toLowerCase())
+    );
+  }
+
   if (filters.email) {
     result = result.filter((u) =>
       u.email.toLowerCase().includes(filters.email.toLowerCase())
     );
   }
 
-  // Lọc theo số điện thoại
   if (filters.phone) {
     result = result.filter((u) =>
       u.phone.toLowerCase().includes(filters.phone.toLowerCase())
     );
   }
 
-  // Lọc theo vai trò
   if (filters.role) {
-    result = result.filter((u) => u.role === filters.role);
+    console.log(result[0].roles);
+    result = result.filter((u) => u.roles === filters.role);
   }
 
-  // Sắp xếp theo tên (có thể mở rộng)
   if (filters.sortOrder === "asc" || filters.sortOrder === "desc") {
     result.sort((a, b) => {
-      const nameA = a.fullName?.toLowerCase() || "";
-      const nameB = b.fullName?.toLowerCase() || "";
+      const nameA = a.lastName?.toLowerCase() || "";
+      const nameB = b.lastName?.toLowerCase() || "";
       return filters.sortOrder === "asc"
         ? nameA.localeCompare(nameB)
         : nameB.localeCompare(nameA);

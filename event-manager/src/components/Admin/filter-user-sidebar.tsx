@@ -2,7 +2,8 @@ import React, { useState } from "react";
 
 interface FilterUserSidebarProps {
   onFilter: (filters: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
     role: string;
@@ -12,7 +13,8 @@ interface FilterUserSidebarProps {
 
 const FilterUserSidebar: React.FC<FilterUserSidebarProps> = ({ onFilter }) => {
   const [filters, setFilters] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
     role: "",
@@ -30,14 +32,16 @@ const FilterUserSidebar: React.FC<FilterUserSidebarProps> = ({ onFilter }) => {
 
   const handleClear = () => {
     setFilters({
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       role: "",
       sortOrder: "",
     });
     onFilter({
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       role: "",
@@ -50,11 +54,21 @@ const FilterUserSidebar: React.FC<FilterUserSidebarProps> = ({ onFilter }) => {
       <h2 className="text-base font-semibold mb-4">Filter</h2>
 
       <div className="mb-3">
-        <label className="block font-medium">Full Name</label>
+        <label className="block font-medium">First Name</label>
         <input
           type="text"
-          name="name"
-          value={filters.name}
+          name="firstName"
+          value={filters.firstName}
+          onChange={handleChange}
+          className="w-full border border-[var(--placeholder)] rounded px-2 py-1"
+        />
+      </div>
+      <div className="mb-3">
+        <label className="block font-medium">Last Name</label>
+        <input
+          type="text"
+          name="lastName"
+          value={filters.lastName}
           onChange={handleChange}
           className="w-full border border-[var(--placeholder)] rounded px-2 py-1"
         />
@@ -95,8 +109,8 @@ const FilterUserSidebar: React.FC<FilterUserSidebarProps> = ({ onFilter }) => {
             className="w-full border border-[var(--placeholder)] rounded px-2 py-1"
           >
             <option value="">-- All --</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
           </select>
         </div>
 
@@ -119,13 +133,13 @@ const FilterUserSidebar: React.FC<FilterUserSidebarProps> = ({ onFilter }) => {
       <div className="flex gap-2 mt-4">
         <button
           onClick={handleSubmit}
-          className="flex-1 bg-[var(--primary-admin)] text-white px-3 py-2 rounded hover:bg-[var(--primary-hover)]"
+          className="flex-1 bg-[var(--primary-admin)] text-white px-3 py-2 rounded hover:bg-[var(--primary-hover)] cursor-pointer"
         >
           Apply
         </button>
         <button
           onClick={handleClear}
-          className="flex-1 bg-[var(--border-secondary)] px-3 py-2 rounded hover:bg-gray-300"
+          className="flex-1 bg-[var(--border-secondary)] px-3 py-2 rounded hover:bg-gray-300 cursor-pointer"
         >
           Reset
         </button>

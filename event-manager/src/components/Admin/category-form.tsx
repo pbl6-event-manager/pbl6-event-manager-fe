@@ -31,13 +31,13 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         <div className="flex gap-2">
           <button
             onClick={onSave}
-            className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)]"
+            className="px-4 py-2 bg-[var(--primary-admin)] text-white rounded hover:bg-[var(--primary-hover)] cursor-pointer"
           >
             {isUpdate ? "Update" : "Save"}
           </button>
           <button
             onClick={onCancel}
-            className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+            className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 cursor-pointer"
           >
             Cancel
           </button>
