@@ -10,7 +10,7 @@ const userReducer = (state = DEFAULT_USERS_STATE, action: any) : UserState => {
         case FETCH_USERS_FAILED:
             return { ...state, loading: false, error: action.payload};
         case UPDATE_STATUS_USER_SUCCESS:
-            return { ...state, loading: false, selectedUserEmail: null, users: action.payload};
+            return { ...state, loading: false, selectedUserEmail: null, users: action.payload.updatedList, user: action.payload.updatedUser};
         case UPDATE_STATUS_USER_REQUEST:
             return { ...state, loading: true, error: null};
         case UPDATE_STATUS_USER_FAILED:

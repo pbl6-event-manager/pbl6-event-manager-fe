@@ -7,7 +7,6 @@ const OrganizerDetailInfo: React.FC<OrganizerDetailInfoProps> = ({ organizer }) 
       <h3 className="text-xl font-semibold mb-3">Organizer Detail Information</h3>
       {organizer ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-800">
-          {/* ✅ Hiển thị logo (nếu có) */}
           {organizer.logoUrl && (
             <div className="md:col-span-2 flex justify-center mb-3">
               <img

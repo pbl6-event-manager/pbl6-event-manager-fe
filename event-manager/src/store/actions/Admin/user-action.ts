@@ -64,7 +64,10 @@ export const updateStatusUser = (email: string, isActive: boolean) => async (dis
 
     dispatch({
       type: UPDATE_STATUS_USER_SUCCESS, 
-      payload: updatedList
+      payload: {
+        updatedList,
+        updatedUser
+      }
     });
   } catch (error: any) {
     dispatch({
@@ -139,18 +142,18 @@ export const getOrgOfAnUser = (id: any) => async (dispatch: any) => {
     const data = await fetchActiveOrgOfAnUserService(id);
         
     dispatch({
-       type: GET_ORGS_OF_AN_USER_SUCCESS,
+      type: GET_ORGS_OF_AN_USER_SUCCESS,
       payload: data.organizers
     })
 
     dispatch({
       type: GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS,
-       payload: data.activeOrgsListDto
+      payload: data.activeOrgsListDto
     })
 
       dispatch({
       type: GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS,
-        payload: data.inActiveOrgsListDto
+      payload: data.inActiveOrgsListDto
     })
   } catch (error: any) {
     dispatch({
@@ -181,6 +184,8 @@ export const getUserByEmail = (email: any) => async (dispatch: any) => {
       type: GET_USER_BY_EMAIL_SUCCESS,
       payload: data
     })
+
+    return data;
   } catch (error: any) {
     dispatch({
       type: GET_USER_BY_EMAIL_FAILED,

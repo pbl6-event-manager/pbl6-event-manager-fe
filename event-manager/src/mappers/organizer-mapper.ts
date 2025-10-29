@@ -7,7 +7,7 @@ export const mapToOrganizerModel = (raw: any) : OrganizerModel => ({
     contactEmail: raw.contactEmail ?? null,
     contactPhone: raw.contactPhone ?? null,
     website: raw.website ?? null,
-    logoUrl: raw.website ?? null,
+    logoUrl: raw.logoUrl ?? null,
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt,
     isActive: raw.isActive ?? false,

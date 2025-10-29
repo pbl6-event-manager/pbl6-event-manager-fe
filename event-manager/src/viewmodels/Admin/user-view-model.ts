@@ -2,17 +2,18 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getOrgOfAnUser, updateUser, getUserByEmail } from "../../store/actions/Admin/user-action";
 import { useEffect, useCallback, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {applyUserFilters} from "../../utils/Admin/filter-user";
 import {type FilterState} from "../../utils/Admin/filter-user";
 import { FILTER_STATE_DEFAULT } from "../../utils/Admin/filter-user";
 import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert } from "../../helpers/alert-helpers";
 
-export const useUserViewModel = () => {
+export const useUserViewModel = () => { 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const {user, users, loading, activeOrganizers, inActiveOrganizers}= useSelector((state: RootState) => state.userReducer);
+  const {user, users, loading, activeOrganizers, inActiveOrganizers} = useSelector((state: RootState) => state.userReducer);
+  const [cachedUserLocal, setCachedUserLocal] = useState<any | null>(null);
   const [openDelDialog, setOpenDelDialog] = useState(false);
   const [openRecDialog, setOpenRecDialog] = useState(false);
   const [detailEmail, setDetailEmail] = useState("");
@@ -31,17 +32,73 @@ export const useUserViewModel = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    
-    if(detailEmail) {
+    const qEmail = new URLSearchParams(location.search).get("email");
+    const stateEmail = (location.state as any)?.user?.email;
+    const emailFromQueryOrState = qEmail ?? stateEmail ?? "";
+    if (emailFromQueryOrState && emailFromQueryOrState !== detailEmail) {
+      setDetailEmail(emailFromQueryOrState);
+    }
+  }, [location.search, location.state]);
+
+  useEffect(() => {
+    if (!detailEmail) {
+      setCachedUserLocal(null);
+      return;
+    }
+
+    let mounted = true;
+    let loadingTimer: any = null;
+
+    const fetchDetailOfAnUser = async () => {
       try {
-        showLoadingAlert("Getting user information...");
-        dispatch<any>(getUserByEmail(detailEmail));
-        closeLoadingAlert();
+        const cached = users.find((u) => u.email === detailEmail) ?? null;
+        if (cached && mounted) {
+          setCachedUserLocal(cached);
+        } else if (mounted) {
+          setCachedUserLocal(null);
+        }
+
+        loadingTimer = setTimeout(() => {
+          if (mounted) showLoadingAlert("Loading");
+        }, 300);
+
+        const fetchRes: any = await dispatch<any>(getUserByEmail(detailEmail));
+
+        if (loadingTimer) {
+          clearTimeout(loadingTimer);
+          loadingTimer = null;
+        }
+        if (!mounted) return;
+
+        const fetchedUser = fetchRes?.payload ?? fetchRes?.data ?? fetchRes;
+        // if fetchedUser exists, replace local cache and ensure store/selectors updated by thunk
+        if (fetchedUser && mounted) {
+          setCachedUserLocal(fetchedUser);
+        }
+
+        const userId = fetchedUser?.id ?? (cached?.id ?? null);
+        if (userId) {
+          await dispatch<any>(getOrgOfAnUser(userId));
+        }
+
+        try { closeLoadingAlert(); } catch {}
       } catch (error: any) {
+        if (!mounted) return;
+        try { closeLoadingAlert(); } catch {}
         showErrorAlert(error?.message || "Failed to fetch information of this user");
       }
-    }
-  }, [detailEmail])
+    };
+
+    fetchDetailOfAnUser();
+
+    return () => {
+      mounted = false;
+      if (loadingTimer) {
+        clearTimeout(loadingTimer);
+        loadingTimer = null;
+      }
+    };
+  }, [detailEmail, dispatch, users]);
 
 
   useEffect(() => {
@@ -67,7 +124,6 @@ export const useUserViewModel = () => {
   const organizerColumns = [
     { header: "ID", accessor: "id", type: "text" as const },
     { header: "Organizer Name", accessor: "name", type: "text" as const },
-    { header: "Actions", accessor: "actions", type: "action" as const },
   ];
   
   const [filters, setFilters] = useState<FilterState>(FILTER_STATE_DEFAULT);
@@ -95,7 +151,7 @@ export const useUserViewModel = () => {
 
   const handleViewDetail = (email: string) => {
     setDetailEmail(email);
-    navigate("/admin/users/details", {state: {email}});
+    navigate(`/admin/users/details?email=${email}`);
   }
 
   const handleEdit = (email: string) => {
@@ -185,13 +241,14 @@ export const useUserViewModel = () => {
     navigate(-1);
   }
   
+  const displayedUser = user ?? cachedUserLocal;
 
   return {
     filteredActiveUsers,
     filteredInActiveUsers, 
     columns,
     users,
-    user,
+    user: displayedUser,
     selectedUserEmail,
     openDelDialog,
     openRecDialog,

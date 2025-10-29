@@ -10,7 +10,7 @@ import UserInActiveOrganizerEvents from "../../components/Admin/user-inactive-or
 import { ArrowLeft } from "lucide-react";
 
 const UserViewDetailPage: React.FC = () => {
-  const { user, openDelDialog, setOpenDelDialog, activeDetailTab, setActiveDetailTab, detailEmail, handleEdit, handleDelete, handleBack } = useUserViewModel();
+  const { user, openDelDialog, setOpenDelDialog, activeDetailTab, setActiveDetailTab, handleEdit, handleDelete, handleBack, confirmDelete, handleRecover, openRecDialog, setOpenRecDialog, confirmRecover } = useUserViewModel();
 
   return (
     <div className="p-6">
@@ -28,7 +28,7 @@ const UserViewDetailPage: React.FC = () => {
       <UserInformationCard
         user={user}
         onEdit={handleEdit}
-        onChangeStatus={() => setOpenDelDialog(true)}
+        onChangeStatus={user.isActive ? handleDelete : handleRecover}
       />
 
       {/* Tabs */}
@@ -56,15 +56,26 @@ const UserViewDetailPage: React.FC = () => {
         {activeDetailTab === "active-organizer" && <UserActiveOrganizerEvents />}
         {activeDetailTab === "deleted-organizer" && <UserInActiveOrganizerEvents />}
       </div>
+
       <ConfirmDialog
-          open={openDelDialog}
-          onOpenChange={setOpenDelDialog}
-          title="Confirm"
-          description="Are you sure you want to delete this account?"
-          confirmText="Delete"
-          cancelText="Cancel"
-          onConfirm={() => handleDelete(detailEmail)}
-        />
+        open={openDelDialog}
+        onOpenChange={setOpenDelDialog}
+        title="Confirm"
+        description="Are you sure you want to delete this account?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDelete}
+      />
+      <ConfirmDialog
+        open={openRecDialog}
+        onOpenChange={setOpenRecDialog}
+        title="Confirm"
+        description="Are you sure you want to recover this account?"
+        confirmText="Recover"
+        cancelText="Cancel"
+        onConfirm={confirmRecover}
+        danger={false}
+      />
     </div>
   );
 };

@@ -25,12 +25,12 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
           <div className="mt-4 flex justify-end gap-2">
             <Dialog.Close asChild>
-              <button className="px-3 py-1 rounded bg-gray-200">
+              <button className="px-3 py-1 rounded bg-gray-200 cursor-pointer">
                 {cancelText}
               </button>
             </Dialog.Close>
             <button
-              className={`px-3 py-1 rounded text-white ${
+              className={`px-3 py-1 rounded text-white cursor-pointer ${
                 danger
                   ? "bg-red-500 hover:bg-red-600"
                   : "bg-blue-500 hover:bg-blue-600"
