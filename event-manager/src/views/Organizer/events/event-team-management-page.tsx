@@ -44,30 +44,30 @@ export default function EventTeamManagementPage() {
 
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">Team Management</h1>
-                    <p className="text-gray-600">Manage team members assigned to this event</p>
+                    <h1 className="text-3xl font-bold mb-2">Staff Management</h1>
+                    <p className="text-gray-600">Manage staffs assigned to this event</p>
                 </div>
 
                 {/* Search Bar */}
                 <div className="mb-6 flex items-center justify-between gap-4">
                     <Input
                         type="text"
-                        placeholder="Search members by name or email"
+                        placeholder="Search staffs by name or email"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-1"
                     />
                     <Button
                         onClick={() => setShowAssignModal(true)}
-                        className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium"
+                        className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium cursor-pointer"
                     >
-                        Assign Member
+                        Assign staffs
                     </Button>
                 </div>
                 {/* Assigned Members Summary */}
                 <Card className="mb-8">
                     <CardHeader>
-                        <CardTitle>Assigned Members ({viewModel.eventMembers.length})</CardTitle>
+                        <CardTitle>Assigned staffs ({viewModel.eventMembers.length})</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
