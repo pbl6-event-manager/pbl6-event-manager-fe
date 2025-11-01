@@ -1,6 +1,6 @@
 import { checkEmailExist } from "../api/auth-api";
 import { getOrgOfAnUserApi } from "../api/organizer-api";
-import { getAllUsersApi, getUserByEmailApi, updateUserApi } from "../api/admin-api";
+import { getAllUsersApi, getUserByEmailApi, updateUserApi } from "../api/user-api";
 import { convertOrgModelToListOrgDto } from "../converters/organizer-converter";
 import { convertUserModelToListUserDto } from "../converters/user-converter";
 import type { ListOrganizerDto } from "../dtos/organizer-dto";
