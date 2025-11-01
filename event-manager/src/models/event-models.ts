@@ -85,3 +85,60 @@ export interface LocationData {
     address2: string
     stateProvince: string
 }
+
+
+// ============ API Models (Raw from Backend) ============
+export interface CreateEventRequest {
+  organizerId: number
+  title: string
+  summary: string
+  startTime: string // ISO 8601 format with offset
+  endTime: string // ISO 8601 format with offset
+  address: string
+  city: string
+  country: string
+  language?: string
+  latitude: number
+  longitude: number
+  banner?: File
+  categoryIds?: number[]
+}
+
+export interface CreateEventResponse {
+  id: number
+  organizerId: number
+  title: string
+  summary: string
+  startTime: string
+  endTime: string
+  address: string
+  city: string
+  country: string
+  language: string
+  latitude: number
+  longitude: number
+  bannerUrl?: string
+  categoryIds: number[]
+  createdAt: string
+  updatedAt: string
+}
+
+// ============ Domain Models (TypeScript Interfaces) ============
+export interface EventDomainModel {
+  id: number
+  organizerId: number
+  title: string
+  summary: string
+  startTime: Date
+  endTime: Date
+  address: string
+  city: string
+  country: string
+  language: string
+  latitude: number
+  longitude: number
+  bannerUrl?: string
+  categoryIds: number[]
+  createdAt: Date
+  updatedAt: Date
+}

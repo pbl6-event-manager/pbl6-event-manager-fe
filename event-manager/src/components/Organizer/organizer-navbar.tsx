@@ -1,4 +1,6 @@
 import EventbriteLogo from "../eventbrite-logo";
+import { useAppSelector } from "../../hooks/redux"
+import { useNavigate } from "react-router-dom"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
@@ -11,6 +13,30 @@ import {
 import { Bell, ChevronDown, Plus } from "lucide-react";
 
 export default function OrganizerNavbar() {
+  const user = useAppSelector((state) => state.auth.user)
+  const navigate = useNavigate()
+
+  const getInitials = () => {
+    if (user?.firstName && user?.lastName) {
+      return (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase()
+    }
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase()
+    }
+    return "U"
+  }
+
+  const getDisplayName = () => {
+    if (user?.firstName && user?.lastName) {
+      return `${user.firstName} ${user.lastName}`
+    }
+    return user?.email || "User"
+  }
+
+  const handleLogout = () => {
+    // TODO: Implement logout action
+    navigate("/login")
+  }
   return (
     <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6">
         {/* Left side - Logo */}
@@ -33,10 +59,10 @@ export default function OrganizerNavbar() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-2">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg?height=32&width=32" />
-                  <AvatarFallback className="bg-blue-500 text-white text-sm">LA</AvatarFallback>
+                  <AvatarImage src={user?.avatar || "/placeholder.svg"} />
+                  <AvatarFallback className="bg-blue-500 text-white text-sm">{getInitials()}</AvatarFallback>
                 </Avatar>
-                <span className="text-sm font-medium">Lê Tôn Thanh An</span>
+                <span className="text-sm font-medium">{getDisplayName()}</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -48,9 +74,9 @@ export default function OrganizerNavbar() {
                 <span>Account Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <span>Log out</span>
-                <span className="text-xs text-gray-500 ml-auto">thanhanleton123@gmail...</span>
+                <span className="text-xs text-gray-500 ml-auto">{user?.email?.substring(0, 20)}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
