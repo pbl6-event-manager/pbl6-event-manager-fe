@@ -181,7 +181,11 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
                   className={`mt-1 ${errors.date ? "border-destructive" : ""}`}
                   value={eventData.startDate}
                   onChange={(e) => {
-                    onUpdate({ ...eventData, startDate: e.target.value })
+                    onUpdate({
+                      ...eventData,
+                      startDate: e.target.value,
+                      endDate: eventType === "single" ? e.target.value : eventData.endDate,
+                    })
                     if (errors.date) {
                       setErrors({ ...errors, date: undefined })
                     }

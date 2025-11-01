@@ -12,6 +12,9 @@ import { OverviewCard } from "../../../components/Organizer/overview-card"
 import { GoodToKnowCard } from "../../../components/Organizer/good-to-know-card"
 import { LineupAndAgendaCard } from "../../../components/Organizer/lineup-and-agenda-card"
 import type { EventData, EventFormErrors, MediaFile, GoodToKnowData } from "../../../models"
+import { useCreateEventViewModel } from "../../../viewmodels/Organizer/events/create-event-view-model"
+import { eventConverter } from "../../../converters/event-converter"
+import type { EventFormDTO } from "../../../dtos/event-dto"
 
 export default function CreateEventPage() {
   const [eventData, setEventData] = useState<EventData>({
@@ -46,6 +49,8 @@ export default function CreateEventPage() {
     timezone: "",
     language: "en-US"
   })
+  const { isLoading, error, createdEvent, createEvent } = useCreateEventViewModel()
+  const navigate = useNavigate()
   const [errors, setErrors] = useState<EventFormErrors>({})
   const [uploadedMedia, setUploadedMedia] = useState<MediaFile[]>([])
   const [goodToKnowData, setGoodToKnowData] = useState<GoodToKnowData>({
@@ -73,13 +78,28 @@ export default function CreateEventPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSaveAndContinue = () => {
+  const handleSaveAndContinue = async () => {
     if (validateForm()) {
-      console.log("Form is valid, saving...")
+      try {
+        const formDTO: EventFormDTO = await eventConverter.convertEventDataToFormDTO(
+          eventData,
+          4, // TODO: Get organizerId from auth state
+          uploadedMedia[0]?.file,
+        )
+
+        const result = await createEvent(formDTO)
+
+        if (result && result.id) {
+          console.log("[v0] Event created successfully:", result)
+          navigate(`/organizer/events/edit/${result.id}?step=2`)
+        }
+      } catch (err) {
+        console.error("[v0] Error creating event:", err)
+        // Show error toast
+      }
     }
   }
 
-  const navigate = useNavigate()
   const handleBackClick = () => {
     const confirmed = window.confirm("Are you sure to leave the page?")
     if (confirmed) {
@@ -153,8 +173,20 @@ export default function CreateEventPage() {
 
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t py-4 z-50">
         <div className="container mx-auto px-4 flex justify-end">
-          <Button size="lg" onClick={handleSaveAndContinue} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
-            Save and continue
+          {error && <span className="text-red-500 text-sm">{error}</span>}
+          <Button 
+            size="lg" 
+            onClick={handleSaveAndContinue} 
+            className="bg-[#f05537] hover:bg-[#d63c1f] text-white"
+          >
+            {isLoading ? (
+              <>
+                <span className="animate-spin mr-2">⏳</span>
+                Saving...
+              </>
+            ) : (
+              "Save and continue"
+            )}
           </Button>
         </div>
       </div>
