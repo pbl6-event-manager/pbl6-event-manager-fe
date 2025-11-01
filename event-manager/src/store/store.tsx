@@ -4,7 +4,7 @@ import { authReducer } from "./reducers/auth-reducer";
 import { navigationReducer } from "./reducers/common/navigation-reducer";
 import { authFlowReducer } from "./reducers/auth-flow-reducer";
 import eventReducer from "./reducers/Admin/event-reducer";
-// import createEventReducer from "./reducers/Organizer/create-event-reducer";
+import createEventReducer from "./reducers/Organizer/create-event-reducer";
 import { locationReducer } from "./reducers/Admin/location-reducer";
 import categoryReducer from "./reducers/Admin/category-reducer";
 import organizerEventReducer from "./reducers/Organizer/event-reducer";
@@ -27,7 +27,7 @@ const allReducer = combineReducers({
   eventTeamManagement: eventTeamManagementReducer,
   organizerTeamManagement: organizerTeamManagementReducer,
   role: roleReducer,
-  // createEvent: createEventReducer,
+  createEvent: createEventReducer,
 }); 
 
 export const store = createStore(allReducer, applyMiddleware(thunk));
