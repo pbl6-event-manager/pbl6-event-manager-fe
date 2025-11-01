@@ -1,6 +1,10 @@
 import { checkEmailExist } from "../api/auth-api";
 import { getOrgOfAnUserApi } from "../api/organizer-api";
+<<<<<<< Updated upstream
 import { updateStatusUserApi, getAllUsersApi, createUserApi } from "../api/user-api";
+=======
+import { getAllUsersApi, getUserByEmailApi, updateUserApi } from "../api/admin-api";
+>>>>>>> Stashed changes
 import { convertOrgModelToListOrgDto } from "../converters/organizer-converter";
 import { convertUserModelToListUserDto, convertUserDataToSignUpDto, convertUserDataToCreateUserDto } from "../converters/user-converter";
 import type { ListOrganizerDto } from "../dtos/organizer-dto";

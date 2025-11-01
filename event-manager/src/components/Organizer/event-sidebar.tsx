@@ -9,9 +9,11 @@ import type { EventData } from "../../models"
 interface EventSidebarProps {
   eventData: EventData
   currentStep: number
+  completedSteps?: number[] // Added to track completed steps
   isCreating?: boolean
   onStepClick?: (stepId: number) => void
   onMenuItemClick?: (itemId: string) => void
+  activeMenuItem?: string // Added to track active menu item
 }
 
 const steps = [
@@ -31,14 +33,17 @@ const additionalMenuItems = [
   { id: "discount", title: "Discount", hasSubmenu: true },
 ]
 
-
 export function EventSidebar({
   eventData,
   currentStep,
+  completedSteps = [], // Default to empty array
   isCreating = false,
   onStepClick,
   onMenuItemClick,
+  activeMenuItem,
 }: EventSidebarProps) {
+  const isStepCompleted = (stepId: number) => completedSteps.includes(stepId)
+
   return (
     <Card className="h-fit">
       <CardHeader className="pb-4">
@@ -56,11 +61,11 @@ export function EventSidebar({
           <Calendar className="h-4 w-4 mr-1" />
           {eventData.startDate
             ? new Date(eventData.startDate).toLocaleDateString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
             : "Mon, Nov 10, 2025"}
           , {eventData.startTime || "10:00 AM"}
         </div>
@@ -82,36 +87,46 @@ export function EventSidebar({
               {steps.map((step) => {
                 const isDisabled = isCreating && step.id > currentStep
                 const isClickable = !isDisabled
+                const completed = isStepCompleted(step.id) // Check if step is completed
 
                 return (
                   <div
                     key={step.id}
-                    className={`flex items-start gap-3 group relative ${isClickable ? "cursor-pointer hover:opacity-80" : "cursor-not-allowed"
-                      }`}
+                    className={`flex items-start gap-3 group relative ${
+                      isClickable ? "cursor-pointer hover:opacity-80" : "cursor-not-allowed"
+                    }`}
                     onClick={() => isClickable && onStepClick?.(step.id)}
                     role={isClickable ? "button" : undefined}
                     tabIndex={isClickable ? 0 : -1}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${currentStep === step.id
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${
+                        currentStep === step.id
                           ? "bg-primary text-primary-foreground"
-                          : isDisabled
-                            ? "bg-muted text-muted-foreground"
-                            : "bg-muted text-muted-foreground"
-                        }`}
+                          : completed // Show checkmark if completed
+                            ? "bg-black  text-white"
+                            : isDisabled
+                              ? "bg-muted text-muted-foreground"
+                              : "bg-muted text-muted-foreground"
+                      }`}
                     >
                       {isDisabled ? (
                         <Ban className="h-4 w-4" />
-                      ) : (step.id)}
+                      ) : completed ? ( // Show check icon if completed
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        step.id
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p
-                        className={`text-sm font-medium ${isDisabled
+                        className={`text-sm font-medium ${
+                          isDisabled
                             ? "text-muted-foreground"
                             : currentStep === step.id
                               ? "text-foreground"
                               : "text-muted-foreground"
-                          }`}
+                        }`}
                       >
                         {step.title}
                       </p>
@@ -132,7 +147,11 @@ export function EventSidebar({
                   <button
                     key={item.id}
                     onClick={() => onMenuItemClick?.(item.id)}
-                    className="w-full flex items-center justify-between px-2 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                    className={`w-full flex items-center justify-between px-2 py-2 text-sm rounded-md transition-colors ${
+                      activeMenuItem === item.id // Highlight active menu item
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
                   >
                     <span>{item.title}</span>
                     {item.hasSubmenu && <ChevronDown className="h-4 w-4" />}

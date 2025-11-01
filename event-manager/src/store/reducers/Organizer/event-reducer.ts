@@ -1,5 +1,6 @@
-import { EVENT_ACTIONS, type EventAction } from "../../actions/Organizer/event-action";
+import { EVENT_ACTIONS } from "../../actions/Organizer/event-action";
 import type { EventData } from "../../../models";
+import type { CreateEventDTO } from "../../../dtos/event-dto";
 
 export interface EventState {
     currentEvent: EventData | null

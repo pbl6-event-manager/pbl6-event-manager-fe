@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { EventTitleCard } from "../../../components/Organizer/event-title-card"
@@ -57,6 +57,7 @@ const fetchEventData = async (eventId: string): Promise<EventData> => {
 export default function EditEventPage() {
   const { eventId } = useParams<{ eventId: string }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const [isLoading, setIsLoading] = useState(true)
   const [eventData, setEventData] = useState<EventData>({
@@ -99,7 +100,8 @@ export default function EditEventPage() {
     parkingInfo: null,
     faqs: [],
   })
-  const [currentSection, setCurrentSection] = useState<string | number>(1)
+  const initialStep = Number.parseInt(searchParams.get("step") || "1")
+  const [currentSection, setCurrentSection] = useState<string | number>(initialStep)
 
   useEffect(() => {
     const loadEventData = async () => {
@@ -206,9 +208,11 @@ export default function EditEventPage() {
                 <EventSidebar
                   eventData={eventData}
                   currentStep={typeof currentSection === "number" ? currentSection : 1}
+                  completedSteps={[1]}
                   isCreating={false}
                   onStepClick={handleStepClick}
                   onMenuItemClick={handleMenuItemClick}
+                  activeMenuItem={typeof currentSection === "string" ? currentSection : undefined}
                 />
               </div>
             </div>
