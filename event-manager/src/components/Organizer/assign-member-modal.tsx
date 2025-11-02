@@ -65,22 +65,18 @@ export default function AssignMemberModal({
                                                     <p className="text-xs text-gray-600 truncate">{member.email}</p>
                                                 </div>
                                             </div>
-                                            {isAssigned ? (
-                                                <div className="flex items-center gap-2 text-green-600">
-                                                    <Check className="h-5 w-5" />
-                                                    <span className="text-sm font-medium">Assigned</span>
-                                                </div>
-                                            ) : (
-                                                <Button
-                                                    onClick={() => onAssign(member)}
-                                                    variant="outline"
-                                                    size="sm"
-                                                    className="ml-4"
+                                            <div className="flex items-center gap-2">   
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isAssigned}
+                                                    onChange={() => onAssign(member)}
                                                     disabled={isLoading}
-                                                >
-                                                    Assign
-                                                </Button>
-                                            )}
+                                                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer disabled:cursor-not-allowed"
+                                                />
+                                                <label className="text-sm font-medium text-gray-700 cursor-pointer">
+                                                    {isAssigned ? 'Assigned' : 'Assign'}
+                                                </label>
+                                            </div>
                                         </div>
                                     )
                                 )
@@ -90,8 +86,15 @@ export default function AssignMemberModal({
                 </div>
 
                 {/* Footer */}
-                <div className="border-t border-gray-200 p-6 flex justify-end">
-                    <Button onClick={onClose} variant="outline">
+                <div className="border-t border-gray-200 p-6 flex justify-end gap-4">
+                    <Button 
+                        className="bg-orange-600 hover:bg-orange-700 text-white hover:text-white px-6 py-2 rounded-lg font-medium cursor-pointer" 
+                        onClick={onClose} 
+                        variant="outline"
+                    >
+                        Save
+                    </Button>
+                    <Button className="cursor-pointer" onClick={onClose} variant="outline">
                         Close
                     </Button>
                 </div>
