@@ -1,5 +1,5 @@
 import React from "react";
-import type { OrganizerDetailInfoProps } from "../../models/organizer-models";
+import type { OrganizerDetailInfoProps } from "../../models/form-models/organizer-form-models";
 
 const OrganizerDetailInfo: React.FC<OrganizerDetailInfoProps> = ({ organizer }) => {
   return (

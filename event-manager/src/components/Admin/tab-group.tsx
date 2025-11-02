@@ -1,8 +1,5 @@
 import React from "react";
-
-interface TabGroupProps {
-  children: React.ReactNode;
-}
+import type { TabGroupProps } from "../../models/component-props/tab-bar-component-props";
 
 const TabGroup: React.FC<TabGroupProps> = ({ children }) => {
   return (

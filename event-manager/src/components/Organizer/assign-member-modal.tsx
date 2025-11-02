@@ -1,18 +1,9 @@
-"use client"
-
 import { useState } from "react"
 import { X, Check } from "lucide-react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-import type { TeamMember } from "../../models/team-models"
 import { useEventTeamManagementViewModel } from "../../viewmodels/Organizer/events/event-team-management-view-model"
-
-interface AssignMemberModalProps {
-    availableMembers: TeamMember[]
-    onAssign: (member: TeamMember) => void
-    onClose: () => void
-    isLoading?: boolean
-}
+import type { AssignMemberModalProps } from "../../models/component-props/modal-component-props"
 
 export default function AssignMemberModal({
     availableMembers,

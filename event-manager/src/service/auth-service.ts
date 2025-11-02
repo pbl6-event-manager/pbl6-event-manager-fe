@@ -1,5 +1,5 @@
 import { loginApi, refreshTokenApi, checkEmailExist, signupApi } from "../api/auth-api";
-import type { SignUpDto } from "../models";
+import type { SignUpDto } from "../dtos/auth-dto";
 
 export const loginService = async (email: string, password: string) => {
   const { data } = await loginApi(email, password);

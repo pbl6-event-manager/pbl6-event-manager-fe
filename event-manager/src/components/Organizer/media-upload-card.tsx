@@ -1,17 +1,10 @@
-"use client"
-
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { Upload, X, ImageIcon, VideoIcon, Check, Plus } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
-import type { MediaFile } from "../../models"
-
-interface MediaUploadCardProps {
-  uploadedMedia: MediaFile[]
-  onUpdate: (files: MediaFile[]) => void
-}
+import type { MediaUploadCardProps } from "../../models/component-props/card-component-props"
+import type { MediaFileModel } from "../../models/form-models/event-form-models"
 
 export function MediaUploadCard({ uploadedMedia, onUpdate }: MediaUploadCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -40,7 +33,7 @@ export function MediaUploadCard({ uploadedMedia, onUpdate }: MediaUploadCardProp
   }, [isExpanded, isValid])
 
   const handleFileUpload = (file: File, type: "image" | "video") => {
-    const newFile: MediaFile = {
+    const newFile: MediaFileModel = {
       id: Math.random().toString(36).substr(2, 9),
       file,
       preview: URL.createObjectURL(file),

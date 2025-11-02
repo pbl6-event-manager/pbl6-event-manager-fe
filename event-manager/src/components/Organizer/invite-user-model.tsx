@@ -1,13 +1,7 @@
-"use client"
-
 import { useState } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-
-interface InviteUserModalProps {
-  onClose: () => void
-}
-
+import type { InviteUserModalProps } from "../../models/component-props/modal-component-props"
 // Mock roles - replace with Redux state
 const mockRoles = [
   { id: "1", name: "Owner" },

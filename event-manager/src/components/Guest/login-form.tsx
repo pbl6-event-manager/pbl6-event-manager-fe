@@ -1,4 +1,3 @@
-"use client";
 import EventbriteLogo from "../eventbrite-logo";
 import SocialLoginButtons from "./social-login-buttons";
 import { useLoginViewModel } from "../../viewmodels/login-view-model";

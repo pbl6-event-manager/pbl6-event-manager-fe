@@ -1,5 +1,5 @@
 import type { ListOrganizerDto } from "../dtos/organizer-dto";
-import type { OrganizerModel } from "../models/organizer-models";
+import type { OrganizerModel } from "../models/bean/organizer-models";
 
 export const convertOrgModelToListOrgDto = (org: OrganizerModel) : ListOrganizerDto => ({
     id: org.id,

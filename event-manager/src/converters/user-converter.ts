@@ -1,6 +1,6 @@
-import type { UserModel } from "../models/user-models";
+import type { UserModel } from "../models/bean/user-models";
 import type { CreateUserDto, ListUserDto } from "../dtos/user-dto";
-import type { SignUpDto } from "../models";
+import type { SignUpDto } from "../dtos/auth-dto";
 
 export const convertUserModelToListUserDto = (user: UserModel): ListUserDto => ({
   id: user.id,

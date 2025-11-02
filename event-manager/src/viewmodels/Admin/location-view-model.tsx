@@ -1,13 +1,13 @@
 // viewmodels/useLocationViewModel.ts
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCountries, fetchCities } from "../../store/actions/Admin/location-action";
+import { fetchCountries, fetchCities } from "../../store/actions/location-action";
 import type { RootState } from "../../store/store";
 import { useEffect } from "react";
 
 export const useLocationViewModel = (country: string) => {
   const dispatch = useDispatch();
   const { countries, cities, loading, error } = useSelector(
-    (state: RootState) => state.location
+    (state: RootState) => state.locationReducer
   );
 
   // Lấy countries 1 lần khi web load

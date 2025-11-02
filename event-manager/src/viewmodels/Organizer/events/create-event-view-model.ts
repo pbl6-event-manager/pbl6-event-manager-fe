@@ -8,7 +8,7 @@ export const useCreateEventViewModel = () => {
     const dispatch = useDispatch<AppDispatch>()
 
     // Select state from Redux
-    const { isLoading, error, createdEvent, isSuccess } = useSelector((state: RootState) => state.createEvent)
+    const { isLoading, error, createdEvent, isSuccess } = useSelector((state: RootState) => state.eventReducer.)
 
     const createEvent = useCallback(
         async (formData: EventFormDTO) => {

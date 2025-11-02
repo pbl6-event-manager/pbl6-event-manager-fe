@@ -1,14 +1,14 @@
 import React from "react";
-import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
-import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import Table from "./table";
 import OrganizerDetailInfo from "./organizer-detail-form"; 
+import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
+import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import { useOrganizerViewModel } from "../../viewmodels/Admin/organizer-view-model";
 
 const UserActiveOrganizerEvents: React.FC = () => {
   const { activeOrganizers, organizerColumns } = useUserViewModel();
   const { userEvents, eventColumnsDelView } = useEventViewModel();
-  const { setSelectedOrganizer, selectedOrganizer, handleSelectOrganizer, handleDelete, openDelDialog, setOpenDelDialog, confirmDelete } = useOrganizerViewModel();
+  const { selectedOrganizer, handleSelectOrganizer } = useOrganizerViewModel();
 
   return (
     <div className="mt-6 flex flex-col gap-6">

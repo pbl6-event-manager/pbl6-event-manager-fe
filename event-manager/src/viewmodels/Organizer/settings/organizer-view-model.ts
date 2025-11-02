@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { useCallback, useEffect, useState } from "react"
 import type { RootState, AppDispatch } from "../../../store/store"
-import type { OrganizerFormData } from "../../../models/organizer-models"
+import type { OrganizerFormData } from "../../../models/bean/organizer-models"
 import {
   fetchOrganizers,
   fetchOrganizerDetail,

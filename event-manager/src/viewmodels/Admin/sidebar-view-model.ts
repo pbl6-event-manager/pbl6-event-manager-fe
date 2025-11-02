@@ -10,6 +10,7 @@ export const useSideBarViewModel = () => {
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  
   const handleLogout = () => {
     setOpenDialog(false);
     dispatch(logout());

@@ -1,4 +1,4 @@
-import { userFormSchema, type UserFormData  } from "../../models/Admin/form-models";
+import { userFormSchema, type UserFormData  } from "../../models/form-models/user-form-models";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useState, useEffect, useRef } from "react";

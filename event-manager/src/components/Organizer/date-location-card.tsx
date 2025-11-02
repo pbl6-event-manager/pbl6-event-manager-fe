@@ -1,5 +1,3 @@
-"use client"
-
 import { useRef, useEffect } from "react"
 import { Calendar, MapPin, Plus, Check, AlertCircle, Clock, Globe } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
@@ -9,16 +7,12 @@ import { Label } from "../ui/label"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { Switch } from "../ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import type { EventData } from "../../models"
 import { useDateLocationViewModel } from "../../viewmodels/Organizer/events/date-location-view-model"
 import { TIMEZONES, LANGUAGES } from "../../utils/Organizer/timezone-language"
+import type { EventCardProps } from "../../models/component-props/card-component-props"
 
-interface DateLocationCardProps {
-  eventData: EventData
-  onUpdate: (data: EventData) => void
-}
 
-export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps) {
+export function DateLocationCard({ eventData, onUpdate }: EventCardProps) {
   const {
     isExpanded,
     setIsExpanded,
@@ -125,7 +119,6 @@ export function DateLocationCard({ eventData, onUpdate }: DateLocationCardProps)
 
   return (
     <div ref={cardRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Date and Time Card - Expanded */}
       <Card className="border-2 border-blue-700 transition-colors duration-300 cursor-pointer">
         <CardHeader>
           <div className="flex items-center justify-between">

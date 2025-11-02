@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteOrganizer } from "../../store/actions/Organizer/organizer-action";
 import type { RootState } from "../../store/store";
 
 export const useOrganizerViewModel = () => {
@@ -15,16 +14,6 @@ export const useOrganizerViewModel = () => {
         const organizer = organizers.filter((o) => o.id === id);
         setSelectedOrganizer(organizer[0]);
     };
-
-    const handleDelete = (id: any) => {
-        setOpenDelDialog(true);
-        setSelectedOrgId(id);
-    }
-
-    const confirmDelete = () => {
-        dispatch<any>(deleteOrganizer(selectedOrgId));
-        setOpenDelDialog(false);
-    }
     
     return {
         selectedOrganizer,
@@ -34,7 +23,5 @@ export const useOrganizerViewModel = () => {
         setOpenRecDialog,
         setSelectedOrganizer,
         handleSelectOrganizer,
-        handleDelete,
-        confirmDelete
     };
 }

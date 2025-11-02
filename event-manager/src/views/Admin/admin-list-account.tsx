@@ -1,10 +1,10 @@
-import React, {useState} from "react";
-import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
+import React from "react";
 import Table from "../../components/Admin/table";
 import FilterUserSidebar from "../../components/Admin/filter-user-sidebar";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
 import TabGroup from "../../components/Admin/tab-group";
 import TabItem from "../../components/Admin/tab-item";
+import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
 
 const AdminUsers: React.FC = () => {
   const {  filteredActiveUsers, filteredInActiveUsers, columns, openDelDialog, openRecDialog, activeTab, setActiveTab, handleViewDetail, handleDelete, handleEdit, confirmDelete, setOpenDelDialog, setOpenRecDialog, handleCreate, setFilters, handleRecover, confirmRecover } = useUserViewModel();

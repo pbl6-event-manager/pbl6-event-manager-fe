@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useEffect } from "react"
 import { Check, Plus, Trash2 } from "lucide-react"
 import { Button } from "../ui/button"
@@ -7,12 +5,8 @@ import { Card, CardContent } from "../ui/card"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-import type { FAQ, GoodToKnowData } from "../../models"
-
-interface GoodToKnowCardProps {
-    data: GoodToKnowData
-    onUpdate: (data: GoodToKnowData) => void
-}
+import type { GoodToKnowCardProps } from "../../models/component-props/card-component-props"
+import type { FAQ } from "../../models/form-models/event-form-models"
 
 type HighlightType = "age" | "doorTime" | "parking"
 

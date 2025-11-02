@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
+import React from "react";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import Table from "../../components/Admin/table";
 

@@ -1,15 +1,13 @@
 import React, { useRef, useEffect } from "react";
-import { createPopper } from "@popperjs/core";
-import type { Instance } from "@popperjs/core";
-import type { DropdownItem, DropdownMenuProps } from "../../models/Admin/dropdown-menu-models";
-
-
+import { createPopper, type Instance } from "@popperjs/core";
+import type { DropdownMenuProps } from "../../models/component-props/dropdown-component-models";
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({
   isOpen,
   onToggle,
   items
 }) => {
+  
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const popperInstance = useRef<Instance | null>(null);

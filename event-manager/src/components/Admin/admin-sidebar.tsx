@@ -15,7 +15,7 @@ import ConfirmDialog from "./confirm-dialog";
 import Logo from "../../assets/Logo.svg";
 
 const AdminSidebar: React.FC = () => {
-  const {openDialog, openSubmenu, setOpenDialog, setOpenSubmenu, handleLogout, toggleSubmenu} = useSideBarViewModel();
+  const {openDialog, openSubmenu, setOpenDialog, handleLogout, toggleSubmenu} = useSideBarViewModel();
   const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: <Home size={18} /> },
     { path: "/admin/systems", label: "System Management", icon: <Settings size={18} /> },
@@ -33,7 +33,6 @@ const AdminSidebar: React.FC = () => {
     },
     { path: "/admin/payments", label: "Transaction Management", icon: <Banknote size={18} /> },
   ];
-
 
   return (
     <div className="h-screen w-64 bg-[var(--surface)] flex flex-col text-[var(--defaulttext)] border-r border-[var(--border-sidebar)]">

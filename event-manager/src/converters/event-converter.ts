@@ -1,20 +1,12 @@
-import type { EventDomainModel} from "../models/event-models"
-import type { CreateEventDTO, EventFormDTO } from "../dtos/event-dto"
-import type { EventData } from "../models/event-models"
+import type { EventModel} from "../models/bean/event-models"
+import type { CreateEventRequestDto, EventFormDto } from "../dtos/event-dto"
+import type { EventFormData } from "../models/form-models/event-form-models"
 import { convertToISODateTime } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
 
-/**
- * Converter Layer - Converts domain models to DTOs for UI consumption
- * Handles formatting and display logic
- */
 
 export const eventConverter = {
-  /**
-   * Convert domain model to DTO for display
-   * Formats dates and combines fields for UI
-   */
-  convertDomainToDTO: (domain: EventDomainModel): CreateEventDTO => {
+  convertDomainToDTO: (domain: EventModel): CreateEventRequestDto => {
   
     const startDateTime = domain.startTime.toLocaleString("en-US", {
       year: "numeric",
@@ -49,10 +41,7 @@ export const eventConverter = {
     }
   },
 
-  /**
-   * Convert EventData (form state) to EventFormDTO for API submission
-   */
-  convertEventDataToFormDTO: async (eventData: EventData, organizerId: number, banner?: File): Promise<EventFormDTO> => {
+  convertEventFormDataToFormDTO: async (eventData: EventFormData, organizerId: number, banner?: File): Promise<EventFormDto> => {
     const startDateTime = convertToISODateTime(eventData.startDate, eventData.startTime, eventData.timezone)
     const endDateTime = convertToISODateTime(eventData.endDate, eventData.endTime, eventData.timezone)
     const coordinates = await getCoordinates(eventData.location.address1, eventData.location.city, eventData.location.country)
@@ -74,10 +63,7 @@ export const eventConverter = {
     }
   },
 
-  /**
-   * Convert multiple domain models to DTOs
-   */
-  convertEventListToDTO: (domainList: EventDomainModel[]): CreateEventDTO[] => {
+  convertEventListToDTO: (domainList: EventModel[]): CreateEventRequestDto[] => {
     return domainList.map((item) => eventConverter.convertDomainToDTO(item))
   },
 }

@@ -1,5 +1,5 @@
-import type { UserModel } from "../models/user-models";
-import type { RoleModel } from "../models/role-models";
+import type { UserModel } from "../models/bean/user-models";
+import type { RoleModel } from "../models/bean/role-models";
 
 export const mapToUserModel = (raw: any): UserModel => ({
   id: raw.id,

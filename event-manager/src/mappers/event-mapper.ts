@@ -1,16 +1,7 @@
-import type { CreateEventResponse, EventDomainModel } from "../models/event-models"
-
-/**
- * Mapper Layer - Converts raw API responses to domain models
- * Pure functions with no side effects
- */
+import type { EventModel } from "../models/bean/event-models";
 
 export const eventMapper = {
-  /**
-   * Map raw API response to domain model
-   * Converts ISO strings to Date objects
-   */
-  mapCreateEventResponseToDomain: (raw: any): EventDomainModel => {
+  mapCreateEventResponseDtoToEventModel: (raw: any): EventModel => {
     return {
       id: raw.id,
       organizerId: raw.organizerId,
@@ -31,10 +22,7 @@ export const eventMapper = {
     }
   },
 
-  /**
-   * Map multiple raw responses to domain models
-   */
-  mapEventListToDomain: (rawList: any[]): EventDomainModel[] => {
-    return rawList.map((item) => eventMapper.mapCreateEventResponseToDomain(item))
+  mapEventListToDomain: (rawList: any[]): EventModel[] => {
+    return rawList.map((item) => eventMapper.mapCreateEventResponseDtoToEventModel(item))
   },
-}
+};

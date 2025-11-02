@@ -1,11 +1,11 @@
 import React from "react";
-import { Plus } from "lucide-react";
 import Table from "../../components/Admin/table";
-import { useCategoryViewModel } from "../../viewmodels/Admin/category-view-model";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
 import CategoryForm from "../../components/Admin/category-form";
 import TabGroup from "../../components/Admin/tab-group";
 import TabItem from "../../components/Admin/tab-item";
+import { Plus } from "lucide-react";
+import { useCategoryViewModel } from "../../viewmodels/Admin/category-view-model";
 
 
 const CategoryManagementView: React.FC = () => {
@@ -40,7 +40,6 @@ const CategoryManagementView: React.FC = () => {
         </TabGroup>
       </div>
 
-      {/* Table */}
       <div>
         {activeTab === "active" && (
           <div className="flex gap-4">
@@ -73,8 +72,6 @@ const CategoryManagementView: React.FC = () => {
         )}
       </div>
       
-
-      {/* Add Category Form */}
       {isAdding && (
         <CategoryForm
           category={newCategory}
@@ -83,7 +80,6 @@ const CategoryManagementView: React.FC = () => {
           onCancel={() => setIsAdding(false)}
         />
       )}
-      {/* Update Category Form */}
       {isEditing && (
         <CategoryForm
           category={category}
@@ -115,7 +111,5 @@ const CategoryManagementView: React.FC = () => {
     </div>
   );
 };
-
-
 
 export default CategoryManagementView;

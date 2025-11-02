@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getOrgOfAnUser, updateUser, getUserByEmail } from "../../store/actions/Admin/user-action";
+import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getOrgOfAnUser, updateUser, getUserByEmail } from "../../store/actions/user-action";
 import { useEffect, useCallback, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {applyUserFilters} from "../../utils/Admin/filter-user";

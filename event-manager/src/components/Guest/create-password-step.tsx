@@ -4,7 +4,7 @@ import { useSignUpViewModel } from "../../viewmodels/signup-view-model"
 import { CheckCircle } from "lucide-react"
 
 const CreatePasswordStep: React.FC = () => {
-  const {password, setPassword, confirmPassword, setConfirmPassword, error, setError, handleSignUpBack, firstName, handleCreateAccount, isLoading, isSuccess, handleGoToLogin} = useSignUpViewModel()
+  const {password, setPassword, confirmPassword, setConfirmPassword, error, handleSignUpBack, firstName, handleCreateAccount, isLoading, isSuccess, handleGoToLogin} = useSignUpViewModel()
 
   if (isSuccess) {
     return (

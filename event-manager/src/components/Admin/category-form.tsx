@@ -1,5 +1,5 @@
 import React from "react";
-import type { CategoryFormProps } from "../../models/Admin/category-models";
+import type { CategoryFormProps } from "../../models/component-props/form-component-props"; 
 
 const CategoryForm: React.FC<CategoryFormProps> = ({
   onSave,

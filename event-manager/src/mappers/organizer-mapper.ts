@@ -1,4 +1,4 @@
-import type { OrganizerModel } from "../models/organizer-models";
+import type { OrganizerModel } from "../models/bean/organizer-models";
 
 export const mapToOrganizerModel = (raw: any) : OrganizerModel => ({
     id: raw.id,
@@ -12,4 +12,4 @@ export const mapToOrganizerModel = (raw: any) : OrganizerModel => ({
     updatedAt: raw.updatedAt,
     isActive: raw.isActive ?? false,
     ownerId: raw.ownerId
-})
+});

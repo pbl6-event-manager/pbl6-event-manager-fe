@@ -1,6 +1,6 @@
 import React from "react";
 import { Pencil, RotateCw, Trash } from "lucide-react";
-import type { UserInformationCardProps } from "../../models/Admin/form-models";
+import type { UserInformationCardProps } from "../../models/component-props/card-component-props"; 
 
 const UserInformationCard: React.FC<UserInformationCardProps> = ({
   user,
@@ -38,9 +38,7 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
         )}
       </div>
 
-      {/* Nội dung user */}
       <div className="flex items-start space-x-8">
-        {/* Avatar + tên */}
         <div className="flex flex-col items-center w-1/4">
           <img
             src={user.avatarUrl ? user.avatarUrl : undefined}
@@ -48,8 +46,7 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
             className="w-28 h-28 rounded-full object-cover shadow-md mb-3"
           />
         </div>
-        
-        {/* Thông tin chi tiết */}
+
         <div className="flex-1 grid grid-cols-3 gap-8">
           <div>
             <p className="font-semibold text-gray-700 text-lg">First Name</p>
@@ -64,7 +61,6 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
               {user.lastName}
             </p>
           </div>
-          {/* Cột trái */}
           <div>
             <p className="font-semibold text-gray-700 text-lg">Email</p>
             <p className="flex items-center text-gray-800 mt-1">
@@ -79,7 +75,6 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
             </p>
           </div>
 
-          {/* Cột phải */}
           <div>
             <p className="font-semibold text-gray-700 text-lg">Role</p>
             <p className="flex items-center text-gray-800 mt-1">
@@ -91,13 +86,12 @@ const UserInformationCard: React.FC<UserInformationCardProps> = ({
             <p
               className={`flex items-center font-semibold mt-1 ${
                 user.isActive ? "text-green-600" : "text-red-600"
-              }`}
-            >
+              }`}>
               <span
                 className={`w-2 h-2 rounded-full mr-2 ${
                   user.isActive ? "bg-green-500" : "bg-red-500"
-                }`}
-              ></span>
+                }`}>
+              </span>
               {user.isActive ? "Active" : "Deleted"}
             </p>
           </div>

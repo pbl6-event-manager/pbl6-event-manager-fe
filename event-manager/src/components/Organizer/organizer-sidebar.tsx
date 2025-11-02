@@ -1,35 +1,20 @@
-"use client"
-
-import type React from "react"
 import { useState } from "react"
-import { Home, Calendar, FileText, Megaphone, BarChart3, Building, Settings, HelpCircle, Grid3X3 } from "lucide-react"
+import { Home, Calendar, FileText, Megaphone, Settings, HelpCircle, Grid3X3 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "../../lib/utils"
 import { Link, useLocation } from "react-router-dom"
 import EventbriteLogoIcon from "../eventbrite-logo-icon"
-
-interface SidebarItem {
-  icon: React.ComponentType<{ className?: string }>
-  label: string
-  href: string
-}
-
-const sidebarItems: SidebarItem[] = [
-  { icon: Home, label: "Home", href: "/organizer/home" },
-  { icon: Calendar, label: "Events", href: "/organizer/events/all" },
-  { icon: FileText, label: "Orders", href: "/organizer/orders" },
-  { icon: Megaphone, label: "Marketing", href: "/organizer/marketing" },
-  { icon: BarChart3, label: "Analytics", href: "/organizer/analytics" },
-  { icon: Building, label: "Venues", href: "/organizer/venues" },
-  { icon: Settings, label: "Settings", href: "/organizer/settings" },
-  { icon: HelpCircle, label: "Help", href: "/organizer/help" },
-]
-
-interface OrganizerSidebarProps {
-  showLogo?: boolean
-}
+import type { SidebarItem, OrganizerSidebarProps } from "../../models/component-props/sidebar-component-props"
 
 export default function OrganizerSidebar({ showLogo = false }: OrganizerSidebarProps) {
+  const sidebarItems: SidebarItem[] = [
+    { icon: Home, label: "Home", href: "/organizer/home" },
+    { icon: Calendar, label: "Events", href: "/organizer/events/all" },
+    { icon: FileText, label: "Orders", href: "/organizer/orders" },
+    { icon: Megaphone, label: "Vouchers", href: "/organizer/vouchers" },
+    { icon: Settings, label: "Settings", href: "/organizer/settings" },
+    { icon: HelpCircle, label: "Help", href: "/organizer/help" },
+  ]
   const location = useLocation()
   const pathname = location.pathname
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);

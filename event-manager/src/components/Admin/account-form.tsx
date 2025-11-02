@@ -1,5 +1,5 @@
 import React from "react";
-import type { RegisterFormProps } from "../../models/Admin/form-models";
+import type { RegisterFormProps } from "../../models/component-props/form-component-props";
 import { useAccountFormViewModel } from "../../viewmodels/Admin/account-form-view-model";
 
 const AccountForm: React.FC<RegisterFormProps> = ({ initialData, onSubmit }) => {

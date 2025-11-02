@@ -1,7 +1,4 @@
-"use client"
-
 import type React from "react"
-
 import { Calendar, Megaphone, Mail } from "lucide-react"
 import { Button } from "../ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"

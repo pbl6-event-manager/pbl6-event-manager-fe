@@ -1,14 +1,9 @@
 import React from "react";
 import { useLocationViewModel } from "../../viewmodels/Admin/location-view-model";
-
-interface CountryCitySelectProps {
-  country: string;
-  city: string;
-  onChange: (country: string, city: string) => void;
-}
+import type { CountryCitySelectProps } from "../../models/component-props/country-city-component-props";
 
 const CountryCitySelect: React.FC<CountryCitySelectProps> = ({ country, city, onChange }) => {
-  const { countries, cities, loading, error } = useLocationViewModel(country);
+  const { countries, cities, loading } = useLocationViewModel(country);
 
   return (
     <div className="flex flex-col gap-3">

@@ -1,6 +1,6 @@
 import { AUTH_FLOW_ACTION } from "../actions/auth-flow-action";
-import type { AuthFlowState } from "../../models";
-import { DEFAULT_AUTH_FLOW_STATE } from "../../models";
+import type { AuthFlowState } from "../../models/reducer-models/auth-reducer-models"; 
+import { DEFAULT_AUTH_FLOW_STATE } from "../../models/reducer-models/auth-reducer-models"; 
 
 export const authFlowReducer = (state = DEFAULT_AUTH_FLOW_STATE, action: any) : AuthFlowState => {
     switch (action.type) {
@@ -16,14 +16,14 @@ export const authFlowReducer = (state = DEFAULT_AUTH_FLOW_STATE, action: any) : 
                 ...state,
                 isExistingUser,
                 currentStep: nextStep,
-                stepHistory: [...state.stepHistory || [], nextStep], // Append the new step to history
+                stepHistory: [...state.stepHistory || [], nextStep],
             };
         case AUTH_FLOW_ACTION.SET_USER_INFO:
             return {
                 ...state,
                 userInfo: action.payload,
                 currentStep: "create-password",
-                stepHistory: [...state.stepHistory || [], "create-password"], // Append the new step to history
+                stepHistory: [...state.stepHistory || [], "create-password"],
             }
         case AUTH_FLOW_ACTION.SET_CURRENT_STEP:
             return {
@@ -31,7 +31,7 @@ export const authFlowReducer = (state = DEFAULT_AUTH_FLOW_STATE, action: any) : 
                 currentStep: action.payload,
                 stepHistory: state.stepHistory?.includes(action.payload)
                     ? state.stepHistory
-                    : [...(state.stepHistory, action.payload)], // Append only if not already in history
+                    : [...(state.stepHistory, action.payload)], 
             };
         case AUTH_FLOW_ACTION.GO_BACK:
             const currentIndex = state.stepHistory?.indexOf(state.currentStep) ?? -1;
@@ -42,7 +42,7 @@ export const authFlowReducer = (state = DEFAULT_AUTH_FLOW_STATE, action: any) : 
             return {
                 ...state,
                 currentStep: previousStep || state.currentStep,
-                stepHistory: state.stepHistory?.slice(0, currentIndex), // Remove the last step from history
+                stepHistory: state.stepHistory?.slice(0, currentIndex),
             };
         case AUTH_FLOW_ACTION.SET_LOADING:
             return {

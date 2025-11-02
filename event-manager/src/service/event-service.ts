@@ -1,24 +1,10 @@
 import { createEvent, getEventById } from "../api/event-api"
 import { eventMapper } from "../mappers/event-mapper"
 import { eventConverter } from "../converters/event-converter"
-import type { CreateEventDTO, EventFormDTO } from "../dtos/event-dto"
+import type { EventFormDto } from "../dtos/event-dto"
 
-/**
- * Service Layer - Orchestrates API calls, mapping, and conversion
- * Calls API → Maps to Domain → Converts to DTO
- * Returns DTOs to actions
- */
-
-export const eventService = {
-  /**
-   * Create event service
-   * 1. Calls API with form data
-   * 2. Maps raw response to domain model
-   * 3. Converts domain to DTO
-   * 4. Returns DTO to action
-   */
-  createEvent: async (formData: EventFormDTO): Promise<CreateEventDTO> => {
-    // Convert DTO to FormData for multipart upload
+export const createEventService = async (formData: EventFormDto) => {
+  try {
     const multipartFormData = new FormData()
     multipartFormData.append("organizerId", formData.organizerId.toString())
     multipartFormData.append("title", formData.title)
@@ -40,25 +26,31 @@ export const eventService = {
       multipartFormData.append("categoryIds", id.toString())
     })
 
-    // Step 1: Call API
     const rawResponse = await createEvent(multipartFormData)
-
-    // Step 2: Map to domain model
-    const domainModel = eventMapper.mapCreateEventResponseToDomain(rawResponse)
-
-    // Step 3: Convert to DTO
+    const domainModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawResponse)
     const dto = eventConverter.convertDomainToDTO(domainModel)
-
     return dto
-  },
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+};
 
-  /**
-   * Get event by ID service
-   */
-  getEventById: async (eventId: number): Promise<CreateEventDTO> => {
+export const getEventByIdService = async(eventId: number) => {
+  try {
     const rawResponse = await getEventById(eventId)
-    const domainModel = eventMapper.mapCreateEventResponseToDomain(rawResponse)
+    const domainModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawResponse)
     const dto = eventConverter.convertDomainToDTO(domainModel)
     return dto
-  },
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
 }
+

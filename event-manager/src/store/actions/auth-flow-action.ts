@@ -1,6 +1,5 @@
 import { checkEmailService } from "../../service/auth-service";
-
-export type AuthStep = "email" | "password" | "user-info" | "create-password";
+import type { AuthStep } from "../../models/reducer-models/auth-reducer-models";
 
 export const AUTH_FLOW_ACTION = {
     SET_EMAIL: "auth-flow/setEmail",

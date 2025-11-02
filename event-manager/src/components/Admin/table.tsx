@@ -1,7 +1,7 @@
 import React from "react";
 import { Pencil, Trash, RotateCcw, Check, X } from "lucide-react"; 
 import { truncateText } from "../../utils/Admin/table-handle";
-import type { TableProps } from "../../models/Admin/table-models";
+import type { TableProps } from "../../models/component-props/table-component-props";
 import { useTableViewModel } from "../../viewmodels/Admin/table-view-model";
 
 const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions, onRowClick }) => {

@@ -1,7 +1,7 @@
 import { addNewCategoryApi, deleteCategoryApi, getAllCategoriesApi, recoverCategoryApi, updateCategoryApi } from "../api/category-api"
 import { convertCategoryModelToListCategoryDto } from "../converters/category-converter";
 import { mapToCategoryModel } from "../mappers/category-mapper";
-import type { CategoryModel } from "../models/Admin/category-models";
+import type { CategoryModel } from "../models/bean/category-models";
 
 export const getAllCategoriesService = async() => {
     try {

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react"
 import { Plus, Check, AlertCircle, Sparkles } from "lucide-react"
 import { Input } from "../ui/input"
@@ -7,14 +5,9 @@ import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
-import type { EventData } from "../../models/event-models"
+import type { EventCardProps } from "../../models/component-props/card-component-props"
 
-interface EventTitleCardProps {
-  eventData: EventData
-  onUpdate: (data: EventData) => void
-}
-
-export function EventTitleCard({ eventData, onUpdate }: EventTitleCardProps) {
+export function EventTitleCard({ eventData, onUpdate }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [touched, setTouched] = useState({ title: false, summary: false })
   const [charCount, setCharCount] = useState(eventData.summary.length)

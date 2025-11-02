@@ -3,9 +3,9 @@
 // viewmodels/Organizer/date-location-view-model.ts
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { fetchCountries, fetchCities } from "../../../store/actions/Admin/location-action"
+import { fetchCountries, fetchCities } from "../../../store/actions/location-action"
 import type { RootState } from "../../../store/store"
-import type { EventData, LocationData } from "../../../models/event-models"
+import type { EventData, LocationData } from "../../../models/bean/event-models"
 
 export const useDateLocationViewModel = (eventData: EventData, onUpdate: (data: EventData) => void) => {
   const dispatch = useDispatch()

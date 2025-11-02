@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import Table from "../../components/Admin/table";
 import FilterEventSidebar from "../../components/Admin/filter-event-sidebar";
-import { applyEventFilters } from "../../utils/Admin/filter-event";
-import type { EventFilterState } from "../../utils/Admin/filter-event";
-import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import TabGroup from "../../components/Admin/tab-group";
 import TabItem from "../../components/Admin/tab-item";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
+import type { EventFilterState } from "../../utils/Admin/filter-event";
+import { applyEventFilters } from "../../utils/Admin/filter-event";
+import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 
 const AdminEvents: React.FC = () => {
   const { publicEvents, pendingEvents, openDeleteDialog, openAcceptDialog, openRejectDialog, activeTab, eventColumns, setActiveTab, setOpenDeleteDialog, setOpenAcceptDialog, setOpenRejectDialog, handleDelete, handleViewDetail, confirmDelete, handleAccept, handleReject, confirmAccept, confirmReject } = useEventViewModel();

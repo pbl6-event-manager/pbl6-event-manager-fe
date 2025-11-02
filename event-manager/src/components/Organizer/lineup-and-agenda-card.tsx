@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react"
 import { Users, Calendar, Check, Upload, Trash2, MoreVertical, Pencil } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card"
@@ -9,15 +7,10 @@ import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
 import { Switch } from "../ui/switch"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
-import type { EventData } from "../../models"
 import { useLineupAgendaViewModel } from "../../viewmodels/Organizer/events/lineup-agenda-view-model"
+import type { EventCardProps } from "../../models/component-props/card-component-props"
 
-interface LineupAndAgendaCardProps {
-  eventData: EventData
-  onUpdate: (data: EventData) => void
-}
-
-export function LineupAndAgendaCard({ eventData, onUpdate }: LineupAndAgendaCardProps) {
+export function LineupAndAgendaCard({ eventData, onUpdate }: EventCardProps) {
   const [showLineupForm, setShowLineupForm] = useState(false)
   const [showAgendaForm, setShowAgendaForm] = useState(false)
   const [lineupSaved, setLineupSaved] = useState(false)
@@ -403,7 +396,7 @@ export function LineupAndAgendaCard({ eventData, onUpdate }: LineupAndAgendaCard
             </div>
 
             <div className="space-y-3">
-              {agendaSections[activeAgendaTab]?.items.map((item, index) => (
+              {agendaSections[activeAgendaTab]?.items.map((item: any, index: any) => (
                 <div key={index} className="p-3 bg-gray-50 rounded-lg border-l-4 border-orange-500">
                   <p className="text-sm text-muted-foreground">{item.time}</p>
                   <p className="font-medium">{item.title}</p>

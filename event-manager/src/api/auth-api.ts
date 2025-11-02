@@ -1,4 +1,4 @@
-import type { SignUpDto } from "../models";
+import type { SignUpDto } from "../dtos/auth-dto";
 import apiClient from "./api-config";
 
 

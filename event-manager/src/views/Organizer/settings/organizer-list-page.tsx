@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
-import type { OrganizerProfile } from "../../../models/organizer-models"
+import type { OrganizerProfile } from "../../../models/bean/organizer-models"
 
 export default function OrganizerListPage() {
   const {

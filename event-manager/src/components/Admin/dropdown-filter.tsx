@@ -1,10 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-
-interface DropdownFilterProps {
-  label: string;
-  options: string[];
-  onSelect: (value: string | null) => void;
-}
+import type { DropdownFilterProps } from "../../models/component-props/dropdown-component-models";
 
 const DropdownFilter: React.FC<DropdownFilterProps> = ({ label, options, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +38,7 @@ const DropdownFilter: React.FC<DropdownFilterProps> = ({ label, options, onSelec
             className="px-3 py-2 text-gray-500 hover:bg-gray-100 cursor-pointer"
             onClick={() => handleSelect(null)}
           >
-            Tất cả
+            All
           </div>
           {options.map((opt, index) => (
             <div

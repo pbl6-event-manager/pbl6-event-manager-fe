@@ -1,14 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import type { RootState } from "../../store/store";
-import { addCategory, deleleCategory, getCategories, recoverCategory, updateCategory } from "../../store/actions/Admin/category-action";
+import { addCategory, deleleCategory, getCategories, recoverCategory, updateCategory } from "../../store/actions/category-action";
 import { useEffect } from "react";
-import { CATEGORY_FORM_DEFAULT, type Category } from "../../models/Admin/category-models";
+import type { CategoryModel } from "../../models/bean/category-models";
+import { CATEGORY_FORM_DEFAULT } from "../../models/form-models/category-form-models";
 import { showSuccessAlert, showWarningAlert, showErrorAlert } from "../../helpers/alert-helpers";
 
-export const useCategoryViewModel = (initialData?: Category) => {
+export const useCategoryViewModel = (initialData?: CategoryModel) => {
   const dispatch = useDispatch();
-  const {categories, activeCategories, inActiveCategories} = useSelector((state: RootState) => state.category);
+  const {categories, activeCategories, inActiveCategories} = useSelector((state: RootState) => state.categoryReducer);
   const [newCategory, setNewCategory] = useState(CATEGORY_FORM_DEFAULT);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -37,11 +38,11 @@ export const useCategoryViewModel = (initialData?: Category) => {
   ];
 
 
-  const handleAddChange = (field: keyof Category, value: string) => {
+  const handleAddChange = (field: keyof CategoryModel, value: string) => {
     setNewCategory((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleUpdateChange = (field: keyof Category, value: string) => {
+  const handleUpdateChange = (field: keyof CategoryModel, value: string) => {
     setCategory((prev) => ({ ...prev, [field]: value}));
   }
 

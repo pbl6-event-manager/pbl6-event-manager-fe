@@ -16,7 +16,6 @@ const CreateAccountView: React.FC = () => {
         <span className="font-medium">Back</span>
       </button>
 
-      {/* 📋 Form căn giữa tuyệt đối */}
       <div className="flex justify-center items-center w-full px-4">
         <div className="w-full max-w-md">
           <AccountForm onSubmit={(data) => handleAdd(data)} />

@@ -1,37 +1,31 @@
-import { legacy_createStore as createStore, combineReducers, applyMiddleware } from "redux";
+import {
+  legacy_createStore as createStore,
+  combineReducers,
+  applyMiddleware,
+} from "redux";
 import { thunk } from "redux-thunk";
 import { authReducer } from "./reducers/auth-reducer";
-import { navigationReducer } from "./reducers/common/navigation-reducer";
 import { authFlowReducer } from "./reducers/auth-flow-reducer";
-import eventReducer from "./reducers/Admin/event-reducer";
-import createEventReducer from "./reducers/Organizer/create-event-reducer";
-import { locationReducer } from "./reducers/Admin/location-reducer";
-import categoryReducer from "./reducers/Admin/category-reducer";
-import organizerEventReducer from "./reducers/Organizer/event-reducer";
-import organizerReducer from "./reducers/Organizer/organizer-reducer"
-import userReducer from "./reducers/Admin/user-reducer";
-import eventTeamManagementReducer from "./reducers/Organizer/event-team-management-reducer";
-import organizerTeamManagementReducer from "./reducers/Organizer/organizer-team-management-reducer";
-import { roleReducer } from "./reducers/Organizer/role-reducer";
+import { eventReducer } from "./reducers/event-reducer";
+import { locationReducer } from "./reducers/location-reducer";
+import { categoryReducer } from "./reducers/category-reducer";
+import { organizerReducer } from "./reducers/organizer-reducer";
+import { userReducer } from "./reducers/user-reducer";
+import { staffReducer } from "./reducers/staff-reducer";
+import { roleReducer } from "./reducers/role-reducer";
 
 const allReducer = combineReducers({
   userReducer: userReducer,
-  event: eventReducer,  
-  navigation: navigationReducer,
-  authFlow: authFlowReducer, 
-  location: locationReducer,
-  category: categoryReducer,
-  organizerEvent: organizerEventReducer,
-  auth: authReducer,
-  organizer: organizerReducer,
-  eventTeamManagement: eventTeamManagementReducer,
-  organizerTeamManagement: organizerTeamManagementReducer,
-  role: roleReducer,
-  createEvent: createEventReducer,
-}); 
+  authReducer: authReducer,
+  eventReducer: eventReducer,
+  authFlowReducer: authFlowReducer,
+  locationReducer: locationReducer,
+  categoryReducer: categoryReducer,
+  organizerReducer: organizerReducer,
+  staffReducer: staffReducer,
+  roleReducer: roleReducer,
+});
 
 export const store = createStore(allReducer, applyMiddleware(thunk));
-
 export type RootState = ReturnType<typeof allReducer>;
 export type AppDispatch = typeof store.dispatch;
-

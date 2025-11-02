@@ -1,6 +1,6 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import type { ConfirmDialogProps } from "../../models/Admin/confirm-dialog-model";
+import type { ConfirmDialogProps } from "../../models/component-props/dialog-component-props";
 
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -13,6 +13,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   cancelText = "Cancel",
   danger = true,
 }) => {
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>

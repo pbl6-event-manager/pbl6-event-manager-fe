@@ -6,11 +6,7 @@ import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Textarea } from "../ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-
-interface OverviewCardProps {
-  description: string
-  onUpdate: (description: string) => void
-}
+import type { OverviewCardProps } from "../../models/component-props/card-component-props"
 
 export function OverviewCard({ description, onUpdate }: OverviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)

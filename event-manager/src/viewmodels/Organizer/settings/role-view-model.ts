@@ -12,7 +12,7 @@ import {
     deleteRoleFailure,
     resetRoleState
 } from "../../../store/actions/Organizer/role-action";
-import type { TeamRole } from "../../../models/team-models";
+import type { TeamRole } from "../../../models/bean/staff-models";
 
 const mockRoles: TeamRole[] = [
     {

@@ -1,10 +1,7 @@
 import React from "react";
+import type { TabItemProps } from "../../models/component-props/tab-bar-component-props";
 
-interface TabItemProps {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}
+
 
 const TabItem: React.FC<TabItemProps> = ({ label, active, onClick }) => {
   return (
