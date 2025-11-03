@@ -14,6 +14,7 @@ import UsersListPage from "../../views/Organizer/settings/users-list-page"
 import RolesListPage from "../../views/Organizer/settings/roles-list-page"
 import EventTeamManagementPage from "../../views/Organizer/events/event-team-management-page"
 import CreateRolePage from "../../views/Organizer/settings/create-role-page"
+import CreateVoucherPage from "../../views/Organizer/vouchers/create-voucher-page"
 
 const OrganizerRoutes: RouteObject = {
   path: "/organizer",
@@ -26,6 +27,12 @@ const OrganizerRoutes: RouteObject = {
     { path: "events/dashboard/:eventId", element: <EventDashboardPage /> },
     { path: "events/team-management/:eventId", element: <EventTeamManagementPage /> },
     { path: "events/edit/:eventId", element: <EditEventPage /> },
+    
+    //#region vouchers
+    { path: "vouchers/create", element: <CreateVoucherPage /> },
+    //#endregion
+
+    //#region settings
     { path: "settings/members/roles/create", element: <CreateRolePage/>},
     { path: "settings/add", element: <AddOrganizerPage/>},
     { path: "settings/edit/:organizerId", element: <EditOrganizerPage/>},
@@ -52,6 +59,7 @@ const OrganizerRoutes: RouteObject = {
         { path: "edit/:organizerId", element: <EditOrganizerPage /> },
       ],
     },
+    //#endregion
   ],
 }
 
