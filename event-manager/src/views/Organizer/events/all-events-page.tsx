@@ -166,7 +166,7 @@ export default function AllEventsPage() {
 
           {/* Create Event Button */}
           <Link to="/organizer/events/create-event">
-            <Button className="bg-[#f05537] hover:bg-[#d94829] text-white">
+            <Button className="bg-[#f05537] hover:bg-[#d94829] text-white cursor-pointer">
               Create Event
             </Button>
           </Link>
