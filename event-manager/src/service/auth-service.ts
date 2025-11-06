@@ -2,8 +2,12 @@ import { loginApi, refreshTokenApi, checkEmailExist, signupApi } from "../api/au
 import type { SignUpDto } from "../dtos/auth-dto";
 
 export const loginService = async (email: string, password: string) => {
-  const { data } = await loginApi(email, password);
-  return data; // { accessToken, refreshToken, userInfo }
+  try {
+    const { data } = await loginApi(email, password);
+    return data; // { accessToken, refreshToken, userInfo }
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const refreshTokenService = async (refreshToken: string) => {

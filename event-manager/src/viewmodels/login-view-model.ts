@@ -7,7 +7,7 @@ import type { RootState } from "../store/store";
 export const useLoginViewModel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { email } = useSelector((state: RootState) => state.authFlow);
+  const { email } = useSelector((state: RootState) => state.authFlowReducer);
   const [localEmail, setLocalEmail] = useState(email);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
