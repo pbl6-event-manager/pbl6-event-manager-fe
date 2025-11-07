@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { ArrowLeft} from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { EventTitleCard } from "../../../components/Organizer/event-title-card"
 import { DateLocationCard } from "../../../components/Organizer/date-location-card"
@@ -11,101 +10,44 @@ import { MediaUploadCard } from "../../../components/Organizer/media-upload-card
 import { OverviewCard } from "../../../components/Organizer/overview-card"
 import { GoodToKnowCard } from "../../../components/Organizer/good-to-know-card"
 import { LineupAndAgendaCard } from "../../../components/Organizer/lineup-and-agenda-card"
-import type { EventData, EventFormErrors, MediaFile, GoodToKnowData } from "../../../models"
 import { useCreateEventViewModel } from "../../../viewmodels/Organizer/events/create-event-view-model"
-import { eventConverter } from "../../../converters/event-converter"
-import type { EventFormDTO } from "../../../dtos/event-dto"
 
 export default function CreateEventPage() {
-  const [eventData, setEventData] = useState<EventData>({
-    mediaFile: null,          
-    title: "",
-    summary: "",
-    description: "",
-    startDate: "",
-    startTime: "10:00",
-    endDate: "",
-    endTime: "12:00",
-    location: {
-      type: "venue",
-      country: "",
-      city: "",
-      venueName: "",
-      address1: "",
-      address2: "",
-      stateProvince: "",
-    },
-    goodToKnowData: {
-      doorTime: null,
-      ageInfo: null,
-      parkingInfo: null,
-      faqs: [],
-    },
-    lineUp: [],                 
-    agenda: [],                 
-    ticketType: null,          
-    capacity: "",
-    category: [],               
-    timezone: "",
-    language: "en-US"
-  })
-  const { isLoading, error, createdEvent, createEvent } = useCreateEventViewModel()
-  const navigate = useNavigate()
-  const [errors, setErrors] = useState<EventFormErrors>({})
-  const [uploadedMedia, setUploadedMedia] = useState<MediaFile[]>([])
-  const [goodToKnowData, setGoodToKnowData] = useState<GoodToKnowData>({
-    doorTime: null,
-    ageInfo: null,
-    parkingInfo: null,
-    faqs: [],
-  })
+  const {
+    isLoading,
+    error,
+    createEvent,
+    isSuccess,
+    eventData,
+    errors,
+    uploadedMedia,
+    goodToKnowData,
+
+    // Card refs
+    mediaCardRef,
+    titleCardRef,
+    dateLocationCardRef,
+    overviewCardRef,
+
+    // Field refs
+    titleRef,
+    dateTimeRef,
+    locationRef,
+    overviewRef,
+    mediaRef,
+
+    handleSaveAndContinue,
+    handleBackClick,
+    validateForm,
+    setEventData,
+    setErrors,
+    setUploadedMedia,
+    setGoodToKnowData,
+    handleCreateEvent,
+    resetState
+  } = useCreateEventViewModel()
+
   const [currentStep, setCurrentStep] = useState(1)
-
-  const validateForm = () => {
-    const newErrors: EventFormErrors = {}
-
-    if (!eventData.title.trim()) {
-      newErrors.title = "Event title is required"
-    }
-
-    if (!eventData.summary.trim()) {
-      newErrors.summary = "Summary is required"
-    } else if (eventData.summary.length < 50) {
-      newErrors.summary = "Summary should be at least 50 characters"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSaveAndContinue = async () => {
-    if (validateForm()) {
-      try {
-        const formDTO: EventFormDTO = await eventConverter.convertEventDataToFormDTO(
-          eventData,
-          4, // TODO: Get organizerId from auth state
-          uploadedMedia[0]?.file,
-        )
-
-        const result = await createEvent(formDTO)
-
-        if (result && result.id) {
-          console.log("[v0] Event created successfully:", result)
-          navigate(`/organizer/events/edit/${result.id}?step=2`)
-        }
-      } catch (err) {
-        console.error("[v0] Error creating event:", err)
-        // Show error toast
-      }
-    }
-  }
-
-  const handleBackClick = () => {
-    const confirmed = window.confirm("Are you sure to leave the page?")
-    if (confirmed) {
-      navigate("/organizer/events/all")
-    }
-  }
 
   const handleStepClick = (stepId: number) => {
     if (stepId <= currentStep) {
@@ -131,11 +73,10 @@ export default function CreateEventPage() {
       <div className="flex-1 overflow-hidden">
         <div className="container mx-auto px-4 py-8 h-full">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-full">
-            {/* Create Event Sidebar */}
             <div className="lg:col-span-1 hidden lg:block">
               <div className="sticky top-24 h-[calc(100vh-120px)] overflow-y-auto">
-                <EventSidebar 
-                  eventData={eventData} 
+                <EventSidebar
+                  eventData={eventData}
                   currentStep={currentStep}
                   isCreating={true}
                   onStepClick={handleStepClick}
@@ -145,26 +86,42 @@ export default function CreateEventPage() {
 
             <div className="lg:col-span-3 overflow-y-auto max-h-[calc(100vh-120px)] pr-4">
               <div className="space-y-8 pb-24">
-                {/* Upload Card */}
-                <MediaUploadCard uploadedMedia={uploadedMedia} onUpdate={setUploadedMedia} />
-
-                {/* Event Title Card */}
-                <EventTitleCard eventData={eventData} onUpdate={setEventData} />
-
-                {/* Date and Location */}
-                <DateLocationCard eventData={eventData} onUpdate={setEventData} />
-
-                {/* Overview Section */}
-                <OverviewCard
-                  description={eventData.description}
-                  onUpdate={(description) => setEventData({ ...eventData, description })}
+                {/* Pass refs to each card component */}
+                <MediaUploadCard 
+                  ref={mediaCardRef}
+                  uploadedMedia={uploadedMedia} 
+                  onUpdate={setUploadedMedia}
+                  inputRef={mediaRef}
                 />
 
-                {/* Good To Know Section */}
-                <GoodToKnowCard data={goodToKnowData} onUpdate={setGoodToKnowData}></GoodToKnowCard>
+                <EventTitleCard 
+                  ref={titleCardRef}
+                  eventData={eventData} 
+                  onUpdate={setEventData}
+                  inputRef={titleRef}
+                />
 
-                {/* Additional Sections */}
-                <LineupAndAgendaCard eventData={eventData} onUpdate={setEventData}></LineupAndAgendaCard>
+                <DateLocationCard 
+                  ref={dateLocationCardRef}
+                  eventData={eventData} 
+                  onUpdate={(newData) => {
+                    console.log("DateLocationCard onUpdate called with:", newData)
+                    setEventData(newData)
+                  }}
+                  dateInputRef={dateTimeRef}
+                  locationInputRef={locationRef}
+                />
+
+                <OverviewCard
+                  ref={overviewCardRef}
+                  description={eventData.description}
+                  onUpdate={(description) => setEventData({ ...eventData, description })}
+                  textareaRef={overviewRef}
+                />
+
+                <GoodToKnowCard data={goodToKnowData} onUpdate={setGoodToKnowData} />
+
+                <LineupAndAgendaCard eventData={eventData} onUpdate={setEventData} />
               </div>
             </div>
           </div>
@@ -173,10 +130,11 @@ export default function CreateEventPage() {
 
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t py-4 z-50">
         <div className="container mx-auto px-4 flex justify-end">
-          {error && <span className="text-red-500 text-sm">{error}</span>}
-          <Button 
-            size="lg" 
-            onClick={handleSaveAndContinue} 
+          {error && <span className="text-red-500 text-sm mr-4">{error}</span>}
+          <Button
+            size="lg"
+            onClick={handleSaveAndContinue}
+            disabled={isLoading}
             className="bg-[#f05537] hover:bg-[#d63c1f] text-white"
           >
             {isLoading ? (

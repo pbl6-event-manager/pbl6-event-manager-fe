@@ -9,7 +9,7 @@ import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/or
 
 export default function EditOrganzerPage() {
     const navigate = useNavigate()
-    const { organizerId } = useParams<{ organizerId: string }>()
+    const { organizerId } = useParams<{ organizerId: any }>()
     const {
         formData,
         validationErrors,

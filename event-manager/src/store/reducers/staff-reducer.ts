@@ -1,4 +1,4 @@
-import { FETCH_EVENT_STAFFS_REQUEST, ASSIGN_STAFF_FAILURE, ASSIGN_STAFF_REQUEST, ASSIGN_STAFF_SUCCESS, FETCH_EVENT_STAFFS_FAILED, FETCH_EVENT_STAFFS_SUCCESS, FETCH_ORGANIZER_STAFFS_FAILURE, FETCH_ORGANIZER_STAFFS_REQUEST,FETCH_ORGANIZER_STAFFS_SUCCESS, INVITE_STAFF_FAILED, INVITE_STAFF_REQUEST, INVITE_STAFF_SUCCESS, REMOVE_STAFF_FAILURE, REMOVE_STAFF_REQUEST, REMOVE_STAFF_SUCCESS, RESET_TEAM_STATE } from "../actions/staff-action";
+import { FETCH_EVENT_STAFFS_REQUEST, ASSIGN_STAFF_FAILURE, ASSIGN_STAFF_REQUEST, ASSIGN_STAFF_SUCCESS, FETCH_EVENT_STAFFS_FAILED, FETCH_EVENT_STAFFS_SUCCESS, FETCH_ORGANIZER_STAFFS_FAILURE, FETCH_ORGANIZER_STAFFS_REQUEST,FETCH_ORGANIZER_STAFFS_SUCCESS, INVITE_STAFF_FAILED, INVITE_STAFF_REQUEST, INVITE_STAFF_SUCCESS, REMOVE_STAFF_FROM_EVENT_REQUEST, REMOVE_STAFF_FROM_EVENT_FAILURE, REMOVE_STAFF_FROM_EVENT_SUCCESS, REMOVE_STAFF_FROM_OWNER_FAILURE,REMOVE_STAFF_FROM_OWNER_REQUEST,REMOVE_STAFF_FROM_OWNER_SUCCESS, RESET_TEAM_STATE } from "../actions/staff-action";
 import { DEFAULT_STAFF_STATE, type StaffsState } from "../../models/reducer-models/staff-reducer-models";
 
 export const staffReducer = (state = DEFAULT_STAFF_STATE, action: any): StaffsState => {
@@ -59,20 +59,20 @@ export const staffReducer = (state = DEFAULT_STAFF_STATE, action: any): StaffsSt
                 isLoading: false,
                 error: action.payload,
             };
-        case REMOVE_STAFF_REQUEST:
+        case REMOVE_STAFF_FROM_EVENT_REQUEST:
             return {
                 ...state,
                 isLoading: true,
                 error: null,
             };
-        case REMOVE_STAFF_SUCCESS:
+        case REMOVE_STAFF_FROM_EVENT_SUCCESS:
             return {
                 ...state,
                 isLoading: false,
                 eventStaffs: state.eventStaffs.filter(staff => staff.id !== action.payload),
                 error: null,
             };
-        case REMOVE_STAFF_FAILURE:
+        case REMOVE_STAFF_FROM_EVENT_FAILURE:
             return {
                 ...state,
                 isLoading: false,

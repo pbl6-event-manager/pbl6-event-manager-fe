@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { X, Check } from "lucide-react"
+import { X } from "lucide-react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { useEventTeamManagementViewModel } from "../../viewmodels/Organizer/events/event-team-management-view-model"
@@ -49,7 +49,7 @@ export default function AssignMemberModal({
                             <p className="text-center text-gray-500 py-8">No available members</p>
                         ) : (
                             filteredMembers.map((member) => {
-                                const isAssigned = viewModel.isMemberAssigned(member.id)
+                                const isAssigned = viewModel.isStaffAssigned(member.id)
                                 return (
                                     (
                                         <div

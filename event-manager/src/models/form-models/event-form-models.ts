@@ -25,8 +25,9 @@ export interface EventFormErrors {
     title?: string;
     summary?: string;
     description?: string;
-    date?: string;
+    dateTime?: string;
     location?: string;
+    media?: string;
     capacity?: string;
     catelory?: string;
 }

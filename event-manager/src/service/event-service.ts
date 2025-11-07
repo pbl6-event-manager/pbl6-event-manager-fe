@@ -27,8 +27,16 @@ export const createEventService = async (formData: EventFormDto) => {
     })
 
     const rawResponse = await createEvent(multipartFormData)
+    console.log("[DEBUG] Raw API Response:", rawResponse) // ✅ Log response
+
+    // Step 2: Map to domain model
     const domainModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawResponse)
+    console.log("[DEBUG] Domain Model:", domainModel) // ✅ Log mapped data
+
+    // Step 3: Convert to DTO
     const dto = eventConverter.convertDomainToDTO(domainModel)
+    console.log("[DEBUG] Final DTO:", dto) // ✅ Log final result
+
     return dto
   } catch (error: any) {
     if (error.response) {

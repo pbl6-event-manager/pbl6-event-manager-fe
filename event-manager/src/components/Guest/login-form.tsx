@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import type React from "react";
 
 const LoginForm: React.FC = () => {
-    const { localEmail, setLocalEmail, password, setPassword, loading, handleSubmit } = useLoginViewModel();
+    const { localEmail, setLocalEmail, password, setPassword, loading, handleSubmit, error } = useLoginViewModel();
 
     return (
         <div className="bg-white rounded-lg p-10 w-[400px] max-w-[90vw] shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
@@ -18,6 +18,13 @@ const LoginForm: React.FC = () => {
                 <h2 className="text-[32px] font-bold text-[#1e0a3c] mb-[30px] leading-[1.2] text-left">What's your email?</h2>
 
                 <form className="mb-[30px]" onSubmit={handleSubmit}>
+                    {/* Error Message Display */}
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm text-left">
+                            {error}
+                        </div>
+                    )}
+
                     <div className="mb-5 text-left">
                         <label htmlFor="email" className="block text-sm text-[#6f7287] mb-2 font-medium">
                             Email
@@ -35,7 +42,7 @@ const LoginForm: React.FC = () => {
                     </div>
 
                     <div className="mb-5 text-left">
-                        <label htmlFor="email" className="block text-sm text-[#6f7287] mb-2 font-medium">
+                        <label htmlFor="password" className="block text-sm text-[#6f7287] mb-2 font-medium">
                             Password
                         </label>
                         <input
@@ -54,13 +61,12 @@ const LoginForm: React.FC = () => {
                             className="w-full bg-[#f05537] text-white py-[14px] px-5 rounded text-base font-semibold cursor-pointer 
          transition-colors duration-200 hover:bg-[#e04527] disabled:opacity-60 disabled:cursor-not-allowed mt-6"
                             disabled={loading}
-                            
-                             >
+                    >
                         {loading ? "Loading..." : "Log In"}
                     </button>
                 </form>
                 <p className="text-sm text-[#6f7287] mt-2">
-                    Don’t have an account?{" "}
+                    Don't have an account?{" "}
                     <Link
                         to="/signup"
                         className="text-[#3659e3] font-medium hover:underline"
@@ -80,19 +86,6 @@ const LoginForm: React.FC = () => {
                         Need help finding your tickets?
                     </a>
                 </div>
-
-                {/* <div className="mt-5">
-                    <p className="text-xs text-[#6f7287] leading-relaxed m-0">
-                        By clicking Continue or the Apple, Google, or Facebook icons, you agree to Eventbrite's{" "}
-                        <a href="#" className="text-blue-600 hover:text-blue-700 underline">
-                            Terms of Service
-                        </a>{" "}
-                        and{" "}
-                        <a href="#" className="text-blue-600 hover:text-blue-700 underline">
-                            Privacy Policy
-                        </a>
-                    </p>
-                </div> */}
             </div>
         </div>
     )

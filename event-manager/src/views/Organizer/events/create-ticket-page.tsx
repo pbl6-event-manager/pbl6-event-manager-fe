@@ -12,7 +12,8 @@ import { Switch } from "../../../components/ui/switch"
 import { Textarea } from "../../../components/ui/textarea"
 import { EventSidebar } from "../../../components/Organizer/event-sidebar"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
-import type { EventData, TicketFormData, TicketListItem } from "../../../models"
+import type { EventFormData } from "../../../models/form-models/event-form-models"
+import type { TicketFormData, TicketListItem } from "../../../models/form-models/ticket-form-models"
 
 export default function CreateTicketsPage() {
   const navigate = useNavigate()
@@ -42,7 +43,7 @@ export default function CreateTicketsPage() {
   })
 
   // Mock event data - in real app this would come from Redux store
-  const [eventData] = useState<EventData>({
+  const [eventData] = useState<EventFormData>({
     mediaFile: null,
     title: "League of Legends Championship Pacific Finals Weekend 2025",
     summary: "Join us for the biggest esports event of the year",

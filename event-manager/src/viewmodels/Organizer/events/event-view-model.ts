@@ -12,18 +12,18 @@ import {
     saveEventStart,
     saveEventSuccess,
     saveEventFailure,
-} from "../../../store/actions/Organizer/event-action"
-import type { EventData, GoodToKnowData, LineUpItem, AgendaSection } from "../../../models";
+} from "../../../store/actions/event-action"
+import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../../models/form-models/event-form-models";
 
 export const useEventViewModel = () => {
     const dispatch = useDispatch<AppDispatch>()
-    const { currentEvent, isLoading, error, isSaved } = useSelector((state: RootState) => state.organizerEvent)
+    const { currentEvent, isLoading, error, isSaved } = useSelector((state: RootState) => state.eventReducer);
 
-    const initializeEvent = (eventData: EventData) => {
+    const initializeEvent = (eventData: EventFormData) => {
         dispatch(setEventData(eventData))
     }
 
-    const updateField = (field: keyof EventData, value: any) => {
+    const updateField = (field: keyof EventFormData, value: any) => {
         dispatch(updateEventField(field, value))
     }
 
@@ -43,7 +43,7 @@ export const useEventViewModel = () => {
         dispatch(updateAgenda(agenda))
     }
 
-    const updateDateLocationData = (data: Partial<EventData>) => {
+    const updateDateLocationData = (data: Partial<EventFormData>) => {
         dispatch(updateDateLocation(data))
     }
 
@@ -51,7 +51,7 @@ export const useEventViewModel = () => {
         dispatch(resetEventData())
     }
 
-    const saveEvent = async (eventData: EventData) => {
+    const saveEvent = async (eventData: EventFormData) => {
         dispatch(saveEventStart())
         try {
             // TODO: Replace with actual API call

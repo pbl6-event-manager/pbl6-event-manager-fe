@@ -5,7 +5,7 @@ import CreateAccountView from "../../views/Admin/admin-create-account-form";
 import UpdateAccountView from "../../views/Admin/admin-update-account";
 import UserDetail from "../../views/Admin/admin-view-account-details";
 import AdminEvents from "../../views/Admin/admin-list-events";
-import CreateEventView from "../../views/Admin/admin-create-event-form";
+//import CreateEventView from "../../views/Admin/admin-create-event-form";
 import CategoryManagementView from "../../views/Admin/admin-list-category";
 import PrivateRoute from "../private-routes";
 
@@ -22,7 +22,7 @@ const adminRoutes: RouteObject = {
     { path: "users/edit", element: <UpdateAccountView /> },
     { path: "users/details", element: <UserDetail /> },
     { path: "events", element: <AdminEvents /> },
-    { path: "events/create", element: <CreateEventView /> },
+    // { path: "events/create", element: <CreateEventView /> },
     { path: "events/categories", element: <CategoryManagementView /> },
   ],
 };

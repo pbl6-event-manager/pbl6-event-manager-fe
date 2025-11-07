@@ -1,6 +1,6 @@
 //#region Staff Models
 export interface Staff {
-  id: string
+  id: number
   email: string
   name?: string
   role: string

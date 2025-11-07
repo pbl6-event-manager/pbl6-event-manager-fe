@@ -6,7 +6,7 @@ import UserInfoStep from "../../components/Guest/user-info-step"
 import CreatePasswordStep from "../../components/Guest/create-password-step"
 
 const AuthFlow : React.FC = () => {
-    const { currentStep } = useAppSelector((state) => state.authFlow)
+    const { currentStep } = useAppSelector((state) => state.authFlowReducer)
 
     const renderStep = () => {
         switch (currentStep) {

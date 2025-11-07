@@ -13,7 +13,7 @@ import {
 import { Bell, ChevronDown, Plus } from "lucide-react";
 
 export default function OrganizerNavbar() {
-  const user = useAppSelector((state) => state.auth.user)
+  const user = useAppSelector((state) => state.authReducer.user)
   const navigate = useNavigate()
 
   const getInitials = () => {

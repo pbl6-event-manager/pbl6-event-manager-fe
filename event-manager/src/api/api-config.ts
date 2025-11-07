@@ -10,9 +10,9 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const { auth } = store.getState();
-    if (auth.accessToken) {
-      config.headers.Authorization = `Bearer ${auth.accessToken}`;
+    const { authReducer } = store.getState();
+    if (authReducer.accessToken) {
+      config.headers.Authorization = `Bearer ${authReducer.accessToken}`;
     }
     return config;
   },
@@ -23,14 +23,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const { auth } = store.getState();
+    const { authReducer } = store.getState();
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      if (auth.refreshToken) {
+      if (authReducer.refreshToken) {
         try {
           const newAccessToken = await store.dispatch(
-            refreshAccessToken(auth.refreshToken)
+            refreshAccessToken(authReducer.refreshToken)
           );
           if (newAccessToken) {
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

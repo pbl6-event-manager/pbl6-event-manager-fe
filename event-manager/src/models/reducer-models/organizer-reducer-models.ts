@@ -1,8 +1,8 @@
-import type { OrganizerModel } from "../bean/organizer-models"
+import type { OrganizerFormData } from "../form-models/organizer-form-models"
 
 export interface OrganizerState {
-  organizers: OrganizerModel[]
-  currentOrganizer: OrganizerModel | null
+  organizers: OrganizerFormData[]
+  currentOrganizer: OrganizerFormData | null
   loading: boolean
   error: string | null
 }

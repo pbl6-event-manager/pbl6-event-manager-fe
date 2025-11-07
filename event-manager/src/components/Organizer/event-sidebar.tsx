@@ -4,10 +4,10 @@ import { Calendar, Plus, Check, ChevronDown, Ban } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select"
 import { Button } from "../ui/button"
-import type { EventData } from "../../models"
+import type { EventFormData } from "../../models/form-models/event-form-models"
 
 interface EventSidebarProps {
-  eventData: EventData
+  eventData: EventFormData
   currentStep: number
   completedSteps?: number[] // Added to track completed steps
   isCreating?: boolean

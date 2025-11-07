@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
-import type { OrganizerProfile } from "../../../models/bean/organizer-models"
+import type { OrganizerProfileForm } from "../../../models/form-models/organizer-form-models"
 
 export default function OrganizerListPage() {
   const {
@@ -15,7 +15,7 @@ export default function OrganizerListPage() {
     handleDeleteOrganizer,
   } = useOrganizerViewModel()
 
-  const [selectedOrganizer, setSelectedOrganizer] = useState<string | null>(null)
+  const [selectedOrganizer, setSelectedOrganizer] = useState<number | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [organizationName, setOrganizationName] = useState("Lê Tôn Thanh An")
   const [preferredCountry, setPreferredCountry] = useState("")
@@ -25,21 +25,21 @@ export default function OrganizerListPage() {
     loadOrganizers()
   }, [loadOrganizers])
 
-  const handleMenuClick = (organizerId: string) => {
+  const handleMenuClick = (organizerId: number) => {
     setSelectedOrganizer(selectedOrganizer === organizerId ? null : organizerId)
   }
 
-  const handleEdit = (organizerId: string) => {
+  const handleEdit = (organizerId: number) => {
     navigateToEditOrganizer(organizerId)
     setSelectedOrganizer(null)
   }
 
-  const handleView = (organizer: OrganizerProfile) => {
+  const handleView = (organizer: OrganizerProfileForm) => {
     navigateToViewOrganizer(organizer.pageUrl)
     setSelectedOrganizer(null)
   }
 
-  const handleDelete = async (organizerId: string) => {
+  const handleDelete = async (organizerId: number) => {
     setShowDeleteConfirm(true)
   }
 
@@ -117,19 +117,12 @@ export default function OrganizerListPage() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleView(organizer)}
+                        // onClick={() => handleView(organizer)}
                         className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
                       >
                         View
                       </button>
-                      {!organizer.isUnnamed && (
-                        <button
-                          onClick={() => handleDelete(organizer.id)}
-                          className="w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-gray-50"
-                        >
-                          Delete
-                        </button>
-                      )}
+                      
                     </div>
                   )}
                 </div>

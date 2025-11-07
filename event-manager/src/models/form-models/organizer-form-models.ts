@@ -18,6 +18,7 @@ export interface OrganizerProfileForm {
 }
 
 export interface OrganizerFormData {
+  id: number,
   name: string,
   website: string,
   bio: string,
