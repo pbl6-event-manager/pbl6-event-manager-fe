@@ -41,9 +41,26 @@ export const eventConverter = {
     }
   },
 
-  convertEventFormDataToFormDTO: async (eventData: EventFormData, organizerId: number, banner?: File): Promise<EventFormDto> => {
+  /**
+   * Convert EventData (form state) to EventFormDTO for API submission
+   */
+  convertEventDataToFormDTO: async (eventData: EventFormData, organizerId: number, banner?: File): Promise<EventFormDto> => {
+    // If endDate not provided, default to startDate (single day event)
+    const effectiveEndDate = eventData.endDate && eventData.endDate.trim().length > 0 ? eventData.endDate : eventData.startDate
+
     const startDateTime = convertToISODateTime(eventData.startDate, eventData.startTime, eventData.timezone)
-    const endDateTime = convertToISODateTime(eventData.endDate, eventData.endTime, eventData.timezone)
+    const endDateTime = convertToISODateTime(effectiveEndDate, eventData.endTime, eventData.timezone)
+
+    // Validate produced ISO strings
+    const startCheck = new Date(startDateTime)
+    const endCheck = new Date(endDateTime)
+    if (isNaN(startCheck.getTime())) {
+      throw new Error("Invalid start date/time")
+    }
+    if (isNaN(endCheck.getTime())) {
+      throw new Error("Invalid end date/time")
+    }
+
     const coordinates = await getCoordinates(eventData.location.address1, eventData.location.city, eventData.location.country)
 
     return {
@@ -59,7 +76,7 @@ export const eventConverter = {
       latitude: coordinates?.lat ?? 0,
       longitude: coordinates?.lng ?? 0,
       banner,
-      categoryIds: eventData.category.map((c) => Number.parseInt(c)),
+      categoryIds: (eventData.category || []).map((c) => Number.parseInt(String(c))).filter((n) => !isNaN(n)),
     }
   },
 

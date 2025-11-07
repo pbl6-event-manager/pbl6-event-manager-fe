@@ -9,16 +9,16 @@ import { useRoleViewModel } from "../../../viewmodels/Organizer/settings/role-vi
 export default function RolesListPage() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedRole, setSelectedRole] = useState<string | null>(null)
-  const { roles, isLoading, error, fetchRoles, deleteRole } = useRoleViewModel()
-
+  const [selectedRole, setSelectedRole] = useState<number | null>(null)
+  const { roles, isLoading, error, handleFetchOwnerRoleStaffs, handleDeleteOwnerRole } = useRoleViewModel()
+  
   useEffect(() => {
-    fetchRoles()
+    handleFetchOwnerRoleStaffs(1) // Assuming ownerId is 1 for demo purposes
   }, [])
 
   const filteredRoles = roles.filter((role) => role.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  const handleMenuClick = (roleId: string) => {
+  const handleMenuClick = (roleId: number) => {
     setSelectedRole(selectedRole === roleId ? null : roleId)
   }
 
@@ -26,9 +26,9 @@ export default function RolesListPage() {
     navigate("/organizer/settings/members/roles/create")
   }
 
-  const handleDeleteRole = async (roleId: string) => {
+  const handleDeleteRole = async (roleId: number) => {
     if (window.confirm("Are you sure you want to delete this role?")) {
-      await deleteRole(roleId)
+      await handleDeleteOwnerRole(roleId)
       setSelectedRole(null)
     }
   }
@@ -69,7 +69,7 @@ export default function RolesListPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900">{role.name}</h3>
-                {role.description && <p className="text-sm text-gray-600">{role.description}</p>}
+                {/* {role.description && <p className="text-sm text-gray-600">{role.description}</p>} */}
               </div>
             </div>
             <button className="text-gray-400 hover:text-gray-600" onClick={() => handleMenuClick(role.id)}>

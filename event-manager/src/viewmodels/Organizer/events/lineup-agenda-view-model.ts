@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import type { LineUpItem, AgendaSection } from "../../../models"
+import type { LineUpItem, AgendaSection } from "../../../models/form-models/event-form-models"
 
 export interface LineupFormData {
   name: string

@@ -368,19 +368,31 @@ export function LineupAndAgendaCard({ eventData, onUpdate }: EventCardProps) {
             </div>
           </div>
         ) : !showAgendaForm && agendaSections.length > 0 ? (
-          <div className="border-2 border-blue-600 rounded-lg p-4">
+          <div className="p-4 border rounded-lg">
+            {/* Header với tiêu đề, icon check và nút Edit nằm ngang */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 <h3 className="font-semibold text-lg">Agenda</h3>
+                {agendaSaved && (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <Check className="h-5 w-5" />
+                  </div>
+                )}
               </div>
-              {agendaSaved && (
-                <div className="flex items-center gap-2 text-green-600">
-                  <Check className="h-5 w-5" />
-                </div>
-              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowAgendaForm(true)
+                  setAgendaSaved(false)
+                }}
+              >
+                Edit
+              </Button>
             </div>
 
+            {/* Agenda Sections (tabs) - nằm dưới tiêu đề */}
             <div className="flex items-center gap-2 mb-4 border-b">
               {agendaSections.map((section, index) => (
                 <Button
@@ -395,6 +407,7 @@ export function LineupAndAgendaCard({ eventData, onUpdate }: EventCardProps) {
               ))}
             </div>
 
+            {/* Danh sách items */}
             <div className="space-y-3">
               {agendaSections[activeAgendaTab]?.items.map((item: any, index: any) => (
                 <div key={index} className="p-3 bg-gray-50 rounded-lg border-l-4 border-orange-500">
@@ -404,17 +417,6 @@ export function LineupAndAgendaCard({ eventData, onUpdate }: EventCardProps) {
                 </div>
               ))}
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="mt-3"
-              onClick={() => {
-                setShowAgendaForm(true)
-                setAgendaSaved(false)
-              }}
-            >
-              Edit
-            </Button>
           </div>
         ) : (
           <div ref={agendaCardRef} className="border-2 border-blue-600 rounded-lg p-6">

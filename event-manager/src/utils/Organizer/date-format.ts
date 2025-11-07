@@ -5,26 +5,60 @@
  * Example:
  *  date: "2025-10-31"
  *  time: "14:30"
- *  timezone: "GMT+07:00"
- *  --> "2025-10-31T14:30:00.0+07:00"
+ *  timezone: "GMT+07:00" | "+07:00" | undefined
+ *  --> "2025-10-31T14:30:00.000+07:00"
  */
-export function convertToISODateTime(date: string, time: string, timezone: string): string {
-  if (!date || !time || !timezone) {
-    console.log("Missing required parameters: date, time, or timezone");
+export function convertToISODateTime(date: string, time: string, timezone?: string): string {
+  // Basic validation
+  if (!date || !time) {
+    throw new Error("Missing required parameters: date or time")
   }
 
-  // Normalize timezone string
-  const cleanTimezone = timezone.replace("GMT", "");
-  const tzPattern = /^([+-])(\d{2}):(\d{2})$/;
-  const match = cleanTimezone.match(tzPattern);
-
-  if (!match) {
-    console.log("Invalid timezone format. Expected format: GMT±HH:MM");
+  // Normalize date format YYYY-MM-DD
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/
+  if (!datePattern.test(date)) {
+    throw new Error("Invalid date format. Expected YYYY-MM-DD")
   }
 
-  // Ensure time has leading zeros (safe for inputs like "9:5")
-  const [hours, minutes] = time.split(":").map(v => v.padStart(2, "0"));
-  const isoString = `${date}T${hours}:${minutes}:00.0${cleanTimezone}`;
+  // Normalize time "HH:MM"
+  const timeParts = time.split(":")
+  if (timeParts.length < 2) {
+    throw new Error("Invalid time format. Expected HH:MM")
+  }
+  const hours = timeParts[0].padStart(2, "0")
+  const minutes = timeParts[1].padStart(2, "0")
 
-  return isoString;
+  // Resolve timezone offset to format +HH:MM or -HH:MM.
+  const resolveTimezoneOffset = (tz?: string): string => {
+    if (!tz) {
+      // fallback: use local environment offset
+      const offsetMin = -new Date().getTimezoneOffset() // minutes ahead of UTC
+      const sign = offsetMin >= 0 ? "+" : "-"
+      const abs = Math.abs(offsetMin)
+      const hh = String(Math.floor(abs / 60)).padStart(2, "0")
+      const mm = String(abs % 60).padStart(2, "0")
+      return `${sign}${hh}:${mm}`
+    }
+
+    let clean = tz.replace(/^GMT/i, "").trim()
+    // Accept Z / UTC
+    if (clean === "Z" || /^UTC$/i.test(clean)) return "+00:00"
+    // Accept +HH:MM or -HH:MM
+    if (/^[+-]\d{2}:\d{2}$/.test(clean)) return clean
+    // Accept +HHMM or -HHMM
+    const m = clean.match(/^([+-])(\d{2})(\d{2})$/)
+    if (m) return `${m[1]}${m[2]}:${m[3]}`
+    throw new Error("Invalid timezone format. Expected GMT±HH:MM or ±HH:MM")
+  }
+
+  const tzOffset = resolveTimezoneOffset(timezone)
+  const isoString = `${date}T${hours}:${minutes}:00.000${tzOffset}`
+
+  // Validate created ISO
+  const check = new Date(isoString)
+  if (isNaN(check.getTime())) {
+    throw new Error("Produced Invalid Date from inputs")
+  }
+
+  return isoString
 }

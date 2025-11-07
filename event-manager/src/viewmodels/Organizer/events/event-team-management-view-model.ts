@@ -1,26 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
-import type { TeamMember } from "../../../models/bean/staff-models";
+import type { Staff } from "../../../models/bean/staff-models";
 import {
-    fetchEventMembersRequest,
-    fetchEventMembersSuccess,
-    fetchEventMembersFailure,
-    fetchOrganizerMembersRequest,
-    fetchOrganizerMembersSuccess,
-    fetchOrganizerMembersFailure,
-    assignMemberRequest,
-    assignMemberSuccess,
-    assignMemberFailure,
-    removeMemberRequest,
-    removeMemberSuccess,
-    removeMemberFailure,
-    resetTeamState,
-} from "../../../store/actions/Organizer/event-team-management-action"
+    fetchEventStaffs,
+    fetchOwnerStaffs,
+    updateListStaffsOfEvent,
+    inviteStaffToOwner,
+    removeStaffOfOwner,
+} from "../../../store/actions/staff-action"
 
 // Mock data - replace with Redux state
-const mockMembersInOrganizer: TeamMember[]  = [
+const mockMembersInOrganizer: Staff[]  = [
     {
-        id: "1",
+        id: 1,
         email: "letonthanhan@gmail.com",
         name: "Lê Tôn Thanh An",
         role: "Owner",
@@ -28,7 +20,7 @@ const mockMembersInOrganizer: TeamMember[]  = [
         joinedAt: "2024-01-15",
     },
     {
-        id: "2",
+        id: 2,
         email: "nguyendacnguyentam@gmail.com",
         name: "Nguyễn Đắc Nguyên Tâm",
         role: "Admin",
@@ -36,7 +28,7 @@ const mockMembersInOrganizer: TeamMember[]  = [
         joinedAt: "2025-01-15",
     },
     {
-        id: "3",
+        id: 3,
         email: "nguyenvana@gmail.com",
         name: "Nguyễn Văn A",
         role: "Marketing",
@@ -44,7 +36,7 @@ const mockMembersInOrganizer: TeamMember[]  = [
         joinedAt: "2024-01-15",
     },
     {
-        id: "4",
+        id: 4,
         email: "staff@gmail.com",
         name: "Staff",
         role: "Admin",
@@ -53,9 +45,9 @@ const mockMembersInOrganizer: TeamMember[]  = [
     },
 ]
 
-const mockMembersInEvent: TeamMember[]  = [
+const mockMembersInEvent: Staff[]  = [
     {
-        id: "1",
+        id: 1,
         email: "letonthanhan@gmail.com",
         name: "Lê Tôn Thanh An",
         role: "Owner",
@@ -63,7 +55,7 @@ const mockMembersInEvent: TeamMember[]  = [
         joinedAt: "2024-01-15",
     },
     {
-        id: "2",
+        id: 2,
         email: "nguyendacnguyentam@gmail.com",
         name: "Nguyễn Đắc Nguyên Tâm",
         role: "Admin",
@@ -74,81 +66,52 @@ const mockMembersInEvent: TeamMember[]  = [
 
 export const useEventTeamManagementViewModel = () => {
     const dispatch = useDispatch();
-    const { eventMembers, organizerMembers, isLoading, error } = useSelector((state: RootState) => state.eventTeamManagement);
+    const { eventStaffs, organizerStaffs, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
 
-    const fetchEventMembers = async (eventId: string) => {
-        dispatch(fetchEventMembersRequest());
-        try {
-            // Replace with actual API call
-            const mockMembers : TeamMember[] = mockMembersInEvent
-            dispatch(fetchEventMembersSuccess(mockMembers))
-        } catch (error) {
-            dispatch(fetchEventMembersFailure(error instanceof Error ? error.message : "Failed to fetch event members"))
-        }
+    const handleFetchEventStaffs = async () => {
+        dispatch<any>(fetchEventStaffs());
     }
-    const fetchOrganizerMembers = async () => {
-        dispatch(fetchOrganizerMembersRequest());
-        try {
-            // Replace with actual API call
-            const mockMembers: TeamMember[] = mockMembersInOrganizer
-            dispatch(fetchOrganizerMembersSuccess(mockMembers))
-        } catch (error) {
-            dispatch(fetchOrganizerMembersFailure(error instanceof Error ? error.message : "Failed to fetch organizer members"))
-        }
+    const handleFetchOwnerStaffs = async (id: number) => {
+        dispatch<any>(fetchOwnerStaffs(id));
+        
     }
-    const assignMemberToEvent = async (member: TeamMember) => {
-        if (eventMembers.some((m) => m.id === member.id)) {
+    const handleUpdateListStaffsOfEvent = async (eventId: number, listStaffId: number[]) => {
+        if (eventStaffs.some((m) => m.id === listStaffId[0])) {
             return
         }
 
-        dispatch(assignMemberRequest())
-        try {
-            // Replace with actual API call
-            dispatch(assignMemberSuccess(member))
-        } catch (err) {
-            dispatch(assignMemberFailure(err instanceof Error ? err.message : "Failed to assign member"))
-        }
+        dispatch<any>(updateListStaffsOfEvent(eventId, listStaffId));
     }
-    const removeMemberFromEvent = async (memberId: string) => {
-        dispatch(removeMemberRequest())
-        try {
-            // Replace with actual API call
-            dispatch(removeMemberSuccess(memberId))
-        } catch (err) {
-            dispatch(removeMemberFailure(err instanceof Error ? err.message : "Failed to remove member"))
-        }
+    const handleRemoveStaffOfOwner = async (ownerId: number, listStaffId: number[]) => {
+        dispatch<any>(removeStaffOfOwner(ownerId, listStaffId));
     }
-    const isMemberAssigned = (memberId: string): boolean => {
-        return eventMembers.some((member) => member.id === memberId);
+    const isStaffAssigned = (staffId: number): boolean => {
+        return eventStaffs.some((staff) => staff.id === staffId);
     }
-    const getUnassignedMembers = (): TeamMember[] => {
-        return organizerMembers.filter((member) => !isMemberAssigned(member.id))
+    const getUnassignedStaffs = (): Staff[] => {
+        return organizerStaffs.filter((staff) => !isStaffAssigned(staff.id))
     }
-    const getAssignedMembers = (): TeamMember[] => {
-        return organizerMembers.filter((member) => isMemberAssigned(member.id))
+    const getAssignedStaffs = (): Staff[] => {
+        return organizerStaffs.filter((staff) => isStaffAssigned(staff.id))
     }
-    const getSortedMembers = (): TeamMember[] => {
-        const unassigned = getUnassignedMembers()
-        const assigned = getAssignedMembers()
+    const getSortedStaffs = (): Staff[] => {
+        const unassigned = getUnassignedStaffs()
+        const assigned = getAssignedStaffs()
         return [...unassigned, ...assigned]
-    }
-    const reset = () => {
-        dispatch(resetTeamState())
     }
     
     return {
-        eventMembers,
-        organizerMembers,
+        eventStaffs,
+        organizerStaffs,
         isLoading,
         error,
-        fetchEventMembers,
-        fetchOrganizerMembers,
-        assignMemberToEvent,
-        removeMemberFromEvent,
-        isMemberAssigned,
-        getUnassignedMembers,
-        getAssignedMembers,
-        getSortedMembers,
-        reset,
+        handleFetchEventStaffs,
+        handleFetchOwnerStaffs,
+        handleUpdateListStaffsOfEvent,
+        handleRemoveStaffOfOwner,
+        isStaffAssigned,
+        getUnassignedStaffs,
+        getAssignedStaffs,
+        getSortedStaffs,
     }
 }

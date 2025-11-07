@@ -9,6 +9,7 @@ export interface EventState {
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
+  isSaved: boolean;
 }
 
 export const DEFAULT_EVENT_STATE: EventState = {
@@ -19,5 +20,6 @@ export const DEFAULT_EVENT_STATE: EventState = {
   currentEvent: null,
   isLoading: false,
   error: null,
-  isSuccess: false
+  isSuccess: false,
+  isSaved: false,
 };

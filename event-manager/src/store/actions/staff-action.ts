@@ -10,9 +10,12 @@ export const ASSIGN_STAFF_FAILURE = "ASSIGN_STAFF_FAILURE";
 export const INVITE_STAFF_REQUEST = "INVITE_STAFF_REQUEST";
 export const INVITE_STAFF_SUCCESS = "INVITE_STAFF_SUCCESS";
 export const INVITE_STAFF_FAILED = "INVITE_STAFF_FAILED";
-export const REMOVE_STAFF_REQUEST = "REMOVE_STAFF_REQUEST";
-export const REMOVE_STAFF_SUCCESS = "REMOVE_STAFF_SUCCESS";
-export const REMOVE_STAFF_FAILURE = "REMOVE_STAFF_FAILURE";
+export const REMOVE_STAFF_FROM_EVENT_REQUEST = "REMOVE_STAFF_FROM_EVENT_REQUEST";
+export const REMOVE_STAFF_FROM_EVENT_SUCCESS = "REMOVE_STAFF_FROM_EVENT_SUCCESS";
+export const REMOVE_STAFF_FROM_EVENT_FAILURE = "REMOVE_STAFF_FROM_EVENT_FAILURE";
+export const REMOVE_STAFF_FROM_OWNER_REQUEST = "REMOVE_STAFF_FROM_OWNER_REQUEST";
+export const REMOVE_STAFF_FROM_OWNER_SUCCESS = "REMOVE_STAFF_FROM_OWNER_SUCCESS";
+export const REMOVE_STAFF_FROM_OWNER_FAILURE = "REMOVE_STAFF_FROM_OWNER_FAILURE";
 export const RESET_TEAM_STATE = "RESET_TEAM_STATE";
 
 export const fetchEventStaffs = () => async (dispatch: any) => {
@@ -59,7 +62,7 @@ export const fetchOwnerStaffs = (id: number) => async (dispatch: any) => {
     }
 }
 
-export const assignStaffToEvent = (eventId: number, userIdList: number[]) => async (dispatch: any) => {
+export const updateListStaffsOfEvent = (eventId: number, userIdList: number[]) => async (dispatch: any) => {
     try {
         dispatch({
             type: ASSIGN_STAFF_REQUEST
@@ -103,25 +106,27 @@ export const inviteStaffToOwner = (ownerId: number, userEmail: string, roleStaff
     }
 }
 
-export const removeStaffOfOwner = (ownerId: number, userEmail: string) => async (dispatch: any) => {
+export const removeStaffOfOwner = (ownerId: number, listStaffId: number[]) => async (dispatch: any) => {
     try {
         dispatch({
-            type: REMOVE_STAFF_REQUEST
+            type: REMOVE_STAFF_FROM_OWNER_REQUEST
         })
 
         const data = "CALL SERVICE HERE";
 
         dispatch({
-            type: REMOVE_STAFF_SUCCESS,
+            type: REMOVE_STAFF_FROM_OWNER_SUCCESS,
             payload: data
         })
     } catch (error: any) {
         dispatch({
-            type: REMOVE_STAFF_FAILURE,
+            type: REMOVE_STAFF_FROM_OWNER_FAILURE,
             payload:
                 error.response?.data?.message || error.message || "Invite staff to an owner failed",
         });
         throw error;
     }
 }
+
+
 

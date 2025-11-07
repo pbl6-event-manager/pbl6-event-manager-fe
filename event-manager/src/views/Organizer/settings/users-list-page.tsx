@@ -7,29 +7,29 @@ import { useOrganizerTeamManagementViewModel } from "../../../viewmodels/Organiz
 export default function UsersListPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [showInviteModal, setShowInviteModal] = useState(false);
-    const [selectedMember, setSelectedMember] = useState<string | null>(null);
-    const { members, isLoading, error, fetchTeamMembers, removeTeamMember } = useOrganizerTeamManagementViewModel();
+    const [selectedMember, setSelectedMember] = useState<number | null>(null);
+    const { organizerStaffs, isLoading, error, handleFetchOwnerStaff, handleRemoveStaffOfOwner } = useOrganizerTeamManagementViewModel();
 
     useEffect(() => {
-        fetchTeamMembers();
+        handleFetchOwnerStaff(1); // Assuming ownerId is 1 for demo purposes
     }, []);
 
-    const filteredMembers = members.filter(
-        (member) =>
-            member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            member.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+    const filteredMembers = organizerStaffs.filter(
+        (staffs) =>
+            staffs.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            staffs.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
 
-    const handleMenuClick = (memberId: string) => {
-        setSelectedMember(selectedMember === memberId ? null : memberId)
+    const handleMenuClick = (staffId: number) => {
+        setSelectedMember(selectedMember === staffId ? null : staffId)
     }
-    const handleRemoveMember = async (memberId: string) => {
-        await removeTeamMember(memberId)
+    const handleRemoveMember = async (ownerId: number, listOfStaffIds: number[]) => {
+        await handleRemoveStaffOfOwner(ownerId, listOfStaffIds)
         setSelectedMember(null)
     }
 
     // Check if there are any members besides the owner
-    const hasTeamMembers = members.length > 1;
+    const hasTeamMembers = organizerStaffs.length > 1;
     if (isLoading) {
         return <div className="flex items-center justify-center py-8">Loading...</div>
     }
@@ -122,7 +122,7 @@ export default function UsersListPage() {
                                                 Edit
                                             </button>
                                             <button
-                                                onClick={() => handleRemoveMember(member.id)}
+                                                onClick={() => handleRemoveMember(1, [member.id])}
                                                 className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
                                             >
                                                 Delete

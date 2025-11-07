@@ -4,22 +4,22 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { useCallback, useEffect, useState } from "react"
 import type { RootState, AppDispatch } from "../../../store/store"
-import type { OrganizerFormData } from "../../../models/bean/organizer-models"
+import type { OrganizerFormData } from "../../../models/form-models/organizer-form-models"
 import {
   fetchOrganizers,
   fetchOrganizerDetail,
   createOrganizer,
   updateOrganizer,
   deleteOrganizer,
-  followOrganizer,
-} from "../../../store/actions/Organizer/organizer-action"
+} from "../../../store/actions/organizer-action"
 
 export const useOrganizerViewModel = () => {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const { organizers, currentOrganizer, loading, error } = useSelector((state: RootState) => state.organizer)
+  const { organizers, currentOrganizer, loading, error } = useSelector((state: RootState) => state.organizerReducer)
 
   const [formData, setFormData] = useState<OrganizerFormData>({
+    id: 0,
     name: "",
     website: "",
     bio: "",
@@ -39,7 +39,7 @@ export const useOrganizerViewModel = () => {
 
   // Load organizer detail
   const loadOrganizerDetail = useCallback(
-    (organizerId: string) => {
+    (organizerId: number) => {
       dispatch(fetchOrganizerDetail(organizerId))
     },
     [dispatch],
@@ -86,7 +86,7 @@ export const useOrganizerViewModel = () => {
 
   // Update existing organizer
   const handleUpdateOrganizer = useCallback(
-    async (organizerId: string) => {
+    async (organizerId: number, ) => {
       if (!validateForm()) {
         return false
       }
@@ -105,7 +105,7 @@ export const useOrganizerViewModel = () => {
 
   // Delete organizer
   const handleDeleteOrganizer = useCallback(
-    async (organizerId: string) => {
+    async (organizerId: number) => {
       try {
         await dispatch(deleteOrganizer(organizerId))
         return true
@@ -117,19 +117,6 @@ export const useOrganizerViewModel = () => {
     [dispatch],
   )
 
-  // Follow organizer
-  const handleFollowOrganizer = useCallback(
-    async (organizerId: string) => {
-      try {
-        await dispatch(followOrganizer(organizerId))
-        return true
-      } catch (error) {
-        console.error("[v0] Failed to follow organizer:", error)
-        return false
-      }
-    },
-    [dispatch],
-  )
 
   // Navigate to add organizer page
   const navigateToAddOrganizer = useCallback(() => {
@@ -138,7 +125,7 @@ export const useOrganizerViewModel = () => {
 
   // Navigate to edit organizer page
   const navigateToEditOrganizer = useCallback(
-    (organizerId: string) => {
+    (organizerId: number) => {
       navigate(`/organizer/settings/edit/${organizerId}`)
     },
     [navigate],
@@ -153,6 +140,7 @@ export const useOrganizerViewModel = () => {
   useEffect(() => {
     if (currentOrganizer) {
       setFormData({
+        id: currentOrganizer.id,
         name: currentOrganizer.name,
         website: currentOrganizer.website || "",
         bio: currentOrganizer.bio || "",
@@ -166,10 +154,11 @@ export const useOrganizerViewModel = () => {
   }, [currentOrganizer])
 
   const loadOrganizerForEdit = useCallback(
-    (organizerId: string) => {
+    (organizerId: number) => {
       const organizer = organizers.find((o) => o.id === organizerId)
       if (organizer) {
         setFormData({
+          id: organizer.id,
           name: organizer.name,
           website: organizer.website || "",
           bio: organizer.bio || "",
@@ -201,7 +190,6 @@ export const useOrganizerViewModel = () => {
     handleCreateOrganizer,
     handleUpdateOrganizer,
     handleDeleteOrganizer,
-    handleFollowOrganizer,
     navigateToAddOrganizer,
     navigateToEditOrganizer,
     navigateToViewOrganizer,

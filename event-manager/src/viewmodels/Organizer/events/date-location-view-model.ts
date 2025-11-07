@@ -5,17 +5,20 @@ import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchCountries, fetchCities } from "../../../store/actions/location-action"
 import type { RootState } from "../../../store/store"
-import type { EventData, LocationData } from "../../../models/bean/event-models"
+import type { EventFormData, LocationData } from "../../../models/form-models/event-form-models"
 
-export const useDateLocationViewModel = (eventData: EventData, onUpdate: (data: EventData) => void) => {
+export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (data: EventFormData) => void) => {
   const dispatch = useDispatch()
-  const { countries, cities, loading } = useSelector((state: RootState) => state.location)
+  const { countries, cities, loading } = useSelector((state: RootState) => state.locationReducer)
 
   const [isExpanded, setIsExpanded] = useState(false)
   const [isValid, setIsValid] = useState(false)
   const [errors, setErrors] = useState<{ date?: string; endDate?: string; location?: string }>({})
   const [eventType, setEventType] = useState<"single" | "multi">("single")
   const [showLocationDetails, setShowLocationDetails] = useState(false)
+  
+  // Thêm state để track xem có đang trong quá trình validation từ expand() không
+  const [isValidating, setIsValidating] = useState(false)
 
   // Fetch countries on mount
   useEffect(() => {
@@ -53,21 +56,31 @@ export const useDateLocationViewModel = (eventData: EventData, onUpdate: (data: 
     return valid
   }
 
-  // Check if card has valid data
+  // Check if card has valid data - CHỈ update isValid, KHÔNG tự động collapse
   useEffect(() => {
     const hasDate = eventData.startDate && (eventType === "single" || eventData.endDate)
     const hasLocation = eventData.location.type !== "venue" || (eventData.location.country && eventData.location.city)
 
     if (hasDate && hasLocation) {
       setIsValid(true)
+    } else {
+      setIsValid(false)
     }
+    
+    // KHÔNG gọi setIsExpanded(false) ở đây!
   }, [eventData.startDate, eventData.endDate, eventData.location, eventType])
 
   const updateLocation = (updates: Partial<LocationData>) => {
-    onUpdate({
+    // FIX: Đảm bảo onUpdate được gọi đúng cách
+    const newLocation = { ...eventData.location, ...updates }
+    const newEventData = {
       ...eventData,
-      location: { ...eventData.location, ...updates },
-    })
+      location: newLocation,
+    }
+    console.log("updateLocation called with:", updates)
+    console.log("New location:", newLocation)
+    console.log("Calling onUpdate with:", newEventData)
+    onUpdate(newEventData)
   }
 
   const formatDateTime = () => {
@@ -97,7 +110,7 @@ export const useDateLocationViewModel = (eventData: EventData, onUpdate: (data: 
     if (eventData.location.type === "tba") return "To be announced"
 
     if (eventData.location.country && eventData.location.city) {
-      return `${eventData.location.city}, ${eventData.location.country}`
+      return `${eventData.location.address1}, ${eventData.location.city}, ${eventData.location.country}`
     }
 
     return "Enter a location"
@@ -120,5 +133,7 @@ export const useDateLocationViewModel = (eventData: EventData, onUpdate: (data: 
     updateLocation,
     formatDateTime,
     formatLocation,
+    isValidating,
+    setIsValidating,
   }
 }

@@ -14,10 +14,10 @@ import { LineupAndAgendaCard } from "../../../components/Organizer/lineup-and-ag
 import EventDashboardPage from "./event-dashboard-page"
 import EventTeamManagementPage from "./event-team-management-page"
 import CreateTicketsPage from "./create-ticket-page"
-import type { EventData, EventFormErrors, MediaFile, GoodToKnowData } from "../../../models"
+import type { EventFormData, EventFormErrors, MediaFileModel, GoodToKnowData } from "../../../models/form-models/event-form-models"
 
 // Mock function to fetch event data - replace with actual API call
-const fetchEventData = async (eventId: string): Promise<EventData> => {
+const fetchEventData = async (eventId: string): Promise<EventFormData> => {
   // Simulate API call
   return {
     mediaFile: null,
@@ -60,7 +60,7 @@ export default function EditEventPage() {
   const [searchParams] = useSearchParams()
 
   const [isLoading, setIsLoading] = useState(true)
-  const [eventData, setEventData] = useState<EventData>({
+  const [eventData, setEventData] = useState<EventFormData>({
     mediaFile: null,
     title: "",
     summary: "",
@@ -93,7 +93,7 @@ export default function EditEventPage() {
     language: "en-US",
   })
   const [errors, setErrors] = useState<EventFormErrors>({})
-  const [uploadedMedia, setUploadedMedia] = useState<MediaFile[]>([])
+  const [uploadedMedia, setUploadedMedia] = useState<MediaFileModel[]>([])
   const [goodToKnowData, setGoodToKnowData] = useState<GoodToKnowData>({
     doorTime: null,
     ageInfo: null,
