@@ -26,32 +26,35 @@ const OrganizerRoutes: RouteObject = {
     { path: "events/dashboard/:eventId", element: <EventDashboardPage /> },
     { path: "events/team-management/:eventId", element: <EventTeamManagementPage /> },
     { path: "events/edit/:eventId", element: <EditEventPage /> },
+    { path: "settings", element: <OrganizationSettingsPage /> },
     { path: "settings/members/roles/create", element: <CreateRolePage/>},
     { path: "settings/add", element: <AddOrganizerPage/>},
     { path: "settings/edit/:organizerId", element: <EditOrganizerPage/>},
-    {
-      path: "settings",
-      element: <OrganizationSettingsPage />,
-      children: [
-        { index: true, element: <OrganizationSettingsPage /> },
-        { path: "info", element: <OrganizationSettingsPage /> },
-        {
-          path: "members",
-          element: <TeamManagementPage />,
-          children: [
-            { index: true, element: <UsersListPage /> },
-            { path: "users", element: <UsersListPage /> },
-            { path: "roles", element: <RolesListPage /> },
-            { path: "roles/create", element: <CreateRolePage /> },
-          ],
-        },
-        { path: "fees", element: <OrganizationSettingsPage /> },
-        { path: "plan", element: <OrganizationSettingsPage /> },
-        { path: "extensions", element: <OrganizationSettingsPage /> },
-        { path: "add", element: <AddOrganizerPage /> },
-        { path: "edit/:organizerId", element: <EditOrganizerPage /> },
-      ],
-    },
+    { path: "settings/members/roles", element: <RolesListPage /> },
+    { path: "settings/members/users", element: <UsersListPage /> },
+    // {
+    //   path: "settings",
+    //   element: <OrganizationSettingsPage />,
+    //   children: [
+    //     { index: true, element: <OrganizationSettingsPage /> },
+    //     { path: "info", element: <OrganizationSettingsPage /> },
+    //     {
+    //       path: "members",
+    //       element: <TeamManagementPage />,
+    //       children: [
+    //         { index: true, element: <UsersListPage /> },
+    //         { path: "users", element: <UsersListPage /> },
+    //         { path: "roles", element: <RolesListPage /> },
+    //         { path: "roles/create", element: <CreateRolePage /> },
+    //       ],
+    //     },
+    //     { path: "fees", element: <OrganizationSettingsPage /> },
+    //     { path: "plan", element: <OrganizationSettingsPage /> },
+    //     { path: "extensions", element: <OrganizationSettingsPage /> },
+    //     { path: "add", element: <AddOrganizerPage /> },
+    //     { path: "edit/:organizerId", element: <EditOrganizerPage /> },
+    //   ],
+    // },
   ],
 }
 

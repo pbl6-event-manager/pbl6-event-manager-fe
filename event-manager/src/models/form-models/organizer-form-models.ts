@@ -29,6 +29,12 @@ export interface OrganizerFormData {
   profileImage: string
 }
 
+export interface OrganizerListItem {
+  id: number,
+  logoUrl: string,
+  name: string,
+}
+
 export interface OrganizerDetailInfoProps {
   organizer: any | null;
 }

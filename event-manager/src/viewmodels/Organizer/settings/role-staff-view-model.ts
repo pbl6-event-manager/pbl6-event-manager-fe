@@ -4,32 +4,32 @@ import {
     fetchOwnerRoleStaffs,
     createOwnerRoleStaff,
     deleteOwnerRoleStaff
-} from "../../../store/actions/role-actions";
-import type { RoleFormModel } from "../../../models/form-models/role-form-models";
+} from "../../../store/actions/role-staff-actions";
+import type { RoleStaffListItem } from "../../../models/form-models/role-staff-form-models";
 
-const mockRoles: RoleFormModel[] = [
-    {
-        id: 1,
-        name: "Owner",
-        description: "Full access to all organization features",
-        permissions: ["all"],
-        isCustom: false,
-    },
-    {
-        id: 2,
-        name: "Admin",
-        description: "Administrative access to organization",
-        permissions: ["manage_events", "manage_team", "manage_settings"],
-        isCustom: false,
-    },
-]
+// const mockRoles = [
+//     {
+//         id: 1,
+//         name: "Owner",
+//         description: "Full access to all organization features",
+//         permissions: ["all"],
+//         isCustom: false,
+//     },
+//     {
+//         id: 2,
+//         name: "Admin",
+//         description: "Administrative access to organization",
+//         permissions: ["manage_events", "manage_team", "manage_settings"],
+//         isCustom: false,
+//     },
+// ]
 
 export const useRoleViewModel = () => {
     const dispatch = useDispatch();
     const { roles, isLoading, error } = useSelector((state: RootState) => state.roleReducer);
 
-    const handleFetchOwnerRoleStaffs = async (ownerId: number) => {
-        dispatch<any>(fetchOwnerRoleStaffs(ownerId));
+    const handleFetchOwnerRoleStaffs = async () => {
+        dispatch<any>(fetchOwnerRoleStaffs());
         
     }
     const handleCreateOwnerRole = async (roleForm: any) => {

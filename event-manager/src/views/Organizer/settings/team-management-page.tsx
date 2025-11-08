@@ -85,7 +85,7 @@ export default function TeamManagementPage() {
                 {/* Main content */}
                 <div className="lg:col-span-6">
                     <div className="h-full">
-                        {tab === "users" && <UsersListPage />}
+                        {/* {tab === "users" && <UsersListPage />} */}
                         {tab === "roles" && <RolesListPage />}
                     </div>
                 </div>

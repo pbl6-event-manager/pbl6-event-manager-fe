@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react"
 import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
 import type { OrganizerProfileForm } from "../../../models/form-models/organizer-form-models"
+import type { OrganizerListItem } from "../../../models/form-models/organizer-form-models"
 
 export default function OrganizerListPage() {
   const {
     organizers,
     loading,
+
+    handleFetchMyOrganizers,
     loadOrganizers,
     navigateToAddOrganizer,
     navigateToEditOrganizer,
@@ -22,8 +25,8 @@ export default function OrganizerListPage() {
   const [countryError, setCountryError] = useState(false)
 
   useEffect(() => {
-    loadOrganizers()
-  }, [loadOrganizers])
+    handleFetchMyOrganizers()
+  }, [handleFetchMyOrganizers])
 
   const handleMenuClick = (organizerId: number) => {
     setSelectedOrganizer(selectedOrganizer === organizerId ? null : organizerId)

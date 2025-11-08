@@ -1,5 +1,21 @@
 import { DEFAULT_ORGANIZER_STATE, type OrganizerState } from "../../models/reducer-models/organizer-reducer-models";
-import { FETCH_ORGANIZERS_REQUEST, DELETE_ORGANIZER_FAILURE, DELETE_ORGANIZER_REQUEST, DELETE_ORGANIZER_SUCCESS, FETCH_ORGANIZERS_FAILURE, FETCH_ORGANIZERS_SUCCESS, FETCH_ORGANIZER_DETAIL_FAILURE, FETCH_ORGANIZER_DETAIL_REQUEST, FETCH_ORGANIZER_DETAIL_SUCCESS, UPDATE_ORGANIZER_FAILURE, UPDATE_ORGANIZER_REQUEST, UPDATE_ORGANIZER_SUCCESS, CREATE_ORGANIZER_FAILURE, CREATE_ORGANIZER_REQUEST, CREATE_ORGANIZER_SUCCESS } from "../actions/organizer-action";
+import { 
+  FETCH_ORGANIZERS_REQUEST, 
+  DELETE_ORGANIZER_FAILURE, 
+  DELETE_ORGANIZER_REQUEST, 
+  DELETE_ORGANIZER_SUCCESS, 
+  FETCH_ORGANIZERS_FAILURE, 
+  FETCH_ORGANIZERS_SUCCESS, 
+  FETCH_ORGANIZER_DETAIL_FAILURE, 
+  FETCH_ORGANIZER_DETAIL_REQUEST, 
+  FETCH_ORGANIZER_DETAIL_SUCCESS, 
+  UPDATE_ORGANIZER_FAILURE, 
+  UPDATE_ORGANIZER_REQUEST, 
+  UPDATE_ORGANIZER_SUCCESS, 
+  CREATE_ORGANIZER_FAILURE, 
+  CREATE_ORGANIZER_REQUEST, 
+  CREATE_ORGANIZER_SUCCESS 
+} from "../actions/organizer-action";
 
 export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): OrganizerState => {
   switch (action.type) {
@@ -13,13 +29,15 @@ export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): 
         loading: true,
         error: null,
       }
+    
     case FETCH_ORGANIZERS_SUCCESS:
       return {
         ...state,
         loading: false,
-        organizers: action.payload,
+        organizers: action.payload || [], // ✅ Thêm fallback
         error: null,
       }
+    
     case FETCH_ORGANIZER_DETAIL_SUCCESS:
       return {
         ...state,
@@ -27,6 +45,7 @@ export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): 
         currentOrganizer: action.payload,
         error: null,
       }
+    
     case CREATE_ORGANIZER_SUCCESS:
       return {
         ...state,
@@ -34,6 +53,7 @@ export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): 
         organizers: [...state.organizers, action.payload],
         error: null,
       }
+    
     case UPDATE_ORGANIZER_SUCCESS:
       return {
         ...state,
@@ -42,6 +62,7 @@ export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): 
         currentOrganizer: action.payload,
         error: null,
       }
+    
     case DELETE_ORGANIZER_SUCCESS:
       return {
         ...state,
@@ -49,11 +70,19 @@ export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): 
         organizers: state.organizers.filter((org) => org.id !== action.payload),
         error: null,
       }
+    
+    // ✅ Xử lý đúng các FAILURE cases
     case FETCH_ORGANIZERS_FAILURE:
     case FETCH_ORGANIZER_DETAIL_FAILURE:
     case CREATE_ORGANIZER_FAILURE:
     case UPDATE_ORGANIZER_FAILURE:
     case DELETE_ORGANIZER_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      }
+    
     default:
       return state
   }

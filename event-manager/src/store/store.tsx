@@ -12,7 +12,7 @@ import { categoryReducer } from "./reducers/category-reducer";
 import { organizerReducer } from "./reducers/organizer-reducer";
 import { userReducer } from "./reducers/user-reducer";
 import { staffReducer } from "./reducers/staff-reducer";
-import { roleReducer } from "./reducers/role-reducer";
+import { roleReducer } from "./reducers/role-staff-reducer";
 
 const allReducer = combineReducers({
   userReducer: userReducer,
