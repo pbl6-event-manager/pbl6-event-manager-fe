@@ -1,4 +1,5 @@
 import type { OrganizerFormData } from "../form-models/organizer-form-models"
+import type { ListOrganizerDto } from "../../dtos/organizer-dto"
 
 export interface OrganizerState {
   organizers: OrganizerFormData[]

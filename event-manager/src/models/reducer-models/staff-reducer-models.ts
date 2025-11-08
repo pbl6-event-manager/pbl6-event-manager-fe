@@ -1,5 +1,5 @@
 import type { Staff } from "../bean/staff-models"
-import type { StaffRole } from "../bean/staff-role-models"
+import type { StaffRole } from "../bean/role-staff-models"
 
 //#region Reducer Models
 export interface StaffsState {

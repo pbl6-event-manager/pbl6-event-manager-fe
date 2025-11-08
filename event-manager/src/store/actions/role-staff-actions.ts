@@ -8,17 +8,19 @@ export const DELETE_OWNER_ROLE_STAFF_REQUEST = "CREATE_OWNER_ROLE_STAFF_REQUEST"
 export const DELETE_OWNER_ROLE_STAFF_SUCCESS = "CREATE_OWNER_ROLE_STAFF_SUCCESS";
 export const DELETE_OWNER_ROLE_STAFF_FAILED = "CREATE_OWNER_ROLE_STAFF_FAILED";
 
-export const fetchOwnerRoleStaffs = (ownerId: number) => async (dispatch: any) => {
+import { fetchOwnerRoleStaffsService } from "../../service/role-staff-service";
+
+export const fetchOwnerRoleStaffs = () => async (dispatch: any) => {
     try {
         dispatch({
             type: FETCH_OWNER_ROLE_STAFF_REQUEST
         })
 
-        const data = "CALL SERVICE HERE";
+        const { roleStaffListItems } = await fetchOwnerRoleStaffsService();
 
         dispatch({
             type: FETCH_OWNER_ROLE_STAFF_SUCCESS,
-            payload: data
+            payload: roleStaffListItems
         })
     } catch (error: any) {
         dispatch({

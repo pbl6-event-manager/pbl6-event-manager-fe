@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
-import { useRoleViewModel } from "../../../viewmodels/Organizer/settings/role-view-model"
+import { useRoleViewModel } from "../../../viewmodels/Organizer/settings/role-staff-view-model"
 
 export default function RolesListPage() {
   const navigate = useNavigate()

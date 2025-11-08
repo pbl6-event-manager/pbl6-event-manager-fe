@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react"
 import type { RootState, AppDispatch } from "../../../store/store"
 import type { OrganizerFormData } from "../../../models/form-models/organizer-form-models"
 import {
-  fetchOrganizers,
+  fetchMyOrganizers,
   fetchOrganizerDetail,
   createOrganizer,
   updateOrganizer,
@@ -32,9 +32,18 @@ export const useOrganizerViewModel = () => {
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
+  const handleFetchMyOrganizers = useCallback(async (): Promise<void> => {
+    try {
+      // dispatch thunk and wait for it to finish; do not assume it returns data
+      await dispatch(fetchMyOrganizers() as any)
+    } catch (err) {
+      console.error("[v0] Failed to fetch organizers:", err)
+    }
+  }, [dispatch])
+
   // Load organizers
   const loadOrganizers = useCallback(() => {
-    dispatch(fetchOrganizers())
+    dispatch(fetchMyOrganizers())
   }, [dispatch])
 
   // Load organizer detail
@@ -137,41 +146,41 @@ export const useOrganizerViewModel = () => {
   }, [])
 
   // Load organizer data for editing
-  useEffect(() => {
-    if (currentOrganizer) {
-      setFormData({
-        id: currentOrganizer.id,
-        name: currentOrganizer.name,
-        website: currentOrganizer.website || "",
-        bio: currentOrganizer.bio || "",
-        description: currentOrganizer.description || "",
-        facebookId: currentOrganizer.facebookId || "",
-        twitter: currentOrganizer.twitter || "",
-        emailOptIn: currentOrganizer.emailOptIn,
-        profileImage: currentOrganizer.profileImage || "",
-      })
-    }
-  }, [currentOrganizer])
+  // useEffect(() => {
+  //   if (currentOrganizer) {
+  //     setFormData({
+  //       id: currentOrganizer.id,
+  //       name: currentOrganizer.name,
+  //       website: currentOrganizer.website || "",
+  //       bio: currentOrganizer.bio || "",
+  //       description: currentOrganizer.description || "",
+  //       facebookId: currentOrganizer.facebookId || "",
+  //       twitter: currentOrganizer.twitter || "",
+  //       emailOptIn: currentOrganizer.emailOptIn,
+  //       profileImage: currentOrganizer.profileImage || "",
+  //     })
+  //   }
+  // }, [currentOrganizer])
 
-  const loadOrganizerForEdit = useCallback(
-    (organizerId: number) => {
-      const organizer = organizers.find((o) => o.id === organizerId)
-      if (organizer) {
-        setFormData({
-          id: organizer.id,
-          name: organizer.name,
-          website: organizer.website || "",
-          bio: organizer.bio || "",
-          description: organizer.description || "",
-          facebookId: organizer.facebookId || "",
-          twitter: organizer.twitter || "",
-          emailOptIn: organizer.emailOptIn,
-          profileImage: organizer.profileImage || "",
-        })
-      }
-    },
-    [organizers],
-  )
+  // const loadOrganizerForEdit = useCallback(
+  //   (organizerId: number) => {
+  //     const organizer = organizers.find((o) => o.id === organizerId)
+  //     if (organizer) {
+  //       setFormData({
+  //         id: organizer.id,
+  //         name: organizer.name,
+  //         website: organizer.website || "",
+  //         bio: organizer.bio || "",
+  //         description: organizer.description || "",
+  //         facebookId: organizer.facebookId || "",
+  //         twitter: organizer.twitter || "",
+  //         emailOptIn: organizer.emailOptIn,
+  //         profileImage: organizer.profileImage || "",
+  //       })
+  //     }
+  //   },
+  //   [organizers],
+  // )
 
   return {
     // State
@@ -183,9 +192,10 @@ export const useOrganizerViewModel = () => {
     validationErrors,
 
     // Actions
+    handleFetchMyOrganizers,
     loadOrganizers,
     loadOrganizerDetail,
-    loadOrganizerForEdit,
+    //loadOrganizerForEdit,
     updateFormData,
     handleCreateOrganizer,
     handleUpdateOrganizer,

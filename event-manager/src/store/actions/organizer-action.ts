@@ -14,13 +14,15 @@ export const CREATE_ORGANIZER_REQUEST = "CREATE_ORGANIZER_REQUEST"
 export const CREATE_ORGANIZER_SUCCESS = "CREATE_ORGANIZER_SUCCESS"
 export const CREATE_ORGANIZER_FAILURE = "CREATE_ORGANIZER_FAILURE"
 
-export const fetchOrganizers = () => async (dispatch: any) => {
+import { getMyOrganizersService } from "../../service/organizer-service";
+
+export const fetchMyOrganizers = () => async (dispatch: any) => {
     try {
         dispatch({
             type: FETCH_ORGANIZERS_REQUEST
         });
 
-        const data = "CALL SERVICE HERE";
+        const data = await getMyOrganizersService();
 
         dispatch({
             type: FETCH_ORGANIZERS_SUCCESS,
