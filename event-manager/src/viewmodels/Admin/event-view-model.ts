@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearEvents, getAllEventsAdmin, getEventsByOrganizerIds } from "../../store/actions/event-action";
+import { clearEvents, getAllEventsAdmin, getEventDetailsById, getEventsByOrganizerIds } from "../../store/actions/event-action";
 import type { RootState } from "../../store/store";
 import { closeLoadingAlert, showErrorAlert, showLoadingAlert } from "../../helpers/alert-helpers";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getEventDetailsByIdService } from "../../service/event-service";
+import type { EventDetailsDto } from "../../dtos/event-dto";
 
 export const useEventViewModel = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
   const eventsByUser = useSelector((state: RootState) => state.eventReducer.eventsByUser);
@@ -14,7 +17,26 @@ export const useEventViewModel = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openAcceptDialog, setOpenAcceptDialog] = useState(false);
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
+  const [eventDetails, setEventDetails] = useState<EventDetailsDto>();
   const [activeTab, setActiveTab] = useState<"pending" | "public">("public");
+  const mapNumToTab = (n: string | null) =>
+    n === "2"
+      ? ("staff" as const)
+      : n === "3"
+      ? ("ticket" as const)
+      : n === "4"
+      ? ("attendee" as const)
+      : n === "5"
+      ? ("transaction" as const)
+      : ("information" as const);
+  
+  const mapTabToNum = (t: "information" | "staff" | "ticket" | "attendee" | "transaction") =>
+    t === "staff" ? "2" : t === "ticket" ? "3" : t === "attendee" ? "4" : t === "transaction" ? "5" : "1";
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id") ?? "";
+  const qTab = params.get("tab");
+
+  const [activeDelTab, _setActiveDelTab] = useState(mapNumToTab(qTab));
 
   const eventColumns = [
       { header: "ID", accessor: "id", type: "text" as const },
@@ -25,17 +47,40 @@ export const useEventViewModel = () => {
       { header: "End", accessor: "endTime", type: "text" as const },
       { header: "Actions", accessor: "actions", type: "action" as const },
     ];
-  const eventColumnsDelView = [
-    { header: "ID", accessor: "id", type: "text" as const },
-    { header: "Title", accessor: "title", type: "text" as const },
-    { header: "Location", accessor: "location", type: "text" as const },
-    { header: "Organizer", accessor: "organizer", type: "text" as const },
-    { header: "Actions", accessor: "actions", type: "action" as const },
-  ]
 
   useEffect(() => {
       dispatch<any>(getAllEventsAdmin());
     }, [dispatch]);
+
+  const setActiveDelTab = useCallback(
+    (tab: "information" | "staff" | "ticket" | "attendee" | "transaction") => {
+      _setActiveDelTab(tab);
+      const p = new URLSearchParams(location.search);
+      p.set("tab", mapTabToNum(tab));
+      if (id) p.set("id", id);
+      navigate(`${location.pathname}?${p.toString()}`, { replace: true });
+    },
+    [location, navigate, id]
+  );
+
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    const newTab = mapNumToTab(p.get("tab"));
+    if (newTab !== activeDelTab) _setActiveDelTab(newTab);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (!id) return;
+    const getEventDetails = async (eventId: number) => {
+      showLoadingAlert();
+      const response = await dispatch<any>(getEventDetailsById(eventId));
+      setEventDetails(response);
+      closeLoadingAlert();
+    } 
+    getEventDetails(parseInt(id));
+  }, [id]);
+
+  const handleBack = () => navigate(-1);
 
   const fetchEventsByOrganizerIds = useCallback(
     async (organizerIds: number[]) => {
@@ -56,6 +101,7 @@ export const useEventViewModel = () => {
   };
 
   const handleViewDetail = (id: number) => {
+    navigate(`/admin/events/details?id=${id}&tab=1`);
   } 
 
   const handleDelete = (id: string) => {
@@ -83,11 +129,15 @@ export const useEventViewModel = () => {
   }
 
   return {
+    id,
     publishedEvents,
     pendingEvents,
     eventsByUser,
     activeTab,
     eventColumns,
+    eventDetails,
+    setEventDetails,
+    activeDelTab,
     setActiveTab,
     resetEvents,
     handleViewDetail,
@@ -97,13 +147,14 @@ export const useEventViewModel = () => {
     setOpenDeleteDialog,
     handleAccept,
     handleReject,
+    handleBack,
     openAcceptDialog,
     openRejectDialog,
     setOpenAcceptDialog,
     setOpenRejectDialog,
     confirmAccept,
     confirmReject,
-    eventColumnsDelView,
-    fetchEventsByOrganizerIds
+    fetchEventsByOrganizerIds,
+    setActiveDelTab
   };
 };

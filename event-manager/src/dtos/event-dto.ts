@@ -1,4 +1,15 @@
+import type { CategoryModel } from "../models/bean/category-models"
+import type { EventModel } from "../models/bean/event-models"
+import type { OrganizerModel } from "../models/bean/organizer-models"
+import type { UserModel } from "../models/bean/user-models"
+import type { ListCategoryDto } from "./category-dto"
+
 //#region Event Dtos
+export const EVENT_STATUS = {
+  PUBLISHED: "PUBLISHED",
+  PENDING: "APPROVAL_PENDING",
+  DRAFT: "DRAFT"
+}
 export interface CreateEventRequestDto {
   id: number
   title: string
@@ -56,5 +67,13 @@ export interface EventListDto {
   endTime: string
   location: string
   status: string
+}
+
+export interface EventDetailsDto {
+  eventInfo?: EventModel
+  ticket?: [],
+  categories?: CategoryModel
+  organizer?: OrganizerModel 
+  owner?: UserModel
 }
 //#endregion

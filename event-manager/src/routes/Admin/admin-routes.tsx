@@ -8,6 +8,7 @@ import AdminEvents from "../../views/Admin/admin-list-events";
 //import CreateEventView from "../../views/Admin/admin-create-event-form";
 import CategoryManagementView from "../../views/Admin/admin-list-category";
 import PrivateRoute from "../private-routes";
+import AdminEventDetailPage from "../../views/Admin/admin-view-event-details";
 
 const adminRoutes: RouteObject = {
   path: "/admin",
@@ -24,6 +25,7 @@ const adminRoutes: RouteObject = {
     { path: "events", element: <AdminEvents /> },
     // { path: "events/create", element: <CreateEventView /> },
     { path: "events/categories", element: <CategoryManagementView /> },
+    { path: "events/details", element: <AdminEventDetailPage /> },
   ],
 };
 
