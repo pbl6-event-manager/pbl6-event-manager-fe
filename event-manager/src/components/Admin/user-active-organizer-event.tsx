@@ -1,13 +1,13 @@
 import React from "react";
 import Table from "./table";
-import OrganizerDetailInfo from "./organizer-detail-form"; 
+import OrganizerDetailInfo from "./organizer-detail-form";
 import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import { useOrganizerViewModel } from "../../viewmodels/Admin/organizer-view-model";
 
 const UserActiveOrganizerEvents: React.FC = () => {
   const { activeOrganizers, organizerColumns } = useUserViewModel();
-  const { eventsByUser, eventColumns } = useEventViewModel();
+  const { eventsByUser, eventColumns, handleDelete, handleViewDetail } = useEventViewModel();
   const { selectedOrganizer, handleSelectOrganizer } = useOrganizerViewModel();
 
   return (
@@ -23,7 +23,7 @@ const UserActiveOrganizerEvents: React.FC = () => {
             columns={organizerColumns}
             data={activeOrganizers}
             className="rounded-lg"
-            onRowClick={(row) => handleSelectOrganizer(row.id)}
+            onRowClick={(row) => handleSelectOrganizer(row.id, true)}
           />
         </div>
       </div>
@@ -38,6 +38,10 @@ const UserActiveOrganizerEvents: React.FC = () => {
           columns={eventColumns}
           data={eventsByUser}
           className="rounded-lg"
+          getRowActions={(row) => [
+            { type: "delete", onClick: () => handleDelete(row.id) },
+          ]}
+          onRowClick={(row) => handleViewDetail(row.id)}
         />
       </div>
     </div>

@@ -141,18 +141,20 @@ export const useUserViewModel = () => {
   }, [detailEmail, dispatch, users]);
 
   const getActiveOrganizersOfAnUser = useCallback(async (id: any) => {
-    await dispatch<any>(getActiveOrgOfAnUser(id))
+    const res = await dispatch<any>(getActiveOrgOfAnUser(id));
+    return res;
   }, [dispatch]);
 
   const getInActiveOrganizersOfAnUser = useCallback(async (id: any) => {
-    await dispatch<any>(getInActiveOrgOfAnUser(id))
+    const res = await dispatch<any>(getInActiveOrgOfAnUser(id));
+    return res;
   }, [dispatch]);
 
   const fetchEventsByOrganizerIds = useCallback(
     async (organizerIds: number[]) => {
-      if (!organizerIds || organizerIds.length === 0) return;
       try {
         showLoadingAlert("Loading");
+        
         await dispatch<any>(getEventsByOrganizerIds(organizerIds));
         closeLoadingAlert();
       } catch (error: any) {
@@ -163,30 +165,47 @@ export const useUserViewModel = () => {
   );
 
   useEffect(() => {
+    let mounted = true;
     const email = selectedUserEmail || detailEmail;
     if (!email) return;
 
-    const user = users.find((u) => u.email === email);
-    if (!user?.id) return;
+    const user = users.find((u) => u.email === email) ?? null;
+    const userId = user?.id ?? null;
+    if (!userId) return;
 
-    const fetchEventOrgDetailsOfAnUser = async () => {
-      if (activeDetailTab === "active-organizer") {
-        await getActiveOrganizersOfAnUser(user.id);
-        const activeOrganizerIds: number[] = Array.isArray(activeOrganizers)
-          ? activeOrganizers.map((o: any) => Number(o?.id)).filter((id) => !Number.isNaN(id))
-          : [];
-        await fetchEventsByOrganizerIds(activeOrganizerIds);
-      } else if (activeDetailTab === "deleted-organizer") {
-        await getInActiveOrganizersOfAnUser(user.id);
-        const inActiveOrganizerIds: number[] = Array.isArray(inActiveOrganizers)
-          ? activeOrganizers.map((o: any) => Number(o?.id)).filter((id) => !Number.isNaN(id))
-          : [];
-        await fetchEventsByOrganizerIds(inActiveOrganizerIds);
+    const run = async () => {
+      try {
+        if (activeDetailTab === "active-organizer") {
+          const orgs = await getActiveOrganizersOfAnUser(userId);
+          const ids: number[] = Array.isArray(orgs)
+            ? orgs.map((o: any) => Number(o?.id)).filter((id) => !Number.isNaN(id))
+            : [];
+          if (mounted) await fetchEventsByOrganizerIds(ids);
+        } else if (activeDetailTab === "deleted-organizer") {
+          const orgs = await getInActiveOrganizersOfAnUser(userId);
+          const ids: number[] = Array.isArray(orgs)
+            ? orgs.map((o: any) => Number(o?.id)).filter((id) => !Number.isNaN(id))
+            : [];
+          if (mounted) await fetchEventsByOrganizerIds(ids);
+        }
+      } catch (error: any) {
+        showErrorAlert(error?.message || "Failed to get organizers");
       }
-    }
+    };
 
-    fetchEventOrgDetailsOfAnUser();
-  }, [activeDetailTab]);
+    run();
+    return () => {
+      mounted = false;
+    };
+  }, [
+    activeDetailTab,
+    detailEmail,
+    selectedUserEmail,
+    users,
+    getActiveOrganizersOfAnUser,
+    getInActiveOrganizersOfAnUser,
+    fetchEventsByOrganizerIds,
+  ]);
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },

@@ -1,4 +1,8 @@
+import type { EventDetailsDto } from "../dtos/event-dto";
 import type { EventModel } from "../models/bean/event-models";
+import { mapToCategoryModel } from "./category-mapper";
+import { mapToOrganizerModel } from "./organizer-mapper";
+import { mapToUserModel } from "./user-mapper";
 
 export const eventMapper = {
   mapCreateEventResponseDtoToEventModel: (raw: any): EventModel => {
@@ -48,4 +52,14 @@ export const eventMapper = {
   mapEventListToDomain: (rawList: any[]): EventModel[] => {
     return rawList.map((item) => eventMapper.mapCreateEventResponseDtoToEventModel(item))
   },
+
+  mapResponseToEventDetailsDto: (raw: any): EventDetailsDto => {
+    return {
+      eventInfo: eventMapper.mapCreateEventResponseDtoToEventModel(raw),
+      ticket: raw.tickets,
+      categories: raw.categories.map(mapToCategoryModel),
+      organizer: mapToOrganizerModel(raw.organizer),
+      owner: mapToUserModel(raw.owner)
+    }
+  }
 };

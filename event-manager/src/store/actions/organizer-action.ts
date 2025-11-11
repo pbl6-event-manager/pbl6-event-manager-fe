@@ -14,7 +14,7 @@ export const CREATE_ORGANIZER_REQUEST = "CREATE_ORGANIZER_REQUEST"
 export const CREATE_ORGANIZER_SUCCESS = "CREATE_ORGANIZER_SUCCESS"
 export const CREATE_ORGANIZER_FAILURE = "CREATE_ORGANIZER_FAILURE"
 
-import { getMyOrganizersService } from "../../service/organizer-service";
+import { getMyOrganizersService, getOrganizerByIdService } from "../../service/organizer-service";
 
 export const fetchMyOrganizers = () => async (dispatch: any) => {
     try {
@@ -44,12 +44,14 @@ export const fetchOrganizerDetail = (organizerId: number) => async (dispatch: an
             type: FETCH_ORGANIZER_DETAIL_REQUEST
         });
 
-        const data = "CALL SERVICE HERE";
+        const data = await getOrganizerByIdService(organizerId);
 
         dispatch({
             type: FETCH_ORGANIZER_DETAIL_SUCCESS,
             payload: data
         });
+
+        return data;
     } catch (error: any) {
         dispatch({
             type: FETCH_ORGANIZER_DETAIL_FAILURE,

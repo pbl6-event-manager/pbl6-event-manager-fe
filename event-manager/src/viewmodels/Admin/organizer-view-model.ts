@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import { fetchOrganizerDetail } from "../../store/actions/organizer-action";
+import { closeLoadingAlert, showErrorAlert, showLoadingAlert } from "../../helpers/alert-helpers";
 
 export const useOrganizerViewModel = () => {
     const dispatch = useDispatch();
-    const [selectedOrganizer, setSelectedOrganizer] = useState<any>(null);
-    const organizers = useSelector((state: RootState) => state.userReducer.organizers);
+    const organizer = useSelector((root: RootState) => root.organizerReducer.currentOrganizer);
+    const [selectedOrganizer, setSelectedOrganizer] = useState<any>();
     const [openDelDialog, setOpenDelDialog] = useState<any>(false);
     const [openRecDialog, setOpenRecDialog] = useState<any>(false);
-    const [selectedOrgId, setSelectedOrgId] = useState<any>(null);
 
-    const handleSelectOrganizer = (id: any) => {
-        const organizer = organizers.filter((o) => o.id === id);
-        setSelectedOrganizer(organizer[0]);
-    };
+    const handleSelectOrganizer = async (id: number, isActive: boolean) => {
+        try {
+            showLoadingAlert();
+            const data = await dispatch<any>(fetchOrganizerDetail(id));
+            setSelectedOrganizer(data);
+            closeLoadingAlert();
+        } catch (error: any) {
+            showErrorAlert(error?.message || "Failed to get details of an organizer");
+        }
+    }
     
     return {
         selectedOrganizer,
@@ -22,6 +29,6 @@ export const useOrganizerViewModel = () => {
         openRecDialog,
         setOpenRecDialog,
         setSelectedOrganizer,
-        handleSelectOrganizer,
+        handleSelectOrganizer
     };
 }

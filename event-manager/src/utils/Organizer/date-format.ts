@@ -62,3 +62,6 @@ export function convertToISODateTime(date: string, time: string, timezone?: stri
 
   return isoString
 }
+
+export const fmt = (s?: string | Date | null) =>
+  s ? new Date(s).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";

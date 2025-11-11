@@ -22,9 +22,13 @@ export const GET_ALL_EVENT_ADMIN_FAILURE = "GET_ALL_EVENT_ADMIN_FAILURE";
 export const GET_EVENTS_BY_ORGANIZERS_REQUEST = "GET_EVENTS_BY_ORGANIZERS_REQUEST";
 export const GET_EVENTS_BY_ORGANIZERS_SUCCESS = "GET_EVENTS_BY_ORGANIZERS_SUCCESS";
 export const GET_EVENTS_BY_ORGANIZERS_FAILURE = "GET_EVENTS_BY_ORGANIZERS_FAILURE";
+export const GET_EVENT_DETAILS_REQUEST = "GET_EVENT_DETAILS_REQUEST";
+export const GET_EVENT_DETAILS_SUCCESS = "GET_EVENT_DETAILS_SUCCESS";
+export const GET_EVENT_DETAILS_FAILURE = "GET_EVENT_DETAILS_FAILURE";
 import type { EventFormDto, EventListDto } from "../../dtos/event-dto";
+import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
-import { createEventService, getAllEventsAdminService, getEventsByOrganizerIdsService } from "../../service/event-service";
+import { createEventService, getAllEventsAdminService, getEventDetailsByIdService, getEventsByOrganizerIdsService } from "../../service/event-service";
 
 export const fetchEventsByUser = (email: string) => {
   const dummyEvents = [
@@ -45,8 +49,8 @@ export const getAllEventsAdmin = () => async (dispatch: any) => {
     })
 
     const response = await getAllEventsAdminService();
-    const publishedEvents = response.filter((e: EventListDto) => e.status === "PUBLISHED");
-    const pendingEvents = response.filter((e: EventListDto) => e.status !== "PUBLISHED");
+    const publishedEvents = response.filter((e: EventListDto) => e.status === EVENT_STATUS.PUBLISHED);
+    const pendingEvents = response.filter((e: EventListDto) => e.status === EVENT_STATUS.PENDING);
 
     dispatch({
       type: GET_ALL_EVENT_ADMIN_SUCCESS,
@@ -72,7 +76,7 @@ export const getEventsByOrganizerIds = (organizerIds: number[]) => async (dispat
     })
 
     const response = await getEventsByOrganizerIdsService(organizerIds);
-    
+
     dispatch({
       type: GET_EVENTS_BY_ORGANIZERS_SUCCESS,
       payload: response
@@ -82,6 +86,30 @@ export const getEventsByOrganizerIds = (organizerIds: number[]) => async (dispat
       type: CREATE_EVENT_FAILED,
       payload:
         error.response?.data?.message || error.message || "Create event failed",
+    });
+    throw error;
+  }
+}
+
+export const getEventDetailsById = (eventId: number) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: GET_EVENT_DETAILS_REQUEST,
+    })
+
+    const response = await getEventDetailsByIdService(eventId);
+
+    dispatch({
+      type: GET_EVENT_DETAILS_SUCCESS,
+      payload: response
+    })
+
+    return response;
+  } catch (error: any) {
+    dispatch({
+      type: GET_EVENT_DETAILS_FAILURE,
+      payload:
+        error.response?.data?.message || error.message || "Failed to get detailed informations of event",
     });
     throw error;
   }

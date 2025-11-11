@@ -21,6 +21,11 @@ export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): 
   switch (action.type) {
     case FETCH_ORGANIZERS_REQUEST:
     case FETCH_ORGANIZER_DETAIL_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
     case CREATE_ORGANIZER_REQUEST:
     case UPDATE_ORGANIZER_REQUEST:
     case DELETE_ORGANIZER_REQUEST:
@@ -71,9 +76,13 @@ export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): 
         error: null,
       }
     
-    // ✅ Xử lý đúng các FAILURE cases
     case FETCH_ORGANIZERS_FAILURE:
     case FETCH_ORGANIZER_DETAIL_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      }
     case CREATE_ORGANIZER_FAILURE:
     case UPDATE_ORGANIZER_FAILURE:
     case DELETE_ORGANIZER_FAILURE:

@@ -145,6 +145,8 @@ export const getActiveOrgOfAnUser = (id: any) => async (dispatch: any) => {
       type: GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS,
       payload: data
     })
+
+    return data;
   } catch (error: any) {
     dispatch({
         type: GET_ACTIVE_ORGS_OF_AN_USER_FAILURE,
@@ -165,6 +167,8 @@ export const getInActiveOrgOfAnUser = (id: any) => async (dispatch: any) => {
       type: GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS,
       payload: data
     })
+
+    return data;
   } catch (error: any) {
     dispatch({
         type: GET_INACTIVE_ORGS_OF_AN_USER_FAILURE,
