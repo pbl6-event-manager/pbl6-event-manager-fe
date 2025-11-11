@@ -12,6 +12,14 @@ import { ArrowLeft } from "lucide-react";
 const UserViewDetailPage: React.FC = () => {
   const { user, openDelDialog, setOpenDelDialog, activeDetailTab, setActiveDetailTab, handleEdit, handleDelete, handleBack, confirmDelete, handleRecover, openRecDialog, setOpenRecDialog, confirmRecover } = useUserViewModel();
 
+  if (!user) {
+    return (
+      <div className="p-6">
+        <div>Loading user...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -31,7 +39,6 @@ const UserViewDetailPage: React.FC = () => {
         onChangeStatus={user.isActive ? handleDelete : handleRecover}
       />
 
-      {/* Tabs */}
       <TabGroup>
         <TabItem
           label="Attendee"

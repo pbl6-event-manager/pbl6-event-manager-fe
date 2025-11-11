@@ -3,7 +3,7 @@ import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import Table from "../../components/Admin/table";
 
 const UserParticipantEvents: React.FC = () => {
-  const { userEvents } = useEventViewModel();
+  const { eventsByUser } = useEventViewModel();
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
@@ -17,7 +17,7 @@ const UserParticipantEvents: React.FC = () => {
       <h3 className="text-xl font-semibold mb-3">List of events</h3>
       <Table
         columns={columns}
-        data={userEvents}
+        data={eventsByUser}
         className="rounded-lg shadow-md"
       />
     </div>

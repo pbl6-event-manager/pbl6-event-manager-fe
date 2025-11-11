@@ -64,7 +64,7 @@ const CategoryManagementView: React.FC = () => {
                 data={inActiveCategories}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
-                  { type: "Recover", onClick: () => handleRecoverCategory(row.id) },
+                  { type: "recover", onClick: () => handleRecoverCategory(row.id) },
                 ]}
               />
             </div>

@@ -9,11 +9,12 @@ export const UPDATE_STATUS_USER_SUCCESS = "UPDATE_STATUS_USER_SUCCESS";
 export const ADD_USER_REQUEST = "ADD_USER_REQUEST";
 export const ADD_USER_SUCCESS = "ADD_USER_SUCCESS";
 export const ADD_USER_FAIL = "ADD_USER_FAIL";
-export const GET_ORGS_OF_AN_USER_REQUEST = "GET_ORGS_OF_AN_USER";
+export const GET_ACTIVE_ORGS_OF_AN_USER_REQUEST = "GET_ACTIVE_ORGS_OF_AN_USER_REQUEST";
 export const GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS = "GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS";
-export const GET_ORGS_OF_AN_USER_SUCCESS = "GET_ORGS_OF_AN_USER_SUCCESS";
+export const GET_ACTIVE_ORGS_OF_AN_USER_FAILURE = "GET_ACTIVE_ORGS_OF_AN_USER_FAILURE";
+export const GET_INACTIVE_ORGS_OF_AN_USER_REQUEST = "GET_INACTIVE_ORGS_OF_AN_USER_REQUEST";
 export const GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS = "GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS";
-export const GET_ORGS_OF_AN_USER_FAILED = "GET_ORGS_OF_AN_USER_FAILED";
+export const GET_INACTIVE_ORGS_OF_AN_USER_FAILURE = "GET_INACTIVE_ORGS_OF_AN_USER_FAILURE";
 export const UPDATE_USER_REQUEST = "UPDATE_USER_REQUEST";
 export const UPDATE_USER_SUCCESS = "UPDATE_USER_SUCCESS";
 export const UPDATE_USER_FAILED = "UPDATE_USER_FAILED";
@@ -22,8 +23,7 @@ export const GET_USER_BY_EMAIL_SUCCESS = "GET_USER_BY_EMAIL_SUCCESS";
 export const GET_USER_BY_EMAIL_FAILED = "GET_USER_BY_EMAIL_FAILED";
 
 
-import { addUserService, fetchUsersService, getUserByEmailService, updateStatusUserService, updateUserService } from "../../service/user-service";
-import { fetchActiveOrgOfAnUserService } from "../../service/user-service";
+import { addUserService, getInActiveOrgOfAnUserService, getActiveOrgOfAnUserService, fetchUsersService, getUserByEmailService, updateStatusUserService, updateUserService } from "../../service/user-service";
 import { store } from "../store";
  
 
@@ -135,29 +135,39 @@ export const updateUser = (userData: any) => async (dispatch: any) => {
   }
 }
 
-export const getOrgOfAnUser = (id: any) => async (dispatch: any) => {
+export const getActiveOrgOfAnUser = (id: any) => async (dispatch: any) => {
   try {
-    dispatch({type:GET_ORGS_OF_AN_USER_REQUEST});
+    dispatch({type:GET_ACTIVE_ORGS_OF_AN_USER_FAILURE});
 
-    const data = await fetchActiveOrgOfAnUserService(id);
-        
-    dispatch({
-      type: GET_ORGS_OF_AN_USER_SUCCESS,
-      payload: data.organizers
-    })
+    const data = await getActiveOrgOfAnUserService(id);
 
     dispatch({
       type: GET_ACTIVE_ORGS_OF_AN_USER_SUCCESS,
-      payload: data.activeOrgsListDto
-    })
-
-      dispatch({
-      type: GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS,
-      payload: data.inActiveOrgsListDto
+      payload: data
     })
   } catch (error: any) {
     dispatch({
-        type: GET_ORGS_OF_AN_USER_FAILED,
+        type: GET_ACTIVE_ORGS_OF_AN_USER_FAILURE,
+        payload:
+        error.response?.data?.message || error.message || "Failed to get organizers of an user",
+    });
+    throw error;
+  }
+}
+
+export const getInActiveOrgOfAnUser = (id: any) => async (dispatch: any) => {
+  try {
+    dispatch({type:GET_INACTIVE_ORGS_OF_AN_USER_REQUEST});
+
+    const data = await getInActiveOrgOfAnUserService(id);
+
+    dispatch({
+      type: GET_INACTIVE_ORGS_OF_AN_USER_SUCCESS,
+      payload: data
+    })
+  } catch (error: any) {
+    dispatch({
+        type: GET_INACTIVE_ORGS_OF_AN_USER_FAILURE,
         payload:
         error.response?.data?.message || error.message || "Failed to get organizers of an user",
     });

@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-import { createEvent} from "../../../store/actions/event-action";
+import { createNewEvent} from "../../../store/actions/event-action";
 import type { RootState, AppDispatch } from "../../../store/store"
 import type { EventFormDto } from "../../../dtos/event-dto";
 import { showLoadingAlert, closeLoadingAlert, showSuccessAlert, showErrorAlert, showConfirmAlert } from "../../../helpers/alert-helpers"

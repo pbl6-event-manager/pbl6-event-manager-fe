@@ -7,7 +7,7 @@ import { useOrganizerViewModel } from "../../viewmodels/Admin/organizer-view-mod
 
 const UserActiveOrganizerEvents: React.FC = () => {
   const { activeOrganizers, organizerColumns } = useUserViewModel();
-  const { userEvents, eventColumnsDelView } = useEventViewModel();
+  const { eventsByUser, eventColumns } = useEventViewModel();
   const { selectedOrganizer, handleSelectOrganizer } = useOrganizerViewModel();
 
   return (
@@ -35,14 +35,8 @@ const UserActiveOrganizerEvents: React.FC = () => {
             : "List of Events"}
         </h3>
         <Table
-          columns={eventColumnsDelView}
-          data={
-            selectedOrganizer
-              ? userEvents.filter(
-                  (event: any) => event.organizerId === selectedOrganizer.id
-                )
-              : userEvents
-          }
+          columns={eventColumns}
+          data={eventsByUser}
           className="rounded-lg"
         />
       </div>

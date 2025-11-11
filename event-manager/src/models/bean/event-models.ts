@@ -2,6 +2,7 @@
 export interface EventModel {
   id: number
   organizerId: number
+  ownerId: number
   title: string
   summary: string
   startTime: Date
@@ -9,11 +10,11 @@ export interface EventModel {
   address: string
   city: string
   country: string
+  status: string
   language: string
   latitude: number
   longitude: number
-  bannerUrl?: string
-  categoryIds: number[]
+  bannerImagePath?: string
   createdAt: Date
   updatedAt: Date
 }

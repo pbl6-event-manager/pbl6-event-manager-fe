@@ -1,5 +1,5 @@
 import type { EventModel} from "../models/bean/event-models"
-import type { CreateEventRequestDto, EventFormDto } from "../dtos/event-dto"
+import type { CreateEventRequestDto, EventFormDto, EventListDto } from "../dtos/event-dto"
 import type { EventFormData } from "../models/form-models/event-form-models"
 import { convertToISODateTime } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
@@ -83,4 +83,16 @@ export const eventConverter = {
   convertEventListToDTO: (domainList: EventModel[]): CreateEventRequestDto[] => {
     return domainList.map((item) => eventConverter.convertDomainToDTO(item))
   },
+
+  convertEventModelToEventListDto: (eventModel: EventModel) : EventListDto => {
+    return {
+      id: eventModel.id,
+      title: eventModel.title,
+      summary: eventModel.summary,
+      location: eventModel.city + ", " + eventModel.country,
+      startTime: eventModel.startTime.toDateString(),
+      endTime: eventModel.endTime.toDateString(),
+      status: eventModel.status
+    }
+  }
 }

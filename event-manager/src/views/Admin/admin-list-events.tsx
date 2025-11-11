@@ -9,9 +9,7 @@ import { applyEventFilters } from "../../utils/Admin/filter-event";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 
 const AdminEvents: React.FC = () => {
-  const { publicEvents, pendingEvents, openDeleteDialog, openAcceptDialog, openRejectDialog, activeTab, eventColumns, setActiveTab, setOpenDeleteDialog, setOpenAcceptDialog, setOpenRejectDialog, handleDelete, handleViewDetail, confirmDelete, handleAccept, handleReject, confirmAccept, confirmReject } = useEventViewModel();
-
-  
+  const { publishedEvents, pendingEvents, openDeleteDialog, openAcceptDialog, openRejectDialog, activeTab, eventColumns, setActiveTab, setOpenDeleteDialog, setOpenAcceptDialog, setOpenRejectDialog, handleDelete, handleViewDetail, confirmDelete, handleAccept, handleReject, confirmAccept, confirmReject } = useEventViewModel();
 
   const [filters, setFilters] = useState<EventFilterState>({
     title: "",
@@ -21,13 +19,11 @@ const AdminEvents: React.FC = () => {
     sortOrder: "",
   });
 
-
-  const filteredPublicEvents = applyEventFilters(publicEvents, filters);
+  const filteredPublishedEvents = applyEventFilters(publishedEvents, filters);
   const filteredPendingEvents = applyEventFilters(pendingEvents, filters);
 
   return (
     <div className="p-6">
-      {/* Header chung */}
       <h2 className="text-2xl font-bold text-[var(--defaulttext)]">Events</h2>
 
       <div className="flex justify-between items-center mb-4">
@@ -51,7 +47,7 @@ const AdminEvents: React.FC = () => {
             <div className="flex-1">
               <Table
                 columns={eventColumns}
-                data={filteredPublicEvents}
+                data={filteredPublishedEvents}
                 className="rounded-lg shadow-md"
                 getRowActions={(row) => [
                   { type: "delete", onClick: () => handleDelete(row.id) },

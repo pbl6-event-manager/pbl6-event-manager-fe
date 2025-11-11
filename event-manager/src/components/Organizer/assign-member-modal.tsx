@@ -68,13 +68,11 @@ export default function AssignMemberModal({
                                             <div className="flex items-center gap-2">   
                                                 <input
                                                     type="checkbox"
-                                                    checked={isAssigned}
                                                     onChange={() => onAssign(member)}
                                                     disabled={isLoading}
                                                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer disabled:cursor-not-allowed"
                                                 />
                                                 <label className="text-sm font-medium text-gray-700 cursor-pointer">
-                                                    {isAssigned ? 'Assigned' : 'Assign'}
                                                 </label>
                                             </div>
                                         </div>

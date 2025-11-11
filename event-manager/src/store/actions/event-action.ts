@@ -1,7 +1,5 @@
 export const FETCH_EVENTS_BY_USER = "FETCH_EVENTS_BY_USER";
 export const CLEAR_EVENTS = "CLEAR_EVENTS";
-export const FETCH_PUBLIC_EVENTS = "FETCH_EVENTS";
-export const FETCH_PENDING_EVENTS = "FETCH_PENDING_EVENTS";
 export const CREATE_EVENT_REQUEST = "CREATE_EVENT_REQUEST";
 export const CREATE_EVENT_SUCCESS = "CREATE_EVENT_REQUEST";
 export const CREATE_EVENT_FAILED = "CREATE_EVENT_FAILED";
@@ -18,9 +16,15 @@ export const EVENT_UI_ACTIONS = {
     SAVE_EVENT_SUCCESS: "SAVE_EVENT_SUCCESS",
     SAVE_EVENT_FAILURE: "SAVE_EVENT_FAILURE"
 } as const
-import type { EventFormDto } from "../../dtos/event-dto";
+export const GET_ALL_EVENT_ADMIN_REQUEST = "GET_ALL_EVENT_ADMIN_REQUEST";
+export const GET_ALL_EVENT_ADMIN_SUCCESS = "GET_ALL_EVENT_ADMIN_SUCCESS";
+export const GET_ALL_EVENT_ADMIN_FAILURE = "GET_ALL_EVENT_ADMIN_FAILURE";
+export const GET_EVENTS_BY_ORGANIZERS_REQUEST = "GET_EVENTS_BY_ORGANIZERS_REQUEST";
+export const GET_EVENTS_BY_ORGANIZERS_SUCCESS = "GET_EVENTS_BY_ORGANIZERS_SUCCESS";
+export const GET_EVENTS_BY_ORGANIZERS_FAILURE = "GET_EVENTS_BY_ORGANIZERS_FAILURE";
+import type { EventFormDto, EventListDto } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
-import { createEventService } from "../../service/event-service";
+import { createEventService, getAllEventsAdminService, getEventsByOrganizerIdsService } from "../../service/event-service";
 
 export const fetchEventsByUser = (email: string) => {
   const dummyEvents = [
@@ -34,37 +38,60 @@ export const fetchEventsByUser = (email: string) => {
   };
 };
 
-export const getPublicEvents = () => {
-  const dummyEvents = [
-    { id: "e1", title: "Event A", description: "Đây là mô tả cơ bản dành cho sự kiện A", location: "Da Nang, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
-    { id: "e2", title: "Event B", description: "Đây là mô tả cơ bản dành cho sự kiện B", location: "Ho Chi Minh City, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
-    { id: "e3", title: "Event C", description: "Đây là mô tả cơ bản dành cho sự kiện C", location: "Hanoi, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
-  ];
-  
-  return {
-    type: FETCH_PUBLIC_EVENTS,
-    payload: dummyEvents
-  };
+export const getAllEventsAdmin = () => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: GET_ALL_EVENT_ADMIN_REQUEST
+    })
+
+    const response = await getAllEventsAdminService();
+    const publishedEvents = response.filter((e: EventListDto) => e.status === "PUBLISHED");
+    const pendingEvents = response.filter((e: EventListDto) => e.status !== "PUBLISHED");
+
+    dispatch({
+      type: GET_ALL_EVENT_ADMIN_SUCCESS,
+      payload: {
+        publishedEvents,
+        pendingEvents
+      }
+    })
+  } catch (error: any) {
+    dispatch({
+      type: CREATE_EVENT_FAILED,
+      payload:
+        error.response?.data?.message || error.message || "Create event failed",
+    });
+    throw error;
+  }
 }
 
-export const getPendingEvents = () => {
-  const dummyEvents = [
-    { id: "e4", title: "Event D", description: "Đây là mô tả cơ bản dành cho sự kiện A", location: "Da Nang, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
-    { id: "e5", title: "Event E", description: "Đây là mô tả cơ bản dành cho sự kiện B", location: "Ho Chi Minh City, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
-    { id: "e6", title: "Event F", description: "Đây là mô tả cơ bản dành cho sự kiện C", location: "Hanoi, Vietnam", starttime: "2025-01-01", endtime: "2025-01-02", status: "Public"},
-  ];
-  
-  return {
-    type: FETCH_PENDING_EVENTS,
-    payload: dummyEvents
-  };
+export const getEventsByOrganizerIds = (organizerIds: number[]) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: GET_EVENTS_BY_ORGANIZERS_REQUEST
+    })
+
+    const response = await getEventsByOrganizerIdsService(organizerIds);
+    
+    dispatch({
+      type: GET_EVENTS_BY_ORGANIZERS_SUCCESS,
+      payload: response
+    })
+  } catch (error: any) {
+    dispatch({
+      type: CREATE_EVENT_FAILED,
+      payload:
+        error.response?.data?.message || error.message || "Create event failed",
+    });
+    throw error;
+  }
 }
 
 export const clearEvents = () => ({
   type: CLEAR_EVENTS,
 });
 
-export const createEvent = (formData: EventFormDto) => async (dispatch: any) => {
+export const createNewEvent = (formData: EventFormDto) => async (dispatch: any) => {
   try {
     dispatch({
       type: CREATE_EVENT_REQUEST

@@ -79,18 +79,7 @@ export const useOrganizerViewModel = () => {
 
   // Create new organizer
   const handleCreateOrganizer = useCallback(async () => {
-    if (!validateForm()) {
-      return false
-    }
 
-    try {
-      await dispatch(createOrganizer(formData))
-      navigate("/organizer/info")
-      return true
-    } catch (error) {
-      console.error("[v0] Failed to create organizer:", error)
-      return false
-    }
   }, [dispatch, formData, navigate, validateForm])
 
   // Update existing organizer
@@ -182,6 +171,9 @@ export const useOrganizerViewModel = () => {
   //   [organizers],
   // )
 
+  const loadOrganizerForEdit = () => {
+    
+  }
   return {
     // State
     organizers,

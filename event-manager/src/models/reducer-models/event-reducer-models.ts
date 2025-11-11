@@ -1,11 +1,11 @@
+import type { EventListDto } from "../../dtos/event-dto";
+
 export interface EventState {
-  eventsByUser: {
-    [email: string]: any[]; 
-  };
+  eventsByUser: EventListDto[]; 
   currentEvent: any | null;
   createEvent: any | null;
-  publicEvents: any[];
-  pendingEvents: any[];
+  publishedEvents: EventListDto[];
+  pendingEvents: EventListDto[];
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
@@ -13,8 +13,8 @@ export interface EventState {
 }
 
 export const DEFAULT_EVENT_STATE: EventState = {
-  eventsByUser: {},
-  publicEvents: [],
+  eventsByUser: [],
+  publishedEvents: [],
   pendingEvents: [],
   createEvent: null,
   currentEvent: null,

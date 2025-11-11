@@ -47,4 +47,14 @@ export interface EventFormDto {
   banner?: File
   categoryIds: number[]
 };
+
+export interface EventListDto {
+  id: number
+  title: string
+  summary: string
+  startTime: string
+  endTime: string
+  location: string
+  status: string
+}
 //#endregion
