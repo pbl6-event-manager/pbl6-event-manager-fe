@@ -1,10 +1,10 @@
 //#region StaffRole Model
-export interface RolStaffModel {
+export interface RoleStaffModel {
   id: number
   createdAt: Date 
   updatedAt: Date
   name: string
-  description?: string
+  description: string
   ownerId: number
 }
 //#endregion

@@ -13,7 +13,7 @@ export default function RolesListPage() {
   const { roles, isLoading, error, handleFetchOwnerRoleStaffs, handleDeleteOwnerRole } = useRoleViewModel()
   
   useEffect(() => {
-    handleFetchOwnerRoleStaffs(1) // Assuming ownerId is 1 for demo purposes
+    handleFetchOwnerRoleStaffs() 
   }, [])
 
   const filteredRoles = roles.filter((role) => role.name.toLowerCase().includes(searchTerm.toLowerCase()))

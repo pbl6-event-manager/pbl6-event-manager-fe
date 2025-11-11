@@ -8,7 +8,7 @@ export const DELETE_OWNER_ROLE_STAFF_REQUEST = "CREATE_OWNER_ROLE_STAFF_REQUEST"
 export const DELETE_OWNER_ROLE_STAFF_SUCCESS = "CREATE_OWNER_ROLE_STAFF_SUCCESS";
 export const DELETE_OWNER_ROLE_STAFF_FAILED = "CREATE_OWNER_ROLE_STAFF_FAILED";
 
-import { fetchOwnerRoleStaffsService } from "../../service/role-staff-service";
+import { fetchOwnerRoleStaffsService, createRoleStaffService } from "../../service/role-staff-service";
 
 export const fetchOwnerRoleStaffs = () => async (dispatch: any) => {
     try {
@@ -60,7 +60,7 @@ export const createOwnerRoleStaff = (roleForm: any) => async (dispatch: any) => 
             type: CREATE_OWNER_ROLE_STAFF_REQUEST
         })
 
-        const data = "CALL SERVICE HERE";
+        const data = await createRoleStaffService(roleForm);
 
         dispatch({
             type: CREATE_OWNER_ROLE_STAFF_SUCCESS,
