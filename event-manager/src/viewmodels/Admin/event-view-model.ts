@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearEvents, getAllEventsAdmin, getEventDetailsById, getEventsByOrganizerIds } from "../../store/actions/event-action";
+import { approveRejectEvent, clearEvents, getAllEventsAdmin, getEventDetailsById, getEventsByOrganizerIds } from "../../store/actions/event-action";
 import type { RootState } from "../../store/store";
-import { closeLoadingAlert, showErrorAlert, showLoadingAlert } from "../../helpers/alert-helpers";
+import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert } from "../../helpers/alert-helpers";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getEventDetailsByIdService } from "../../service/event-service";
 import type { EventDetailsDto } from "../../dtos/event-dto";
 
 export const useEventViewModel = () => {
@@ -19,6 +18,7 @@ export const useEventViewModel = () => {
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
   const [eventDetails, setEventDetails] = useState<EventDetailsDto>();
   const [activeTab, setActiveTab] = useState<"pending" | "public">("public");
+  const [selectedEventId, setSelectedEventId] = useState<any>();
   const mapNumToTab = (n: string | null) =>
     n === "2"
       ? ("staff" as const)
@@ -112,20 +112,40 @@ export const useEventViewModel = () => {
     setOpenDeleteDialog(false);
   };
 
-  const handleAccept = (id: string) => {
+  const handleAccept = (id: number) => {
+    setSelectedEventId(id)
     setOpenAcceptDialog(true);
   }
   
-  const confirmAccept = () => {
-    setOpenAcceptDialog(false);
+  const confirmAccept = async () => {
+    try {
+      showLoadingAlert();
+      setOpenAcceptDialog(false);
+      await dispatch<any>(approveRejectEvent(selectedEventId, true));
+      closeLoadingAlert();
+      await showSuccessAlert("Approved event successfully");
+      setSelectedEventId(null);
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to approved event");
+    }
   }
   
-  const handleReject = (id: string) => {
+  const handleReject = (id: number) => {
+    setSelectedEventId(id);
     setOpenRejectDialog(true);
   }
 
-  const confirmReject = () => {
-    setOpenRejectDialog(false);
+  const confirmReject = async () => {
+    try {
+      showLoadingAlert();
+      setOpenRejectDialog(false);
+      await dispatch<any>(approveRejectEvent(selectedEventId, false));
+      closeLoadingAlert();
+      await showSuccessAlert("Rejected event successfully");
+      setSelectedEventId(null);
+    } catch (error: any) {
+      showErrorAlert(error?.message || "Failed to rejected event");
+    }
   }
 
   return {

@@ -1,4 +1,4 @@
-import { createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi } from "../api/event-api"
+import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi } from "../api/event-api"
 import { eventMapper } from "../mappers/event-mapper"
 import { eventConverter } from "../converters/event-converter"
 import type { EventFormDto } from "../dtos/event-dto"
@@ -137,3 +137,22 @@ export const getEventsByOrganizerIdsService = async (organizerIds: number[]) => 
   }
 }
 
+export const approveRejectEventService = async (eventId: number, isApprove: boolean) => {
+  try {
+    if(!eventId) return false;
+
+    const response = await approveRejectEventApi(eventId, isApprove);
+
+    if(response.data.message === "success") {
+      return true;  
+    }
+
+    return false;
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
