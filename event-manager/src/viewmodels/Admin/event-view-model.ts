@@ -1,13 +1,15 @@
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEventsByUser, clearEvents, getPublicEvents, getPendingEvents } from "../../store/actions/event-action";
-import { useEffect, useState } from "react";
+import { clearEvents, getAllEventsAdmin, getEventsByOrganizerIds } from "../../store/actions/event-action";
 import type { RootState } from "../../store/store";
+import { closeLoadingAlert, showErrorAlert, showLoadingAlert } from "../../helpers/alert-helpers";
+import { useLocation } from "react-router-dom";
 
 export const useEventViewModel = () => {
   const dispatch = useDispatch();
-  const selectedUserEmail = useSelector((state: RootState) => state.userReducer.selectedUserEmail);
+  const location = useLocation();
   const eventsByUser = useSelector((state: RootState) => state.eventReducer.eventsByUser);
-  const publicEvents = useSelector((state: RootState) => state.eventReducer.publicEvents);
+  const publishedEvents = useSelector((state: RootState) => state.eventReducer.publishedEvents);
   const pendingEvents = useSelector((state: RootState) => state.eventReducer.pendingEvents);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openAcceptDialog, setOpenAcceptDialog] = useState(false);
@@ -17,11 +19,10 @@ export const useEventViewModel = () => {
   const eventColumns = [
       { header: "ID", accessor: "id", type: "text" as const },
       { header: "Title", accessor: "title", type: "text" as const },
-      { header: "Description", accessor: "description", type: "text" as const },
+      { header: "Summary", accessor: "summary", type: "text" as const },
       { header: "Location", accessor: "location", type: "text" as const },
-      { header: "Start", accessor: "starttime", type: "text" as const },
-      { header: "End", accessor: "endtime", type: "text" as const },
-      { header: "Status", accessor: "status", type: "text" as const },
+      { header: "Start", accessor: "startTime", type: "text" as const },
+      { header: "End", accessor: "endTime", type: "text" as const },
       { header: "Actions", accessor: "actions", type: "action" as const },
     ];
   const eventColumnsDelView = [
@@ -33,25 +34,28 @@ export const useEventViewModel = () => {
   ]
 
   useEffect(() => {
-      dispatch(getPublicEvents());
-      dispatch(getPendingEvents());
-      if(selectedUserEmail) getEventsForUser(selectedUserEmail);
+      dispatch<any>(getAllEventsAdmin());
     }, [dispatch]);
-  
-  const userEvents = selectedUserEmail
-    ? eventsByUser[selectedUserEmail] || []
-    : [];
-  
-  const getEventsForUser = (email: string) => {
-    dispatch(fetchEventsByUser(email));
-  };
+
+  const fetchEventsByOrganizerIds = useCallback(
+    async (organizerIds: number[]) => {
+      if (!organizerIds || organizerIds.length === 0) return;
+      try {
+        showLoadingAlert("Loading");
+        await dispatch<any>(getEventsByOrganizerIds(organizerIds));
+        closeLoadingAlert();
+      } catch (error: any) {
+        showErrorAlert(error?.message || "Failed to get list events");
+      }
+    },
+    [dispatch]
+  );
 
   const resetEvents = () => {
     dispatch(clearEvents());
   };
 
-  const handleViewDetail = (id: string) => {
-    
+  const handleViewDetail = (id: number) => {
   } 
 
   const handleDelete = (id: string) => {
@@ -79,13 +83,12 @@ export const useEventViewModel = () => {
   }
 
   return {
-    publicEvents,
+    publishedEvents,
     pendingEvents,
     eventsByUser,
     activeTab,
     eventColumns,
     setActiveTab,
-    getEventsForUser,
     resetEvents,
     handleViewDetail,
     handleDelete,
@@ -100,7 +103,7 @@ export const useEventViewModel = () => {
     setOpenRejectDialog,
     confirmAccept,
     confirmReject,
-    userEvents,
-    eventColumnsDelView
+    eventColumnsDelView,
+    fetchEventsByOrganizerIds
   };
 };

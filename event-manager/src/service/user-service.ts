@@ -115,18 +115,29 @@ export const updateUserService = async (userData: any) => {
   }
 }
 
-export const fetchActiveOrgOfAnUserService = async (userId: any) => {
+export const getActiveOrgOfAnUserService = async (userId: any) => {
   try {
     const data = await getOrgOfAnUserApi(userId);
     const organizers = data.data.data.map(mapToOrganizerModel);
     const organizersListDto = organizers.map(convertOrgModelToListOrgDto);
     const activeOrgsListDto = organizersListDto.filter((o : ListOrganizerDto) => o.isActive === true);
+    return activeOrgsListDto;
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
+export const getInActiveOrgOfAnUserService = async (userId: any) => {
+  try {
+    const data = await getOrgOfAnUserApi(userId);
+    const organizers = data.data.data.map(mapToOrganizerModel);
+    const organizersListDto = organizers.map(convertOrgModelToListOrgDto);
     const inActiveOrgsListDto = organizersListDto.filter((o : ListOrganizerDto) => o.isActive === false);
-    return {
-      organizers,
-      activeOrgsListDto,
-      inActiveOrgsListDto
-    };
+    return inActiveOrgsListDto;
   } catch (error: any) {
     if (error.response) {
       throw new Error(error.response.data?.message || "Server error");

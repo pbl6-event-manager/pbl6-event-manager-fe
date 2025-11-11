@@ -1,7 +1,8 @@
-import { createEvent, getEventById } from "../api/event-api"
+import { createEvent, getAllEventsAdminApi, getEventById, getEventsByOrganizerApi } from "../api/event-api"
 import { eventMapper } from "../mappers/event-mapper"
 import { eventConverter } from "../converters/event-converter"
 import type { EventFormDto } from "../dtos/event-dto"
+import type { EventModel } from "../models/bean/event-models";
 
 export const createEventService = async (formData: EventFormDto) => {
   try {
@@ -53,6 +54,62 @@ export const getEventByIdService = async(eventId: number) => {
     const domainModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawResponse)
     const dto = eventConverter.convertDomainToDTO(domainModel)
     return dto
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
+export const getAllEventsAdminService = async () => {
+  try {
+    const response = await getAllEventsAdminApi();
+    if(response.data.message === "success") {
+      const eventModelList = response.data.data.map(eventMapper.mapResponseEventToEventModel);
+      const eventListDtoList = eventModelList.map(eventConverter.convertEventModelToEventListDto);
+      return eventListDtoList;
+    }
+    else {
+      throw new Error("Unexpected error occurred");
+    }
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
+export const getEventsByOrganizerIdsService = async (organizerIds: number[]) => {
+  try {
+    if (!organizerIds || organizerIds.length === 0) return [];
+
+    const results = await Promise.allSettled(
+      organizerIds.map((id) => getEventsByOrganizerApi(id))
+    );
+
+    const collectedModels: EventModel[] = [];
+
+    results.forEach((res) => {
+      if (res.status === "fulfilled") {
+        const resp = res.value;
+        if (resp?.data?.message === "success" && Array.isArray(resp.data.data)) {
+          const models = resp.data.data.map(eventMapper.mapResponseEventToEventModel);
+          collectedModels.push(...models);
+        }
+      } else {
+        throw new Error("Unexpected error occurred");
+      }
+    });
+
+    const uniqueById = Array.from(new Map(collectedModels.map((e) => [e.id, e])).values());
+    uniqueById.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+
+    const dtoList = uniqueById.map(eventConverter.convertEventModelToEventListDto);
+    return dtoList;
   } catch (error: any) {
     if (error.response) {
       throw new Error(error.response.data?.message || "Server error");

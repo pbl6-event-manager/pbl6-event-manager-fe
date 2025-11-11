@@ -1,27 +1,72 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getOrgOfAnUser, updateUser, getUserByEmail } from "../../store/actions/user-action";
-import { useEffect, useCallback, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import {applyUserFilters} from "../../utils/Admin/filter-user";
-import {type FilterState} from "../../utils/Admin/filter-user";
+import { getUsers, setSelectedUser, clearSelectedUser, updateStatusUser, addUser, getActiveOrgOfAnUser, getInActiveOrgOfAnUser, updateUser, getUserByEmail } from "../../store/actions/user-action";
+import { useEffect, useCallback, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { applyUserFilters } from "../../utils/Admin/filter-user";
+import { type FilterState } from "../../utils/Admin/filter-user";
 import { FILTER_STATE_DEFAULT } from "../../utils/Admin/filter-user";
 import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert } from "../../helpers/alert-helpers";
+import { getEventsByOrganizerIds } from "../../store/actions/event-action";
 
-export const useUserViewModel = () => { 
+export const useUserViewModel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const {user, users, loading, activeOrganizers, inActiveOrganizers} = useSelector((state: RootState) => state.userReducer);
+  const { user, users, loading, activeOrganizers, inActiveOrganizers } = useSelector((state: RootState) => state.userReducer);
   const [cachedUserLocal, setCachedUserLocal] = useState<any | null>(null);
   const [openDelDialog, setOpenDelDialog] = useState(false);
   const [openRecDialog, setOpenRecDialog] = useState(false);
   const [detailEmail, setDetailEmail] = useState("");
-  const [activeTab, setActiveTab] = useState<"active" | "deleted">("active");
-  const [activeDetailTab, setActiveDetailTab] = useState<"participant" | "active-organizer" | "deleted-organizer">("participant");
   const selectedUserEmail = useSelector(
     (state: RootState) => state.userReducer.selectedUserEmail
   );
+  const qTab = new URLSearchParams(location.search).get("tab");
+  const mapListTabToNum = (t: "active" | "deleted") => (t === "deleted" ? "2" : "1");
+  const mapNumToListTab = (n: string | null) => (n === "2" ? ("deleted" as const) : ("active" as const));
+  const mapNumToDetailTab = (n: string | null) =>
+    n === "2" ? ("active-organizer" as const) : n === "3" ? ("deleted-organizer" as const) : ("participant" as const);
+  const mapDetailTabToNum = (t: "participant" | "active-organizer" | "deleted-organizer") =>
+    t === "active-organizer" ? "2" : t === "deleted-organizer" ? "3" : "1";
+  const [activeTab, _setActiveTab] = useState<"active" | "deleted">(mapNumToListTab(qTab));
+  const [activeDetailTab, _setActiveDetailTab] = useState<"participant" | "active-organizer" | "deleted-organizer">(mapNumToDetailTab(qTab));
+
+  const setActiveTab = useCallback(
+    (tab: "active" | "deleted") => {
+      _setActiveTab(tab);
+      try {
+        const params = new URLSearchParams(location.search);
+        params.set("tab", mapListTabToNum(tab));
+        const qs = params.toString();
+        navigate(`${location.pathname}${qs ? `?${qs}` : ""}`, { replace: true });
+      } catch { }
+    },
+    [location, navigate]
+  );
+
+  const setActiveDetailTab = useCallback(
+    (tab: "participant" | "active-organizer" | "deleted-organizer") => {
+      _setActiveDetailTab(tab);
+      try {
+        const params = new URLSearchParams(location.search);
+        params.set("tab", mapDetailTabToNum(tab));
+        const qs = params.toString();
+        navigate(`${location.pathname}${qs ? `?${qs}` : ""}`, { replace: true });
+      } catch { }
+    },
+    [location, navigate]
+  );
+
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get("tab");
+    if (location.pathname.includes("/admin/users/details")) {
+      const newDetail = mapNumToDetailTab(q);
+      if (newDetail !== activeDetailTab) _setActiveDetailTab(newDetail);
+    } else {
+      const newList = mapNumToListTab(q);
+      if (newList !== activeTab) _setActiveTab(newList);
+    }
+  }, [location.search, location.pathname]);
 
   useEffect(() => {
     try {
@@ -71,20 +116,15 @@ export const useUserViewModel = () => {
         if (!mounted) return;
 
         const fetchedUser = fetchRes?.payload ?? fetchRes?.data ?? fetchRes;
-        // if fetchedUser exists, replace local cache and ensure store/selectors updated by thunk
+
         if (fetchedUser && mounted) {
           setCachedUserLocal(fetchedUser);
         }
 
-        const userId = fetchedUser?.id ?? (cached?.id ?? null);
-        if (userId) {
-          await dispatch<any>(getOrgOfAnUser(userId));
-        }
-
-        try { closeLoadingAlert(); } catch {}
+        try { closeLoadingAlert(); } catch { }
       } catch (error: any) {
         if (!mounted) return;
-        try { closeLoadingAlert(); } catch {}
+        try { closeLoadingAlert(); } catch { }
         showErrorAlert(error?.message || "Failed to fetch information of this user");
       }
     };
@@ -100,15 +140,53 @@ export const useUserViewModel = () => {
     };
   }, [detailEmail, dispatch, users]);
 
+  const getActiveOrganizersOfAnUser = useCallback(async (id: any) => {
+    await dispatch<any>(getActiveOrgOfAnUser(id))
+  }, [dispatch]);
+
+  const getInActiveOrganizersOfAnUser = useCallback(async (id: any) => {
+    await dispatch<any>(getInActiveOrgOfAnUser(id))
+  }, [dispatch]);
+
+  const fetchEventsByOrganizerIds = useCallback(
+    async (organizerIds: number[]) => {
+      if (!organizerIds || organizerIds.length === 0) return;
+      try {
+        showLoadingAlert("Loading");
+        await dispatch<any>(getEventsByOrganizerIds(organizerIds));
+        closeLoadingAlert();
+      } catch (error: any) {
+        showErrorAlert(error?.message || "Failed to get list events");
+      }
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    if ((activeDetailTab === "active-organizer" || activeDetailTab === "deleted-organizer") && selectedUserEmail) {
-      const user = users.find((u) => u.email === selectedUserEmail);
-      if (user?.id) {
-        getOrganizersOfAnUser(user.id);
+    const email = selectedUserEmail || detailEmail;
+    if (!email) return;
+
+    const user = users.find((u) => u.email === email);
+    if (!user?.id) return;
+
+    const fetchEventOrgDetailsOfAnUser = async () => {
+      if (activeDetailTab === "active-organizer") {
+        await getActiveOrganizersOfAnUser(user.id);
+        const activeOrganizerIds: number[] = Array.isArray(activeOrganizers)
+          ? activeOrganizers.map((o: any) => Number(o?.id)).filter((id) => !Number.isNaN(id))
+          : [];
+        await fetchEventsByOrganizerIds(activeOrganizerIds);
+      } else if (activeDetailTab === "deleted-organizer") {
+        await getInActiveOrganizersOfAnUser(user.id);
+        const inActiveOrganizerIds: number[] = Array.isArray(inActiveOrganizers)
+          ? activeOrganizers.map((o: any) => Number(o?.id)).filter((id) => !Number.isNaN(id))
+          : [];
+        await fetchEventsByOrganizerIds(inActiveOrganizerIds);
       }
     }
-  }, [activeDetailTab, selectedUserEmail]);
+
+    fetchEventOrgDetailsOfAnUser();
+  }, [activeDetailTab]);
 
   const columns = [
     { header: "ID", accessor: "id", type: "text" as const },
@@ -125,7 +203,7 @@ export const useUserViewModel = () => {
     { header: "ID", accessor: "id", type: "text" as const },
     { header: "Organizer Name", accessor: "name", type: "text" as const },
   ];
-  
+
   const [filters, setFilters] = useState<FilterState>(FILTER_STATE_DEFAULT);
 
   const activeUsers = users.filter((u) => u.isActive);
@@ -140,24 +218,23 @@ export const useUserViewModel = () => {
     },
     [dispatch]
   );
-  
+
   const clearUser = useCallback(() => {
     dispatch(clearSelectedUser());
   }, [dispatch]);
 
-  const getOrganizersOfAnUser = useCallback((id: any) => {
-    dispatch<any>(getOrgOfAnUser(id))
-  }, [dispatch]);
-
   const handleViewDetail = (email: string) => {
-    setDetailEmail(email);
-    navigate(`/admin/users/details?email=${email}`);
+    const tabNum = mapDetailTabToNum(activeDetailTab);
+    const params = new URLSearchParams(location.search);
+    params.set("email", email);
+    params.set("tab", tabNum);
+    navigate(`/admin/users/details?${params.toString()}`);
   }
 
   const handleEdit = (email: string) => {
     const user = users.find((u) => u.email === email);
-    if(user) {
-      navigate("/admin/users/edit", { state: { user } }); 
+    if (user) {
+      navigate("/admin/users/edit", { state: { user } });
     }
   };
 
@@ -168,7 +245,7 @@ export const useUserViewModel = () => {
   }
 
   const confirmDelete = async () => {
-    if(!selectedUserEmail) {
+    if (!selectedUserEmail) {
       setOpenDelDialog(false);
       showErrorAlert("Failed to delete user");
       return;
@@ -184,7 +261,7 @@ export const useUserViewModel = () => {
       showErrorAlert(error?.message || "Failed to delete user");
     }
   };
-  
+
   const handleCreate = () => {
     navigate("/admin/users/create");
   }
@@ -192,11 +269,11 @@ export const useUserViewModel = () => {
   const handleRecover = (email: string) => {
     clearUser();
     selectUser(email);
-    setOpenRecDialog(true);  
+    setOpenRecDialog(true);
   }
 
   const confirmRecover = async () => {
-    if(!selectedUserEmail) {
+    if (!selectedUserEmail) {
       setOpenRecDialog(false);
       showErrorAlert("Failed to recover user");
       return;
@@ -236,16 +313,16 @@ export const useUserViewModel = () => {
       showErrorAlert(error?.message || "Failed to add account");
     }
   }
-  
+
   const handleBack = () => {
     navigate(-1);
   }
-  
+
   const displayedUser = user ?? cachedUserLocal;
 
   return {
     filteredActiveUsers,
-    filteredInActiveUsers, 
+    filteredInActiveUsers,
     columns,
     users,
     user: displayedUser,
