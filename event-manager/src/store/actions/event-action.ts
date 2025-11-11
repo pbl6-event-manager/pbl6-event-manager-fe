@@ -25,10 +25,14 @@ export const GET_EVENTS_BY_ORGANIZERS_FAILURE = "GET_EVENTS_BY_ORGANIZERS_FAILUR
 export const GET_EVENT_DETAILS_REQUEST = "GET_EVENT_DETAILS_REQUEST";
 export const GET_EVENT_DETAILS_SUCCESS = "GET_EVENT_DETAILS_SUCCESS";
 export const GET_EVENT_DETAILS_FAILURE = "GET_EVENT_DETAILS_FAILURE";
+export const APPROVE_REJECT_EVENT_REQUEST = "APPROVE_REJECT_EVENT_REQUEST";
+export const APPROVE_REJECT_EVENT_SUCCESS = "APPROVE_REJECT_EVENT_SUCCESS";
+export const APPROVE_REJECT_EVENT_FAILURE = "APPROVE_REJECT_EVENT_FAILURE";
 import type { EventFormDto, EventListDto } from "../../dtos/event-dto";
 import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
-import { createEventService, getAllEventsAdminService, getEventDetailsByIdService, getEventsByOrganizerIdsService } from "../../service/event-service";
+import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, getEventsByOrganizerIdsService } from "../../service/event-service";
+import { store } from "../store";
 
 export const fetchEventsByUser = (email: string) => {
   const dummyEvents = [
@@ -86,6 +90,44 @@ export const getEventsByOrganizerIds = (organizerIds: number[]) => async (dispat
       type: CREATE_EVENT_FAILED,
       payload:
         error.response?.data?.message || error.message || "Create event failed",
+    });
+    throw error;
+  }
+}
+
+export const approveRejectEvent = (eventId: number, isApprove: boolean) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: APPROVE_REJECT_EVENT_REQUEST
+    })
+
+    const response = await approveRejectEventService(eventId, isApprove);
+    let pendingEvents: EventListDto[] = Array.isArray(store.getState().eventReducer.pendingEvents) ? [...store.getState().eventReducer.pendingEvents] : [];
+    let publishedEvents: any[] = Array.isArray(store.getState().eventReducer.publishedEvents) ? [...store.getState().eventReducer.publishedEvents] : [];
+    let removedEvent = null;
+    if(response) {
+      const pendingIndex = pendingEvents.findIndex((e: any) => Number(e?.id) === Number(eventId));
+      removedEvent = pendingEvents.splice(pendingIndex, 1)[0];
+    }
+
+    if(isApprove) {
+      publishedEvents = [removedEvent, ...publishedEvents].sort((a , b) => a.id - b.id);
+    }
+
+    dispatch({
+      type: APPROVE_REJECT_EVENT_SUCCESS,
+      payload: {
+        publishedEvents,
+        pendingEvents
+      },
+    });
+    
+    return response;
+  } catch (error: any) {
+    dispatch({
+      type: APPROVE_REJECT_EVENT_FAILURE,
+      payload:
+        error.response?.data?.message || error.message || "Approve event failed",
     });
     throw error;
   }
