@@ -44,12 +44,12 @@ export default function AddOrganizerPage() {
         }
     }
 
-    const handleSubmit = async () => {
-        const success = await handleCreateOrganizer()
-        if (success) {
-            navigate("/organizer/settings")
-        }
-    }
+    // const handleSubmit = async () => {
+    //     const success = await handleCreateOrganizer()
+    //     if (success) {
+    //         navigate("/organizer/settings")
+    //     }
+    // }
 
     const handleBackClick = async () => {
         const confirmed = window.confirm("Are you sure to leave the page?")
@@ -322,7 +322,7 @@ export default function AddOrganizerPage() {
                         Cancel
                     </button>
                     <button
-                        onClick={handleSubmit}
+                        //onClick={handleSubmit}
                         className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700 disabled:bg-gray-300"
                     >
                         Save
