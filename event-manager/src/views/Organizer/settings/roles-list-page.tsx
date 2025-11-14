@@ -1,37 +1,34 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
+import { MoreVertical, Pencil, Trash2 } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../components/ui/dropdown-menu"
 import { useRoleViewModel } from "../../../viewmodels/Organizer/settings/role-staff-view-model"
 
 export default function RolesListPage() {
-  const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedRole, setSelectedRole] = useState<number | null>(null)
-  const { roles, isLoading, error, handleFetchOwnerRoleStaffs, handleDeleteOwnerRole } = useRoleViewModel()
-  
+  const {
+    filteredRoles,
+    isLoading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    handleFetchOwnerRoleStaffs,
+    handleNavigateToCreateNewRole,
+    handleNavigateToUpdateRole,
+    handleDeleteOwnerRole
+  } = useRoleViewModel()
+
   useEffect(() => {
-    handleFetchOwnerRoleStaffs() 
-  }, [])
+    handleFetchOwnerRoleStaffs()
+  }, [handleFetchOwnerRoleStaffs])
 
-  const filteredRoles = roles.filter((role) => role.name.toLowerCase().includes(searchTerm.toLowerCase()))
-
-  const handleMenuClick = (roleId: number) => {
-    setSelectedRole(selectedRole === roleId ? null : roleId)
-  }
-
-  const handleCreateNewRole = () => {
-    navigate("/organizer/settings/members/roles/create")
-  }
-
-  const handleDeleteRole = async (roleId: number) => {
-    if (window.confirm("Are you sure you want to delete this role?")) {
-      await handleDeleteOwnerRole(roleId)
-      setSelectedRole(null)
-    }
-  }
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-8">Loading roles...</div>
@@ -48,7 +45,7 @@ export default function RolesListPage() {
           className="flex-1"
         />
         <Button
-          onClick={handleCreateNewRole}
+          onClick={handleNavigateToCreateNewRole}
           className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium"
         >
           Create new role
@@ -69,32 +66,37 @@ export default function RolesListPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900">{role.name}</h3>
-                {/* {role.description && <p className="text-sm text-gray-600">{role.description}</p>} */}
+                {role.description && (
+                  <p className="text-sm text-gray-600">{role.description}</p>
+                )}
               </div>
             </div>
-            <button className="text-gray-400 hover:text-gray-600" onClick={() => handleMenuClick(role.id)}>
-              <svg className="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-              </svg>
-            </button>
-            {selectedRole === role.id && (
-              <div className="absolute right-0 top-[70%] z-50 mt-0 w-40 rounded-lg border border-gray-200 bg-white shadow-lg transition-transform duration-150 ease-out">
-                <button
-                  onClick={() => {
-                    /* Handle Edit Action */
-                  }}
-                  className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => { handleDeleteRole(role.id) }}
-                  className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
-                >
-                  Delete
-                </button>
-              </div>
-            )}
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-8 w-8 text-gray-400 hover:text-gray-600"
+                  >
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem 
+                    onClick={() => handleNavigateToUpdateRole(role.id)}
+                  >
+                    <Pencil className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    variant="destructive"
+                    onClick={() => handleDeleteOwnerRole(role.id)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
           </div>
         ))}
       </div>

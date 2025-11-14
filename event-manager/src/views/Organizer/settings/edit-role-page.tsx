@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, Check } from "lucide-react"
+import { Check, ArrowLeft } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
 import { Textarea } from "../../../components/ui/textarea"
@@ -9,14 +9,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import { Checkbox } from "../../../components/ui/checkbox"
 import { usePermissionViewModel } from "../../../viewmodels/Organizer/settings/permission-view-model"
 import { useRoleViewModel } from "../../../viewmodels/Organizer/settings/role-staff-view-model"
+import { useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
 
-export default function CreateRolePage() {
+export default function EditRolePage() {
+    const { id } = useParams<{ id: any }>()
+    const [isInitialized, setIsInitialized] = useState(false)
+
     const {
         formData,
         updateFormData,
         validationErrors,
-        handleCreateOwnerRole,
-        isLoading: roleLoading, 
+        handleUpdateOwnerRole,
+        handleLoadRoleById,
+        handleGetRoleById,
+        handleFetchOwnerRoleStaffs,
+        isLoading: roleLoading,
         handleBackClick
     } = useRoleViewModel()
 
@@ -25,25 +33,58 @@ export default function CreateRolePage() {
         isLoading: permissionLoading,
         error: permissionError,
         selectedPermissions,
+        setSelectedPermissions,
         togglePermission,
-        isAllSelected,
         toggleSelectAll,
+        isAllSelected
     } = usePermissionViewModel()
 
-    
+    useEffect(() => {
+        handleFetchOwnerRoleStaffs()
+    }, [handleFetchOwnerRoleStaffs])
 
-    if (permissionLoading) {
+    useEffect(() => {
+        if (id && !isInitialized && !roleLoading) {
+            const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+            const role = handleLoadRoleById(numericId)
+            if (role) {
+                if (role.permissions && role.permissions.length > 0) {
+                    const permissionIds = role.permissions.map(p => p.id)
+                    const permissionSet = new Set(permissionIds)
+                    setSelectedPermissions(permissionSet)
+                    updateFormData("permissionIds", permissionIds)
+                }
+
+                setIsInitialized(true)
+            } else {
+                throw new Error(`Role with ID ${numericId} not found`)
+            }
+        }
+    }, [id, roleLoading, isInitialized, handleLoadRoleById, setSelectedPermissions, updateFormData])
+    // Get current role for validation
+    const currentRole = handleGetRoleById(id)
+
+    // Role not found
+    if (!currentRole) {
         return (
             <div className="flex-1 bg-gray-50 p-8">
                 <div className="max-w-4xl mx-auto">
-                    <div className="text-center py-12">
-                        <p className="text-gray-600">Loading permissions...</p>
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-red-800 mb-2">Role Not Found</h3>
+                        <p className="text-red-600 mb-4">The role with ID {id} could not be found.</p>
+                        <Button
+                            variant="outline"
+                            onClick={() => window.history.back()}
+                        >
+                            Go Back
+                        </Button>
                     </div>
                 </div>
             </div>
         )
     }
 
+    // Permission error
     if (permissionError) {
         return (
             <div className="flex-1 bg-gray-50 p-8">
@@ -69,12 +110,12 @@ export default function CreateRolePage() {
                 </div>
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">Create New Role</h1>
-                    <p className="text-gray-600">Define a custom role with specific permissions</p>
+                    <h1 className="text-3xl font-bold mb-2">Edit Role</h1>
+                    <p className="text-gray-600">Update role information and permissions</p>
                 </div>
 
                 {/* Role Information */}
-                <Card className="mb-8"> 
+                <Card className="mb-8">
                     <CardHeader>
                         <CardTitle>Role Information</CardTitle>
                     </CardHeader>
@@ -160,28 +201,32 @@ export default function CreateRolePage() {
                                 {/* Permissions List */}
                                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                                     <div className="divide-y divide-gray-200">
-                                        {permissionListItems.map((permission) => (
-                                            <Label
-                                                key={permission.id}
-                                                className="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-4 transition-colors"
-                                            >
-                                                <Checkbox
-                                                    checked={selectedPermissions.has(permission.id)}
-                                                    onCheckedChange={() => togglePermission(permission.id)}
-                                                />
-                                                <div className="flex-1">
-                                                    <h4 className="text-sm font-medium text-gray-700 capitalize">
-                                                        {permission.name.replace(/_/g, " ")}
-                                                    </h4>
-                                                    <p className="text-xs text-gray-500 mt-1">
-                                                        {permission.description}
-                                                    </p>
-                                                </div>
-                                                {selectedPermissions.has(permission.id) && (
-                                                    <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                                                )}
-                                            </Label>
-                                        ))}
+                                        {permissionListItems.map((permission) => {
+                                            const isChecked = selectedPermissions.has(permission.id);
+                                            //console.log(`Permission ${permission.id} (${permission.name}): checked=${isChecked}`);
+                                            return (
+                                                <Label
+                                                    key={permission.id}
+                                                    className="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-4 transition-colors"
+                                                >
+                                                    <Checkbox
+                                                        checked={isChecked}
+                                                        onCheckedChange={() => togglePermission(permission.id)}
+                                                    />
+                                                    <div className="flex-1">
+                                                        <h4 className="text-sm font-medium text-gray-700 capitalize">
+                                                            {permission.name.replace(/_/g, " ")}
+                                                        </h4>
+                                                        <p className="text-xs text-gray-500 mt-1">
+                                                            {permission.description}
+                                                        </p>
+                                                    </div>
+                                                    {isChecked && (
+                                                        <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                                                    )}
+                                                </Label>
+                                            )
+                                        })}
                                     </div>
                                 </div>
 
@@ -209,11 +254,11 @@ export default function CreateRolePage() {
                         Cancel
                     </Button>
                     <Button
-                        onClick={handleCreateOwnerRole}
+                        onClick={() => handleUpdateOwnerRole(id)}
                         disabled={roleLoading || permissionLoading}
                         className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2"
                     >
-                        {roleLoading ? "Creating..." : "Create Role"}
+                        {roleLoading ? "Updating..." : "Update Role"}
                     </Button>
                 </div>
             </div>

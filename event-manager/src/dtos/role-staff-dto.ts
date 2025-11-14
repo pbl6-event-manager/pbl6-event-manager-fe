@@ -2,7 +2,7 @@ export interface RoleStaffDto {
     id: number,
     name: string,
     description: string,
-    permissions?: RolePermissionDto[],
+    permissions: RolePermissionDto[],
     ownerId: number
 }
 

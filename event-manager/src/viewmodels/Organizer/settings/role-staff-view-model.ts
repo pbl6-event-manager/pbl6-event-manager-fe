@@ -1,20 +1,21 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../../store/store";
 import {
     fetchOwnerRoleStaffs,
     createOwnerRoleStaff,
-    deleteOwnerRoleStaff
+    deleteOwnerRoleStaff,
+    updateOwnerRoleStaff
 } from "../../../store/actions/role-staff-actions";
 import type { CreateRoleStaffFormData } from "../../../models/form-models/role-staff-form-models";
-import { showLoadingAlert, showSuccessAlert, showErrorAlert, closeLoadingAlert } from "../../../helpers/alert-helpers";
+import { showLoadingAlert, showSuccessAlert, showErrorAlert, closeLoadingAlert, showConfirmAlert } from "../../../helpers/alert-helpers";
 
 
 export const useRoleViewModel = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
+    const [searchTerm, setSearchTerm] = useState("")
     const { roles, currentRole, isLoading, error } = useSelector((state: RootState) => state.roleReducer);
     const [formData, setFormData] = useState<CreateRoleStaffFormData>({
         name: "",
@@ -22,11 +23,11 @@ export const useRoleViewModel = () => {
         permissionIds: [],
     });
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+    const filteredRoles = roles.filter((role) => role.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const updateFormData = useCallback((field: keyof CreateRoleStaffFormData, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }))
-        
-        // Clear validation error khi user nhập
+
         if (validationErrors[field]) {
             setValidationErrors(prev => {
                 const newErrors = { ...prev }
@@ -36,33 +37,62 @@ export const useRoleViewModel = () => {
         }
     }, [validationErrors]);
 
+    const handleLoadRoleById = useCallback((roleId: number | string) => {
+        const numericRoleId = typeof roleId === 'string' ? parseInt(roleId, 10) : roleId;
+        const role = roles.find(r => r.id === numericRoleId);
+
+        if (role) {
+            setFormData({
+                name: role.name,
+                description: role.description,
+                permissionIds: [] 
+            })
+            return role
+        }
+        return null
+    }, [roles]);
+
+    const handleGetRoleById = useCallback((roleId: number | string) => {
+        const numericRoleId = typeof roleId === 'string' ? parseInt(roleId, 10) : roleId;
+        const role = roles.find(r => r.id === numericRoleId);
+        return role;
+    }, [roles]);
+    const resetForm = useCallback(() => {
+        setFormData({
+            name: "",
+            description: "",
+            permissionIds: [],
+        });
+        setValidationErrors({});
+    }, []);
+
     const validateForm = useCallback(() => {
         const errors: Record<string, string> = {};
 
         if (!formData.name.trim()) {
             errors.name = "Role name is required";
-            console.log("Validation Error: Name is required");
         } else if (formData.name.length > 50) {
             errors.name = "Role name must be less than 50 characters";
-            console.log("Validation Error: Name too long");
         }
 
         if (!formData.description.trim()) {
             errors.description = "Role description is required";
-            console.log("Validation Error: Description is required");
         } else if (formData.description.length > 200) {
             errors.description = "Role description must be less than 200 characters";
-            console.log("Validation Error: Description too long");
         }
 
         if (formData.permissionIds.length === 0) {
             errors.permissions = "At least one permission must be selected"
-            console.log("Validation Error: No permissions selected");
         };
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
     }, [formData]);
-
+    const handleNavigateToCreateNewRole = () => {
+        navigate("/organizer/settings/members/roles/create")
+    }
+    const handleNavigateToUpdateRole = (roleStaffId: number) => {
+        navigate(`/organizer/settings/members/roles/edit/${roleStaffId}`)
+    }
     const handleFetchOwnerRoleStaffs = useCallback(async () => {
         try {
             showLoadingAlert("Loading roles...");
@@ -75,9 +105,8 @@ export const useRoleViewModel = () => {
         }
     }, [dispatch])
     const handleCreateOwnerRole = useCallback(async () => {
-        console.log("Form data before validation:", formData);
         if (!validateForm()) {
-            showErrorAlert( "Please fix validation errors before submitting.");
+            showErrorAlert("Please fix validation errors before submitting.");
             return;
         }
         try {
@@ -87,27 +116,78 @@ export const useRoleViewModel = () => {
             showSuccessAlert("Role created successfully");
             navigate("/organizer/settings?tab=roles");
         } catch (error) {
+            closeLoadingAlert();
             showErrorAlert("Error creating role");
-            console.error("Error creating role:", error)
         }
     }, [dispatch, formData, validateForm, navigate])
+
+    const handleUpdateOwnerRole = useCallback(async (roleStaffId: number) => {
+        if (!validateForm()) {
+            showErrorAlert("Please fix validation errors before submitting.");
+            return;
+        }
+        try {
+            showLoadingAlert("Updating role...");
+            await dispatch<any>(updateOwnerRoleStaff(roleStaffId, formData));
+            closeLoadingAlert();
+            showSuccessAlert("Role updated successfully");
+            navigate("/organizer/settings?tab=roles");
+        } catch (error) {
+            closeLoadingAlert();
+            showErrorAlert("Error updating role");
+        }
+    }, [dispatch, formData, validateForm, navigate])
+
     const handleDeleteOwnerRole = useCallback(async (roleStaffId: number) => {
         try {
-            dispatch<any>(deleteOwnerRoleStaff(roleStaffId));
+            const result = await showConfirmAlert("Are you sure you want to delete this role?", "Delete Role")
+            if (result) {
+                showLoadingAlert("Deleting role...");
+                await dispatch<any>(deleteOwnerRoleStaff(roleStaffId));
+                closeLoadingAlert();
+                showSuccessAlert("Role deleted successfully");
+                await handleFetchOwnerRoleStaffs();
+            }
         } catch (error) {
-            console.error("Error deleting role:", error)
+            closeLoadingAlert();
+            showErrorAlert("Error deleting role");
         }
-    }, [dispatch])
+    }, [dispatch, handleFetchOwnerRoleStaffs])
+
+    const handleBackClick = () => {
+        showConfirmAlert("Are you sure to leave the page?", "Unsaved changes will be lost.").then(async (confirmed) => {
+            if (confirmed) {
+                navigate("/organizer/settings?tab=roles")
+            }
+        })
+    }
 
     return {
+        // State
         roles,
+        filteredRoles,
+        currentRole,
         isLoading,
         error,
+        searchTerm,
         formData,
-        updateFormData, 
         validationErrors,
+        
+        // Setters
+        setSearchTerm,
+        updateFormData,
+        
+        // Functions
+        handleLoadRoleById,
+        handleGetRoleById,         
+        resetForm,           
+        validateForm,          
         handleFetchOwnerRoleStaffs,
+        handleNavigateToCreateNewRole,
+        handleNavigateToUpdateRole,
         handleCreateOwnerRole,
-        handleDeleteOwnerRole
+        handleUpdateOwnerRole,
+        handleDeleteOwnerRole,
+        handleBackClick
     }
 }

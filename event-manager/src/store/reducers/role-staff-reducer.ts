@@ -1,4 +1,17 @@
-import { FETCH_OWNER_ROLE_STAFF_FAILED, FETCH_OWNER_ROLE_STAFF_REQUEST, FETCH_OWNER_ROLE_STAFF_SUCCESS, CREATE_OWNER_ROLE_STAFF_FAILED, CREATE_OWNER_ROLE_STAFF_REQUEST, CREATE_OWNER_ROLE_STAFF_SUCCESS, DELETE_OWNER_ROLE_STAFF_FAILED, DELETE_OWNER_ROLE_STAFF_REQUEST, DELETE_OWNER_ROLE_STAFF_SUCCESS } from "../actions/role-staff-actions";
+import {
+    FETCH_OWNER_ROLE_STAFF_FAILED,
+    FETCH_OWNER_ROLE_STAFF_REQUEST,
+    FETCH_OWNER_ROLE_STAFF_SUCCESS,
+    CREATE_OWNER_ROLE_STAFF_FAILED,
+    CREATE_OWNER_ROLE_STAFF_REQUEST,
+    CREATE_OWNER_ROLE_STAFF_SUCCESS,
+    DELETE_OWNER_ROLE_STAFF_FAILED,
+    DELETE_OWNER_ROLE_STAFF_REQUEST,
+    DELETE_OWNER_ROLE_STAFF_SUCCESS,
+    UPDATE_OWNER_ROLE_STAFF_REQUEST,
+    UPDATE_OWNER_ROLE_STAFF_SUCCESS,
+    UPDATE_OWNER_ROLE_STAFF_FAILED
+} from "../actions/role-staff-actions";
 import { DEFAULT_ROLE_STATE, type RoleState } from "../../models/reducer-models/role-reducer-models";
 
 export const roleReducer = (state = DEFAULT_ROLE_STATE, action: any): RoleState => {
@@ -39,6 +52,29 @@ export const roleReducer = (state = DEFAULT_ROLE_STATE, action: any): RoleState 
                 isLoading: false,
                 error: action.payload,
             };
+        case UPDATE_OWNER_ROLE_STAFF_REQUEST:
+            return {
+                ...state,
+                isLoading: true,
+                error: null,
+            };
+        case UPDATE_OWNER_ROLE_STAFF_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                roles: state.roles.map(role =>
+                    role.id === action.payload.id
+                        ? { ...role, ...action.payload }
+                        : role
+                ),
+                error: null,
+            };
+        case UPDATE_OWNER_ROLE_STAFF_FAILED:
+            return {
+                ...state,
+                isLoading: false,
+                error: action.payload,
+            };
         case DELETE_OWNER_ROLE_STAFF_REQUEST:
             return {
                 ...state,
@@ -50,6 +86,7 @@ export const roleReducer = (state = DEFAULT_ROLE_STATE, action: any): RoleState 
                 ...state,
                 isLoading: false,
                 roles: state.roles.filter(role => role.id !== action.payload),
+                error: null,
             };
         case DELETE_OWNER_ROLE_STAFF_FAILED:
             return {

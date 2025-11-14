@@ -1,11 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom"
-import type { RootState, AppDispatch } from "../../../store/store";
+import type { RootState } from "../../../store/store";
 import type { PermissionListItem } from "../../../models/form-models/permission-form-models";
 import { fetchPermissions } from "../../../store/actions/permission-action";
 
-export const usePermissionViewModel = () => {
+export const usePermissionViewModel = (
+    updateFormData?: (field: string, value: any) => void
+) => {
     const dispatch = useDispatch();
 
     const [selectedPermissions, setSelectedPermissions] = useState<Set<number>>(new Set())
@@ -30,6 +32,46 @@ export const usePermissionViewModel = () => {
         }
     }, [dispatch])
 
+    const togglePermission = useCallback((permissionId: number) => {
+        setSelectedPermissions(prev => {
+            const newPermissions = new Set(prev);
+            
+            if (newPermissions.has(permissionId)) {
+                newPermissions.delete(permissionId);
+            } else {
+                newPermissions.add(permissionId);
+            }
+            if (updateFormData) {
+                updateFormData("permissionIds", Array.from(newPermissions));
+            }
+
+            return newPermissions;
+        });
+    }, [updateFormData]);
+
+    const toggleSelectAll = useCallback(() => {
+        setSelectedPermissions(prev => {
+            const allSelected = permissionListItems.every(p => prev.has(p.id));
+            let newPermissions: Set<number>;
+
+            if (allSelected) {
+                newPermissions = new Set();
+            } else {
+                newPermissions = new Set(permissionListItems.map(p => p.id));
+            }
+            if (updateFormData) {
+                updateFormData("permissionIds", Array.from(newPermissions));
+            }
+
+            return newPermissions;
+        });
+    }, [permissionListItems, updateFormData]);
+
+    const isAllSelected = useMemo(() => {
+        return permissionListItems.length > 0 &&
+            permissionListItems.every(p => selectedPermissions.has(p.id));
+    }, [permissionListItems, selectedPermissions]);
+
     useEffect(() => {
         handleFetchPermissions();
     }, []);
@@ -46,5 +88,8 @@ export const usePermissionViewModel = () => {
         navigate,
         setErrors,
         handleFetchPermissions,
+        togglePermission,
+        isAllSelected,
+        toggleSelectAll,
     };
 }

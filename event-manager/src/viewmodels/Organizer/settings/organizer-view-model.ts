@@ -171,7 +171,7 @@ export const useOrganizerViewModel = () => {
   //   [organizers],
   // )
 
-  const loadOrganizerForEdit = () => {
+  const loadOrganizerForEdit = (organizerId: number) => {
     
   }
   return {
@@ -187,7 +187,7 @@ export const useOrganizerViewModel = () => {
     handleFetchMyOrganizers,
     loadOrganizers,
     loadOrganizerDetail,
-    //loadOrganizerForEdit,
+    loadOrganizerForEdit,
     updateFormData,
     handleCreateOrganizer,
     handleUpdateOrganizer,
