@@ -1,8 +1,10 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "../../components/Admin/admin-sidebar";
+import { useLayoutViewModel } from "../../viewmodels/Admin/layout-view-model";
 
 const AdminLayout: React.FC = () => {
+  const { isScrollable } = useLayoutViewModel();
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -11,7 +13,7 @@ const AdminLayout: React.FC = () => {
       </aside>
 
       {/* Content */}
-      <main className="flex-1 bg-[var(--surface)] p-6 overflow-auto">
+      <main className={`flex-1 bg-[var(--surface)] p-6 ${isScrollable ? "overflow-auto" : "overflow-hidden"}`}>
         <Outlet />
       </main>
     </div>

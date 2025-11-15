@@ -3,3 +3,13 @@ export interface PermissionListItem {
     name: string;
     description: string;
 }
+
+export interface PermissionFormData {
+    name: string,
+    description: string
+}
+
+export const PERMISSION_FORM_DEFAULT: PermissionFormData = {
+  name: "",
+  description: "",
+};

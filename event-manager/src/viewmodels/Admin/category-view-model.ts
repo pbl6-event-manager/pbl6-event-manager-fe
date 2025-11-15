@@ -91,7 +91,7 @@ export const useCategoryViewModel = (initialData?: CategoryModel) => {
       setDeleteId(null);
       setOpenDeleteDialog(false);
     } catch (error: any) {
-      showErrorAlert(error?.message || "Failed to recover category");
+      showErrorAlert(error?.message || "Failed to delete category");
     }
   };
 

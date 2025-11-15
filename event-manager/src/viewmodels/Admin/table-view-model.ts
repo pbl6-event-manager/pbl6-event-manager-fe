@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export function useTableViewModel(data: any) {
   const tableRef = useRef<HTMLDivElement | null>(null);
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
-  const itemsPerPage = 5;
+  const itemsPerPage = 15;
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
@@ -21,6 +22,11 @@ export function useTableViewModel(data: any) {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
+  const location = useLocation();
+  const path = location.pathname.toLocaleLowerCase();
+
+  const Paths = ["/admin/categories", "/admin/permissions", "/admin/users"];
+  const isWrapText = Paths.some((p) => path === p || path.startsWith(p + "/") || path.includes(p));
 
   return {
     tableRef,
@@ -32,6 +38,7 @@ export function useTableViewModel(data: any) {
     currentData,
     handlePrev,
     handleNext,
-    goToPage
+    goToPage,
+    isWrapText
   };
 }
