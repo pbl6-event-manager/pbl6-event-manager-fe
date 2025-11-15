@@ -23,7 +23,7 @@ const AdminEvents: React.FC = () => {
   const filteredPendingEvents = applyEventFilters(pendingEvents, filters);
 
   return (
-    <div className="p-6">
+    <div className="pt-1 px-6 pb-6">
       <h2 className="text-2xl font-bold text-[var(--defaulttext)]">Events</h2>
 
       <div className="flex justify-between items-center mb-4">
