@@ -95,7 +95,6 @@ export const useStaffViewModel = () => {
     }, []);
 
     return {
-        // State
         email,
         selectedRole,
         organizerStaffs: filteredStaffs,
@@ -105,16 +104,14 @@ export const useStaffViewModel = () => {
         showInviteModal,
         selectedMember,
         
-        // Setters
         setEmail,
         setSelectedRole,
         setShowInviteModal,
         setSearchTerm,
         setSelectedMember,
         
-        // Functions
         handleInviteStaffToOwner,
         handleRemoveStaffOfOwner,
-        handleFetchOwnerStaff, // Export để có thể gọi manually nếu cần
+        handleFetchOwnerStaff,
     };
 }

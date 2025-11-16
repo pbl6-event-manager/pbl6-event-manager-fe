@@ -37,7 +37,7 @@ export default function EditRolePage() {
         togglePermission,
         toggleSelectAll,
         isAllSelected
-    } = usePermissionViewModel()
+    } = usePermissionViewModel(updateFormData)
 
     useEffect(() => {
         handleFetchOwnerRoleStaffs()

@@ -6,7 +6,7 @@ import type { PermissionListItem } from "../../../models/form-models/permission-
 import { fetchPermissions } from "../../../store/actions/permission-action";
 
 export const usePermissionViewModel = (
-    updateFormData?: (field: string, value: any) => void
+    updateFormData?: (field: any, value: any) => void
 ) => {
     const dispatch = useDispatch();
 
@@ -71,10 +71,6 @@ export const usePermissionViewModel = (
         return permissionListItems.length > 0 &&
             permissionListItems.every(p => selectedPermissions.has(p.id));
     }, [permissionListItems, selectedPermissions]);
-
-    useEffect(() => {
-        handleFetchPermissions();
-    }, []);
 
 
     return {

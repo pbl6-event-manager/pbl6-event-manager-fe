@@ -28,7 +28,7 @@ export default function CreateRolePage() {
         togglePermission,
         isAllSelected,
         toggleSelectAll,
-    } = usePermissionViewModel()
+    } = usePermissionViewModel(updateFormData)
 
     
 
