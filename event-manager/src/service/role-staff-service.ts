@@ -1,4 +1,4 @@
-import { getAllRoleStaffs, createNewRoleStaff, getRoleStaffById, deleteRoleStaff, updateRoleStaff } from "../api/role-staff-api";
+import { getAllRoleStaffs, createNewRoleStaff, deleteRoleStaff, updateRoleStaff } from "../api/role-staff-api";
 import { mapToRoleStaffModel, mapToRolePermissionModel } from "../mappers/role-staff-mapper";
 import { convertRoleStaffModelToDto, convertRoleStaffFormDataToCreateRequestDto, convertToRoleStaffListItem } from "../converters/role-staff-converter";
 import type { RoleStaffListItem } from "../models/form-models/role-staff-form-models";
@@ -7,7 +7,6 @@ import type { RolePermissionDto } from "../dtos/role-staff-dto";
 export const fetchOwnerRoleStaffsService = async () => {
     const response = await getAllRoleStaffs();
     const rawList = response?.data?.data ?? [];
-    console.log("Raw role staff list data:", rawList);
 
     const roleStaffDtos = Array.isArray(rawList)
         ? rawList.map((raw: any) => {
@@ -46,10 +45,8 @@ export const createRoleStaffService = async (formData: any) => {
             ? rawData.permissions.map((p: any) => mapToRolePermissionModel(p))
             : []
         const roleStaffDto = convertRoleStaffModelToDto(roleStaffModel, permissions);
-        console.log("Created RoleStaffDto:", roleStaffDto);
         return roleStaffDto;
     } catch (error: any) {
-        console.error("Error in createRoleService:", error)
         throw new Error(error.response?.data?.message || "Failed to create role")
     }
 }
@@ -59,7 +56,6 @@ export const deleteRoleStaffService = async (roleStaffId: number) => {
         await deleteRoleStaff(roleStaffId);
         return true;
     } catch (error: any) {
-        console.error("Error in deleteRoleStaffService:", error)
         throw new Error(error.response?.data?.message || "Failed to delete role")
     }
 }
@@ -88,7 +84,6 @@ export const updateRoleStaffService = async (roleStaffId: number, formData: any)
 
         return roleStaffDto;
     } catch (error: any) {
-        console.error("Error in updateRoleStaffService:", error)
         throw new Error(error.response?.data?.message || "Failed to update role")
     }
 }

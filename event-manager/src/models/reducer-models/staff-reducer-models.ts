@@ -1,11 +1,12 @@
-import type { Staff } from "../bean/staff-models"
-import type { StaffRole } from "../bean/role-staff-models"
+//import type { Staff } from "../bean/owner-staff-models"
+import type { StaffDto } from "../../dtos/staff-dto"
+import type { RoleStaffDto } from "../../dtos/role-staff-dto"
 
 //#region Reducer Models
 export interface StaffsState {
-  eventStaffs: Staff[]
-  organizerStaffs: Staff[]
-  roles: StaffRole[]
+  eventStaffs: StaffDto[]
+  organizerStaffs: StaffDto[]
+  roles: RoleStaffDto[]
   isLoading: boolean
   error: string | null
 }

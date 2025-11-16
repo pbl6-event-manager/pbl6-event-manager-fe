@@ -1,4 +1,4 @@
-export interface OwnerStaffListItem {
+export interface StaffDto {
     id: number;
     name: string;
     email: string;

@@ -66,9 +66,9 @@ export const useRoleViewModel = () => {
         setValidationErrors({});
     }, []);
 
-    const validateForm = useCallback(() => {
+    const validateForm = useCallback((): { isValid: boolean; errors: Record<string, string> } => {
         const errors: Record<string, string> = {};
-
+        console.log("List permissionIds: " + formData.permissionIds)
         if (!formData.name.trim()) {
             errors.name = "Role name is required";
         } else if (formData.name.length > 50) {
@@ -84,8 +84,9 @@ export const useRoleViewModel = () => {
         if (formData.permissionIds.length === 0) {
             errors.permissions = "At least one permission must be selected"
         };
+
         setValidationErrors(errors);
-        return Object.keys(errors).length === 0;
+        return { isValid: Object.keys(errors).length === 0, errors };
     }, [formData]);
     const handleNavigateToCreateNewRole = () => {
         navigate("/organizer/settings/members/roles/create")
@@ -101,12 +102,13 @@ export const useRoleViewModel = () => {
             closeLoadingAlert();
         } catch (error) {
             showErrorAlert("Error loading roles");
-            console.error("Error loading roles:", error)
         }
     }, [dispatch])
     const handleCreateOwnerRole = useCallback(async () => {
-        if (!validateForm()) {
-            showErrorAlert("Please fix validation errors before submitting.");
+        const { isValid, errors } = validateForm();
+        if (!isValid) {
+            const firstMsg = Object.values(errors)[0] || "Please fix validation errors";
+            showErrorAlert(firstMsg);
             return;
         }
         try {
@@ -122,8 +124,10 @@ export const useRoleViewModel = () => {
     }, [dispatch, formData, validateForm, navigate])
 
     const handleUpdateOwnerRole = useCallback(async (roleStaffId: number) => {
-        if (!validateForm()) {
-            showErrorAlert("Please fix validation errors before submitting.");
+        const { isValid, errors } = validateForm();
+        if (!isValid) {
+            const firstMsg = Object.values(errors)[0] || "Please fix validation errors";
+            showErrorAlert(firstMsg);
             return;
         }
         try {

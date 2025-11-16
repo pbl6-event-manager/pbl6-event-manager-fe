@@ -10,11 +10,11 @@ import OrganizationSettingsPage from "../../views/Organizer/settings/organizatio
 import AddOrganizerPage from "../../views/Organizer/settings/add-organizer-page"
 import EditOrganizerPage from "../../views/Organizer/settings/edit-organizer-page"
 import TeamManagementPage from "../../views/Organizer/settings/team-management-page" 
-import UsersListPage from "../../views/Organizer/settings/users-list-page"
 import RolesListPage from "../../views/Organizer/settings/roles-list-page"
 import EventTeamManagementPage from "../../views/Organizer/events/event-team-management-page"
 import CreateRolePage from "../../views/Organizer/settings/create-role-page"
 import EditRolePage from "../../views/Organizer/settings/edit-role-page"
+import StaffsListPage from "../../views/Organizer/settings/staffs-list-page"
 
 const OrganizerRoutes: RouteObject = {
   path: "/organizer",
@@ -33,7 +33,7 @@ const OrganizerRoutes: RouteObject = {
     { path: "settings/add", element: <AddOrganizerPage/>},
     { path: "settings/edit/:organizerId", element: <EditOrganizerPage/>},
     { path: "settings/members/roles", element: <RolesListPage /> },
-    { path: "settings/members/users", element: <UsersListPage /> },
+    { path: "settings/members/staffs", element: <StaffsListPage /> },
     // {
     //   path: "settings",
     //   element: <OrganizationSettingsPage />,
