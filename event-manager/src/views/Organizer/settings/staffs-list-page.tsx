@@ -1,39 +1,36 @@
-import { useState, useEffect } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
-import InviteUserModal from "../../../components/Organizer/invite-user-model";
-import { useOrganizerTeamManagementViewModel } from "../../../viewmodels/Organizer/settings/organizer-team-management-view-model";
+import { Pencil, Trash2, MoreVertical } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../../../components/ui/dropdown-menu"
+import InviteUserModal from "../../../components/Organizer/invite-user-modal";
+import { useStaffViewModel } from "../../../viewmodels/Organizer/settings/staff-view-model";
 
-export default function UsersListPage() {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [showInviteModal, setShowInviteModal] = useState(false);
-    const [selectedMember, setSelectedMember] = useState<number | null>(null);
-    const { organizerStaffs, isLoading, error, handleFetchOwnerStaff, handleRemoveStaffOfOwner } = useOrganizerTeamManagementViewModel();
-
-    useEffect(() => {
-        handleFetchOwnerStaff(1); // Assuming ownerId is 1 for demo purposes
-    }, []);
-
-    const filteredMembers = organizerStaffs.filter(
-        (staffs) =>
-            staffs.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            staffs.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
-
-    const handleMenuClick = (staffId: number) => {
-        setSelectedMember(selectedMember === staffId ? null : staffId)
-    }
-    const handleRemoveMember = async (ownerId: number, listOfStaffIds: number[]) => {
-        await handleRemoveStaffOfOwner(ownerId, listOfStaffIds)
-        setSelectedMember(null)
-    }
-
-    // Check if there are any members besides the owner
-    const hasTeamMembers = organizerStaffs.length > 1;
+export default function StaffsListPage() {    
+    const {
+        email, 
+        setEmail,
+        selectedRole,
+        setSelectedRole,
+        organizerStaffs, 
+        isLoading, 
+        error, 
+        searchTerm,
+        showInviteModal,
+        setShowInviteModal,
+        setSearchTerm,
+        handleRemoveStaffOfOwner, 
+        handleInviteStaffToOwner,
+    } = useStaffViewModel();
+    
     if (isLoading) {
         return <div className="flex items-center justify-center py-8">Loading...</div>
     }
-    if (!hasTeamMembers) {
+    if (organizerStaffs.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-8">
                 <div className="mb-4 text-center">
@@ -49,7 +46,14 @@ export default function UsersListPage() {
                 >
                     Invite Users
                 </Button>
-                {showInviteModal && <InviteUserModal onClose={() => setShowInviteModal(false)} />}
+                {showInviteModal && (<InviteUserModal 
+                    onClose={() => setShowInviteModal(false)}
+                    email={email}
+                    setEmail={setEmail}
+                    selectedRole={selectedRole}
+                    setSelectedRole={setSelectedRole}
+                    handleInviteStaffToOwner={handleInviteStaffToOwner}
+                />) }
             </div>
         )
     }
@@ -72,13 +76,20 @@ export default function UsersListPage() {
                 >
                     Invite users
                 </Button>
-                {showInviteModal && <InviteUserModal onClose={() => setShowInviteModal(false)} />}
+                {showInviteModal && (<InviteUserModal 
+                    onClose={() => setShowInviteModal(false)}
+                    email={email}
+                    setEmail={setEmail}
+                    selectedRole={selectedRole}
+                    setSelectedRole={setSelectedRole}
+                    handleInviteStaffToOwner={handleInviteStaffToOwner}
+                />)}
             </div>
             {/* Error message */}
             {error && <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{error}</div>}
 
             {/* Members Table */}
-            <div over-flow-x-auto>
+            <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead>
                         <tr className="border-b border-gray-200">
@@ -88,7 +99,7 @@ export default function UsersListPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredMembers.map((member) => (
+                        {organizerStaffs.map((member) => (
                             <tr key={member.id} className="border-b border-gray-100 hover:bg-gray-50">
                                 <td className="px-4 py-4">
                                     <div className="flex items-center gap-3">
@@ -98,37 +109,37 @@ export default function UsersListPage() {
                                         <div>
                                             <p className="font-medium text-gray-900">{member.name || member.email}</p>
                                             {member.name && <p className="text-sm text-gray-600">{member.email}</p>}
-                                            {member.status === "pending" && <p className="text-sm text-gray-500">Sending invitation</p>}
                                         </div>
                                     </div>
                                 </td>
                                 <td className="px-4 py-4 text-gray-700">{member.role}</td>
                                 <td className="px-4 py-4 text-right relative">
-                                    <button
-                                        onClick={() => handleMenuClick(member.id)}
-                                        className="rounded p-2 hover:bg-gray-100"
-                                    >
-                                        <svg className="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                                        </svg>
-                                    </button>
-
-                                    {selectedMember === member.id && (
-                                        <div className="absolute right-0 top-[70%] z-50 mt-0 w-40 rounded-lg border border-gray-200 bg-white shadow-lg transition-transform duration-150 ease-out">
-                                            <button
-                                                onClick={() => {/* Handle Edit Action */ }}
-                                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-gray-400 hover:text-gray-600"
                                             >
+                                                <MoreVertical className="h-5 w-5" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-40">
+                                            <DropdownMenuItem
+                                                //onClick={() => handleNavigateToUpdateRole(role.id)}
+                                            >
+                                                <Pencil className="h-4 w-4 mr-2" />
                                                 Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleRemoveMember(1, [member.id])}
-                                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                variant="destructive"
+                                                onClick={() => handleRemoveStaffOfOwner(member.email)}
                                             >
+                                                <Trash2 className="h-4 w-4 mr-2" />
                                                 Delete
-                                            </button>
-                                        </div>
-                                    )}
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </td>
                             </tr>
                         ))}

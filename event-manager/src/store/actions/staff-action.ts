@@ -7,9 +7,9 @@ export const FETCH_ORGANIZER_STAFFS_FAILURE = "FETCH_ORGANIZER_STAFFS_FAILURE";
 export const ASSIGN_STAFF_REQUEST = "ASSIGN_STAFF_REQUEST";
 export const ASSIGN_STAFF_SUCCESS = "ASSIGN_STAFF_SUCCESS";
 export const ASSIGN_STAFF_FAILURE = "ASSIGN_STAFF_FAILURE";
-export const INVITE_STAFF_REQUEST = "INVITE_STAFF_REQUEST";
-export const INVITE_STAFF_SUCCESS = "INVITE_STAFF_SUCCESS";
-export const INVITE_STAFF_FAILED = "INVITE_STAFF_FAILED";
+export const INVITE_STAFF_TO_OWNER_REQUEST = "INVITE_STAFF_TO_OWNER_REQUEST";
+export const INVITE_STAFF_TO_OWNER_SUCCESS = "INVITE_STAFF_TO_OWNER_SUCCESS";
+export const INVITE_STAFF_TO_OWNER_FAILURE = "INVITE_STAFF_TO_OWNER_FAILURE";
 export const REMOVE_STAFF_FROM_EVENT_REQUEST = "REMOVE_STAFF_FROM_EVENT_REQUEST";
 export const REMOVE_STAFF_FROM_EVENT_SUCCESS = "REMOVE_STAFF_FROM_EVENT_SUCCESS";
 export const REMOVE_STAFF_FROM_EVENT_FAILURE = "REMOVE_STAFF_FROM_EVENT_FAILURE";
@@ -17,6 +17,8 @@ export const REMOVE_STAFF_FROM_OWNER_REQUEST = "REMOVE_STAFF_FROM_OWNER_REQUEST"
 export const REMOVE_STAFF_FROM_OWNER_SUCCESS = "REMOVE_STAFF_FROM_OWNER_SUCCESS";
 export const REMOVE_STAFF_FROM_OWNER_FAILURE = "REMOVE_STAFF_FROM_OWNER_FAILURE";
 export const RESET_TEAM_STATE = "RESET_TEAM_STATE";
+
+import { assignStaffToOwnerService, fetchStaffGroupedByRoleService, removeStaffOfOwnerService,  } from "../../service/staff-service";
 
 export const fetchEventStaffs = () => async (dispatch: any) => {
     try {
@@ -40,18 +42,19 @@ export const fetchEventStaffs = () => async (dispatch: any) => {
     }
 }
 
-export const fetchOwnerStaffs = (id: number) => async (dispatch: any) => {
+export const fetchOwnerStaffs = () => async (dispatch: any) => {
     try {
         dispatch({
             type: FETCH_ORGANIZER_STAFFS_REQUEST
         });
 
-        const data = "CALL SERVICE HERE";
+        const { allStaffDtos, allStaffItems } = await fetchStaffGroupedByRoleService();
 
         dispatch({
             type: FETCH_ORGANIZER_STAFFS_SUCCESS,
-            payload: data
+            payload: allStaffDtos
         });
+        return allStaffItems;
     } catch (error: any) {
         dispatch({
             type: FETCH_ORGANIZER_STAFFS_FAILURE,
@@ -84,21 +87,22 @@ export const updateListStaffsOfEvent = (eventId: number, userIdList: number[]) =
     }
 }
 
-export const inviteStaffToOwner = (ownerId: number, userEmail: string, roleStaffId: number) => async (dispatch: any) => {
+export const inviteStaffToOwner = (staffEmail: string, roleStaffId: number) => async (dispatch: any) => {
     try {
         dispatch({
-            type: INVITE_STAFF_REQUEST
+            type: INVITE_STAFF_TO_OWNER_REQUEST
         })
 
-        const data = "CALL SERVICE HERE";
+        const data = await assignStaffToOwnerService(staffEmail, roleStaffId);
 
         dispatch({
-            type: INVITE_STAFF_SUCCESS,
-            payload: data
+            type: INVITE_STAFF_TO_OWNER_SUCCESS,
+            payload: data.staffDto
         })
+        return data;
     } catch (error: any) {
         dispatch({
-            type: INVITE_STAFF_FAILED,
+            type: INVITE_STAFF_TO_OWNER_FAILURE,
             payload:
                 error.response?.data?.message || error.message || "Invite staff to an owner failed",
         });
@@ -106,17 +110,17 @@ export const inviteStaffToOwner = (ownerId: number, userEmail: string, roleStaff
     }
 }
 
-export const removeStaffOfOwner = (ownerId: number, listStaffId: number[]) => async (dispatch: any) => {
+export const removeStaffOfOwner = (staffEmail: string) => async (dispatch: any) => {
     try {
         dispatch({
             type: REMOVE_STAFF_FROM_OWNER_REQUEST
         })
 
-        const data = "CALL SERVICE HERE";
+        const data = await removeStaffOfOwnerService(staffEmail);
 
         dispatch({
             type: REMOVE_STAFF_FROM_OWNER_SUCCESS,
-            payload: data
+            payload: staffEmail
         })
     } catch (error: any) {
         dispatch({

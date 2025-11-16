@@ -1,26 +1,21 @@
-import { useState } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-import type { InviteUserModalProps } from "../../models/component-props/modal-component-props"
-// Mock roles - replace with Redux state
-const mockRoles = [
-  { id: "1", name: "Owner" },
-  { id: "2", name: "Admin" },
-  { id: "3", name: "Editor" },
-]
+import { useStaffViewModel } from "../../viewmodels/Organizer/settings/staff-view-model"
+import { useRoleViewModel } from "../../viewmodels/Organizer/settings/role-staff-view-model"
+//import type { InviteUserModalProps } from "../../models/component-props/modal-component-props"
 
-export default function InviteUserModal({ onClose }: InviteUserModalProps) {
-  const [email, setEmail] = useState("")
-  const [selectedRole, setSelectedRole] = useState("")
-  const [limitedAccess, setLimitedAccess] = useState(false)
-
-  const handleSubmit = () => {
-    if (email && selectedRole) {
-      // TODO: Dispatch Redux action to invite user
-      console.log("[v0] Inviting user:", { email, role: selectedRole, limitedAccess })
-      onClose()
-    }
-  }
+export default function InviteUserModal({
+   onClose,
+   email,
+   setEmail,
+   selectedRole,
+   setSelectedRole,
+   handleInviteStaffToOwner
+  }: any) {
+  
+  const { 
+    roles 
+  } = useRoleViewModel();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-200 bg-opacity-50">
@@ -52,7 +47,7 @@ export default function InviteUserModal({ onClose }: InviteUserModalProps) {
               className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none"
             >
               <option value="">Select a role</option>
-              {mockRoles.map((role) => (
+              {roles.map((role) => (
                 <option key={role.id} value={role.id}>
                   {role.name}
                 </option>
@@ -60,19 +55,6 @@ export default function InviteUserModal({ onClose }: InviteUserModalProps) {
             </select>
           </div>
 
-          {/* Limited Event Access Checkbox */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="limitedAccess"
-              checked={limitedAccess}
-              onChange={(e) => setLimitedAccess(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600"
-            />
-            <label htmlFor="limitedAccess" className="text-sm text-gray-700">
-              Limited event access
-            </label>
-          </div>
         </div>
 
         {/* Buttons */}
@@ -84,7 +66,7 @@ export default function InviteUserModal({ onClose }: InviteUserModalProps) {
             Cancel
           </Button>
           <Button
-            onClick={handleSubmit}
+            onClick={() => handleInviteStaffToOwner(email, Number(selectedRole))}
             disabled={!email || !selectedRole}
             className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium disabled:opacity-50"
           >

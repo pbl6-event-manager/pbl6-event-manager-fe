@@ -101,7 +101,6 @@ export const useRoleViewModel = () => {
             closeLoadingAlert();
         } catch (error) {
             showErrorAlert("Error loading roles");
-            console.error("Error loading roles:", error)
         }
     }, [dispatch])
     const handleCreateOwnerRole = useCallback(async () => {

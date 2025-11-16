@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
-import type { Staff } from "../../../models/bean/staff-models";
+//import type { OwnerStaffModelStaff } from "../../../models/bean/owner-staff-models";
 import {
     fetchOwnerStaffs,
     inviteStaffToOwner,
@@ -8,7 +8,7 @@ import {
 } from "../../../store/actions/staff-action"
 
 //Mock data - replace with Redux state
-const mockMembers: Staff[] = [
+const mockMembers = [
     {
         id: 1,
         email: "letonthanhan@gmail.com",
@@ -33,12 +33,12 @@ export const useOrganizerTeamManagementViewModel = () => {
     const dispatch = useDispatch();
     const { organizerStaffs, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
 
-    const handleFetchOwnerStaff = async (id: number) => {
-        dispatch<any>(fetchOwnerStaffs(id));
+    const handleFetchOwnerStaff = async () => {
+        dispatch<any>(fetchOwnerStaffs());
     }
 
-    const handleInviteStaffToOwner = async (ownerId: number, email: string, roleStaffId: number) => {
-        dispatch<any>(inviteStaffToOwner(ownerId, email, roleStaffId));
+    const handleInviteStaffToOwner = async ( email: string, roleStaffId: number) => {
+        dispatch<any>(inviteStaffToOwner( email, roleStaffId));
     }
     const handleRemoveStaffOfOwner = async (ownerId: number, listStaffId: number[]) => {
         dispatch<any>(removeStaffOfOwner(ownerId, listStaffId));

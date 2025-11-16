@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
-import type { Staff } from "../../../models/bean/staff-models";
+import type { Staff } from "../../../models/bean/owner-staff-models";
 import {
     fetchEventStaffs,
     fetchOwnerStaffs,

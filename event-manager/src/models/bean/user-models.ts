@@ -9,7 +9,7 @@ export interface UserModel {
   phone?: string | null;
   avatarUrl?: string | null;
   isActive: boolean;
-  roles: RoleModel[];
+  roles?: RoleModel[];
   createdAt: string;
   updatedAt: string;
 }
