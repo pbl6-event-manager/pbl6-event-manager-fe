@@ -23,13 +23,13 @@ export const useEventViewModel = () => {
     n === "2"
       ? ("staff" as const)
       : n === "3"
-      ? ("ticket" as const)
-      : n === "4"
-      ? ("attendee" as const)
-      : n === "5"
-      ? ("transaction" as const)
-      : ("information" as const);
-  
+        ? ("ticket" as const)
+        : n === "4"
+          ? ("attendee" as const)
+          : n === "5"
+            ? ("transaction" as const)
+            : ("information" as const);
+
   const mapTabToNum = (t: "information" | "staff" | "ticket" | "attendee" | "transaction") =>
     t === "staff" ? "2" : t === "ticket" ? "3" : t === "attendee" ? "4" : t === "transaction" ? "5" : "1";
   const params = new URLSearchParams(location.search);
@@ -39,18 +39,24 @@ export const useEventViewModel = () => {
   const [activeDelTab, _setActiveDelTab] = useState(mapNumToTab(qTab));
 
   const eventColumns = [
-      { header: "ID", accessor: "id", type: "text" as const },
-      { header: "Title", accessor: "title", type: "text" as const },
-      { header: "Summary", accessor: "summary", type: "text" as const },
-      { header: "Location", accessor: "location", type: "text" as const },
-      { header: "Start", accessor: "startTime", type: "text" as const },
-      { header: "End", accessor: "endTime", type: "text" as const },
-      { header: "Actions", accessor: "actions", type: "action" as const },
-    ];
+    { header: "ID", accessor: "id", type: "text" as const },
+    { header: "Title", accessor: "title", type: "text" as const },
+    { header: "Summary", accessor: "summary", type: "text" as const },
+    { header: "Location", accessor: "location", type: "text" as const },
+    { header: "Start", accessor: "startTime", type: "text" as const },
+    { header: "End", accessor: "endTime", type: "text" as const },
+    { header: "Actions", accessor: "actions", type: "action" as const },
+  ];
 
   useEffect(() => {
-      dispatch<any>(getAllEventsAdmin());
-    }, [dispatch]);
+    const getAllEvents = async () => {
+      showLoadingAlert();
+      await dispatch<any>(getAllEventsAdmin());
+      closeLoadingAlert();
+    }
+
+    getAllEvents();
+  }, [dispatch]);
 
   const setActiveDelTab = useCallback(
     (tab: "information" | "staff" | "ticket" | "attendee" | "transaction") => {
@@ -76,7 +82,7 @@ export const useEventViewModel = () => {
       const response = await dispatch<any>(getEventDetailsById(eventId));
       setEventDetails(response);
       closeLoadingAlert();
-    } 
+    }
     getEventDetails(parseInt(id));
   }, [id]);
 
@@ -102,7 +108,7 @@ export const useEventViewModel = () => {
 
   const handleViewDetail = (id: number) => {
     navigate(`/admin/events/details?id=${id}&tab=1`);
-  } 
+  }
 
   const handleDelete = (id: string) => {
     setOpenDeleteDialog(true);
@@ -116,7 +122,7 @@ export const useEventViewModel = () => {
     setSelectedEventId(id)
     setOpenAcceptDialog(true);
   }
-  
+
   const confirmAccept = async () => {
     try {
       showLoadingAlert();
@@ -129,7 +135,7 @@ export const useEventViewModel = () => {
       showErrorAlert(error?.message || "Failed to approved event");
     }
   }
-  
+
   const handleReject = (id: number) => {
     setSelectedEventId(id);
     setOpenRejectDialog(true);

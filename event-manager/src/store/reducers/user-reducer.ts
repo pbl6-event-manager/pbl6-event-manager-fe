@@ -4,7 +4,7 @@ import { DEFAULT_USERS_STATE, type UserState } from "../../models/reducer-models
 export const userReducer = (state = DEFAULT_USERS_STATE, action: any): UserState => {
     switch (action.type) {
         case FETCH_USERS_SUCSESS:
-            return { ...state, loading: true, users: action.payload };
+            return { ...state, loading: true, users: action.payload.userListDto, numberOfUsers: action.payload.userListDto.length, listUserDashBoard: action.payload.userDashBoardDto };
         case FETCH_USERS_REQUEST:
             return { ...state, loading: true, error: null };
         case FETCH_USERS_FAILED:

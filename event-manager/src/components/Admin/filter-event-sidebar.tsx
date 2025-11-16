@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CountryCitySelect from "./country-city-select";
-import { validateFromTo } from "../../utils/Admin/validate-from-to-date";
+import { validateFromTo } from "../../utils/Admin/date-utils";
 interface FilterEventSidebarProps {
   onFilter: (filters: {
     title: string;

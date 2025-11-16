@@ -69,11 +69,17 @@ export const useUserViewModel = () => {
   }, [location.search, location.pathname]);
 
   useEffect(() => {
-    try {
-      dispatch<any>(getUsers());
-    } catch (error: any) {
-      showErrorAlert(error?.message || "Failed to fetch users");
+    const getUsersInfo = async () => {
+      try {
+        showLoadingAlert();
+        await dispatch<any>(getUsers());
+        closeLoadingAlert();
+      } catch (error: any) {
+        showErrorAlert(error?.message || "Failed to fetch users");
+      }
     }
+
+    getUsersInfo();
   }, [dispatch]);
 
   useEffect(() => {

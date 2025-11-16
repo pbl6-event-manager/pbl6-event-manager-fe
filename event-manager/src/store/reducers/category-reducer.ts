@@ -4,7 +4,7 @@ import { DEFAULT_CATEGORY_STATE, type CategoryState } from "../../models/reducer
 export const categoryReducer = (state = DEFAULT_CATEGORY_STATE, action: any): CategoryState => {
   switch (action.type) {
     case FETCH_CATEGORIES_SUCCESS:
-      return { ...state, loading: false, categories: action.payload };
+      return { ...state, loading: false, categories: action.payload, numberOfCategories: action.payload.length };
     case FETCH_ACTIVE_CATEGORIES_SUCCESS:
       return { ...state, loading: false, activeCategories: action.payload };
     case FETCH_INACTIVE_CATEGORIES_SUCCESS:

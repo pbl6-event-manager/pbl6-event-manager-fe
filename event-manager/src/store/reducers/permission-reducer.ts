@@ -32,6 +32,7 @@ export const permissionReducer = (
                 isLoading: false,
                 permissions: action.payload.permissionDtos || [],
                 listPermissionItem: action.payload.permissionListItems,
+                numberOfPermissions: action.payload.permissionListItems.length,
                 error: null
             };
         case FETCH_PERMISSIONS_FAILED:

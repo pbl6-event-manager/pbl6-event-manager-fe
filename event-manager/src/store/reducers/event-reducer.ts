@@ -27,7 +27,10 @@ export const eventReducer = (state = DEFAULT_EVENT_STATE, action: any): EventSta
         ...state,
         isLoading: false,
         publishedEvents: action.payload.publishedEvents,
-        pendingEvents: action.payload.pendingEvents
+        pendingEvents: action.payload.pendingEvents,
+        numberOfEvents: action.payload.numberOfEvents,
+        allEvents: action.payload.allEvents,
+        eventDashBoardList: action.payload.eventDashBoardDtoList
       }
     case GET_ALL_EVENT_ADMIN_FAILURE:
       return {

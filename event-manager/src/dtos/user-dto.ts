@@ -14,4 +14,9 @@ export interface CreateUserDto {
   phone?: string | null;
   role: string
 };
+
+export interface UserDashBoardDto {
+  id: number;
+  createdAt: string;
+}
 //#endregion

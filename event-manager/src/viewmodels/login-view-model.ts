@@ -80,7 +80,7 @@ export const useLoginViewModel = () => {
       const res = await dispatch<any>(login(localEmail, password));
       if (res && res.accessToken) {
         if (localEmail === "admin@event.com") {
-          navigate("/admin/users");
+          navigate("/admin/dashboard");
         } else {
           navigate("/dashboard");
         }

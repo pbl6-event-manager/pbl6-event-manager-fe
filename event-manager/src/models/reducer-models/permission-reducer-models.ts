@@ -6,6 +6,7 @@ export interface PermissionState {
     listPermissionItem: PermissionListItem[];
     isLoading: boolean;
     error: string | null;
+    numberOfPermissions: number;
 }
 
 export const DEFAULT_PERMISSION_STATE: PermissionState = {
@@ -13,4 +14,5 @@ export const DEFAULT_PERMISSION_STATE: PermissionState = {
     listPermissionItem: [],
     isLoading: false,
     error: null,
+    numberOfPermissions: 0,
 };

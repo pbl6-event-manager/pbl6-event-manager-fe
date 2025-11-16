@@ -85,7 +85,11 @@ export const getAllEventsAdminService = async () => {
     if(response.data.message === "success") {
       const eventModelList = response.data.data.map(eventMapper.mapResponseEventToEventModel);
       const eventListDtoList = eventModelList.map(eventConverter.convertEventModelToEventListDto);
-      return eventListDtoList;
+      const eventDashBoardDtoList = response.data.data.map(eventMapper.mapResponseToEventDashBoardDto);
+      return {
+        eventListDtoList,
+        eventDashBoardDtoList
+      }
     }
     else {
       throw new Error("Unexpected error occurred");

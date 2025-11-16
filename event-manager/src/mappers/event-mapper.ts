@@ -1,4 +1,4 @@
-import type { EventDetailsDto } from "../dtos/event-dto";
+import type { EventDashBoardDto, EventDetailsDto } from "../dtos/event-dto";
 import type { EventModel } from "../models/bean/event-models";
 import { mapToCategoryModel } from "./category-mapper";
 import { mapToOrganizerModel } from "./organizer-mapper";
@@ -60,6 +60,13 @@ export const eventMapper = {
       categories: raw.categories.map(mapToCategoryModel),
       organizer: mapToOrganizerModel(raw.organizer),
       owner: mapToUserModel(raw.owner)
+    }
+  },
+
+  mapResponseToEventDashBoardDto: (raw: any): EventDashBoardDto => {
+    return {
+      id: raw.id,
+      categories: raw.categories.map(mapToCategoryModel)
     }
   }
 };

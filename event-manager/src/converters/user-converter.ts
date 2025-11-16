@@ -1,5 +1,5 @@
 import type { UserModel } from "../models/bean/user-models";
-import type { CreateUserDto, ListUserDto } from "../dtos/user-dto";
+import type { CreateUserDto, ListUserDto, UserDashBoardDto } from "../dtos/user-dto";
 import type { SignUpDto } from "../dtos/auth-dto";
 
 export const convertUserModelToListUserDto = (user: UserModel): ListUserDto => ({
@@ -23,4 +23,9 @@ export const convertUserDataToSignUpDto = (user: any): SignUpDto => ({
 export const convertUserDataToCreateUserDto = (user: any): CreateUserDto => ({
   phone: user.phone,
   role: user.roles === "Admin" ? "1" : "2,3"
+})
+
+export const convertUserModelToUserDashboardDto = (user: UserModel): UserDashBoardDto => ({
+  id: user.id,
+  createdAt: user.createdAt,
 })
