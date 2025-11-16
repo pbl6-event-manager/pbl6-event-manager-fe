@@ -2,7 +2,7 @@ import { checkEmailExist } from "../api/auth-api";
 import { getOrgOfAnUserApi } from "../api/organizer-api";
 import { getAllUsersApi, getUserByEmailApi, updateUserApi } from "../api/user-api";
 import { convertOrgModelToListOrgDto } from "../converters/organizer-converter";
-import { convertUserModelToListUserDto } from "../converters/user-converter";
+import { convertUserModelToListUserDto, convertUserModelToUserDashboardDto } from "../converters/user-converter";
 import type { ListOrganizerDto } from "../dtos/organizer-dto";
 import { mapToOrganizerModel } from "../mappers/organizer-mapper";
 import { mapToUserModel } from "../mappers/user-mapper";
@@ -14,7 +14,11 @@ export const fetchUsersService = async () => {
     if(data.message === "success") {
       const users = data.data.map(mapToUserModel);
       const userListDto = users.map(convertUserModelToListUserDto);
-      return userListDto;
+      const userDashBoardDto = users.map(convertUserModelToUserDashboardDto);
+      return {
+        userListDto,
+        userDashBoardDto
+      }
     }
   } catch (error: any) {
     if (error.response) {

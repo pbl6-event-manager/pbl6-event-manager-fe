@@ -10,15 +10,17 @@ import CategoryManagementView from "../../views/Admin/admin-list-category";
 import PrivateRoute from "../private-routes";
 import AdminEventDetailPage from "../../views/Admin/admin-view-event-details";
 import PermissionManagememtView from "../../views/Admin/admin-list-permission";
+import AdminDashboard from "../../views/Admin/admin-dashboard";
 
 const adminRoutes: RouteObject = {
   path: "/admin",
   element: (
     <PrivateRoute>
-      <AdminLayout/>
+      <AdminLayout />
     </PrivateRoute>
   ),
   children: [
+    { path: "dashboard", element: <AdminDashboard /> },
     { path: "users", element: <AdminUsers /> },
     { path: "users/create", element: <CreateAccountView /> },
     { path: "users/edit", element: <UpdateAccountView /> },
@@ -27,7 +29,6 @@ const adminRoutes: RouteObject = {
     { path: "events/details", element: <AdminEventDetailPage /> },
     { path: "categories", element: <CategoryManagementView /> },
     { path: "permissions", element: <PermissionManagememtView /> },
-
   ],
 };
 

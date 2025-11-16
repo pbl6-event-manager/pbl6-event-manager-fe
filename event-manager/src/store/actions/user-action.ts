@@ -34,10 +34,15 @@ export const getUsers = () => async (dispatch: any) => {
     })
 
     const data = await fetchUsersService();
-    
+    const userListDto = data?.userListDto;
+    const userDashBoardDto = data?.userDashBoardDto;
+
     dispatch({
       type: FETCH_USERS_SUCSESS, 
-      payload: data
+      payload: {
+        userListDto,
+        userDashBoardDto
+      }
     });
   } catch (error: any) {
     dispatch({

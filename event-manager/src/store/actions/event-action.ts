@@ -34,18 +34,6 @@ import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from ".
 import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, getEventsByOrganizerIdsService } from "../../service/event-service";
 import { store } from "../store";
 
-export const fetchEventsByUser = (email: string) => {
-  const dummyEvents = [
-    { id: "e1", name: "Sự kiện A", date: "2025-09-01", location: "Hà Nội" },
-    { id: "e2", name: "Sự kiện B", date: "2025-09-05", location: "TP.HCM" },
-  ];
-
-  return {
-    type: FETCH_EVENTS_BY_USER,
-    payload: { email, events: dummyEvents },
-  };
-};
-
 export const getAllEventsAdmin = () => async (dispatch: any) => {
   try {
     dispatch({
@@ -53,14 +41,21 @@ export const getAllEventsAdmin = () => async (dispatch: any) => {
     })
 
     const response = await getAllEventsAdminService();
-    const publishedEvents = response.filter((e: EventListDto) => e.status === EVENT_STATUS.PUBLISHED);
-    const pendingEvents = response.filter((e: EventListDto) => e.status === EVENT_STATUS.PENDING);
+    const allEvents = response.eventListDtoList;
+    const eventDashBoardDtoList = response.eventDashBoardDtoList;
+    const publishedEvents = response.eventListDtoList.filter((e: EventListDto) => e.status === EVENT_STATUS.PUBLISHED);
+    const pendingEvents = response.eventListDtoList.filter((e: EventListDto) => e.status === EVENT_STATUS.PENDING);
+
+    const numberOfEvents = response.eventListDtoList.length;
 
     dispatch({
       type: GET_ALL_EVENT_ADMIN_SUCCESS,
       payload: {
         publishedEvents,
-        pendingEvents
+        pendingEvents,
+        numberOfEvents,
+        allEvents,
+        eventDashBoardDtoList
       }
     })
   } catch (error: any) {

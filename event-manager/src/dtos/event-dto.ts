@@ -69,6 +69,11 @@ export interface EventListDto {
   status: string
 }
 
+export interface EventDashBoardDto {
+  id: number
+  categories?: CategoryModel
+}
+
 export interface EventDetailsDto {
   eventInfo?: EventModel
   ticket?: [],

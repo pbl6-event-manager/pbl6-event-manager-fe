@@ -4,7 +4,7 @@ import type { PermissionDto } from "../../dtos/permission-dto";
 import { useDispatch, useSelector } from "react-redux";
 import { addPermission, deletePermission, fetchPermissions, updatePermission } from "../../store/actions/permission-action";
 import type { RootState } from "../../store/store";
-import { showErrorAlert, showSuccessAlert, showWarningAlert } from "../../helpers/alert-helpers";
+import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert, showWarningAlert } from "../../helpers/alert-helpers";
 
 export const usePermissionViewModel = (initialData?: PermissionDto) => {
     const permissionColumns = [
@@ -25,7 +25,13 @@ export const usePermissionViewModel = (initialData?: PermissionDto) => {
     const [deleteId, setDeleteId] = useState<any>();
 
     useEffect(() => {
-        dispatch<any>(fetchPermissions());
+        const getPermissionsInfo = async () => {
+            showLoadingAlert();
+            await dispatch<any>(fetchPermissions());
+            closeLoadingAlert();
+        }
+
+        getPermissionsInfo();
     }, [dispatch]);
 
     useEffect(() => {

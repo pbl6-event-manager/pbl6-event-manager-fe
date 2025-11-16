@@ -5,7 +5,7 @@ import { addCategory, deleleCategory, getCategories, recoverCategory, updateCate
 import { useEffect } from "react";
 import type { CategoryModel } from "../../models/bean/category-models";
 import { CATEGORY_FORM_DEFAULT } from "../../models/form-models/category-form-models";
-import { showSuccessAlert, showWarningAlert, showErrorAlert } from "../../helpers/alert-helpers";
+import { showSuccessAlert, showWarningAlert, showErrorAlert, showLoadingAlert, closeLoadingAlert } from "../../helpers/alert-helpers";
 
 export const useCategoryViewModel = (initialData?: CategoryModel) => {
   const dispatch = useDispatch();
@@ -21,7 +21,13 @@ export const useCategoryViewModel = (initialData?: CategoryModel) => {
   const [updateId, setUpdateId] = useState(null);
   const [activeTab, setActiveTab] = useState<"active" | "deleted">("active");
   useEffect(() => {
-    dispatch<any>(getCategories());
+    const getAllCategories = async () => {
+      showLoadingAlert();
+      await dispatch<any>(getCategories());
+      closeLoadingAlert();
+    }
+
+    getAllCategories();
   }, [dispatch]);
 
   useEffect(() => {
