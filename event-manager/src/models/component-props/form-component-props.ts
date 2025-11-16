@@ -1,6 +1,7 @@
 import type { UserFormData } from "../form-models/user-form-models";
 import type { ListCategoryDto } from "../../dtos/category-dto";
 import type { EventFormData, EventFormErrors } from "../form-models/event-form-models";
+import type { PermissionListItem } from "../form-models/permission-form-models";
 //#region Form Props
   //#region User Form
   export interface RegisterFormProps {
@@ -18,6 +19,14 @@ import type { EventFormData, EventFormErrors } from "../form-models/event-form-m
     isUpdate?: boolean;
   }
   //#endregion
+
+  export interface PermissionsFormProps {
+    permission?: any;
+    handleChange: (field: keyof PermissionListItem, value: string) => void;
+    onSave: () => void;
+    onCancel: () => void;
+    isUpdate?: boolean;
+  }
 
   //#region  Event Form
   export interface EventBasicInfoFormProps {

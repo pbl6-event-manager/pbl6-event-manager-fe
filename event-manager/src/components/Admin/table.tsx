@@ -12,6 +12,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions, 
     totalPages,
     currentPage,
     currentData,
+    isWrapText
   } = useTableViewModel(data);
 
   return (
@@ -128,7 +129,7 @@ const Table: React.FC<TableProps> = ({ columns, data, className, getRowActions, 
                           })}
                       </div>
                     ) : (
-                      truncateText(row[col.accessor], 30)
+                      truncateText(row[col.accessor], isWrapText ? 50 : 15)
                     )}
                   </td>
                 ))}
