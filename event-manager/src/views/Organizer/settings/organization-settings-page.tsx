@@ -1,15 +1,29 @@
 "use client"
 
-import { useState } from "react"
+import { useSearchParams, useNavigate } from "react-router-dom"
 import { cn } from "../../../lib/utils"
+import { Button } from "../../../components/ui/button"
 import OrganizerListPage from "./organizer-list-page"
 import TeamManagementPage from "./team-management-page"
 
-type SettingsTab = "organizer-profile" | "team-management" | "ticket-fees" | "plan-management" | "app-extensions"
+type MainTab = "organizer-profile" | "team-management" | "ticket-fees" | "plan-management" | "app-extensions"
+type SettingsTab = "organizer-profile" | "staff-management" | "role-management" | "ticket-fees" | "plan-management" | "app-extensions"
 
 export default function OrganizationSettingsPage() {
-  const [activeTab, setActiveTab] = useState<SettingsTab>("organizer-profile")
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
 
+  const activeTab = (searchParams.get("tab") || "organizer-profile") as SettingsTab
+
+  const getMainTab = (): MainTab => {
+    if (activeTab === "staff-management" || activeTab === "role-management") {
+      return "team-management"
+    }
+    return activeTab as MainTab
+  }
+  const mainTab = getMainTab()
+
+  //5 main tabs
   const tabs = [
     { id: "organizer-profile" as const, label: "Organizer Profile" },
     { id: "team-management" as const, label: "Team Management" },
@@ -17,6 +31,16 @@ export default function OrganizationSettingsPage() {
     { id: "plan-management" as const, label: "Plan Management" },
     { id: "app-extensions" as const, label: "App Extensions" },
   ]
+
+  const handleTabChange = (tab: MainTab) => {
+    if (tab === "team-management") {
+      navigate(`/organizer/settings?tab=staff-management`)
+    } else {
+      navigate(`/organizer/settings?tab=${tab}`)
+    }
+  }
+
+  const isTeamManagement = activeTab === "staff-management" || activeTab === "role-management"
 
   return (
     <div className="min-h-screen bg-white">
@@ -26,19 +50,22 @@ export default function OrganizationSettingsPage() {
 
         {/* Tabs */}
         <div className="mb-8 border-b border-gray-200">
-          <div className="flex gap-8">
+          <div className="flex gap-8 overflow-x-auto">
             {tabs.map((tab) => (
-              <button
+              <Button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
+                variant="ghost"
                 className={cn(
-                  "pb-4 text-base font-medium transition-colors relative",
+                  "pb-4 text-base font-medium transition-colors relative whitespace-nowrap shadow-none hover:bg-transparent",
                   activeTab === tab.id ? "text-blue-600" : "text-gray-600 hover:text-gray-900",
                 )}
               >
                 {tab.label}
-                {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />}
-              </button>
+                {mainTab === tab.id && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                )}
+              </Button>
             ))}
           </div>
         </div>
@@ -46,7 +73,7 @@ export default function OrganizationSettingsPage() {
         {/* Tab Content */}
         <div className="mt-8">
           {activeTab === "organizer-profile" && <OrganizerListPage />}
-          {activeTab === "team-management" && <TeamManagementPage />}
+          {isTeamManagement && <TeamManagementPage />}
           {activeTab === "ticket-fees" && <div className="text-gray-600">Ticket Fees content coming soon...</div>}
           {activeTab === "plan-management" && (
             <div className="text-gray-600">Plan Management content coming soon...</div>

@@ -1,6 +1,5 @@
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-import { useStaffViewModel } from "../../viewmodels/Organizer/settings/staff-view-model"
 import { useRoleViewModel } from "../../viewmodels/Organizer/settings/role-staff-view-model"
 //import type { InviteUserModalProps } from "../../models/component-props/modal-component-props"
 

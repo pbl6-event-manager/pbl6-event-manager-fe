@@ -10,62 +10,46 @@ import { Checkbox } from "../../../components/ui/checkbox"
 import { usePermissionViewModel } from "../../../viewmodels/Organizer/settings/permission-view-model"
 import { useRoleViewModel } from "../../../viewmodels/Organizer/settings/role-staff-view-model"
 import { useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
 
 export default function EditRolePage() {
-    const { id } = useParams<{ id: any }>()
-    const [isInitialized, setIsInitialized] = useState(false)
-
+    const { id } = useParams<{ id: string }>()
+    
     const {
         formData,
         updateFormData,
         validationErrors,
         handleUpdateOwnerRole,
-        handleLoadRoleById,
         handleGetRoleById,
-        handleFetchOwnerRoleStaffs,
         isLoading: roleLoading,
+        isInitialized,
         handleBackClick
-    } = useRoleViewModel()
-
+    } = useRoleViewModel(id) 
+    
     const {
         permissionListItems,
         isLoading: permissionLoading,
         error: permissionError,
         selectedPermissions,
-        setSelectedPermissions,
         togglePermission,
         toggleSelectAll,
         isAllSelected
-    } = usePermissionViewModel(updateFormData)
+    } = usePermissionViewModel(updateFormData, formData.permissionIds)
 
-    useEffect(() => {
-        handleFetchOwnerRoleStaffs()
-    }, [handleFetchOwnerRoleStaffs])
+    const currentRole = id ? handleGetRoleById(id) : null
 
-    useEffect(() => {
-        if (id && !isInitialized && !roleLoading) {
-            const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
-            const role = handleLoadRoleById(numericId)
-            if (role) {
-                if (role.permissions && role.permissions.length > 0) {
-                    const permissionIds = role.permissions.map(p => p.id)
-                    const permissionSet = new Set(permissionIds)
-                    setSelectedPermissions(permissionSet)
-                    updateFormData("permissionIds", permissionIds)
-                }
+    if (!isInitialized && roleLoading) {
+        return (
+            <div className="flex-1 bg-gray-50 p-8">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center py-12">
+                        <p className="text-gray-600">Loading role...</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
-                setIsInitialized(true)
-            } else {
-                throw new Error(`Role with ID ${numericId} not found`)
-            }
-        }
-    }, [id, roleLoading, isInitialized, handleLoadRoleById, setSelectedPermissions, updateFormData])
-    // Get current role for validation
-    const currentRole = handleGetRoleById(id)
-
-    // Role not found
-    if (!currentRole) {
+    if (!currentRole && isInitialized) {
         return (
             <div className="flex-1 bg-gray-50 p-8">
                 <div className="max-w-4xl mx-auto">
@@ -84,7 +68,6 @@ export default function EditRolePage() {
         )
     }
 
-    // Permission error
     if (permissionError) {
         return (
             <div className="flex-1 bg-gray-50 p-8">
@@ -108,6 +91,7 @@ export default function EditRolePage() {
                         </Button>
                     </div>
                 </div>
+                
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">Edit Role</h1>
@@ -203,7 +187,6 @@ export default function EditRolePage() {
                                     <div className="divide-y divide-gray-200">
                                         {permissionListItems.map((permission) => {
                                             const isChecked = selectedPermissions.has(permission.id);
-                                            //console.log(`Permission ${permission.id} (${permission.name}): checked=${isChecked}`);
                                             return (
                                                 <Label
                                                     key={permission.id}
@@ -254,7 +237,7 @@ export default function EditRolePage() {
                         Cancel
                     </Button>
                     <Button
-                        onClick={() => handleUpdateOwnerRole(id)}
+                        onClick={() => handleUpdateOwnerRole(Number(id))}
                         disabled={roleLoading || permissionLoading}
                         className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2"
                     >

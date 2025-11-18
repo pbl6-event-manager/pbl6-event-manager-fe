@@ -19,16 +19,10 @@ export default function RolesListPage() {
     error,
     searchTerm,
     setSearchTerm,
-    handleFetchOwnerRoleStaffs,
     handleNavigateToCreateNewRole,
     handleNavigateToUpdateRole,
     handleDeleteOwnerRole
   } = useRoleViewModel()
-
-  useEffect(() => {
-    handleFetchOwnerRoleStaffs()
-  }, [handleFetchOwnerRoleStaffs])
-
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-8">Loading roles...</div>
