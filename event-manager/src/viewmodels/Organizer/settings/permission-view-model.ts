@@ -6,7 +6,8 @@ import type { PermissionListItem } from "../../../models/form-models/permission-
 import { fetchPermissions } from "../../../store/actions/permission-action";
 
 export const usePermissionViewModel = (
-    updateFormData?: (field: any, value: any) => void
+    updateFormData?: (field: any, value: any) => void,
+    initialPermissionIds?: number[]
 ) => {
     const dispatch = useDispatch();
 
@@ -14,6 +15,7 @@ export const usePermissionViewModel = (
     const [errors, setErrors] = useState<Record<string, string>>({})
     const { permissions, isLoading, error } = useSelector((state: RootState) => state.permissionReducer);
     const navigate = useNavigate()
+    
     const permissionListItems: PermissionListItem[] = useMemo<PermissionListItem[]>(() => {
         return permissions
             .filter((dto) => dto.isActive)
@@ -41,6 +43,7 @@ export const usePermissionViewModel = (
             } else {
                 newPermissions.add(permissionId);
             }
+            
             if (updateFormData) {
                 updateFormData("permissionIds", Array.from(newPermissions));
             }
@@ -59,6 +62,7 @@ export const usePermissionViewModel = (
             } else {
                 newPermissions = new Set(permissionListItems.map(p => p.id));
             }
+            
             if (updateFormData) {
                 updateFormData("permissionIds", Array.from(newPermissions));
             }
@@ -72,10 +76,18 @@ export const usePermissionViewModel = (
             permissionListItems.every(p => selectedPermissions.has(p.id));
     }, [permissionListItems, selectedPermissions]);
 
+    useEffect(() => {
+        handleFetchPermissions();
+    }, [handleFetchPermissions]);
+
+    useEffect(() => {
+        if (initialPermissionIds && initialPermissionIds.length > 0) {
+            setSelectedPermissions(new Set(initialPermissionIds));
+        }
+    }, [initialPermissionIds]);
 
     return {
         permissionListItems,
-        
         selectedPermissions,
         setSelectedPermissions,
         isLoading,

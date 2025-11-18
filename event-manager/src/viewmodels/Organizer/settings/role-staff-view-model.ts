@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useCallback, useState } from "react"
+import { useCallback, useState, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../../store/store";
 import {
@@ -11,19 +11,33 @@ import {
 import type { CreateRoleStaffFormData } from "../../../models/form-models/role-staff-form-models";
 import { showLoadingAlert, showSuccessAlert, showErrorAlert, closeLoadingAlert, showConfirmAlert } from "../../../helpers/alert-helpers";
 
-
-export const useRoleViewModel = () => {
+export const useRoleViewModel = (roleId?: string | number) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("")
+    const [isInitialized, setIsInitialized] = useState(false)
+    
     const { roles, currentRole, isLoading, error } = useSelector((state: RootState) => state.roleReducer);
+    
     const [formData, setFormData] = useState<CreateRoleStaffFormData>({
         name: "",
         description: "",
         permissionIds: [],
     });
+    
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-    const filteredRoles = roles.filter((role) => role.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredRoles = useMemo(() => {
+    return roles
+        .filter((role) => 
+            role.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => {
+            const nameCompare = a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            if (nameCompare !== 0) return nameCompare;
+            
+            return a.id - b.id;
+        });
+}, [roles, searchTerm]);
 
     const updateFormData = useCallback((field: keyof CreateRoleStaffFormData, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }))
@@ -45,7 +59,7 @@ export const useRoleViewModel = () => {
             setFormData({
                 name: role.name,
                 description: role.description,
-                permissionIds: [] 
+                permissionIds: role.permissions?.map(p => p.id) || [] // ✅ Load permissionIds luôn
             })
             return role
         }
@@ -57,6 +71,7 @@ export const useRoleViewModel = () => {
         const role = roles.find(r => r.id === numericRoleId);
         return role;
     }, [roles]);
+
     const resetForm = useCallback(() => {
         setFormData({
             name: "",
@@ -64,11 +79,12 @@ export const useRoleViewModel = () => {
             permissionIds: [],
         });
         setValidationErrors({});
+        setIsInitialized(false);
     }, []);
 
     const validateForm = useCallback((): { isValid: boolean; errors: Record<string, string> } => {
         const errors: Record<string, string> = {};
-        console.log("List permissionIds: " + formData.permissionIds)
+        
         if (!formData.name.trim()) {
             errors.name = "Role name is required";
         } else if (formData.name.length > 50) {
@@ -88,12 +104,15 @@ export const useRoleViewModel = () => {
         setValidationErrors(errors);
         return { isValid: Object.keys(errors).length === 0, errors };
     }, [formData]);
+
     const handleNavigateToCreateNewRole = () => {
         navigate("/organizer/settings/members/roles/create")
     }
+
     const handleNavigateToUpdateRole = (roleStaffId: number) => {
         navigate(`/organizer/settings/members/roles/edit/${roleStaffId}`)
     }
+
     const handleFetchOwnerRoleStaffs = useCallback(async () => {
         try {
             showLoadingAlert("Loading roles...");
@@ -104,6 +123,7 @@ export const useRoleViewModel = () => {
             showErrorAlert("Error loading roles");
         }
     }, [dispatch])
+
     const handleCreateOwnerRole = useCallback(async () => {
         const { isValid, errors } = validateForm();
         if (!isValid) {
@@ -116,7 +136,8 @@ export const useRoleViewModel = () => {
             await dispatch<any>(createOwnerRoleStaff(formData));
             closeLoadingAlert();
             showSuccessAlert("Role created successfully");
-            navigate("/organizer/settings?tab=roles");
+            resetForm();
+            navigate("/organizer/settings?tab=role-management");
         } catch (error) {
             closeLoadingAlert();
             showErrorAlert("Error creating role");
@@ -135,7 +156,8 @@ export const useRoleViewModel = () => {
             await dispatch<any>(updateOwnerRoleStaff(roleStaffId, formData));
             closeLoadingAlert();
             showSuccessAlert("Role updated successfully");
-            navigate("/organizer/settings?tab=roles");
+            resetForm();
+            navigate("/organizer/settings?tab=role-management");
         } catch (error) {
             closeLoadingAlert();
             showErrorAlert("Error updating role");
@@ -161,10 +183,25 @@ export const useRoleViewModel = () => {
     const handleBackClick = () => {
         showConfirmAlert("Are you sure to leave the page?", "Unsaved changes will be lost.").then(async (confirmed) => {
             if (confirmed) {
-                navigate("/organizer/settings?tab=roles")
+                navigate("/organizer/settings?tab=role-management")
             }
         })
     }
+
+    useEffect(() => {
+        if (roleId && !isInitialized && !isLoading && roles.length > 0) {
+            const numericId = typeof roleId === 'string' ? parseInt(roleId, 10) : roleId;
+            const role = handleLoadRoleById(numericId);
+            
+            if (role) {
+                setIsInitialized(true);
+            }
+        }
+    }, [roleId, isInitialized, isLoading, roles.length, handleLoadRoleById]);
+
+    useEffect(() => {
+            handleFetchOwnerRoleStaffs();
+    }, [handleFetchOwnerRoleStaffs]);
 
     return {
         // State
@@ -176,16 +213,17 @@ export const useRoleViewModel = () => {
         searchTerm,
         formData,
         validationErrors,
-        
+        isInitialized,
+
         // Setters
         setSearchTerm,
         updateFormData,
-        
+
         // Functions
         handleLoadRoleById,
-        handleGetRoleById,         
-        resetForm,           
-        validateForm,          
+        handleGetRoleById,
+        resetForm,
+        validateForm,
         handleFetchOwnerRoleStaffs,
         handleNavigateToCreateNewRole,
         handleNavigateToUpdateRole,
