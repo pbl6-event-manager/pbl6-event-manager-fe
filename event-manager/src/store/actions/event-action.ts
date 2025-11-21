@@ -28,10 +28,14 @@ export const GET_EVENT_DETAILS_FAILURE = "GET_EVENT_DETAILS_FAILURE";
 export const APPROVE_REJECT_EVENT_REQUEST = "APPROVE_REJECT_EVENT_REQUEST";
 export const APPROVE_REJECT_EVENT_SUCCESS = "APPROVE_REJECT_EVENT_SUCCESS";
 export const APPROVE_REJECT_EVENT_FAILURE = "APPROVE_REJECT_EVENT_FAILURE";
+export const GET_EVENTS_BY_OWNER_REQUEST = "GET_EVENTS_BY_OWNER_REQUEST";
+export const GET_EVENTS_BY_OWNER_SUCCESS = "GET_EVENTS_BY_OWNER_SUCCESS";
+export const GET_EVENTS_BY_OWNER_FAILURE = "GET_EVENTS_BY_OWNER_FAILURE";
+
 import type { EventFormDto, EventListDto } from "../../dtos/event-dto";
 import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
-import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, getEventsByOrganizerIdsService } from "../../service/event-service";
+import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, getEventsByOrganizerIdsService, getEventsByOwnerService } from "../../service/event-service";
 import { store } from "../store";
 
 export const getAllEventsAdmin = () => async (dispatch: any) => {
@@ -163,6 +167,7 @@ export const createNewEvent = (formData: EventFormDto) => async (dispatch: any) 
     });
 
     const result = await createEventService(formData);
+    console.log("[debug] Action: create event result ->", result)
     
     dispatch({
       type: CREATE_EVENT_SUCCESS,
@@ -173,6 +178,33 @@ export const createNewEvent = (formData: EventFormDto) => async (dispatch: any) 
       type: CREATE_EVENT_FAILED,
       payload:
         error.response?.data?.message || error.message || "Create event failed",
+    });
+    throw error;
+  }
+}
+
+export const getEventsByOwner = () => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: GET_EVENTS_BY_OWNER_REQUEST,
+    });
+    
+    const { eventListDto, organizerEventsListItem } = await getEventsByOwnerService();
+    console.log("eventListDto:", eventListDto);
+    console.log("organizerEventsListItem:", organizerEventsListItem);
+    
+    dispatch({
+      type: GET_EVENTS_BY_OWNER_SUCCESS,
+      payload: eventListDto,
+    });
+    
+    // Trả về data thay vì chỉ trả organizerEventsListItem
+    return organizerEventsListItem;
+    
+  } catch (error: any) {
+    dispatch({
+      type: GET_EVENTS_BY_OWNER_FAILURE,
+      payload: error.response?.data?.message || error.message || "Failed to get events by owner",
     });
     throw error;
   }

@@ -16,28 +16,28 @@ export const useRoleViewModel = (roleId?: string | number) => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("")
     const [isInitialized, setIsInitialized] = useState(false)
-    
+
     const { roles, currentRole, isLoading, error } = useSelector((state: RootState) => state.roleReducer);
-    
+
     const [formData, setFormData] = useState<CreateRoleStaffFormData>({
         name: "",
         description: "",
         permissionIds: [],
     });
-    
+
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const filteredRoles = useMemo(() => {
-    return roles
-        .filter((role) => 
-            role.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .sort((a, b) => {
-            const nameCompare = a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-            if (nameCompare !== 0) return nameCompare;
-            
-            return a.id - b.id;
-        });
-}, [roles, searchTerm]);
+        return roles
+            .filter((role) =>
+                role.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .sort((a, b) => {
+                const nameCompare = a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+                if (nameCompare !== 0) return nameCompare;
+
+                return a.id - b.id;
+            });
+    }, [roles, searchTerm]);
 
     const updateFormData = useCallback((field: keyof CreateRoleStaffFormData, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }))
@@ -84,7 +84,7 @@ export const useRoleViewModel = (roleId?: string | number) => {
 
     const validateForm = useCallback((): { isValid: boolean; errors: Record<string, string> } => {
         const errors: Record<string, string> = {};
-        
+
         if (!formData.name.trim()) {
             errors.name = "Role name is required";
         } else if (formData.name.length > 50) {
@@ -192,7 +192,7 @@ export const useRoleViewModel = (roleId?: string | number) => {
         if (roleId && !isInitialized && !isLoading && roles.length > 0) {
             const numericId = typeof roleId === 'string' ? parseInt(roleId, 10) : roleId;
             const role = handleLoadRoleById(numericId);
-            
+
             if (role) {
                 setIsInitialized(true);
             }
@@ -200,7 +200,7 @@ export const useRoleViewModel = (roleId?: string | number) => {
     }, [roleId, isInitialized, isLoading, roles.length, handleLoadRoleById]);
 
     useEffect(() => {
-            handleFetchOwnerRoleStaffs();
+        handleFetchOwnerRoleStaffs();
     }, [handleFetchOwnerRoleStaffs]);
 
     return {
