@@ -89,4 +89,17 @@ export interface LocationData {
     address2: string
     stateProvince: string
 }
+
+export interface OrganizerEventsListItem {
+    id: number;
+    bannerImagePath: string | null;
+    title: string;
+    address: string;
+    soldTickets: number;
+    capacity: number;
+    startDate: string;
+    endDate: string;
+    status: string;
+    organizerName: string;
+}
 //#endregion

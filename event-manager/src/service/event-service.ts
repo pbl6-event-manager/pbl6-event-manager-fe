@@ -1,13 +1,14 @@
-import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi } from "../api/event-api"
+import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi, getEventsByOwnerApi } from "../api/event-api"
 import { eventMapper } from "../mappers/event-mapper"
 import { eventConverter } from "../converters/event-converter"
-import type { EventFormDto } from "../dtos/event-dto"
+import type { EventFormDto, EventListDto } from "../dtos/event-dto"
 import type { EventModel } from "../models/bean/event-models";
+import type { OrganizerEventsListItem } from "../models/form-models/event-form-models";
+import { getMyOrganizersService } from "./organizer-service";
 
 export const createEventService = async (formData: EventFormDto) => {
   try {
     const multipartFormData = new FormData()
-    multipartFormData.append("organizerId", formData.organizerId.toString())
     multipartFormData.append("title", formData.title)
     multipartFormData.append("summary", formData.summary)
     multipartFormData.append("startTime", formData.startTime)
@@ -19,24 +20,34 @@ export const createEventService = async (formData: EventFormDto) => {
     multipartFormData.append("latitude", formData.latitude.toString())
     multipartFormData.append("longitude", formData.longitude.toString())
 
-    if (formData.banner) {
-      multipartFormData.append("banner", formData.banner)
+    const bannerFormData = formData.bannerFile as File | null;
+    console.log("[DEBUG] Banner appended to FormData:", bannerFormData)
+    if (bannerFormData) {
+      multipartFormData.append("banner", bannerFormData)
     }
-
+    console.log("[DEBUG] multipartFormData banner:", multipartFormData.get("banner"))  
+    const myOrganizers = await getMyOrganizersService();
+    const firstOrganizerId = myOrganizers[0]?.id;
+    if (!firstOrganizerId) {
+      throw new Error("No organizers found for the user.");
+    }
+    multipartFormData.append("organizerId", firstOrganizerId.toString());
     formData.categoryIds.forEach((id) => {
       multipartFormData.append("categoryIds", id.toString())
     })
 
     const rawResponse = await createEvent(multipartFormData)
-    console.log("[DEBUG] Raw API Response:", rawResponse) // ✅ Log response
+    console.log("[DEBUG] Raw API Response:", rawResponse)
+    const rawData = rawResponse.data
+    if(rawData.message !== "success") {
+      throw new Error(rawData.message || "Failed to create event");
+    }
 
-    // Step 2: Map to domain model
-    const domainModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawResponse)
-    console.log("[DEBUG] Domain Model:", domainModel) // ✅ Log mapped data
+    const eventModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawData.data)
+    console.log("[DEBUG] Event Model after mapping:", eventModel)
 
-    // Step 3: Convert to DTO
-    const dto = eventConverter.convertDomainToDTO(domainModel)
-    console.log("[DEBUG] Final DTO:", dto) // ✅ Log final result
+    const dto = eventConverter.convertDomainToDTO(eventModel)
+    console.log("[DEBUG] Final DTO:", dto)
 
     return dto
   } catch (error: any) {
@@ -152,6 +163,34 @@ export const approveRejectEventService = async (eventId: number, isApprove: bool
     }
 
     return false;
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
+export const getEventsByOwnerService = async () => {
+  try {
+    const response = await getEventsByOwnerApi();
+    if(response.data.message === "success") {
+      const rawData = response.data.data;
+      const eventModelList : EventModel[] = rawData.map(eventMapper.mapResponseEventToEventModel);
+      const eventListDto : EventListDto[] = eventModelList.map(eventConverter.convertEventModelToEventListDto);
+      const organizerEventsListItem : OrganizerEventsListItem[] = eventListDto.map((dto) => {
+        const organizerName = rawData.find((item: any) => item.id === dto.id)?.organizer?.name || "";
+        return eventConverter.convertEventListDtoToOrganizerEventsListItem(dto, organizerName);
+      });
+      return {
+        eventListDto, 
+        organizerEventsListItem
+      };  
+    }
+    else {
+      throw new Error("Unexpected error occurred");
+    }
   } catch (error: any) {
     if (error.response) {
       throw new Error(error.response.data?.message || "Server error");

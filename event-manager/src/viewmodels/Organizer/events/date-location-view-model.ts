@@ -17,7 +17,6 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
   const [eventType, setEventType] = useState<"single" | "multi">("single")
   const [showLocationDetails, setShowLocationDetails] = useState(false)
   
-  // Thêm state để track xem có đang trong quá trình validation từ expand() không
   const [isValidating, setIsValidating] = useState(false)
 
   // Fetch countries on mount
@@ -32,7 +31,6 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
     }
   }, [eventData.location.country, dispatch])
 
-  // Validate fields
   const validateFields = () => {
     const newErrors: { date?: string; endDate?: string; location?: string } = {}
 
@@ -56,7 +54,6 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
     return valid
   }
 
-  // Check if card has valid data - CHỈ update isValid, KHÔNG tự động collapse
   useEffect(() => {
     const hasDate = eventData.startDate && (eventType === "single" || eventData.endDate)
     const hasLocation = eventData.location.type !== "venue" || (eventData.location.country && eventData.location.city)
@@ -66,20 +63,15 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
     } else {
       setIsValid(false)
     }
-    
-    // KHÔNG gọi setIsExpanded(false) ở đây!
+
   }, [eventData.startDate, eventData.endDate, eventData.location, eventType])
 
   const updateLocation = (updates: Partial<LocationData>) => {
-    // FIX: Đảm bảo onUpdate được gọi đúng cách
     const newLocation = { ...eventData.location, ...updates }
     const newEventData = {
       ...eventData,
       location: newLocation,
     }
-    console.log("updateLocation called with:", updates)
-    console.log("New location:", newLocation)
-    console.log("Calling onUpdate with:", newEventData)
     onUpdate(newEventData)
   }
 

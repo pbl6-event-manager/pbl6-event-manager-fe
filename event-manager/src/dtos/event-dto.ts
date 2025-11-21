@@ -44,7 +44,6 @@ export interface CreateEventResponseDto {
 };
 
 export interface EventFormDto {
-  organizerId: number
   title: string
   summary: string
   startTime: string
@@ -55,12 +54,13 @@ export interface EventFormDto {
   language: string
   latitude: number
   longitude: number
-  banner?: File
+  bannerFile?: File
   categoryIds: number[]
 };
 
 export interface EventListDto {
-  id: number
+  id: number,
+  bannerImagePath?: string,
   title: string
   summary: string
   startTime: string

@@ -57,6 +57,7 @@ export const addUserService = async (userData: any) => {
   const role = userData.get("role") as string;
   const roleIds = role === "Admin" ? "1" : "2";
   const avatar = userData.get("avatar") as File | null;
+  console.log("[DEBUG] avatar file in addUserService:", avatar);
   const signUpDto = {
     email: email,
     password: password,
