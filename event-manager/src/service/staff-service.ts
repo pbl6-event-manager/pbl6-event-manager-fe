@@ -1,4 +1,5 @@
 import { assignAndUpdateStaffToOwner, getStaffGroupedByRole, deleteOwnerStaffByEmail } from "../api/owner-staff-api";
+import { syncStaffToEvent, getAllAssignedStaffIdsOfEvent } from "../api/event-staff-api";
 import { convertToOwnerStaffListItem, convertToStaffDto } from "../converters/staff-converter";
 import { mapToStaffModel } from "../mappers/staff-mapper";
 import { mapToRoleStaffModel } from "../mappers/role-staff-mapper";
@@ -77,5 +78,55 @@ export const removeStaffOfOwnerService = async (staffEmail: string) => {
         return response.data.message;
     } catch (error: any) {
         throw new Error(error.response?.data?.message || "Failed to remove staff");
+    }
+}
+
+export const syncStaffsToEventService  = async (eventId: number, staffIds: number[]) => {
+    try {
+        console.log("[StaffService] Syncing staffs to event:", { eventId, staffIds });
+        
+        const response = await syncStaffToEvent(eventId, staffIds);
+        console.log("[StaffService] Sync response:", response);
+        
+        if (response.data.status && response.data.message === "success") {
+            return {
+                message: response.data.data.message,
+                addedStaffIds: response.data.data.addedStaffIds,
+                removedStaffIds: response.data.data.removedStaffIds,
+                finalStaffIds: response.data.data.finalStaffIds
+            };
+        } else {
+            throw new Error(response.data.message || "Failed to sync staffs to event");
+        }
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Failed to sync staffs to event");
+    }
+}
+
+
+export const fetchAssignedStaffsOfEventByListIds = async (eventId: number) => {
+    try {
+        const response = await getAllAssignedStaffIdsOfEvent(eventId);
+        const assignedStaffIds: number[] = response.data.data; // Lấy mảng IDs từ API
+        
+        // Lấy tất cả staff của organizer
+        const { allStaffDtos, allStaffItems } = await fetchStaffGroupedByRoleService();
+        
+        // Filter để lấy những staff đã được assign
+        const assignedStaffsDto = allStaffDtos.filter(staff => 
+            assignedStaffIds.includes(staff.id)
+        );
+        
+        const assignedStaffsItems = allStaffItems.filter(staff => 
+            assignedStaffIds.includes(staff.id)
+        );
+        
+        return { 
+            assignedStaffsDto, 
+            assignedStaffsItems,
+            assignedStaffIds 
+        };
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Failed to fetch assigned staffs of event");
     }
 }

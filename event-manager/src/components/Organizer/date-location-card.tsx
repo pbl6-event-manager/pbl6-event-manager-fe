@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef, useImperativeHandle, useRef, useEffect } from "react"
+import { forwardRef, useImperativeHandle } from "react"
 import { Calendar, MapPin, Plus, Check, AlertCircle, Clock, Globe } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"
@@ -29,6 +29,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
   ({ eventData, onUpdate, dateInputRef, locationInputRef }, ref) => {
     const {
       isExpanded,
+      cardRef,
       setIsExpanded,
       isValid,
       errors,
@@ -44,11 +45,10 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
       updateLocation,
       formatDateTime,
       formatLocation,
-      isValidating,
       setIsValidating,
+      handleCardClick,
     } = useDateLocationViewModel(eventData, onUpdate)
 
-    const cardRef = useRef<HTMLDivElement>(null)
 
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({
@@ -68,55 +68,6 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
       }
     }))
 
-    // Handle click outside - IGNORE clicks vào dropdown/popover
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        const target = event.target as HTMLElement
-
-        // Kiểm tra xem click có phải vào card không
-        const isClickInsideCard = cardRef.current?.contains(target)
-
-        // Kiểm tra xem click có phải vào dropdown/popover không
-        // Các dropdown của shadcn/ui thường có attribute data-radix-popper-content-wrapper
-        const isClickInsideDropdown =
-          target.closest('[role="listbox"]') || // Select dropdown
-          target.closest('[role="dialog"]') || // Command palette
-          target.closest('[data-radix-popper-content-wrapper]') || // Radix popover
-          target.closest('[cmdk-root]') || // cmdk command
-          target.closest('.select-content') || // Custom class nếu có
-          target.closest('[data-state="open"]') // Radix open state
-
-        // CHỈ xử lý nếu click BÊN NGOÀI card VÀ BÊN NGOÀI dropdown
-        if (!isClickInsideCard && !isClickInsideDropdown && isExpanded) {
-          // Nếu đang validating, không làm gì
-          if (isValidating) return
-
-          // Validate trước khi collapse
-          const valid = validateFields()
-          if (valid) {
-            setIsExpanded(false)
-          }
-        }
-      }
-
-      // CHỈ add listener khi card đang expanded
-      if (isExpanded) {
-        // Delay nhỏ để đảm bảo dropdown đã render
-        setTimeout(() => {
-          document.addEventListener("mousedown", handleClickOutside)
-        }, 0)
-      }
-
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside)
-      }
-    }, [isExpanded, isValidating, validateFields])
-
-    const handleCardClick = () => {
-      if (!isExpanded) {
-        setIsExpanded(true)
-      }
-    }
 
     if (!isExpanded) {
       return (

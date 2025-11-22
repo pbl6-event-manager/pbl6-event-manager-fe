@@ -4,21 +4,24 @@ import { showLoadingAlert, closeLoadingAlert, showSuccessAlert, showErrorAlert, 
 import {
     fetchOwnerStaffs,
     inviteStaffToOwner,
-    removeStaffOfOwner
+    removeStaffOfOwner,
+    fetchEventStaffs
 } from "../../../store/actions/staff-action";
 import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 export const useStaffViewModel = () => {
+    const { eventId } = useParams<{ eventId: string }>()
     const dispatch = useDispatch();
     const [email, setEmail] = useState("");
     const [selectedRole, setSelectedRole] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [showInviteModal, setShowInviteModal] = useState(false);
-    const { organizerStaffs, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
+    const { organizerStaffs, eventStaffs, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
     const [selectedMember, setSelectedMember] = useState<number | null>(null);
 
     // Filter staffs based on search term
-    const filteredStaffs = organizerStaffs.filter(staff => 
+    const filteredStaffs = organizerStaffs.filter(staff =>
         staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         staff.role.toLowerCase().includes(searchTerm.toLowerCase())
@@ -37,6 +40,23 @@ export const useStaffViewModel = () => {
         }
     }, [dispatch]);
 
+    const handleFetchEventStaff = useCallback(async (eventId: number | undefined) => {
+        try {
+            if (eventId === undefined) {
+                return
+            } else {
+                showLoadingAlert("Loading event staffs...");
+                await new Promise(resolve => setTimeout(resolve, 500));
+                await dispatch<any>(fetchEventStaffs(eventId));
+                closeLoadingAlert();
+            }
+        } catch (error) {
+            closeLoadingAlert();
+            showErrorAlert("Error loading event staffs");
+            throw new Error("Error loading event staffs: " + error);
+        }
+    }, [dispatch]);
+
     const handleInviteStaffToOwner = useCallback(async (email: string, roleStaffId: number) => {
         if (!email || !roleStaffId) {
             showErrorAlert("Please provide email and select a role");
@@ -47,18 +67,18 @@ export const useStaffViewModel = () => {
             showLoadingAlert("Inviting staff...");
             const result = await dispatch<any>(inviteStaffToOwner(email, roleStaffId));
             closeLoadingAlert();
-            
+
             if (result.message.includes("updated")) {
                 showSuccessAlert("Staff role updated successfully");
             } else {
                 showSuccessAlert("Staff invited successfully");
             }
-            
+
             // Reset form and close modal
             setEmail("");
             setSelectedRole("");
             setShowInviteModal(false);
-            
+
             // Refresh staff list
             await handleFetchOwnerStaff();
         } catch (error: any) {
@@ -70,17 +90,17 @@ export const useStaffViewModel = () => {
     const handleRemoveStaffOfOwner = useCallback(async (staffEmail: string) => {
         try {
             const result = await showConfirmAlert(
-                "Are you sure you want to remove this staff?", 
+                "Are you sure you want to remove this staff?",
                 "Remove Staff"
             );
-            
+
             if (result) {
                 showLoadingAlert("Removing staff...");
                 await dispatch<any>(removeStaffOfOwner(staffEmail));
                 closeLoadingAlert();
                 showSuccessAlert("Staff removed successfully");
                 setSelectedMember(null);
-                
+
                 // Refresh staff list
                 await handleFetchOwnerStaff();
             }
@@ -103,13 +123,13 @@ export const useStaffViewModel = () => {
         searchTerm,
         showInviteModal,
         selectedMember,
-        
+
         setEmail,
         setSelectedRole,
         setShowInviteModal,
         setSearchTerm,
         setSelectedMember,
-        
+
         handleInviteStaffToOwner,
         handleRemoveStaffOfOwner,
         handleFetchOwnerStaff,

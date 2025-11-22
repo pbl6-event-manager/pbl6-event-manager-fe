@@ -1,4 +1,3 @@
-//import type { Staff } from "../bean/owner-staff-models"
 import type { StaffDto } from "../../dtos/staff-dto"
 import type { RoleStaffDto } from "../../dtos/role-staff-dto"
 

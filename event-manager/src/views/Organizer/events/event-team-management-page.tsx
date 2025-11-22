@@ -1,47 +1,36 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useState } from "react"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
-import { useEventTeamManagementViewModel } from "../../../viewmodels/Organizer/events/event-team-management-view-model"
 import AssignMemberModal from "../../../components/Organizer/assign-member-modal"
-
+import { useEventTeamManagementViewModel } from "../../../viewmodels/Organizer/events/event-team-management-view-model"
 
 export default function EventTeamManagementPage() {
-    const { eventId } = useParams()
-    const [searchTerm, setSearchTerm] = useState("")
-    const [showAssignModal, setShowAssignModal] = useState(false)
+    const [showAssignModal, setShowAssignModal] = useState(false);
 
-    const viewModel = useEventTeamManagementViewModel()
+    const {
+        searchTerm,
+        setSearchTerm,
+        organizerStaffs,
+        eventStaffs,
+        selectedStaffIds,
+        isLoading,
+        error,
+        isStaffAssigned,
+        handleToggleStaff,
+        handleSyncStaffs,
+    } = useEventTeamManagementViewModel();
 
-    // useEffect(() => {
-    //     viewModel.handleFetchEventStaffs()
-    //     viewModel.handleFetchOrganizerMembers( || "")
-    // }, [eventId])
+    const handleSaveAssignments = async () => {
+        await handleSyncStaffs();
+        setShowAssignModal(false);
+    };
 
-    // const assignedMembers = viewModel.getAssignedMembers()
-    // const availableMembers = viewModel.getSortedMembers()
-
-    // const filteredAssignedMembers = assignedMembers.filter(
-    //     (staffs) =>
-    //         staffs.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //         staffs.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-    // )
-
-    // const handleAssignMember = (member: any) => {
-    //     try {
-    //         viewModel.assignMemberToEvent(member)
-    //         setShowAssignModal(false)
-    //     } catch (err: any) {
-    //         console.error("Error assigning member:", err.message)
-    //     }
-    // }
     return (
         <div className="flex-1 bg-gray-50 p-8">
             <div className="max-w-4xl mx-auto">
-
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">Staff Management</h1>
@@ -64,35 +53,62 @@ export default function EventTeamManagementPage() {
                         Assign staffs
                     </Button>
                 </div>
+
+                {/* Error Display */}
+                {error && (
+                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-red-600 text-sm">{error}</p>
+                    </div>
+                )}
+
                 {/* Assigned Members Summary */}
                 <Card className="mb-8">
                     <CardHeader>
-                        <CardTitle>Assigned staffs ({viewModel.eventStaffs.length})</CardTitle>
+                        <CardTitle>Assigned staffs ({eventStaffs.length})</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-2">
-                            {/* {filteredAssignedMembers.map((member) => ( */}
-                                <div  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-600 text-white font-semibold text-xs">
-                                        {/* {member.name?.charAt(0) || member.email.charAt(0)} */}
+                        {isLoading ? (
+                            <div className="text-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
+                            </div>
+                        ) : eventStaffs.length === 0 ? (
+                            <div className="text-center py-8 text-gray-500">
+                                No staffs assigned to this event yet
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {eventStaffs.map((staff) => (
+                                    <div 
+                                        key={staff.id} 
+                                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                                    >
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-600 text-white font-semibold text-xs">
+                                            {staff.name?.charAt(0) || staff.email.charAt(0)}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-medium text-gray-900">{staff.name}</p>
+                                            <p className="text-xs text-gray-600">{staff.email}</p>
+                                        </div>
+                                        <span className="text-sm font-medium text-gray-700 bg-blue-100 px-3 py-1 rounded-full">
+                                            {staff.role}
+                                        </span>
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="font-medium text-gray-900">member.name</p>
-                                        <p className="text-xs text-gray-600">member.email</p>
-                                    </div>
-                                    <span className="text-sm font-medium text-gray-700">member.role</span>
-                                </div>
-                            {/* ))} */}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
                 {showAssignModal && (
                     <AssignMemberModal
-                        availableMembers={[]} //availableMembers
-                        onAssign={(member) => {} /*handleAssignMember*/}
+                        availableMembers={organizerStaffs}
+                        selectedStaffIds={selectedStaffIds}
+                        onToggle={handleToggleStaff}
+                        onSave={handleSaveAssignments}
                         onClose={() => setShowAssignModal(false)}
-                        isLoading={viewModel.isLoading}
+                        isLoading={isLoading}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
                     />
                 )}
             </div>

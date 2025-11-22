@@ -16,7 +16,7 @@ export interface EventFormData {
     agenda: AgendaSection[];
     ticketType: TicketType[] | null;
     capacity: string;
-    category: string[];
+    category: number[];
     timezone: string;
     language: string
 }
