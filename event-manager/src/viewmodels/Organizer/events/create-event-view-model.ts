@@ -19,6 +19,7 @@ interface ValidationResult {
 export const useCreateEventViewModel = () => {
     const dispatch = useDispatch<AppDispatch>()
     const { isLoading, error, createEvent, isSuccess } = useSelector((state: RootState) => state.eventReducer)
+    const [currentStep, setCurrentStep] = useState(1)
     const [eventData, setEventData] = useState<EventFormData>({
         mediaFile: null,
         title: "",
@@ -51,6 +52,11 @@ export const useCreateEventViewModel = () => {
         timezone: "",
         language: "en-US"
     })
+    const handleStepClick = (stepId: number) => {
+    if (stepId <= currentStep) {
+      setCurrentStep(stepId)
+    }
+  }
     const [errors, setErrors] = useState<EventFormErrors>({})
     const [uploadedMedia, setUploadedMedia] = useState<MediaFileModel[]>([])
     const [goodToKnowData, setGoodToKnowData] = useState<GoodToKnowData>({
@@ -355,6 +361,7 @@ export const useCreateEventViewModel = () => {
         errors,
         uploadedMedia,
         goodToKnowData,
+        currentStep,
 
         // Card refs để expand
         mediaCardRef,
@@ -371,6 +378,7 @@ export const useCreateEventViewModel = () => {
 
         handleSaveAndContinue,
         handleBackClick,
+        handleStepClick,
         validateForm,
         setEventData,
         setErrors,

@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { EventTitleCard } from "../../../components/Organizer/event-title-card"
@@ -14,12 +13,10 @@ export default function CreateEventPage() {
   const {
     isLoading,
     error,
-    createEvent,
-    isSuccess,
     eventData,
-    errors,
     uploadedMedia,
     goodToKnowData,
+    currentStep,
 
     // Card refs
     mediaCardRef,
@@ -36,23 +33,12 @@ export default function CreateEventPage() {
 
     handleSaveAndContinue,
     handleBackClick,
-    validateForm,
     setEventData,
-    setErrors,
+    handleStepClick,
     setUploadedMedia,
     setGoodToKnowData,
-    handleCreateEvent,
-    resetState
   } = useCreateEventViewModel()
-
-  const [currentStep, setCurrentStep] = useState(1)
-
-  const handleStepClick = (stepId: number) => {
-    if (stepId <= currentStep) {
-      setCurrentStep(stepId)
-    }
-  }
-
+  
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b bg-card sticky top-0 z-50">

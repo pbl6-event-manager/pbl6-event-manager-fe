@@ -19,8 +19,7 @@ export default function AllEventsPage() {
     statusFilter,
     setStatusFilter,
     getStatusColor,
-    handleDeleteEvent,
-    handleEditEvent,
+    handleNavigateToEditEvent,
     handleViewEvent,
   } = useEventViewModel()
 
@@ -192,17 +191,17 @@ export default function AllEventsPage() {
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation()
-                          handleEditEvent(event.id)
+                          handleNavigateToEditEvent(event.id)
                         }}
                       >
                         <Pencil className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleDeleteEvent(event.id)
-                        }}
+                        // onClick={(e) => {
+                        //   e.stopPropagation()
+                        //   handleDeleteEvent(event.id)
+                        // }}
                         className="text-red-600"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />

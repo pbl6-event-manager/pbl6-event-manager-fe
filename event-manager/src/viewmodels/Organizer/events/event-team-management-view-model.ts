@@ -1,117 +1,116 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import type { RootState } from "../../../store/store";
-import type { Staff } from "../../../models/bean/owner-staff-models";
-import {
+import { 
+    showLoadingAlert, 
+    closeLoadingAlert, 
+    showSuccessAlert, 
+    showErrorAlert 
+} from "../../../helpers/alert-helpers";
+import { 
+    fetchOwnerStaffs, 
     fetchEventStaffs,
-    fetchOwnerStaffs,
-    updateListStaffsOfEvent,
-    inviteStaffToOwner,
-    removeStaffOfOwner,
-} from "../../../store/actions/staff-action"
-
-// Mock data - replace with Redux state
-const mockMembersInOrganizer: Staff[]  = [
-    {
-        id: 1,
-        email: "letonthanhan@gmail.com",
-        name: "Lê Tôn Thanh An",
-        role: "Owner",
-        status: "active",
-        joinedAt: "2024-01-15",
-    },
-    {
-        id: 2,
-        email: "nguyendacnguyentam@gmail.com",
-        name: "Nguyễn Đắc Nguyên Tâm",
-        role: "Admin",
-        status: "active",
-        joinedAt: "2025-01-15",
-    },
-    {
-        id: 3,
-        email: "nguyenvana@gmail.com",
-        name: "Nguyễn Văn A",
-        role: "Marketing",
-        status: "active",
-        joinedAt: "2024-01-15",
-    },
-    {
-        id: 4,
-        email: "staff@gmail.com",
-        name: "Staff",
-        role: "Admin",
-        status: "active",
-        joinedAt: "2025-01-15",
-    },
-]
-
-const mockMembersInEvent: Staff[]  = [
-    {
-        id: 1,
-        email: "letonthanhan@gmail.com",
-        name: "Lê Tôn Thanh An",
-        role: "Owner",
-        status: "active",
-        joinedAt: "2024-01-15",
-    },
-    {
-        id: 2,
-        email: "nguyendacnguyentam@gmail.com",
-        name: "Nguyễn Đắc Nguyên Tâm",
-        role: "Admin",
-        status: "active",
-        joinedAt: "2025-01-15",
-    },
-]
+    syncStaffsToEvent 
+} from "../../../store/actions/staff-action";
 
 export const useEventTeamManagementViewModel = () => {
+    const { eventId } = useParams<{ eventId: string }>();
     const dispatch = useDispatch();
-    const { eventStaffs, organizerStaffs, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedStaffIds, setSelectedStaffIds] = useState<number[]>([]);
+    
+    const { organizerStaffs, eventStaffs, isLoading, error } = useSelector(
+        (state: RootState) => state.staffReducer
+    );
 
-    const handleFetchEventStaffs = async () => {
-        dispatch<any>(fetchEventStaffs());
-    }
-    const handleFetchOwnerStaffs = async (id: number) => {
-        dispatch<any>(fetchOwnerStaffs(id));
+    // Filter organizer staffs based on search
+    const filteredOrganizerStaffs = organizerStaffs.filter(staff =>
+        staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.role.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Filter event staffs based on search
+    const filteredEventStaffs = eventStaffs.filter(staff =>
+        staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Check if staff is assigned to event
+    const isStaffAssigned = useCallback((staffId: number) => {
+        return eventStaffs.some(staff => staff.id === staffId);
+    }, [eventStaffs]);
+
+    // Initialize selected staff IDs from event staffs
+    useEffect(() => {
+        if (eventStaffs.length > 0) {
+            setSelectedStaffIds(eventStaffs.map(staff => staff.id));
+        }
+    }, [eventStaffs]);
+
+    // Fetch organizer and event staffs
+    const handleFetchStaffs = useCallback(async () => {
+        if (!eventId) return;
         
-    }
-    const handleUpdateListStaffsOfEvent = async (eventId: number, listStaffId: number[]) => {
-        if (eventStaffs.some((m) => m.id === listStaffId[0])) {
-            return
+        try {
+            showLoadingAlert("Loading staffs...");
+            await Promise.all([
+                dispatch<any>(fetchOwnerStaffs()),
+                dispatch<any>(fetchEventStaffs(Number(eventId)))
+            ]);
+            closeLoadingAlert();
+        } catch (error: any) {
+            closeLoadingAlert();
+            showErrorAlert(error.message || "Error loading staffs");
+        }
+    }, [dispatch, eventId]);
+
+    // Toggle staff selection
+    const handleToggleStaff = useCallback((staffId: number) => {
+        setSelectedStaffIds(prev => {
+            if (prev.includes(staffId)) {
+                return prev.filter(id => id !== staffId);
+            } else {
+                return [...prev, staffId];
+            }
+        });
+    }, []);
+
+    // Sync staffs to event
+    const handleSyncStaffs = useCallback(async () => {
+        if (!eventId) {
+            showErrorAlert("Event ID is required");
+            return;
         }
 
-        dispatch<any>(updateListStaffsOfEvent(eventId, listStaffId));
-    }
-    const handleRemoveStaffOfOwner = async (ownerId: number, listStaffId: number[]) => {
-        dispatch<any>(removeStaffOfOwner(ownerId, listStaffId));
-    }
-    const isStaffAssigned = (staffId: number): boolean => {
-        return eventStaffs.some((staff) => staff.id === staffId);
-    }
-    const getUnassignedStaffs = (): Staff[] => {
-        return organizerStaffs.filter((staff) => !isStaffAssigned(staff.id))
-    }
-    const getAssignedStaffs = (): Staff[] => {
-        return organizerStaffs.filter((staff) => isStaffAssigned(staff.id))
-    }
-    const getSortedStaffs = (): Staff[] => {
-        const unassigned = getUnassignedStaffs()
-        const assigned = getAssignedStaffs()
-        return [...unassigned, ...assigned]
-    }
-    
+        try {
+            showLoadingAlert("Syncing staffs...");
+            await dispatch<any>(syncStaffsToEvent(Number(eventId), selectedStaffIds));
+            closeLoadingAlert();
+            showSuccessAlert("Staffs synced successfully");
+        } catch (error: any) {
+            closeLoadingAlert();
+            showErrorAlert(error.message || "Error syncing staffs");
+        }
+    }, [dispatch, eventId, selectedStaffIds]);
+
+    // Initial load
+    useEffect(() => {
+        handleFetchStaffs();
+    }, [handleFetchStaffs]);
+
     return {
-        eventStaffs,
-        organizerStaffs,
+        searchTerm,
+        setSearchTerm,
+        organizerStaffs: filteredOrganizerStaffs,
+        eventStaffs: filteredEventStaffs,
+        selectedStaffIds,
         isLoading,
         error,
-        handleFetchEventStaffs,
-        handleFetchOwnerStaffs,
-        handleUpdateListStaffsOfEvent,
-        handleRemoveStaffOfOwner,
         isStaffAssigned,
-        getUnassignedStaffs,
-        getAssignedStaffs,
-        getSortedStaffs,
-    }
-}
+        handleToggleStaff,
+        handleSyncStaffs,
+        handleFetchStaffs,
+    };
+};

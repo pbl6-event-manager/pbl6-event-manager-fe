@@ -1,7 +1,7 @@
 "use client"
 
 // viewmodels/Organizer/date-location-view-model.ts
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchCountries, fetchCities } from "../../../store/actions/location-action"
 import type { RootState } from "../../../store/store"
@@ -16,7 +16,7 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
   const [errors, setErrors] = useState<{ date?: string; endDate?: string; location?: string }>({})
   const [eventType, setEventType] = useState<"single" | "multi">("single")
   const [showLocationDetails, setShowLocationDetails] = useState(false)
-  
+  const cardRef = useRef<HTMLDivElement>(null)
   const [isValidating, setIsValidating] = useState(false)
 
   // Fetch countries on mount
@@ -75,6 +75,57 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
     onUpdate(newEventData)
   }
 
+  const handleCardClick = () => {
+    if (!isExpanded) {
+      setIsExpanded(true)
+    }
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+
+      // Kiểm tra xem click có phải vào card không
+      const isClickInsideCard = cardRef.current?.contains(target)
+
+      // Kiểm tra xem click có phải vào dropdown/popover không
+      // Các dropdown của shadcn/ui thường có attribute data-radix-popper-content-wrapper
+      const isClickInsideDropdown =
+        target.closest('[role="listbox"]') || // Select dropdown
+        target.closest('[role="dialog"]') || // Command palette
+        target.closest('[data-radix-popper-content-wrapper]') || // Radix popover
+        target.closest('[cmdk-root]') || // cmdk command
+        target.closest('.select-content') || // Custom class nếu có
+        target.closest('[data-state="open"]') // Radix open state
+
+      // CHỈ xử lý nếu click BÊN NGOÀI card VÀ BÊN NGOÀI dropdown
+      if (!isClickInsideCard && !isClickInsideDropdown && isExpanded) {
+        // Nếu đang validating, không làm gì
+        if (isValidating) return
+
+        // Validate trước khi collapse
+        const valid = validateFields()
+        if (valid) {
+          setIsExpanded(false)
+        }
+      }
+    }
+
+    // CHỈ add listener khi card đang expanded
+    if (isExpanded) {
+      // Delay nhỏ để đảm bảo dropdown đã render
+      setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside)
+      }, 0)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isExpanded, isValidating, validateFields])
+
+  
+
   const formatDateTime = () => {
     if (!eventData.startDate) return "Enter date and time"
 
@@ -110,6 +161,7 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
 
   return {
     isExpanded,
+    cardRef,
     setIsExpanded,
     isValid,
     errors,
@@ -127,5 +179,6 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
     formatLocation,
     isValidating,
     setIsValidating,
+    handleCardClick,
   }
 }
