@@ -4,10 +4,8 @@ import TabItem from "../../components/Admin/tab-item";
 import { ArrowLeft } from "lucide-react";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import { EventInfoSection } from "../../components/Admin/event-info-section";
+import EventStaffSection from "../../components/Admin/event-stafff-section";
 
-const EventStaffSection: React.FC<{ id: string }> = ({ id }) => {
-  return <div>Staff for event id: {id}</div>;
-};
 const EventTicketSection: React.FC<{ id: string }> = ({ id }) => {
   return <div>Tickets for event id: {id}</div>;
 };

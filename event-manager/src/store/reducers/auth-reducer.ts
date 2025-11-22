@@ -1,4 +1,5 @@
 import { LOGIN_SUCCESS, LOGOUT, REFRESH_TOKEN_SUCCESS, SIGNUP_SUCCESS } from "../actions/auth-action";
+import { UPDATE_CURRENT_USER_SUCCESS } from "../actions/user-action";
 
 const initialState = {
   accessToken: localStorage.getItem("accessToken") || null,
@@ -18,6 +19,12 @@ export const authReducer = (state = initialState, action: any) => {
         refreshToken: action.payload.refreshToken,
         user: action.payload.user,
       };
+    case UPDATE_CURRENT_USER_SUCCESS:
+      localStorage.setItem("user", JSON.stringify(action.payload));
+      return {
+        ...state,
+        user: action.payload
+      }
     case REFRESH_TOKEN_SUCCESS:
       return {
         ...state,

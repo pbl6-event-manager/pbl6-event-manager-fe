@@ -82,7 +82,7 @@ export const useLoginViewModel = () => {
         if (localEmail === "admin@event.com") {
           navigate("/admin/dashboard");
         } else {
-          navigate("/dashboard");
+          navigate("/organizer/events/all");
         }
       } else {
         setError("Incorrect password");
