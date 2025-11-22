@@ -2,14 +2,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-import { createNewEvent} from "../../../store/actions/event-action";
+import { createNewEvent } from "../../../store/actions/event-action";
 import type { RootState, AppDispatch } from "../../../store/store"
 import type { EventFormDto } from "../../../dtos/event-dto";
 import { showLoadingAlert, closeLoadingAlert, showSuccessAlert, showErrorAlert, showConfirmAlert } from "../../../helpers/alert-helpers"
 import { eventConverter } from "../../../converters/event-converter"
 import type { EventFormData, EventFormErrors, GoodToKnowData, MediaFileModel } from "../../../models/form-models/event-form-models"
 
-// Kiểu trả về mới cho validation
 interface ValidationResult {
     isValid: boolean;
     errors: EventFormErrors;
@@ -61,7 +60,7 @@ export const useCreateEventViewModel = () => {
         faqs: [],
     })
     const navigate = useNavigate()
-    
+
     // Refs for card components - để trigger expand
     const mediaCardRef = useRef<{ expand: () => void }>(null)
     const titleCardRef = useRef<{ expand: () => void }>(null)
@@ -281,60 +280,52 @@ export const useCreateEventViewModel = () => {
         }
     }
 
-    const handleCreateEvent = useCallback(
-        async (formData: EventFormDto) => {
-            try {
-                const actionResult = await dispatch<any>(createEvent(formData))
-                if (actionResult && Object.prototype.hasOwnProperty.call(actionResult, "payload")) {
-                    return actionResult.payload
-                }
-                return actionResult
-            } catch (err) {
-                console.error("[v0] Create event error:", err)
-                throw err
-            }
-        },
+    const handleCreateEvent = useCallback(async (formData: EventFormDto) => {
+        try {
+            const actionResult = await dispatch<any>(createNewEvent(formData))
+            console.log("[debug] Handlecreateevent: create event actionResult ->", actionResult)
+
+            return actionResult
+        } catch (err) {
+            console.error("[v0] Create event error:", err)
+            throw err
+        }
+    },
         [dispatch],
     )
 
     const handleSaveAndContinue = async () => {
         const validationResult = validateForm()
-        
+
         if (!validationResult.isValid) {
-            // Focus vào field bị lỗi và expand card
             focusErrorField(validationResult.firstErrorField)
-            
-            // Hiển thị message cụ thể của lỗi đầu tiên
             await showErrorAlert(validationResult.firstErrorMessage || "Please fix the errors in the form before continuing.")
             return
         }
 
         try {
             showLoadingAlert("Creating event...")
-
             let formDTO: EventFormDto
             try {
+                const bannerFile : File | undefined = uploadedMedia.find(m => m.type === 'image')?.file
                 formDTO = await eventConverter.convertEventDataToFormDTO(
                     eventData,
-                    4, // TODO: lấy organizerId từ auth
-                    uploadedMedia[0]?.file,
+                    bannerFile,
                 )
             } catch (convErr) {
                 closeLoadingAlert()
-                console.error("[v0] Converter error:", convErr)
                 await showErrorAlert(String(convErr || "Invalid form data"))
+                throw new Error("Event form data conversion failed" + String(convErr))
                 return
             }
-
-            console.log("[debug] formDTO ->", formDTO)
-            const result = await createEvent(formDTO)
+            await handleCreateEvent(formDTO)
             closeLoadingAlert()
-
-            if (result && result.id) {
-                await showSuccessAlert("Event created successfully!")
-                navigate(`/organizer/events/edit/${result.id}?step=2`)
+            await showSuccessAlert("Event created successfully!")
+            const eventId = createEvent?.id
+            if ( !eventId ) {
+                navigate("/organizer/events/all")
             } else {
-                await showErrorAlert("Failed to create event. Server returned unexpected response.")
+                navigate(`/organizer/events/edit/${eventId}?step=2`)
             }
         } catch (err: any) {
             closeLoadingAlert()

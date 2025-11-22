@@ -3,7 +3,7 @@ import type { EventDashBoardDto, EventListDto } from "../../dtos/event-dto";
 export interface EventState {
   eventsByUser: EventListDto[]; 
   currentEvent: any | null;
-  createEvent: any | null;
+  createEvent: EventListDto | null;
   publishedEvents: EventListDto[];
   pendingEvents: EventListDto[];
   isLoading: boolean;

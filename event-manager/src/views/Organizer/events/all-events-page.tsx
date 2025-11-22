@@ -1,103 +1,28 @@
 "use client"
 
-import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Search, List, CalendarIcon, ChevronDown, MoreVertical, Pencil, Trash2 } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../../components/ui/dropdown-menu"
 import { Badge } from "../../../components/ui/badge"
+import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
 
-// Mock event data
-interface Event {
-  id: string
-  title: string
-  venue: string
-  date: string
-  time: string
-  image: string
-  sold: number
-  capacity: number
-  gross: number
-  status: "Draft" | "Published" | "Completed"
-}
-
-const mockEvents: Event[] = [
-  {
-    id: "1",
-    title: "League of Legends Championship Pacific Finals Weekend 2025",
-    venue: "Tien Son Sport Center",
-    date: "Saturday, September 6, 2025",
-    time: "12:00 PM +07",
-    image: "/esports-arena.png",
-    sold: 0,
-    capacity: 200,
-    gross: 0,
-    status: "Draft",
-  },
-  {
-    id: "2",
-    title: "Tech Conference 2025",
-    venue: "Convention Center",
-    date: "Monday, October 15, 2025",
-    time: "9:00 AM +07",
-    image: "/tech-conference.png",
-    sold: 150,
-    capacity: 500,
-    gross: 15000,
-    status: "Published",
-  },
-  {
-    id: "3",
-    title: "Summer Music Festival",
-    venue: "City Park",
-    date: "Friday, July 20, 2025",
-    time: "6:00 PM +07",
-    image: "/vibrant-music-festival.png",
-    sold: 450,
-    capacity: 1000,
-    gross: 45000,
-    status: "Published",
-  },
-]
 
 export default function AllEventsPage() {
-  const navigate = useNavigate()
-  const [events, setEvents] = useState<Event[]>(mockEvents)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [viewMode, setViewMode] = useState<"list" | "calendar">("list")
-  const [statusFilter, setStatusFilter] = useState<string>("Draft")
-
-  const handleDeleteEvent = (eventId: string) => {
-    setEvents(events.filter((event) => event.id !== eventId))
-  }
-
-  const handleEditEvent = (eventId: string) => {
-    navigate(`/organizer/events/edit/${eventId}`)
-  }
-
-  const handleViewEvent = (eventId: string) => {
-    navigate(`/organizer/events/dashboard/${eventId}`)
-  }
-
-  const filteredEvents = events.filter((event) => {
-    const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesStatus = statusFilter === "All" || event.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Draft":
-        return "bg-gray-100 text-gray-700"
-      case "Published":
-        return "bg-green-100 text-green-700"
-      case "Completed":
-        return "bg-blue-100 text-blue-700"
-      default:
-        return "bg-gray-100 text-gray-700"
-    }
-  }
+  const {
+    filteredEvents,
+    searchQuery,
+    setSearchQuery,
+    viewMode,
+    setViewMode,
+    statusFilter,
+    setStatusFilter,
+    getStatusColor,
+    handleDeleteEvent,
+    handleEditEvent,
+    handleViewEvent,
+  } = useEventViewModel()
 
   return (
     <div className="flex-1 bg-gray-50">
@@ -105,11 +30,6 @@ export default function AllEventsPage() {
         {/* Header */}
         <h1 className="text-5xl font-bold text-gray-900 mb-8">Events</h1>
 
-        {/* Tabs */}
-        <div className="flex gap-8 mb-6 border-b border-gray-200">
-          <button className="pb-3 text-sm font-semibold text-blue-600 border-b-2 border-blue-600">Events</button>
-          <button className="pb-3 text-sm font-semibold text-gray-600 hover:text-gray-900">Collections</button>
-        </div>
 
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-6">
@@ -158,8 +78,8 @@ export default function AllEventsPage() {
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => setStatusFilter("All")}>All</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setStatusFilter("Draft")}>Draft</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter("Pending")}>Pending</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setStatusFilter("Published")}>Published</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter("Completed")}>Completed</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -199,10 +119,11 @@ export default function AllEventsPage() {
         <div className="bg-white rounded-lg border border-gray-200">
           {/* Table Header */}
           <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 text-sm font-semibold text-gray-700">
-            <div className="col-span-5">Event</div>
+            <div className="col-span-4">Event</div>
             <div className="col-span-2">Sold</div>
             <div className="col-span-2">Gross</div>
             <div className="col-span-2">Status</div>
+            <div className="col-span-1">Organizer</div>
             <div className="col-span-1"></div>
           </div>
 
@@ -217,39 +138,45 @@ export default function AllEventsPage() {
                 onClick={() => handleViewEvent(event.id)}
               >
                 {/* Event Info */}
-                <div className="col-span-5 flex items-center gap-4">
+                <div className="col-span-4 flex items-center gap-4">
                   <div className="flex flex-col items-center justify-center bg-orange-50 rounded px-2 py-1 min-w-[50px]">
                     <span className="text-xs font-semibold text-orange-600 uppercase">
-                      {new Date(event.date).toLocaleDateString("en-US", { month: "short" })}
+                      {new Date(event.startDate).toLocaleDateString("en-US", { month: "short" })}
                     </span>
-                    <span className="text-xl font-bold text-gray-900">{new Date(event.date).getDate()}</span>
+                    <span className="text-xl font-bold text-gray-900">{new Date(event.startDate).getDate()}</span>
                   </div>
                   <img
-                    src={event.image || "/placeholder.svg"}
+                    src={event.bannerImagePath || "/placeholder.svg"}
                     alt={event.title}
                     className="w-16 h-16 rounded object-cover"
                   />
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">{event.title}</h3>
-                    <p className="text-sm text-gray-600">{event.venue}</p>
+                    <p className="text-sm text-gray-600">{event.address}</p>
                     <p className="text-sm text-gray-500">
-                      {event.date} at {event.time}
+                      {event.startDate} - {event.endDate}
                     </p>
                   </div>
                 </div>
 
                 {/* Sold */}
                 <div className="col-span-2 flex items-center text-sm text-gray-700">
-                  {event.sold} / {event.capacity}
+                  {event.soldTickets} / {event.capacity}
                 </div>
 
                 {/* Gross */}
-                <div className="col-span-2 flex items-center text-sm text-gray-700">${event.gross.toFixed(2)}</div>
+                <div className="col-span-2 flex items-center text-sm text-gray-700">$0</div>
 
                 {/* Status */}
                 <div className="col-span-2 flex items-center">
                   <Badge variant="secondary" className={getStatusColor(event.status)}>
                     {event.status}
+                  </Badge>
+                </div>
+                {/* Organizer Name */}
+                <div className="col-span-1 flex items-center text-sm text-gray-700">
+                  <Badge variant="secondary">
+                    {event.organizerName}
                   </Badge>
                 </div>
 
