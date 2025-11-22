@@ -8,7 +8,6 @@ import type { SidebarItem, OrganizerSidebarProps } from "../../models/component-
 
 export default function OrganizerSidebar({ showLogo = false }: OrganizerSidebarProps) {
   const sidebarItems: SidebarItem[] = [
-    { icon: Home, label: "Home", href: "/organizer/home" },
     { icon: Calendar, label: "Events", href: "/organizer/events/all" },
     { icon: FileText, label: "Orders", href: "/organizer/orders" },
     { icon: Megaphone, label: "Vouchers", href: "/organizer/vouchers" },

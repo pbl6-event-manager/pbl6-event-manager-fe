@@ -21,9 +21,12 @@ export const UPDATE_USER_FAILED = "UPDATE_USER_FAILED";
 export const GET_USER_BY_EMAIL_REQUEST = "GET_USER_BY_EMAIL_REQUEST";
 export const GET_USER_BY_EMAIL_SUCCESS = "GET_USER_BY_EMAIL_SUCCESS";
 export const GET_USER_BY_EMAIL_FAILED = "GET_USER_BY_EMAIL_FAILED";
+export const UPDATE_CURRENT_USER_REQUEST = "UPDATE_CURRENT_USER_REQUEST";
+export const UPDATE_CURRENT_USER_SUCCESS = "UPDATE_CURRENT_USER_SUCCESS";
+export const UPDATE_CURRENT_USER_FAILURE = "UPDATE_CURRENT_USER_FAILURE";
 
 
-import { addUserService, getInActiveOrgOfAnUserService, getActiveOrgOfAnUserService, fetchUsersService, getUserByEmailService, updateStatusUserService, updateUserService } from "../../service/user-service";
+import { addUserService, getInActiveOrgOfAnUserService, getActiveOrgOfAnUserService, fetchUsersService, getUserByEmailService, updateStatusUserService, updateUserService, updateCurrentUserService } from "../../service/user-service";
 import { store } from "../store";
  
 
@@ -210,6 +213,28 @@ export const getUserByEmail = (email: any) => async (dispatch: any) => {
       type: GET_USER_BY_EMAIL_FAILED,
       payload:
         error.response?.data?.message || error.message || "Failed to get information of an user",
+    })
+    throw error;
+  }
+}
+
+export const updateCurrentUser = (userData: any) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: UPDATE_CURRENT_USER_REQUEST
+    })
+
+    const data = await updateCurrentUserService(userData);
+
+    dispatch({
+      type: UPDATE_CURRENT_USER_SUCCESS,
+      payload: data
+    })
+  } catch (error: any) {
+    dispatch({
+      type: UPDATE_CURRENT_USER_FAILURE,
+      payload:
+        error.response?.data?.message || error.message || "Failed to update information of your user",
     })
     throw error;
   }
