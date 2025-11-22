@@ -5,7 +5,7 @@ import { refreshAccessToken, logout } from "../store/actions/auth-action";
 const apiClient = axios.create({
   baseURL: "http://localhost:3000/api", // URL backend
   headers: { "Content-Type": "application/json" },
-  timeout: 10000,
+  timeout: 30000,
 });
 
 apiClient.interceptors.request.use(

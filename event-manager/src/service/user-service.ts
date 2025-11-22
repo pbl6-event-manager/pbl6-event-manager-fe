@@ -1,6 +1,6 @@
 import { checkEmailExist } from "../api/auth-api";
 import { getOrgOfAnUserApi } from "../api/organizer-api";
-import { getAllUsersApi, getUserByEmailApi, updateUserApi } from "../api/user-api";
+import { getAllUsersApi, getUserByEmailApi, udpateCurrentUserApi, updateUserApi } from "../api/user-api";
 import { convertOrgModelToListOrgDto } from "../converters/organizer-converter";
 import { convertUserModelToListUserDto, convertUserModelToUserDashboardDto } from "../converters/user-converter";
 import type { ListOrganizerDto } from "../dtos/organizer-dto";
@@ -160,6 +160,21 @@ export const getUserByEmailService = async (email: any) => {
       return userDto;
     } else {
       return null;
+    }
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
+export const updateCurrentUserService = async (userData: any) => {
+  try {
+    const data = await udpateCurrentUserApi(userData);
+    if(data.data.message === "success") {
+      return data.data.data;
     }
   } catch (error: any) {
     if (error.response) {
