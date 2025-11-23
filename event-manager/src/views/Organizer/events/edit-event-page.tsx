@@ -12,6 +12,7 @@ import { LineupAndAgendaCard } from "../../../components/Organizer/lineup-and-ag
 import EventDashboardPage from "./event-dashboard-page"
 import EventTeamManagementPage from "./event-team-management-page"
 import CreateTicketsPage from "./create-ticket-page"
+import PublishEventPage from "./publish-event-page"
 import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
 
 export default function EditEventPage() {
@@ -22,7 +23,7 @@ export default function EditEventPage() {
     eventData,
     uploadedMedia,
     goodToKnowData,
-    
+
     // Refs
     mediaCardRef,
     titleCardRef,
@@ -33,7 +34,7 @@ export default function EditEventPage() {
     locationRef,
     overviewRef,
     mediaRef,
-    
+
     // Actions
     setUploadedMedia,
     setGoodToKnowData,
@@ -101,25 +102,25 @@ export default function EditEventPage() {
                 {currentSection === 1 && (
                   <>
                     {/* Upload Card */}
-                    <MediaUploadCard 
+                    <MediaUploadCard
                       ref={mediaCardRef}
-                      uploadedMedia={uploadedMedia} 
+                      uploadedMedia={uploadedMedia}
                       onUpdate={setUploadedMedia}
                       inputRef={mediaRef}
                     />
 
                     {/* Event Title Card */}
-                    <EventTitleCard 
+                    <EventTitleCard
                       ref={titleCardRef}
-                      eventData={eventData} 
+                      eventData={eventData}
                       onUpdate={handleUpdateEventData}
                       inputRef={titleRef}
                     />
 
                     {/* Date and Location */}
-                    <DateLocationCard 
+                    <DateLocationCard
                       ref={dateLocationCardRef}
-                      eventData={eventData} 
+                      eventData={eventData}
                       onUpdate={handleUpdateEventData}
                       dateInputRef={dateTimeRef}
                       locationInputRef={locationRef}
@@ -147,8 +148,13 @@ export default function EditEventPage() {
                 )}
                 {currentSection === 3 && (
                   <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Publish Event</h2>
-                    <p className="text-muted-foreground">Event publishing section will be displayed here.</p>
+                    <PublishEventPage
+                      eventData={eventData}
+                      onPublish={(settings) => {
+                        console.log("[v0] Publishing event with settings:", settings)
+                        // TODO: Call publish action/API here
+                      }}
+                    />
                   </div>
                 )}
                 {currentSection === "dashboard" && (

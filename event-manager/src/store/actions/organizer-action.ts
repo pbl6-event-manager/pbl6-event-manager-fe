@@ -22,12 +22,13 @@ export const fetchMyOrganizers = () => async (dispatch: any) => {
             type: FETCH_ORGANIZERS_REQUEST
         });
 
-        const data = await getMyOrganizersService();
+        const { listOrganizerDto, listOrganizerFormData,} = await getMyOrganizersService();
 
         dispatch({
             type: FETCH_ORGANIZERS_SUCCESS,
-            payload: data
+            payload: listOrganizerDto
         });
+        return listOrganizerFormData;
     } catch (error: any) {
         dispatch({
             type: FETCH_ORGANIZERS_FAILURE,
