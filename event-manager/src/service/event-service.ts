@@ -27,7 +27,7 @@ export const createEventService = async (formData: EventFormDto) => {
     }
     console.log("[DEBUG] multipartFormData banner:", multipartFormData.get("banner"))  
     const myOrganizers = await getMyOrganizersService();
-    const firstOrganizerId = myOrganizers[0]?.id;
+    const firstOrganizerId = myOrganizers.listOrganizerDto[0]?.id;
     if (!firstOrganizerId) {
       throw new Error("No organizers found for the user.");
     }
