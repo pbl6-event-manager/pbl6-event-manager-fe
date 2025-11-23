@@ -328,10 +328,8 @@ export const useEventViewModel = () => {
 
     const handleFetchOwnerEvents = useCallback(async () => {
         try {
-            console.log("eventsByUser:", eventsByUser);
             showLoadingAlert("Fetching events...")
             const result = await dispatch(getEventsByOwner()) as unknown as OrganizerEventsListItem[]
-            console.log("Fetched events:", result);
             setEvents(result)
             closeLoadingAlert()
         } catch (error: any) {

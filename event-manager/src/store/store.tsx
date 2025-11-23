@@ -14,6 +14,7 @@ import { userReducer } from "./reducers/user-reducer";
 import { staffReducer } from "./reducers/staff-reducer";
 import { roleReducer } from "./reducers/role-staff-reducer";
 import { permissionReducer } from "./reducers/permission-reducer";
+import { voucherReducer } from "./reducers/voucher-reducer";
 import { ticketReducer } from "./reducers/ticket-reducer";
 
 const allReducer = combineReducers({
@@ -27,6 +28,7 @@ const allReducer = combineReducers({
   staffReducer: staffReducer,
   roleReducer: roleReducer,
   permissionReducer: permissionReducer,
+  voucherReducer: voucherReducer,
   ticketReducer: ticketReducer,
 });
 

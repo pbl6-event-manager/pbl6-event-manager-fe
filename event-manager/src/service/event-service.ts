@@ -1,7 +1,7 @@
 import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi, getEventsByOwnerApi } from "../api/event-api"
 import { eventMapper } from "../mappers/event-mapper"
 import { eventConverter } from "../converters/event-converter"
-import type { EventFormDto, EventListDto } from "../dtos/event-dto"
+import type { EventFormDto, EventListDto, EventSelectionDto } from "../dtos/event-dto"
 import type { EventModel } from "../models/bean/event-models";
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models";
 import { getMyOrganizersService } from "./organizer-service";
@@ -27,7 +27,7 @@ export const createEventService = async (formData: EventFormDto) => {
     }
     console.log("[DEBUG] multipartFormData banner:", multipartFormData.get("banner"))  
     const myOrganizers = await getMyOrganizersService();
-    const firstOrganizerId = myOrganizers[0]?.id;
+    const firstOrganizerId = myOrganizers.listOrganizerDto[0]?.id;
     if (!firstOrganizerId) {
       throw new Error("No organizers found for the user.");
     }

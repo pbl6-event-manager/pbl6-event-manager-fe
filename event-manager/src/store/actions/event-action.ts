@@ -35,7 +35,7 @@ export const UPDATE_EVENT_REQUEST = "UPDATE_EVENT_REQUEST";
 export const UPDATE_EVENT_SUCCESS = "UPDATE_EVENT_SUCCESS";
 export const UPDATE_EVENT_FAILURE = "UPDATE_EVENT_FAILURE";
 
-import type { EventFormDto, EventListDto } from "../../dtos/event-dto";
+import type { EventFormDto, EventListDto, EventSelectionDto } from "../../dtos/event-dto";
 import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
 import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService } from "../../service/event-service";
@@ -207,10 +207,14 @@ export const getEventsByOwner = () => async (dispatch: any) => {
     });
     
     const { eventListDto, organizerEventsListItem } = await getEventsByOwnerService();
-    
+    const eventListSelectionDto : EventSelectionDto[] = eventListDto.filter((e) => e.status === EVENT_STATUS.PUBLISHED);
+
     dispatch({
       type: GET_EVENTS_BY_OWNER_SUCCESS,
-      payload: eventListDto,
+      payload: {
+        eventListDto,
+        eventListSelectionDto
+      },
     });
     
     return organizerEventsListItem;

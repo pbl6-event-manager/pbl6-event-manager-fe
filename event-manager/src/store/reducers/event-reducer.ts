@@ -126,7 +126,9 @@ export const eventReducer = (state = DEFAULT_EVENT_STATE, action: any): EventSta
       return {
         ...state,
         isLoading: false,
-        eventsByUser: action.payload
+        eventsByUser: action.payload.eventListDto,
+        eventSelectionList: action.payload.eventListSelectionDto
+
       }
     case GET_EVENTS_BY_OWNER_FAILURE:
       return {
