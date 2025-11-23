@@ -82,7 +82,7 @@ export interface EventDashBoardDto {
 export interface EventDetailsDto {
   eventInfo?: EventModel
   ticket?: [],
-  categories?: CategoryModel
+  categories?: CategoryModel[]
   organizer?: OrganizerModel 
   owner?: UserModel
 }

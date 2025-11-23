@@ -16,6 +16,7 @@ export const REMOVE_STAFF_FROM_EVENT_FAILURE = "REMOVE_STAFF_FROM_EVENT_FAILURE"
 export const REMOVE_STAFF_FROM_OWNER_REQUEST = "REMOVE_STAFF_FROM_OWNER_REQUEST";
 export const REMOVE_STAFF_FROM_OWNER_SUCCESS = "REMOVE_STAFF_FROM_OWNER_SUCCESS";
 export const REMOVE_STAFF_FROM_OWNER_FAILURE = "REMOVE_STAFF_FROM_OWNER_FAILURE";
+<<<<<<< HEAD
 export const FETCH_EVENT_STAFFS_REQUEST_ADMIN = "FETCH_EVENT_STAFFS_REQUEST_ADMIN";
 export const FETCH_EVENT_STAFFS_FAILED_ADMIN = "FETCH_EVENT_STAFFS_FAILED_ADMIN";
 export const FETCH_EVENT_STAFFS_SUCCESS_ADMIN = "FETCH_EVENT_STAFFS_SUCCESS_ADMIN";
@@ -24,28 +25,39 @@ export const RESET_TEAM_STATE = "RESET_TEAM_STATE";
 import { convertEventStaffAdminModelToEventStaffAdminDto } from "../../converters/event-staff-converter";
 import { mapResponseToEventStaffModelAdmin } from "../../mappers/event-staff-mapper";
 import { assignStaffToOwnerService, fetchStaffGroupedByRoleService, getStaffOfEventAdminService, removeStaffOfOwnerService, } from "../../service/staff-service";
+=======
+export const ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_REQUEST = "ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_REQUEST";
+export const ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_SUCCESS = "ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_SUCCESS";
+export const ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_FAILURE = "ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_FAILURE";
+export const SYNC_STAFFS_TO_EVENT_REQUEST = "SYNC_STAFFS_TO_EVENT_REQUEST";
+export const SYNC_STAFFS_TO_EVENT_SUCCESS = "SYNC_STAFFS_TO_EVENT_SUCCESS";
+export const SYNC_STAFFS_TO_EVENT_FAILURE = "SYNC_STAFFS_TO_EVENT_FAILURE";
+export const RESET_TEAM_STATE = "RESET_TEAM_STATE";
 
-export const fetchEventStaffs = () => async (dispatch: any) => {
+import { syncStaffsToEventService, assignStaffToOwnerService, fetchStaffGroupedByRoleService, removeStaffOfOwnerService, fetchAssignedStaffsOfEventByListIds } from "../../service/staff-service";
+>>>>>>> develop
+
+export const fetchEventStaffs = (eventId: number) => async (dispatch: any) => {
+    dispatch({ type: FETCH_EVENT_STAFFS_REQUEST });
     try {
-        dispatch({
-            type: FETCH_EVENT_STAFFS_REQUEST
-        });
-
-        const data = "CALL SERVICE HERE";
+        const { assignedStaffsDto, assignedStaffsItems } = await fetchAssignedStaffsOfEventByListIds(eventId);
 
         dispatch({
             type: FETCH_EVENT_STAFFS_SUCCESS,
-            payload: data
+            payload: assignedStaffsDto
         });
+
+        return assignedStaffsItems;
     } catch (error: any) {
+        console.error("[fetchEventStaffs] Error:", error);
+
         dispatch({
             type: FETCH_EVENT_STAFFS_FAILED,
-            payload:
-                error.response?.data?.message || error.message || "Get event staffs failed",
+            payload: error.message
         });
         throw error;
     }
-}
+};
 
 export const fetchEventStaffsAdmin = (eventId: number) => async (dispatch: any) => {
     try {
@@ -161,5 +173,26 @@ export const removeStaffOfOwner = (staffEmail: string) => async (dispatch: any) 
     }
 }
 
+export const syncStaffsToEvent = (eventId: number, staffIds: number[]) => {
+    return async (dispatch: any) => {
+        dispatch({ type: SYNC_STAFFS_TO_EVENT_REQUEST });
+        try {
+            const response = await syncStaffsToEventService(eventId, staffIds);
 
+            const { assignedStaffsDto } = await fetchAssignedStaffsOfEventByListIds(eventId);
 
+            dispatch({
+                type: SYNC_STAFFS_TO_EVENT_SUCCESS,
+                payload: assignedStaffsDto
+            });
+
+            return response;
+        } catch (error: any) {
+            dispatch({
+                type: SYNC_STAFFS_TO_EVENT_FAILURE,
+                payload: error.message
+            });
+            throw error;
+        }
+    };
+};

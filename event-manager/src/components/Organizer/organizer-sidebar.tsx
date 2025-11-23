@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Home, Calendar, FileText, Megaphone, Settings, HelpCircle, Grid3X3 } from "lucide-react"
+import { Home, Calendar, FileText, TicketPercent , Settings, HelpCircle, Grid3X3 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "../../lib/utils"
 import { Link, useLocation } from "react-router-dom"
@@ -10,7 +10,7 @@ export default function OrganizerSidebar({ showLogo = false }: OrganizerSidebarP
   const sidebarItems: SidebarItem[] = [
     { icon: Calendar, label: "Events", href: "/organizer/events/all" },
     { icon: FileText, label: "Orders", href: "/organizer/orders" },
-    { icon: Megaphone, label: "Vouchers", href: "/organizer/vouchers" },
+    { icon: TicketPercent , label: "Vouchers", href: "/organizer/vouchers" },
     { icon: Settings, label: "Settings", href: "/organizer/settings" },
     { icon: HelpCircle, label: "Help", href: "/organizer/help" },
   ]

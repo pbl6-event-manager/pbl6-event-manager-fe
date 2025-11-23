@@ -1,6 +1,6 @@
 import type { EventModel} from "../models/bean/event-models"
-import type { CreateEventRequestDto, EventFormDto, EventListDto } from "../dtos/event-dto"
-import type { EventFormData } from "../models/form-models/event-form-models"
+import type { CreateEventRequestDto, EventDetailsDto, EventFormDto, EventListDto } from "../dtos/event-dto"
+import type { EventFormData, MediaFileModel } from "../models/form-models/event-form-models"
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models"
 import { convertToISODateTime } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
@@ -105,5 +105,69 @@ export const eventConverter = {
       capacity: 0,
       status: eventListDto.status
     }
-  }
+  },
+  convertEventDetailToFormData: (eventDetail: EventDetailsDto): EventFormData => {
+    const eventInfo = eventDetail.eventInfo
+    if (!eventInfo) {
+      throw new Error("Event info is missing in event details")
+    }
+    const startDate = new Date(eventInfo.startTime)
+    const endDate = new Date(eventInfo.endTime)
+
+    const formattedStartDate = startDate.toISOString().split('T')[0]
+    const formattedEndDate = endDate.toISOString().split('T')[0]
+
+    const formattedStartTime = startDate.toTimeString().slice(0, 5)
+    const formattedEndTime = endDate.toTimeString().slice(0, 5)
+
+    const isSingleDay = formattedStartDate === formattedEndDate
+    return {
+      mediaFile: null, // Will be handled separately
+      title: eventInfo.title,
+      summary: eventInfo.summary,
+      description: "", // Not in API response, might need to add later
+      startDate: formattedStartDate,
+      startTime: formattedStartTime,
+      endDate: isSingleDay ? "" : formattedEndDate,
+      endTime: formattedEndTime,
+      location: {
+        type: "venue",
+        country: eventInfo.country,
+        city: eventInfo.city,
+        venueName: "",
+        address1: eventInfo.address,
+        address2: "",
+        stateProvince: "",
+      },
+      goodToKnowData: {
+        doorTime: null,
+        ageInfo: null,
+        parkingInfo: null,
+        faqs: [],
+      },
+      lineUp: [],
+      agenda: [],
+      ticketType: null,
+      capacity: "",
+      category: eventDetail.categories ? eventDetail.categories.map(category => category.id) : [],
+      timezone: "UTC+7",
+      language: eventInfo.language || "en-US",
+    }
+  },
+  convertBannerToMediaFile: (bannerUrl: string | null): MediaFileModel[] => {
+    if (!bannerUrl) {
+      return []
+    }
+
+    return [
+      {
+        id: "banner-existing",
+        file: null as any, // Existing file, no File object
+        preview: bannerUrl,
+        type: "image",
+        uploadedAt: new Date(),
+      },
+    ]
+  },
+
 }

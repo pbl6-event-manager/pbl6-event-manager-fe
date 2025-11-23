@@ -1,7 +1,5 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { EventTitleCard } from "../../../components/Organizer/event-title-card"
@@ -14,157 +12,40 @@ import { LineupAndAgendaCard } from "../../../components/Organizer/lineup-and-ag
 import EventDashboardPage from "./event-dashboard-page"
 import EventTeamManagementPage from "./event-team-management-page"
 import CreateTicketsPage from "./create-ticket-page"
-import type { EventFormData, EventFormErrors, MediaFileModel, GoodToKnowData } from "../../../models/form-models/event-form-models"
-
-// Mock function to fetch event data - replace with actual API call
-const fetchEventData = async (eventId: string): Promise<EventFormData> => {
-  // Simulate API call
-  return {
-    mediaFile: null,
-    title: "League of Legends Championship Pacific Finals Weekend 2025",
-    summary: "Join us for the most exciting esports event of the year! Watch the best teams compete for glory.",
-    description:
-      "Experience the thrill of competitive League of Legends at its finest. This championship event brings together the top teams from across the Pacific region to compete for the ultimate prize.",
-    startDate: "2025-09-06",
-    endDate: "2025-09-06",
-    startTime: "12:00",
-    endTime: "18:00",
-    location: {
-      type: "venue",
-      country: "Vietnam",
-      city: "Bac Ninh",
-      venueName: "Tien Son Sport Center",
-      address1: "123 Sport Street",
-      address2: "",
-      stateProvince: "Bac Ninh",
-    },
-    goodToKnowData: {
-      doorTime: { value: "30", unit: "minutes" },
-      ageInfo: { type: "restricted", limit: "18+" },
-      parkingInfo: "free",
-      faqs: [],
-    },
-    lineUp: [],
-    agenda: [],
-    ticketType: null,
-    capacity: "200",
-    category: ["Sports", "Esports"],
-    timezone: "GMT+7",
-    language: "en-US",
-  }
-}
+import PublishEventPage from "./publish-event-page"
+import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
 
 export default function EditEventPage() {
-  const { eventId } = useParams<{ eventId: string }>()
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const {
+    isLoading,
+    currentEvent,
+    currentSection,
+    eventData,
+    uploadedMedia,
+    goodToKnowData,
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [eventData, setEventData] = useState<EventFormData>({
-    mediaFile: null,
-    title: "",
-    summary: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    startTime: "10:00",
-    endTime: "12:00",
-    location: {
-      type: "venue",
-      country: "",
-      city: "",
-      venueName: "",
-      address1: "",
-      address2: "",
-      stateProvince: "",
-    },
-    goodToKnowData: {
-      doorTime: null,
-      ageInfo: null,
-      parkingInfo: null,
-      faqs: [],
-    },
-    lineUp: [],
-    agenda: [],
-    ticketType: null,
-    capacity: "",
-    category: [],
-    timezone: "GMT+7",
-    language: "en-US",
-  })
-  const [errors, setErrors] = useState<EventFormErrors>({})
-  const [uploadedMedia, setUploadedMedia] = useState<MediaFileModel[]>([])
-  const [goodToKnowData, setGoodToKnowData] = useState<GoodToKnowData>({
-    doorTime: null,
-    ageInfo: null,
-    parkingInfo: null,
-    faqs: [],
-  })
-  const initialStep = Number.parseInt(searchParams.get("step") || "1")
-  const [currentSection, setCurrentSection] = useState<string | number>(initialStep)
+    // Refs
+    mediaCardRef,
+    titleCardRef,
+    dateLocationCardRef,
+    overviewCardRef,
+    titleRef,
+    dateTimeRef,
+    locationRef,
+    overviewRef,
+    mediaRef,
 
-  useEffect(() => {
-    const loadEventData = async () => {
-      if (!eventId) {
-        navigate("/organizer/events/all")
-        return
-      }
+    // Actions
+    setUploadedMedia,
+    setGoodToKnowData,
+    handleStepClick,
+    handleMenuItemClick,
+    handleBackClick,
+    handleSaveChanges,
+    handleUpdateEventData,
+  } = useEventViewModel()
 
-      try {
-        setIsLoading(true)
-        const data = await fetchEventData(eventId)
-        setEventData(data)
-        setGoodToKnowData(data.goodToKnowData)
-      } catch (error) {
-        console.error("[v0] Error loading event data:", error)
-        // Handle error - could show toast notification
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadEventData()
-  }, [eventId, navigate])
-
-  const validateForm = () => {
-    const newErrors: EventFormErrors = {}
-
-    if (!eventData.title.trim()) {
-      newErrors.title = "Event title is required"
-    }
-
-    if (!eventData.summary.trim()) {
-      newErrors.summary = "Summary is required"
-    } else if (eventData.summary.length < 50) {
-      newErrors.summary = "Summary should be at least 50 characters"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSaveChanges = () => {
-    if (validateForm()) {
-      console.log("[v0] Saving event changes:", eventData)
-      // TODO: Implement API call to save changes
-    }
-  }
-
-  const handleBackClick = () => {
-    const confirmed = window.confirm("Are you sure you want to leave? Any unsaved changes will be lost.")
-    if (confirmed) {
-      navigate("/organizer/events/all")
-    }
-  }
-  const handleStepClick = (stepId: number) => {
-    setCurrentSection(stepId)
-  }
-
-  const handleMenuItemClick = (itemId: string) => {
-    setCurrentSection(itemId)
-  }
-
-  if (isLoading) {
+  if (isLoading || !eventData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -174,7 +55,6 @@ export default function EditEventPage() {
       </div>
     )
   }
-
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -188,13 +68,13 @@ export default function EditEventPage() {
               </Button>
             </div>
             <div className="container mx-auto px-4 flex justify-end gap-3">
-          <Button size="sm" variant="outline" onClick={handleBackClick}>
-            Cancel
-          </Button>
-          <Button size="sm" onClick={handleSaveChanges} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
-            Save changes
-          </Button>
-        </div>
+              <Button size="sm" variant="outline" onClick={handleBackClick}>
+                Cancel
+              </Button>
+              <Button size="sm" onClick={handleSaveChanges} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
+                Save changes
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -202,7 +82,7 @@ export default function EditEventPage() {
       <div className="flex-1 overflow-hidden">
         <div className="container mx-auto px-4 py-8 h-full">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-full">
-            {/* Event Sidebar - Set isCreating to false to show all menu items */}
+            {/* Event Sidebar */}
             <div className="lg:col-span-1 hidden lg:block">
               <div className="sticky top-24 h-[calc(100vh-120px)] overflow-y-auto">
                 <EventSidebar
@@ -222,25 +102,43 @@ export default function EditEventPage() {
                 {currentSection === 1 && (
                   <>
                     {/* Upload Card */}
-                    <MediaUploadCard uploadedMedia={uploadedMedia} onUpdate={setUploadedMedia} />
+                    <MediaUploadCard
+                      ref={mediaCardRef}
+                      uploadedMedia={uploadedMedia}
+                      onUpdate={setUploadedMedia}
+                      inputRef={mediaRef}
+                    />
 
                     {/* Event Title Card */}
-                    <EventTitleCard eventData={eventData} onUpdate={setEventData} />
+                    <EventTitleCard
+                      ref={titleCardRef}
+                      eventData={eventData}
+                      onUpdate={handleUpdateEventData}
+                      inputRef={titleRef}
+                    />
 
                     {/* Date and Location */}
-                    <DateLocationCard eventData={eventData} onUpdate={setEventData} />
+                    <DateLocationCard
+                      ref={dateLocationCardRef}
+                      eventData={eventData}
+                      onUpdate={handleUpdateEventData}
+                      dateInputRef={dateTimeRef}
+                      locationInputRef={locationRef}
+                    />
 
                     {/* Overview Section */}
                     <OverviewCard
+                      ref={overviewCardRef}
                       description={eventData.description}
-                      onUpdate={(description) => setEventData({ ...eventData, description })}
+                      onUpdate={(description) => handleUpdateEventData({ ...eventData, description })}
+                      textareaRef={overviewRef}
                     />
 
                     {/* Good To Know Section */}
                     <GoodToKnowCard data={goodToKnowData} onUpdate={setGoodToKnowData} />
 
                     {/* Additional Sections */}
-                    <LineupAndAgendaCard eventData={eventData} onUpdate={setEventData} />
+                    <LineupAndAgendaCard eventData={eventData} onUpdate={handleUpdateEventData} />
                   </>
                 )}
                 {currentSection === 2 && (
@@ -250,8 +148,13 @@ export default function EditEventPage() {
                 )}
                 {currentSection === 3 && (
                   <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Publish Event</h2>
-                    <p className="text-muted-foreground">Event publishing section will be displayed here.</p>
+                    <PublishEventPage
+                      eventData={eventData}
+                      onPublish={(settings) => {
+                        console.log("[v0] Publishing event with settings:", settings)
+                        // TODO: Call publish action/API here
+                      }}
+                    />
                   </div>
                 )}
                 {currentSection === "dashboard" && (
@@ -266,7 +169,8 @@ export default function EditEventPage() {
                 )}
                 {currentSection === "order-options" && (
                   <div className="bg-card rounded-lg p-6 border">
-                    
+                    <h2 className="text-2xl font-bold mb-4">Order Options</h2>
+                    <p className="text-muted-foreground">Order options will be displayed here.</p>
                   </div>
                 )}
                 {currentSection === "payments" && (
@@ -298,17 +202,6 @@ export default function EditEventPage() {
           </div>
         </div>
       </div>
-
-      {/* <div className="fixed bottom-0 left-0 right-0 bg-card border-t py-4 z-50">
-        <div className="container mx-auto px-4 flex justify-end gap-3">
-          <Button size="lg" variant="outline" onClick={handleBackClick}>
-            Cancel
-          </Button>
-          <Button size="lg" onClick={handleSaveChanges} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
-            Save changes
-          </Button>
-        </div>
-      </div> */}
     </div>
   )
 }

@@ -4,6 +4,12 @@ export interface CategoryFormData {
     description: string;
 }
 
+export interface CategoryListItem {
+    id: number;
+    name: string;
+    description: string;
+}
+
 export const CATEGORY_FORM_DEFAULT: CategoryFormData = {
   name: "",
   description: "",

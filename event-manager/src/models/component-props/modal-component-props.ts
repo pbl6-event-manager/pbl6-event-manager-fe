@@ -1,11 +1,14 @@
-// import type { OwnerStaffModelStaff } from "../bean/owner-staff-models"
+import type { OwnerStaffListItem } from "../form-models/staff-form-models"
 
-// export interface AssignMemberModalProps {
-//     availableMembers: Staff[]
-//     onAssign: (member: Staff) => void
-//     onClose: () => void
-//     isLoading?: boolean
-// }
+export interface AssignMemberModalProps {
+    availableMembers: OwnerStaffListItem[]
+    isStaffAssigned: (staffId: number) => boolean
+    onToggleStaff: (staffId: number) => void
+    onSave: () => void
+    onClose: () => void
+    isLoading?: boolean
+    hasChanges?: boolean
+}
 
 // export interface InviteUserModalProps {
 //   onClose: () => void

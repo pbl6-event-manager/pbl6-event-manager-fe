@@ -15,6 +15,8 @@ import EventTeamManagementPage from "../../views/Organizer/events/event-team-man
 import CreateRolePage from "../../views/Organizer/settings/create-role-page"
 import EditRolePage from "../../views/Organizer/settings/edit-role-page"
 import StaffsListPage from "../../views/Organizer/settings/staffs-list-page"
+import VoucherListPage from "../../views/Organizer/vouchers/voucher-list-page"
+import CreateVoucherPage from "../../views/Organizer/vouchers/create-voucher-page"
 import AccountSettingPage from "../../views/Organizer/accounts/account-setting-page"
 import ListOrderPage from "../../views/Organizer/orders/list-order-page"
 import VoucherListPage from "../../views/Organizer/vouchers/voucher-list-page"
@@ -37,9 +39,16 @@ const OrganizerRoutes: RouteObject = {
     { path: "settings/edit/:organizerId", element: <EditOrganizerPage/>},
     { path: "settings/members/roles", element: <RolesListPage /> },
     { path: "settings/members/staffs", element: <StaffsListPage /> },
+<<<<<<< HEAD
     { path: "accounts-settings", element: <AccountSettingPage />},
     { path: "orders", element: <ListOrderPage />},
     { path: "vouchers", element: <VoucherListPage />},
+=======
+    { path: "vouchers", element: <VoucherListPage /> },
+    { path: "vouchers/create", element: <CreateVoucherPage /> },
+
+    { path: "accounts-settings", element: <AccountSettingPage />}
+>>>>>>> develop
     // {
     //   path: "settings",
     //   element: <OrganizationSettingsPage />,

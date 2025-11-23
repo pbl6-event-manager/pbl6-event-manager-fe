@@ -90,6 +90,50 @@ export const getEventDetailsByIdService = async (eventId: number) => {
   }
 }
 
+export const updateEventService = async (eventId: number, formData: EventFormDto) => {
+  try {
+    const multipartFormData = new FormData()
+    multipartFormData.append("title", formData.title)
+    multipartFormData.append("summary", formData.summary)
+    multipartFormData.append("startTime", formData.startTime)
+    multipartFormData.append("endTime", formData.endTime)
+    multipartFormData.append("address", formData.address)
+    multipartFormData.append("city", formData.city)
+    multipartFormData.append("country", formData.country)
+    multipartFormData.append("language", formData.language)
+    multipartFormData.append("latitude", formData.latitude.toString())
+    multipartFormData.append("longitude", formData.longitude.toString())
+
+    // Only append banner if it's a new file
+    if (formData.bannerFile instanceof File) {
+      multipartFormData.append("banner", formData.bannerFile)
+    }
+
+    // formData.categoryIds.forEach((id) => {
+    //   multipartFormData.append("categoryIds", id.toString())
+    // })
+
+    // const rawResponse = await updateEventApi(eventId, multipartFormData)
+    // console.log("[DEBUG] Update event raw response:", rawResponse)
+    
+    // const rawData = rawResponse.data
+    // if(rawData.message !== "success") {
+    //   throw new Error(rawData.message || "Failed to update event");
+    // }
+
+    // const eventModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawData.data)
+    // const dto = eventConverter.convertDomainToDTO(eventModel)
+
+    //return dto
+  } catch (error: any) {
+    console.error("[EventService] Update event error:", error)
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
 export const getAllEventsAdminService = async () => {
   try {
     const response = await getAllEventsAdminApi();
