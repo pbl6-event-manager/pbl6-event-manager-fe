@@ -16,26 +16,20 @@ export const REMOVE_STAFF_FROM_EVENT_FAILURE = "REMOVE_STAFF_FROM_EVENT_FAILURE"
 export const REMOVE_STAFF_FROM_OWNER_REQUEST = "REMOVE_STAFF_FROM_OWNER_REQUEST";
 export const REMOVE_STAFF_FROM_OWNER_SUCCESS = "REMOVE_STAFF_FROM_OWNER_SUCCESS";
 export const REMOVE_STAFF_FROM_OWNER_FAILURE = "REMOVE_STAFF_FROM_OWNER_FAILURE";
-<<<<<<< HEAD
 export const FETCH_EVENT_STAFFS_REQUEST_ADMIN = "FETCH_EVENT_STAFFS_REQUEST_ADMIN";
 export const FETCH_EVENT_STAFFS_FAILED_ADMIN = "FETCH_EVENT_STAFFS_FAILED_ADMIN";
 export const FETCH_EVENT_STAFFS_SUCCESS_ADMIN = "FETCH_EVENT_STAFFS_SUCCESS_ADMIN";
 export const RESET_TEAM_STATE = "RESET_TEAM_STATE";
-
-import { convertEventStaffAdminModelToEventStaffAdminDto } from "../../converters/event-staff-converter";
-import { mapResponseToEventStaffModelAdmin } from "../../mappers/event-staff-mapper";
-import { assignStaffToOwnerService, fetchStaffGroupedByRoleService, getStaffOfEventAdminService, removeStaffOfOwnerService, } from "../../service/staff-service";
-=======
 export const ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_REQUEST = "ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_REQUEST";
 export const ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_SUCCESS = "ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_SUCCESS";
 export const ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_FAILURE = "ASSIGN_OR_UPDATE_STAFFS_TO_EVENT_FAILURE";
 export const SYNC_STAFFS_TO_EVENT_REQUEST = "SYNC_STAFFS_TO_EVENT_REQUEST";
 export const SYNC_STAFFS_TO_EVENT_SUCCESS = "SYNC_STAFFS_TO_EVENT_SUCCESS";
 export const SYNC_STAFFS_TO_EVENT_FAILURE = "SYNC_STAFFS_TO_EVENT_FAILURE";
-export const RESET_TEAM_STATE = "RESET_TEAM_STATE";
 
-import { syncStaffsToEventService, assignStaffToOwnerService, fetchStaffGroupedByRoleService, removeStaffOfOwnerService, fetchAssignedStaffsOfEventByListIds } from "../../service/staff-service";
->>>>>>> develop
+import { convertEventStaffAdminModelToEventStaffAdminDto } from "../../converters/event-staff-converter";
+import { mapResponseToEventStaffModelAdmin } from "../../mappers/event-staff-mapper";
+import { syncStaffsToEventService, assignStaffToOwnerService, fetchStaffGroupedByRoleService, removeStaffOfOwnerService, fetchAssignedStaffsOfEventByListIds, getStaffOfEventAdminService } from "../../service/staff-service";
 
 export const fetchEventStaffs = (eventId: number) => async (dispatch: any) => {
     dispatch({ type: FETCH_EVENT_STAFFS_REQUEST });

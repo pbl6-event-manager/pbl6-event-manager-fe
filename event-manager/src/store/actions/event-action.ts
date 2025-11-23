@@ -207,12 +207,8 @@ export const getEventsByOwner = () => async (dispatch: any) => {
     });
     
     const { eventListDto, organizerEventsListItem } = await getEventsByOwnerService();
-<<<<<<< HEAD
     const eventListSelectionDto : EventSelectionDto[] = eventListDto.filter((e) => e.status === EVENT_STATUS.PUBLISHED);
 
-=======
-    
->>>>>>> develop
     dispatch({
       type: GET_EVENTS_BY_OWNER_SUCCESS,
       payload: {

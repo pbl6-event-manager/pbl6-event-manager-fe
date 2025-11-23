@@ -5,22 +5,6 @@ import { useCallback, useEffect, useState, useRef } from "react";
 import { getEventsByOwner, getEventDetailsById, setEventData } from "../../../store/actions/event-action";
 import type { EventFormErrors, MediaFileModel, OrganizerEventsListItem } from "../../../models/form-models/event-form-models";
 import { showLoadingAlert, showSuccessAlert, showErrorAlert, closeLoadingAlert, showConfirmAlert } from "../../../helpers/alert-helpers";
-<<<<<<< HEAD
-import {
-    setEventData,
-    updateEventField,
-    updateOverview,
-    updateGoodToKnow,
-    updateLineup,
-    updateAgenda,
-    updateDateLocation,
-    resetEventData,
-    saveEventStart,
-    saveEventSuccess,
-    saveEventFailure,
-} from "../../../store/actions/event-action"
-import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../../models/form-models/event-form-models";
-=======
 import type { EventFormData, GoodToKnowData } from "../../../models/form-models/event-form-models";
 import { eventConverter } from "../../../converters/event-converter";
 import type { EventDetailsDto } from "../../../dtos/event-dto";
@@ -31,7 +15,6 @@ interface ValidationResult {
     firstErrorMessage: string | null
     firstErrorField: 'media' | 'title' | 'dateTime' | 'location' | 'description' | null
 }
->>>>>>> develop
 
 export const useEventViewModel = () => {
     const dispatch = useDispatch<AppDispatch>()

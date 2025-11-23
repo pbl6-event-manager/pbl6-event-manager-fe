@@ -84,23 +84,25 @@ export const removeStaffOfOwnerService = async (staffEmail: string) => {
     }
 }
 
-<<<<<<< HEAD
 export const getStaffOfEventAdminService = async (eventId: number) => {
     try {
         const response = await getStaffOfEventAdminApi(eventId);
-        if(response.data.message === "success") {
+        if (response.data.message === "success") {
             return response.data.data.assignments;
         }
     } catch (error: any) {
         throw new Error(error.response?.data?.message || "Failed to get staff of this event");
-=======
-export const syncStaffsToEventService  = async (eventId: number, staffIds: number[]) => {
+
+    }
+}
+
+export const syncStaffsToEventService = async (eventId: number, staffIds: number[]) => {
     try {
         console.log("[StaffService] Syncing staffs to event:", { eventId, staffIds });
-        
+
         const response = await syncStaffToEvent(eventId, staffIds);
         console.log("[StaffService] Sync response:", response);
-        
+
         if (response.data.status && response.data.message === "success") {
             return {
                 message: response.data.data.message,
@@ -121,26 +123,25 @@ export const fetchAssignedStaffsOfEventByListIds = async (eventId: number) => {
     try {
         const response = await getAllAssignedStaffIdsOfEvent(eventId);
         const assignedStaffIds: number[] = response.data.data; // Lấy mảng IDs từ API
-        
+
         // Lấy tất cả staff của organizer
         const { allStaffDtos, allStaffItems } = await fetchStaffGroupedByRoleService();
-        
+
         // Filter để lấy những staff đã được assign
-        const assignedStaffsDto = allStaffDtos.filter(staff => 
+        const assignedStaffsDto = allStaffDtos.filter(staff =>
             assignedStaffIds.includes(staff.id)
         );
-        
-        const assignedStaffsItems = allStaffItems.filter(staff => 
+
+        const assignedStaffsItems = allStaffItems.filter(staff =>
             assignedStaffIds.includes(staff.id)
         );
-        
-        return { 
-            assignedStaffsDto, 
+
+        return {
+            assignedStaffsDto,
             assignedStaffsItems,
-            assignedStaffIds 
+            assignedStaffIds
         };
     } catch (error: any) {
         throw new Error(error.response?.data?.message || "Failed to fetch assigned staffs of event");
->>>>>>> develop
     }
 }
