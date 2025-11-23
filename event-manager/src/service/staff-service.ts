@@ -6,6 +6,9 @@ import type { OwnerStaffListItem } from "../models/form-models/staff-form-models
 import type { RoleStaffModel } from "../models/bean/role-staff-models";
 import type { UserModel } from "../models/bean/user-models";
 import type { StaffDto } from "../dtos/staff-dto";
+import { getStaffOfEventAdminApi } from "../api/event-staff";
+import { mapResponseToEventStaffModelAdmin } from "../mappers/event-staff-mapper";
+import { convertEventStaffAdminModelToEventStaffAdminDto } from "../converters/event-staff-converter";
 
 export const assignStaffToOwnerService = async (staffEmail: string, roleStaffId: number) => {
     try {
@@ -77,5 +80,16 @@ export const removeStaffOfOwnerService = async (staffEmail: string) => {
         return response.data.message;
     } catch (error: any) {
         throw new Error(error.response?.data?.message || "Failed to remove staff");
+    }
+}
+
+export const getStaffOfEventAdminService = async (eventId: number) => {
+    try {
+        const response = await getStaffOfEventAdminApi(eventId);
+        if(response.data.message === "success") {
+            return response.data.data.assignments;
+        }
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Failed to get staff of this event");
     }
 }

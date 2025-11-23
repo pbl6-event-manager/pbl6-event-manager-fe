@@ -17,7 +17,9 @@ import {
     REMOVE_STAFF_FROM_OWNER_FAILURE,
     REMOVE_STAFF_FROM_OWNER_REQUEST,
     REMOVE_STAFF_FROM_OWNER_SUCCESS,
-    RESET_TEAM_STATE
+    FETCH_EVENT_STAFFS_REQUEST_ADMIN,
+    FETCH_EVENT_STAFFS_SUCCESS_ADMIN,
+    FETCH_EVENT_STAFFS_FAILED_ADMIN
 } from "../actions/staff-action";
 import { DEFAULT_STAFF_STATE, type StaffsState } from "../../models/reducer-models/staff-reducer-models";
 
@@ -36,6 +38,24 @@ export const staffReducer = (state = DEFAULT_STAFF_STATE, action: any): StaffsSt
                 eventStaffs: action.payload,
             };
         case FETCH_EVENT_STAFFS_FAILED:
+            return {
+                ...state,
+                isLoading: false,
+                error: action.payload,
+            };
+        case FETCH_EVENT_STAFFS_REQUEST_ADMIN:
+            return {
+                ...state,
+                isLoading: true,
+                error: null,
+            };
+        case FETCH_EVENT_STAFFS_SUCCESS_ADMIN:
+            return {
+                ...state,
+                isLoading: false,
+                eventStaffsAdmin: action.payload,
+            };
+        case FETCH_EVENT_STAFFS_FAILED_ADMIN:
             return {
                 ...state,
                 isLoading: false,

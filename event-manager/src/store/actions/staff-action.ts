@@ -16,9 +16,14 @@ export const REMOVE_STAFF_FROM_EVENT_FAILURE = "REMOVE_STAFF_FROM_EVENT_FAILURE"
 export const REMOVE_STAFF_FROM_OWNER_REQUEST = "REMOVE_STAFF_FROM_OWNER_REQUEST";
 export const REMOVE_STAFF_FROM_OWNER_SUCCESS = "REMOVE_STAFF_FROM_OWNER_SUCCESS";
 export const REMOVE_STAFF_FROM_OWNER_FAILURE = "REMOVE_STAFF_FROM_OWNER_FAILURE";
+export const FETCH_EVENT_STAFFS_REQUEST_ADMIN = "FETCH_EVENT_STAFFS_REQUEST_ADMIN";
+export const FETCH_EVENT_STAFFS_FAILED_ADMIN = "FETCH_EVENT_STAFFS_FAILED_ADMIN";
+export const FETCH_EVENT_STAFFS_SUCCESS_ADMIN = "FETCH_EVENT_STAFFS_SUCCESS_ADMIN";
 export const RESET_TEAM_STATE = "RESET_TEAM_STATE";
 
-import { assignStaffToOwnerService, fetchStaffGroupedByRoleService, removeStaffOfOwnerService,  } from "../../service/staff-service";
+import { convertEventStaffAdminModelToEventStaffAdminDto } from "../../converters/event-staff-converter";
+import { mapResponseToEventStaffModelAdmin } from "../../mappers/event-staff-mapper";
+import { assignStaffToOwnerService, fetchStaffGroupedByRoleService, getStaffOfEventAdminService, removeStaffOfOwnerService, } from "../../service/staff-service";
 
 export const fetchEventStaffs = () => async (dispatch: any) => {
     try {
@@ -35,6 +40,30 @@ export const fetchEventStaffs = () => async (dispatch: any) => {
     } catch (error: any) {
         dispatch({
             type: FETCH_EVENT_STAFFS_FAILED,
+            payload:
+                error.response?.data?.message || error.message || "Get event staffs failed",
+        });
+        throw error;
+    }
+}
+
+export const fetchEventStaffsAdmin = (eventId: number) => async (dispatch: any) => {
+    try {
+        dispatch({
+            type: FETCH_EVENT_STAFFS_REQUEST_ADMIN
+        });
+
+        const data = await getStaffOfEventAdminService(eventId);
+        const eventStaffModelAdminList = data.map(mapResponseToEventStaffModelAdmin);
+        const eventStaffDtoAdminList = eventStaffModelAdminList.map(convertEventStaffAdminModelToEventStaffAdminDto);
+
+        dispatch({
+            type: FETCH_EVENT_STAFFS_SUCCESS_ADMIN,
+            payload: eventStaffDtoAdminList
+        });
+    } catch (error: any) {
+        dispatch({
+            type: FETCH_EVENT_STAFFS_FAILED_ADMIN,
             payload:
                 error.response?.data?.message || error.message || "Get event staffs failed",
         });

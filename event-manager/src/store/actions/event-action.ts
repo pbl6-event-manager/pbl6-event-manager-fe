@@ -32,7 +32,7 @@ export const GET_EVENTS_BY_OWNER_REQUEST = "GET_EVENTS_BY_OWNER_REQUEST";
 export const GET_EVENTS_BY_OWNER_SUCCESS = "GET_EVENTS_BY_OWNER_SUCCESS";
 export const GET_EVENTS_BY_OWNER_FAILURE = "GET_EVENTS_BY_OWNER_FAILURE";
 
-import type { EventFormDto, EventListDto } from "../../dtos/event-dto";
+import type { EventFormDto, EventListDto, EventSelectionDto } from "../../dtos/event-dto";
 import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
 import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, getEventsByOrganizerIdsService, getEventsByOwnerService } from "../../service/event-service";
@@ -190,15 +190,16 @@ export const getEventsByOwner = () => async (dispatch: any) => {
     });
     
     const { eventListDto, organizerEventsListItem } = await getEventsByOwnerService();
-    console.log("eventListDto:", eventListDto);
-    console.log("organizerEventsListItem:", organizerEventsListItem);
-    
+    const eventListSelectionDto : EventSelectionDto[] = eventListDto.filter((e) => e.status === EVENT_STATUS.PUBLISHED);
+
     dispatch({
       type: GET_EVENTS_BY_OWNER_SUCCESS,
-      payload: eventListDto,
+      payload: {
+        eventListDto,
+        eventListSelectionDto
+      },
     });
     
-    // Trả về data thay vì chỉ trả organizerEventsListItem
     return organizerEventsListItem;
     
   } catch (error: any) {

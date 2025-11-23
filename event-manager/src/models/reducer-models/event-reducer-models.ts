@@ -1,4 +1,4 @@
-import type { EventDashBoardDto, EventListDto } from "../../dtos/event-dto";
+import type { EventDashBoardDto, EventListDto, EventSelectionDto } from "../../dtos/event-dto";
 
 export interface EventState {
   eventsByUser: EventListDto[]; 
@@ -13,6 +13,7 @@ export interface EventState {
   numberOfEvents: number;
   allEvents: EventListDto[];
   eventDashBoardList: EventDashBoardDto[];
+  eventSelectionList: EventSelectionDto[];
 }
 
 export const DEFAULT_EVENT_STATE: EventState = {
@@ -28,4 +29,5 @@ export const DEFAULT_EVENT_STATE: EventState = {
   numberOfEvents: 0,
   allEvents: [],
   eventDashBoardList: [],
+  eventSelectionList: []
 };

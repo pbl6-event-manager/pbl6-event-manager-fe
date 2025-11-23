@@ -16,6 +16,8 @@ import CreateRolePage from "../../views/Organizer/settings/create-role-page"
 import EditRolePage from "../../views/Organizer/settings/edit-role-page"
 import StaffsListPage from "../../views/Organizer/settings/staffs-list-page"
 import AccountSettingPage from "../../views/Organizer/accounts/account-setting-page"
+import ListOrderPage from "../../views/Organizer/orders/list-order-page"
+import VoucherListPage from "../../views/Organizer/vouchers/voucher-list-page"
 
 const OrganizerRoutes: RouteObject = {
   path: "/organizer",
@@ -35,7 +37,9 @@ const OrganizerRoutes: RouteObject = {
     { path: "settings/edit/:organizerId", element: <EditOrganizerPage/>},
     { path: "settings/members/roles", element: <RolesListPage /> },
     { path: "settings/members/staffs", element: <StaffsListPage /> },
-    { path: "accounts-settings", element: <AccountSettingPage />}
+    { path: "accounts-settings", element: <AccountSettingPage />},
+    { path: "orders", element: <ListOrderPage />},
+    { path: "vouchers", element: <VoucherListPage />},
     // {
     //   path: "settings",
     //   element: <OrganizationSettingsPage />,

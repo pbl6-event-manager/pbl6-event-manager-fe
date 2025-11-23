@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { approveRejectEvent, clearEvents, getAllEventsAdmin, getEventDetailsById, getEventsByOrganizerIds } from "../../store/actions/event-action";
 import type { RootState } from "../../store/store";
 import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert } from "../../helpers/alert-helpers";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { EventDetailsDto } from "../../dtos/event-dto";
+import { fetchEventStaffsAdmin } from "../../store/actions/staff-action";
+import type { EventStaffDtoAdmin } from "../../dtos/event-staff-dto";
 
 export const useEventViewModel = () => {
   const navigate = useNavigate();
@@ -13,6 +15,7 @@ export const useEventViewModel = () => {
   const eventsByUser = useSelector((state: RootState) => state.eventReducer.eventsByUser);
   const publishedEvents = useSelector((state: RootState) => state.eventReducer.publishedEvents);
   const pendingEvents = useSelector((state: RootState) => state.eventReducer.pendingEvents);
+  const eventStaffs = useSelector((root: RootState) => root.staffReducer.eventStaffsAdmin);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openAcceptDialog, setOpenAcceptDialog] = useState(false);
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
@@ -48,6 +51,14 @@ export const useEventViewModel = () => {
     { header: "Actions", accessor: "actions", type: "action" as const },
   ];
 
+  const staffColumns = [
+      { header: "ID", accessor: "id", type: "text" as const },
+      { header: "Avatar", accessor: "avatarUrl", type: "image" as const },
+      { header: "First Name", accessor: "firstName", type: "text" as const },
+      { header: "Last Name", accessor: "lastName", type: "text" as const },
+      { header: "Phone", accessor: "phone", type: "text" as const },
+    ];
+
   useEffect(() => {
     const getAllEvents = async () => {
       showLoadingAlert();
@@ -80,6 +91,7 @@ export const useEventViewModel = () => {
     const getEventDetails = async (eventId: number) => {
       showLoadingAlert();
       const response = await dispatch<any>(getEventDetailsById(eventId));
+      await dispatch<any>(fetchEventStaffsAdmin(eventId));
       setEventDetails(response);
       closeLoadingAlert();
     }
@@ -154,6 +166,16 @@ export const useEventViewModel = () => {
     }
   }
 
+  const groupedByRole = useMemo(() => {
+    const map = new Map<string, EventStaffDtoAdmin[]>();
+    for (const s of eventStaffs) {
+      const role = s.roleStaff?.trim() || "Unspecified";
+      if (!map.has(role)) map.set(role, []);
+      map.get(role)!.push(s);
+    }
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [eventStaffs]);
+
   return {
     id,
     publishedEvents,
@@ -181,6 +203,9 @@ export const useEventViewModel = () => {
     confirmAccept,
     confirmReject,
     fetchEventsByOrganizerIds,
-    setActiveDelTab
+    setActiveDelTab,
+    eventStaffs,
+    groupedByRole,
+    staffColumns
   };
 };

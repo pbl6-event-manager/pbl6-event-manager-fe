@@ -1,7 +1,7 @@
 import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi, getEventsByOwnerApi } from "../api/event-api"
 import { eventMapper } from "../mappers/event-mapper"
 import { eventConverter } from "../converters/event-converter"
-import type { EventFormDto, EventListDto } from "../dtos/event-dto"
+import type { EventFormDto, EventListDto, EventSelectionDto } from "../dtos/event-dto"
 import type { EventModel } from "../models/bean/event-models";
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models";
 import { getMyOrganizersService } from "./organizer-service";
