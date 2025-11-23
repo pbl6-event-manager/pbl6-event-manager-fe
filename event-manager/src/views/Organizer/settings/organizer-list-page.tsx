@@ -3,6 +3,14 @@
 import { useEffect, useState } from "react"
 import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
 import type { OrganizerProfileForm } from "../../../models/form-models/organizer-form-models"
+import { Button } from "../../../components/ui/button"
+import { MoreVertical, Pencil, Trash2 } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../components/ui/dropdown-menu"
 import type { OrganizerListItem } from "../../../models/form-models/organizer-form-models"
 
 export default function OrganizerListPage() {
@@ -19,18 +27,10 @@ export default function OrganizerListPage() {
   } = useOrganizerViewModel()
 
   const [selectedOrganizer, setSelectedOrganizer] = useState<number | null>(null)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [organizationName, setOrganizationName] = useState("Lê Tôn Thanh An")
-  const [preferredCountry, setPreferredCountry] = useState("")
-  const [countryError, setCountryError] = useState(false)
 
   useEffect(() => {
     handleFetchMyOrganizers()
   }, [handleFetchMyOrganizers])
-
-  const handleMenuClick = (organizerId: number) => {
-    setSelectedOrganizer(selectedOrganizer === organizerId ? null : organizerId)
-  }
 
   const handleEdit = (organizerId: number) => {
     navigateToEditOrganizer(organizerId)
@@ -43,15 +43,7 @@ export default function OrganizerListPage() {
   }
 
   const handleDelete = async (organizerId: number) => {
-    setShowDeleteConfirm(true)
-  }
-
-  const confirmDelete = async () => {
-    if (selectedOrganizer) {
-      await handleDeleteOrganizer(selectedOrganizer)
-      setShowDeleteConfirm(false)
-      setSelectedOrganizer(null)
-    }
+    
   }
 
   return (
@@ -87,9 +79,8 @@ export default function OrganizerListPage() {
             organizers.map((organizer, index) => (
               <div
                 key={organizer.id}
-                className={`flex items-center justify-between p-6 ${
-                  index !== organizers.length - 1 ? "border-b border-gray-200" : ""
-                }`}
+                className={`flex items-center justify-between p-6 ${index !== organizers.length - 1 ? "border-b border-gray-200" : ""
+                  }`}
               >
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
@@ -104,102 +95,36 @@ export default function OrganizerListPage() {
                   <span className="text-lg font-medium text-gray-900">{organizer.name}</span>
                 </div>
 
-                <div className="relative">
-                  <button onClick={() => handleMenuClick(organizer.id)} className="rounded p-2 hover:bg-gray-100">
-                    <svg className="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                    </svg>
-                  </button>
-
-                  {selectedOrganizer === organizer.id && (
-                    <div className="absolute right-0 top-full z-10 mt-1 w-40 rounded-lg border border-gray-200 bg-white shadow-lg">
-                      <button
-                        onClick={() => handleEdit(organizer.id)}
-                        className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        // onClick={() => handleView(organizer)}
-                        className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
-                      >
-                        View
-                      </button>
-                      
-                    </div>
-                  )}
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-gray-400 hover:text-gray-600"
+                    >
+                      <MoreVertical className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuItem
+                    //onClick={() => }
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      variant="destructive"
+                    //onClick={() => }
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ))
           )}
         </div>
-
-        {/* Organization Section */}
-        {/* <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="mb-2 text-xl font-bold text-gray-900">Organization</h2>
-          <p className="mb-6 text-sm text-gray-600">Details that apply across your events and venues</p>
-
-          <div className="space-y-4">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">Organization Name</label>
-              <input
-                type="text"
-                value={organizationName}
-                onChange={(e) => setOrganizationName(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-blue-500 focus:outline-none"
-              />
-              <div className="mt-1 text-right text-xs text-gray-500">{organizationName.length}/50</div>
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Preferred Country <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={preferredCountry}
-                onChange={(e) => {
-                  setPreferredCountry(e.target.value)
-                  setCountryError(false)
-                }}
-                className={`w-full rounded-lg border ${
-                  countryError ? "border-red-500" : "border-gray-300"
-                } px-4 py-2.5 focus:border-blue-500 focus:outline-none`}
-              >
-                <option value="">Select a country</option>
-                <option value="VN">Vietnam</option>
-                <option value="US">United States</option>
-                <option value="UK">United Kingdom</option>
-              </select>
-              {countryError && <p className="mt-1 text-sm text-red-500">Preferred Country is required</p>}
-            </div>
-          </div>
-        </div> */}
-
-        {/* Delete Confirmation Modal */}
-        {showDeleteConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="w-full max-w-md rounded-lg bg-white p-6">
-              <h3 className="mb-4 text-xl font-bold">Delete Organizer</h3>
-              <p className="mb-6 text-gray-600">
-                Are you sure you want to delete this organizer? This action cannot be undone.
-              </p>
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="rounded-lg border border-gray-300 px-4 py-2 font-medium hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="rounded-lg bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

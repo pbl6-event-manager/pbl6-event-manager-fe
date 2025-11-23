@@ -4,7 +4,7 @@ import type { OrganizerListItem } from "../models/form-models/organizer-form-mod
 import type { ListOrganizerDto } from "../dtos/organizer-dto";
 import { convertOrgModelToListOrgDto } from "../converters/organizer-converter";
 
-export const getMyOrganizersService = async (): Promise<OrganizerListItem[]> => {
+export const getMyOrganizersService = async () => {
     try {
         const dataResponse = await getMyOrganizers();
         const rawList = dataResponse?.data?.data ?? [];
@@ -20,7 +20,10 @@ export const getMyOrganizersService = async (): Promise<OrganizerListItem[]> => 
             .map((org: any) => convertToListOrganizerFormData(org))
             .filter((item): item is OrganizerListItem => item != null);
 
-        return listOrganizerFormData;
+        return {
+            listOrganizerDto,
+            listOrganizerFormData,
+        };
     } catch (error: any) {
         if (error.response) {
             throw new Error(error.response.data?.message || "Server error");
