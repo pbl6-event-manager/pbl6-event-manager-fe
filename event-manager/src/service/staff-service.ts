@@ -7,9 +7,7 @@ import type { OwnerStaffListItem } from "../models/form-models/staff-form-models
 import type { RoleStaffModel } from "../models/bean/role-staff-models";
 import type { UserModel } from "../models/bean/user-models";
 import type { StaffDto } from "../dtos/staff-dto";
-import { getStaffOfEventAdminApi } from "../api/event-staff";
-import { mapResponseToEventStaffModelAdmin } from "../mappers/event-staff-mapper";
-import { convertEventStaffAdminModelToEventStaffAdminDto } from "../converters/event-staff-converter";
+import { getStaffOfEventAdminApi } from "../api/event-staff-api";
 
 export const assignStaffToOwnerService = async (staffEmail: string, roleStaffId: number) => {
     try {
