@@ -14,6 +14,7 @@ import { userReducer } from "./reducers/user-reducer";
 import { staffReducer } from "./reducers/staff-reducer";
 import { roleReducer } from "./reducers/role-staff-reducer";
 import { permissionReducer } from "./reducers/permission-reducer";
+import { ticketReducer } from "./reducers/ticket-reducer";
 
 const allReducer = combineReducers({
   userReducer: userReducer,
@@ -26,6 +27,7 @@ const allReducer = combineReducers({
   staffReducer: staffReducer,
   roleReducer: roleReducer,
   permissionReducer: permissionReducer,
+  ticketReducer: ticketReducer,
 });
 
 export const store = createStore(allReducer, applyMiddleware(thunk));
