@@ -63,7 +63,6 @@ export const useEventViewModel = () => {
                 closeLoadingAlert()
 
                 if (result) {
-                    console.log("[EventViewModel] Event details loaded:", result)
                     
                     // Map event details to form data
                     const formData = eventConverter.convertEventDetailToFormData(result)
@@ -405,9 +404,7 @@ export const useEventViewModel = () => {
     }
 
     const handleNavigateToEditEvent = useCallback(async (eventId: number) => {
-        console.log("Current event before navigation:", currentEvent);
         await dispatch(getEventDetailsById(eventId));
-        console.log("Current event after fetching details:", currentEvent);
         navigate(`/organizer/events/edit/${eventId}`)
     }, [dispatch, navigate])
 

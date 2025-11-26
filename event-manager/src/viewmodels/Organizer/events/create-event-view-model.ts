@@ -289,7 +289,6 @@ export const useCreateEventViewModel = () => {
     const handleCreateEvent = useCallback(async (formData: EventFormDto) => {
         try {
             const actionResult = await dispatch<any>(createNewEvent(formData))
-            console.log("[debug] Handlecreateevent: create event actionResult ->", actionResult)
 
             return actionResult
         } catch (err) {
