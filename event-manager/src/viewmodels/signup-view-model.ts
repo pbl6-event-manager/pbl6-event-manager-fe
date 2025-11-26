@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkEmailExists, goBack, resetAuthFlow, setEmail, setUserInfo } from "../store/actions/auth-flow-action";
 import type { RootState } from "../store/store";
-import type { SignUpDto } from "../models";
+import type { SignUpDto } from "../dtos/auth-dto";
 import { signup } from "../store/actions/auth-action";
 import { useNavigate } from "react-router-dom";
 
 export const useSignUpViewModel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {email, userInfo} = useSelector((state: RootState) => state.authFlow)
+  const {email, userInfo} = useSelector((state: RootState) => state.authFlowReducer);
   const [isSuccess, setIsSuccess] = useState(false);
   const [localEmail, setLocalEmail] = useState(email);
   const [password, setPassword] = useState("");

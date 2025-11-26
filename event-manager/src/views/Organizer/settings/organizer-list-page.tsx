@@ -1,17 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
-import type { OrganizerProfileForm } from "../../../models/form-models/organizer-form-models"
 import { Button } from "../../../components/ui/button"
-import { MoreVertical, Pencil, Trash2 } from "lucide-react"
+import { MoreVertical, Pencil, Trash2, Eye } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu"
-import type { OrganizerListItem } from "../../../models/form-models/organizer-form-models"
 
 export default function OrganizerListPage() {
   const {
@@ -19,32 +16,11 @@ export default function OrganizerListPage() {
     loading,
 
     handleFetchMyOrganizers,
-    loadOrganizers,
     navigateToAddOrganizer,
     navigateToEditOrganizer,
     navigateToViewOrganizer,
     handleDeleteOrganizer,
   } = useOrganizerViewModel()
-
-  const [selectedOrganizer, setSelectedOrganizer] = useState<number | null>(null)
-
-  useEffect(() => {
-    handleFetchMyOrganizers()
-  }, [handleFetchMyOrganizers])
-
-  const handleEdit = (organizerId: number) => {
-    navigateToEditOrganizer(organizerId)
-    setSelectedOrganizer(null)
-  }
-
-  const handleView = (organizer: OrganizerProfileForm) => {
-    navigateToViewOrganizer(organizer.pageUrl)
-    setSelectedOrganizer(null)
-  }
-
-  const handleDelete = async (organizerId: number) => {
-    
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -84,17 +60,26 @@ export default function OrganizerListPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
-                    <svg className="h-6 w-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    {
+                      organizer.logoUrl ? (
+                        <img
+                          src={organizer.logoUrl}
+                          alt={organizer.name}
+                          className="h-12 w-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <svg className="h-6 w-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )
+                    }
                   </div>
                   <span className="text-lg font-medium text-gray-900">{organizer.name}</span>
                 </div>
-
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -109,12 +94,18 @@ export default function OrganizerListPage() {
                     <DropdownMenuItem
                     //onClick={() => }
                     >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigateToEditOrganizer(organizer.id)}
+                    >
                       <Pencil className="h-4 w-4 mr-2" />
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       variant="destructive"
-                    //onClick={() => }
+                      onClick={() => handleDeleteOrganizer(organizer.id)}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete

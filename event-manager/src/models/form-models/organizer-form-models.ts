@@ -18,32 +18,21 @@ export interface OrganizerProfileForm {
 }
 
 export interface OrganizerFormData {
-  id: number,
   name: string,
-  website: string,
-  bio: string,
-  description: string,
-  facebookId: string,
-  twitter: string,
-  emailOptIn: boolean,
-  profileImage: string
+  website?: string,
+  description?: string,
+  contactEmail?: string,
+  contactPhone?: string,
+  logoFile?: File,
+  logoUrl?: string,
 }
 
 export interface OrganizerListItem {
   id: number,
-  logoUrl: string,
+  logoUrl?: string,
   name: string,
 }
 
 export interface OrganizerDetailInfoProps {
   organizer: any | null;
 }
-//#endregion
-
-//#region Sub Models
-export interface Organization {
-  id: string
-  name: string
-  preferredCountry: string
-}
-//#endregion

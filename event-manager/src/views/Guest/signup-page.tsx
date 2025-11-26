@@ -10,6 +10,7 @@ const SignUpPage: React.FC = () => {
             <div className="absolute inset-0 w-full h-full z-10">
                 <img src="/public/images/yoga-background.jpg" alt="Yoga class background" className="w-full h-full object-cover" />
             </div>
+            <h1>Sign Up</h1>
             <div className="relative z-20 flex justify-center items-center w-full h-full">
                 <AuthFlow />
             </div>

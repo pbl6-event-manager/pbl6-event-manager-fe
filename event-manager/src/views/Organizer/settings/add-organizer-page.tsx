@@ -4,66 +4,48 @@ import { useState, useRef } from "react"
 import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
 import { useNavigate } from "react-router-dom"
 import { Button } from "../../../components/ui/button"
+import { Label } from "../../../components/ui/label"
+import { Input } from "../../../components/ui/input"
 import { ArrowLeft, Contact, ImageIcon, UserRound, Upload, X } from "lucide-react"
+import { Textarea } from "../../../components/ui/textarea"
 
 export default function AddOrganizerPage() {
-    const navigate = useNavigate()
-    const { formData, validationErrors, updateFormData, handleCreateOrganizer } = useOrganizerViewModel()
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            // Validate file size (10MB max)
-            if (file.size > 10 * 1024 * 1024) {
-                alert("File size must be less than 10MB")
-                return
-            }
+    const {
+        // State
+        imagePreview,
+        organizers,
+        currentOrganizer,
+        loading,
+        error,
+        formData,
+        validationErrors,
+        fileInputRef,
 
-            // Validate file type
-            if (!file.type.startsWith("image/")) {
-                alert("Please upload an image file (JPEG or PNG)")
-                return
-            }
+        // Actions
+        handleImageUpload,
+        handleRemoveImage,
+        handleFetchMyOrganizers,
+        loadOrganizerDetail,
+        loadOrganizerForEdit,
+        updateFormData,
+        handleCreateOrganizer,
+        handleUpdateOrganizer,
+        handleDeleteOrganizer,
+        navigateToAddOrganizer,
+        navigateToEditOrganizer,
+        navigateToViewOrganizer,
+        handleSubmit,
+        handleBackClick,
+    } = useOrganizerViewModel()
 
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string)
-                updateFormData("profileImage", reader.result as string)
-            }
-            reader.readAsDataURL(file)
-        }
-    }
-
-    const handleRemoveImage = () => {
-        setImagePreview(null)
-        updateFormData("profileImage", "")
-        if (fileInputRef.current) {
-            fileInputRef.current.value = ""
-        }
-    }
-
-    // const handleSubmit = async () => {
-    //     const success = await handleCreateOrganizer()
-    //     if (success) {
-    //         navigate("/organizer/settings")
-    //     }
-    // }
-
-    const handleBackClick = async () => {
-        const confirmed = window.confirm("Are you sure to leave the page?")
-        if (confirmed) {
-            navigate("/organizer/settings")
-        }
-    }
 
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="mx-auto max-w-5xl px-6 py-8 space-y-3">
                 {/* Back Button */}
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="sm" className="px-8 py-4 text-0.5xl" onClick={handleBackClick}>
+                    <Button variant="ghost" size="sm" className="px-8 py-4 text-0.5xl cursor-pointer" onClick={handleBackClick}>
                         <ArrowLeft className="h-4 w-4 mr-2 text-blue-600" />
                         <span className="text-blue-600 hover:underline">Organization Settings</span>
                     </Button>
@@ -154,11 +136,10 @@ export default function AddOrganizerPage() {
 
                         <div className="space-y-4">
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                <Label className="mb-2 block text-sm font-medium text-gray-700">
                                     Organizer name <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="text"
+                                </Label>
+                                <Input
                                     value={formData.name}
                                     onChange={(e) => updateFormData("name", e.target.value)}
                                     placeholder="e.g. Eventbrite Careers"
@@ -169,67 +150,14 @@ export default function AddOrganizerPage() {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">Your website</label>
-                                <input
+                                <Label className="mb-2 block text-sm font-medium text-gray-700">Your website</Label>
+                                <Input
                                     type="url"
                                     value={formData.website}
                                     onChange={(e) => updateFormData("website", e.target.value)}
                                     placeholder="e.g: https://www.eventbritecareers.com/home"
                                     className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
                                 />
-                            </div>
-                            {/* Organizer Bio */}
-                            <div>
-                                <h3 className="mb-2 text-xl font-bold text-gray-900">Organizer Bio</h3>
-                                <p className="mb-4 text-sm text-gray-600">
-                                    Describe who you are, the types of events you host, or your mission. The bio is displayed on your organizer 
-                                    profile. Unfortunately, we can no longer support images, video, or custom HTML in the description.
-                                </p>
-                                <div className="rounded-lg border border-gray-300">
-                                    {/* <div className="flex items-center gap-2 border-b border-gray-300 bg-gray-50 px-4 py-2">
-                                    <button className="rounded p-1 hover:bg-gray-200">
-                                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M3 4h14v2H3V4zm0 5h14v2H3V9zm0 5h14v2H3v-2z" />
-                                        </svg>
-                                    </button>
-                                    <button className="rounded p-1 hover:bg-gray-200">
-                                        <span className="font-bold">B</span>
-                                    </button>
-                                    <button className="rounded p-1 hover:bg-gray-200">
-                                        <span className="italic">I</span>
-                                    </button>
-                                    <button className="rounded p-1 hover:bg-gray-200">
-                                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M12.586 4.586a2 2 0 112.828 2.828l-3 3-2.828-2.828 3-3zM15 9l-3-3-9 9v3h3l9-9z" />
-                                        </svg>
-                                    </button>
-                                    <button className="rounded p-1 hover:bg-gray-200">
-                                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                    </button>
-                                    <button className="rounded p-1 hover:bg-gray-200">
-                                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                    </button>
-                                </div> */}
-                                    <textarea
-                                        value={formData.bio}
-                                        onChange={(e) => updateFormData("bio", e.target.value)}
-                                        rows={8}
-                                        className="w-full resize-none px-4 py-3 focus:outline-none"
-                                        placeholder="Enter organizer bio..."
-                                    />
-                                </div>
                             </div>
                             {/* Description for Event Pages */}
                             <div>
@@ -239,8 +167,7 @@ export default function AddOrganizerPage() {
                                     longer support images, video, or custom HTML in the description.
                                 </p>
                                 <div className="rounded-lg border border-gray-300">
-
-                                    <textarea
+                                    <Textarea
                                         value={formData.description}
                                         onChange={(e) => updateFormData("description", e.target.value)}
                                         rows={6}
@@ -264,70 +191,53 @@ export default function AddOrganizerPage() {
                             Let attendees know how to connect with you.
                         </p>
                         <div className="space-y-4">
-                            {/* FacebookID */}
+                            {/* Contact Email */}
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">Facebook ID</label>
-                                <input
-                                    type="text"
-                                    value={formData.facebookId}
-                                    onChange={(e) => updateFormData("facebookId", e.target.value)}
-                                    placeholder="e.g: 1529838090599318"
+                                <Label className="mb-2 block text-sm font-medium text-gray-700">Contact Email</Label>
+                                <Input
+                                    value={formData.contactEmail}
+                                    onChange={(e) => updateFormData("contactEmail", e.target.value)}
+                                    placeholder="e.g: example@example.com"
                                     className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
                                 />
                             </div>
 
-                            {/* Twitter */}
+                            {/* Contact Phone */}
                             <div >
-                                <label className="mb-2 block text-sm font-medium text-gray-700">Twitter</label>
+                                <Label className="mb-2 block text-sm font-medium text-gray-700">Contact Phone</Label>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-gray-500">@</span>
-                                    <input
-                                        type="text"
-                                        value={formData.twitter}
-                                        onChange={(e) => updateFormData("twitter", e.target.value)}
-                                        placeholder="e.g: EventbriteLife"
+                                    <Input
+                                        value={formData.contactPhone}
+                                        onChange={(e) => updateFormData("contactPhone", e.target.value)}
+                                        placeholder="e.g: +1 234 567 8901"
                                         className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
                                     />
                                 </div>
                             </div>
 
-                            {/* Email otp in */}
-                            <div className="flex items-start gap-3 rounded-lg bg-gray-50 p-4">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.emailOptIn}
-                                    onChange={(e) => updateFormData("emailOptIn", e.target.checked)}
-                                    className="mt-1"
-                                />
-                                <div>
-                                    <p className="font-medium text-gray-900">
-                                        Email opt-in: {formData.emailOptIn ? "Enabled" : "Disabled"}
-                                    </p>
-                                    <p className="text-sm text-gray-600">
-                                        Attendees are {formData.emailOptIn ? "able" : "unable"} to opt-in to receive marketing emails at
-                                        checkout
-                                    </p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex justify-end gap-4">
-                    <button
-                        onClick={() => navigate("/organizer/settings")}
-                        className="rounded-lg border border-gray-300 px-6 py-2.5 font-semibold text-gray-900 hover:bg-gray-50"
+                    <Button
+                        onClick={handleBackClick}
+                        variant="outline"
+                        className="rounded-lg border border-gray-300 px-6 py-2.5 font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer"
                     >
                         Cancel
-                    </button>
-                    <button
-                        //onClick={handleSubmit}
-                        className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700 disabled:bg-gray-300"
+                    </Button>
+
+                    <Button
+                        onClick={handleCreateOrganizer}
+                        type="submit"
+                        className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-700 disabled:bg-gray-300 cursor-pointer    "
                     >
                         Save
-                    </button>
+                    </Button>
                 </div>
+
             </div>
         </div>
     )
