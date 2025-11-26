@@ -14,7 +14,8 @@ export const CREATE_ORGANIZER_REQUEST = "CREATE_ORGANIZER_REQUEST"
 export const CREATE_ORGANIZER_SUCCESS = "CREATE_ORGANIZER_SUCCESS"
 export const CREATE_ORGANIZER_FAILURE = "CREATE_ORGANIZER_FAILURE"
 
-import { getMyOrganizersService, getOrganizerByIdService } from "../../service/organizer-service";
+import type { OrganizerFormData } from "../../models/form-models/organizer-form-models"
+import { getMyOrganizersService, getOrganizerByIdService, createOrganizerService, updateOrganizerService, deleteOrganizerService } from "../../service/organizer-service";
 
 export const fetchMyOrganizers = () => async (dispatch: any) => {
     try {
@@ -45,14 +46,14 @@ export const fetchOrganizerDetail = (organizerId: number) => async (dispatch: an
             type: FETCH_ORGANIZER_DETAIL_REQUEST
         });
 
-        const data = await getOrganizerByIdService(organizerId);
+        const { organizerDto, organizerFormData } = await getOrganizerByIdService(organizerId);
 
         dispatch({
             type: FETCH_ORGANIZER_DETAIL_SUCCESS,
-            payload: data
+            payload: organizerDto
         });
 
-        return data;
+        return organizerFormData;
     } catch (error: any) {
         dispatch({
             type: FETCH_ORGANIZER_DETAIL_FAILURE,
@@ -63,13 +64,13 @@ export const fetchOrganizerDetail = (organizerId: number) => async (dispatch: an
     }
 }
 
-export const updateOrganizer = (organizerId: number, organizer: any) => async (dispatch: any) => {
+export const updateOrganizer = (organizerId: number, organizer: OrganizerFormData) => async (dispatch: any) => {
     try {
         dispatch({
             type: UPDATE_ORGANIZER_REQUEST
         });
 
-        const data = "CALL SERVICE HERE";
+        const data = await updateOrganizerService(organizerId, organizer);
 
         dispatch({
             type: UPDATE_ORGANIZER_SUCCESS,
@@ -85,17 +86,17 @@ export const updateOrganizer = (organizerId: number, organizer: any) => async (d
     }
 }
 
-export const createOrganizer = (organizer: any) => async (dispatch: any) => {
+export const createOrganizer = (organizer: OrganizerFormData) => async (dispatch: any) => {
     try {
         dispatch({
             type: CREATE_ORGANIZER_REQUEST
         });
 
-        const data = "CALL SERVICE HERE";
+        const organizerDto = await createOrganizerService(organizer);
 
         dispatch({
             type: CREATE_ORGANIZER_SUCCESS,
-            payload: data
+            payload: organizerDto
         });
     } catch (error: any) {
         dispatch({
@@ -113,12 +114,13 @@ export const deleteOrganizer = (organizerId: number) => async (dispatch: any) =>
             type: DELETE_ORGANIZER_REQUEST
         });
 
-        const data = "CALL SERVICE HERE";
+        const result = await deleteOrganizerService(organizerId);
 
         dispatch({
             type: DELETE_ORGANIZER_SUCCESS,
-            payload: data
+            payload: organizerId
         });
+        return result;
     } catch (error: any) {
         dispatch({
             type: DELETE_ORGANIZER_FAILURE,
