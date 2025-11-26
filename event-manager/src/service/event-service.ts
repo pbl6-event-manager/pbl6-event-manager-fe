@@ -21,11 +21,9 @@ export const createEventService = async (formData: EventFormDto) => {
     multipartFormData.append("longitude", formData.longitude.toString())
 
     const bannerFormData = formData.bannerFile as File | null;
-    console.log("[DEBUG] Banner appended to FormData:", bannerFormData)
     if (bannerFormData) {
       multipartFormData.append("banner", bannerFormData)
     }
-    console.log("[DEBUG] multipartFormData banner:", multipartFormData.get("banner"))  
     const myOrganizers = await getMyOrganizersService();
     const firstOrganizerId = myOrganizers.listOrganizerDto[0]?.id;
     if (!firstOrganizerId) {
@@ -37,17 +35,14 @@ export const createEventService = async (formData: EventFormDto) => {
     })
 
     const rawResponse = await createEvent(multipartFormData)
-    console.log("[DEBUG] Raw API Response:", rawResponse)
     const rawData = rawResponse.data
     if(rawData.message !== "success") {
       throw new Error(rawData.message || "Failed to create event");
     }
 
     const eventModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawData.data)
-    console.log("[DEBUG] Event Model after mapping:", eventModel)
 
     const dto = eventConverter.convertDomainToDTO(eventModel)
-    console.log("[DEBUG] Final DTO:", dto)
 
     return dto
   } catch (error: any) {
@@ -114,7 +109,6 @@ export const updateEventService = async (eventId: number, formData: EventFormDto
     // })
 
     // const rawResponse = await updateEventApi(eventId, multipartFormData)
-    // console.log("[DEBUG] Update event raw response:", rawResponse)
     
     // const rawData = rawResponse.data
     // if(rawData.message !== "success") {
