@@ -20,8 +20,8 @@ export const convertVoucherModelToVoucherListDto = (v: VoucherModel) : VoucherLi
     id: v.id,
     code: v.code,
     type: v.discountType,
-    amount: v.totalUsageLimit,
-    uses: v.currentUsageCount,
+    amount: Number.parseInt(v.discountValue.toString()),
+    uses: v.currentUsageCount + "/" + v.totalUsageLimit,
     expiry: new Date(v.validTo),
     status: v.status,
     event: v.eventId

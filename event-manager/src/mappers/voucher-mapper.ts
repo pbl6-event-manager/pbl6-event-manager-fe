@@ -12,10 +12,14 @@ export const mapResponseToVoucherModel = (raw: any): VoucherModel => ({
     totalUsageLimit: raw.totalUsageLimit,
     currentUsageCount: raw.currentUsageCount,
     usagePerUser: raw.usagePerUser,
+    remainingUsage: raw.remainingUsage,
     validFrom: raw.validFrom,
     validTo: raw.validTo,
     status: raw.status,
     eventId: raw.eventId,
+    isActive: raw.isActive,
+    isValid: raw.isValid,
+    isExpired: raw.isExpired,
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt
 })
