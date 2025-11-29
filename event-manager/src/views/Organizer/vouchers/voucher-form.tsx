@@ -3,56 +3,47 @@ import { Label } from "../../../components/ui/label";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { Textarea } from "../../../components/ui/textarea";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../../components/ui/select";
-import useVoucherViewModel from "../../../viewmodels/Organizer/voucher/voucher-view-model";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../../../components/ui/select";
 import { TIMEZONES } from "../../../utils/Organizer/timezone-language";
-import type { EventSelectionDto } from "../../../dtos/event-dto";
+import type { VoucherFormProps } from "../../../models/component-props/form-component-props";
 
-type VoucherType = "Percentage" | "Fixed";
 
-type Props = {
-  voucherCode: string;
-  setVoucherCode: (s: string) => void;
-  formName: string;
-  setFormName: (s: string) => void;
-  formDesc: string;
-  setFormDesc: (s: string) => void;
-  formType: VoucherType;
-  setFormType: (t: VoucherType) => void;
-  formAmount: number;
-  setFormAmount: (n: number) => void;
-  formMaxUses?: number | undefined;
-  setFormMaxUses: (n?: number) => void;
-  formExpires?: string | undefined;
-  setFormExpires: (s?: string) => void;
-  onSave: () => void;
-  onBack: () => void;
-  loadingEvents?: boolean;
-  handleRandomCode: () => void;
-  eventSelectionList: EventSelectionDto[]
-};
-
-const VoucherForm: React.FC<Props> = ({
+const VoucherForm: React.FC<VoucherFormProps> = ({
   voucherCode,
   setVoucherCode,
   formName,
   setFormName,
   formDesc,
   setFormDesc,
-  formType,
-  setFormType,
-  formAmount,
-  setFormAmount,
-  formMaxUses,
-  setFormMaxUses,
-  formExpires,
-  setFormExpires,
+  formDiscountType,
+  setFormDiscountType,
+  formDiscountValue,
+  setFormDiscountValue,
+  formMinOrderAmount,
+  setFormMinOrderAmount,
+  formMaxDiscountAmount,
+  setFormMaxDiscountAmount,
+  formTotalUsageLimit,
+  setFormTotalUsageLimit,
+  formUsagePerUser,
+  setFormUsagePerUser,
+  formValidFrom,
+  setFormValidFrom,
+  formValidTo,
+  setFormValidTo,
+  formEventId,
+  setFormEventId,
+  selectedTimezone,
+  setSelectedTimezone,
   handleRandomCode,
   eventSelectionList,
 }) => {
-  const [selectedEvent, setSelectedEvent] = useState<string | undefined>(undefined);
-  const [selectedTimezone, setSelectedTimezone] = useState<string | undefined>();
-
   return (
     <div className="w-full">
       <div className="space-y-4 max-w-none">
@@ -64,7 +55,9 @@ const VoucherForm: React.FC<Props> = ({
               className="lg:col-span-3"
               placeholder="Enter voucher code"
               value={voucherCode}
-              onChange={(e) => setVoucherCode(String(e.target.value).toUpperCase())}
+              onChange={(e) =>
+                setVoucherCode(String(e.target.value).toUpperCase())
+              }
             />
             <Button
               className="bg-orange-600 hover:bg-orange-700 lg:col-span-1"
@@ -77,20 +70,30 @@ const VoucherForm: React.FC<Props> = ({
 
         <div className="space-y-3">
           <Label htmlFor="voucher-name">Voucher Name *</Label>
-          <Input id="voucher-name" placeholder="Name of the voucher" value={formName} onChange={(e) => setFormName(String(e.target.value))} />
+          <Input
+            id="voucher-name"
+            placeholder="Name of the voucher"
+            value={formName}
+            onChange={(e) => setFormName(String(e.target.value))}
+          />
         </div>
 
         <div className="space-y-3">
           <Label htmlFor="voucher-description">Description *</Label>
-          <Textarea id="voucher-description" placeholder="Description of the voucher" value={formDesc} onChange={(e) => setFormDesc(String(e.target.value))} />
+          <Textarea
+            id="voucher-description"
+            placeholder="Description of the voucher"
+            value={formDesc}
+            onChange={(e) => setFormDesc(String(e.target.value))}
+          />
         </div>
 
         <div className="space-y-3">
           <Label htmlFor="apply-event">Apply to event</Label>
           <div className="w-full">
             <Select
-              value={selectedEvent}
-              onValueChange={(v: any) => setSelectedEvent(v)}
+              value={formEventId}
+              onValueChange={(v: any) => setFormEventId(v)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={"Select event (optional)"} />
@@ -110,13 +113,16 @@ const VoucherForm: React.FC<Props> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
             <Label htmlFor="discount-type">Discount Type *</Label>
-            <Select value={formType} onValueChange={(v: any) => setFormType(v)}>
+            <Select
+              value={formDiscountType}
+              onValueChange={(v: any) => setFormDiscountType(v)}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Fixed">Fixed</SelectItem>
-                <SelectItem value="Percentage">Percentage</SelectItem>
+                <SelectItem value="FIXED_AMOUNT">Fixed Amount</SelectItem>
+                <SelectItem value="PERCENTAGE">Percentage</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -127,8 +133,12 @@ const VoucherForm: React.FC<Props> = ({
               id="discount-value"
               className="w-full"
               type="number"
-              value={formAmount === undefined ? "" : String(formAmount)}
-              onChange={(e) => setFormAmount(Number(e.target.value || 0))}
+              value={
+                formDiscountValue === undefined ? "" : String(formDiscountValue)
+              }
+              onChange={(e) =>
+                setFormDiscountValue(Number(e.target.value || 0))
+              }
             />
           </div>
         </div>
@@ -136,12 +146,30 @@ const VoucherForm: React.FC<Props> = ({
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-3">
             <Label htmlFor="min-order-amount">Min order amount *</Label>
-            <Input id="min-order-amount" type="number" />
+            <Input
+              id="min-order-amount"
+              type="number"
+              value={formMinOrderAmount ?? ""}
+              onChange={(e) =>
+                setFormMinOrderAmount(
+                  e.target.value ? Number(e.target.value) : undefined
+                )
+              }
+            />
           </div>
-          {formType === "Percentage" && (
+          {formDiscountType === "PERCENTAGE" && (
             <div className="space-y-3">
               <Label htmlFor="max-discount-amount">Max discount amount *</Label>
-              <Input id="max-discount-amount" type="number" value={formMaxUses ?? ""} onChange={(e) => setFormMaxUses(e.target.value ? Number(e.target.value) : undefined)} />
+              <Input
+                id="max-discount-amount"
+                type="number"
+                value={formMaxDiscountAmount ?? ""}
+                onChange={(e) =>
+                  setFormMaxDiscountAmount(
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
+              />
             </div>
           )}
         </div>
@@ -149,40 +177,60 @@ const VoucherForm: React.FC<Props> = ({
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-3">
             <Label htmlFor="total-usage-limit">Total usage limit *</Label>
-            <Input id="total-usage-limit" type="number" />
+            <Input
+              id="total-usage-limit"
+              type="number"
+              value={formTotalUsageLimit ?? ""}
+              onChange={(e) =>
+                setFormTotalUsageLimit(
+                  Number.parseInt(e.target.value) || undefined
+                )
+              }
+            />
           </div>
           <div className="space-y-3">
             <Label htmlFor="usage-per-user">Usage per user *</Label>
-            <Input id="usage-per-user" type="number" />
+            <Input
+              id="usage-per-user"
+              type="number"
+              value={formUsagePerUser ?? ""}
+              onChange={(e) =>
+                setFormUsagePerUser(
+                  Number.parseInt(e.target.value) || undefined
+                )
+              }
+            />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="startDate">Start date *</Label>
-            <Input id="startDate" type="date" />
+            <Label htmlFor="validFrom">Valid From *</Label>
+            <Input
+              id="startDate"
+              type="datetime-local"
+              value={formValidFrom ?? ""}
+              onChange={(e) => setFormValidFrom(e.target.value || undefined)}
+            />
           </div>
           <div className="space-y-3">
-            <Label htmlFor="startTime">Start time *</Label>
-            <Input id="startTime" type="time" />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <Label htmlFor="endDate">End date *</Label>
-            <Input id="endDate" type="date" value={formExpires ?? ""} onChange={(e) => setFormExpires(e.target.value || undefined)} />
-          </div>
-          <div className="space-y-3">
-            <Label htmlFor="endTime">End time *</Label>
-            <Input id="endTime" type="time" />
+            <Label htmlFor="validTo">Valid To *</Label>
+            <Input
+              id="endDate"
+              type="datetime-local"
+              value={formValidTo ?? ""}
+              onChange={(e) => setFormValidTo(e.target.value || undefined)}
+            />
           </div>
         </div>
 
         <div className="space-y-3">
           <Label htmlFor="timezone">Time zone</Label>
           <div className="w-full">
-            <Select value={selectedTimezone} onValueChange={(v: any) => setSelectedTimezone(v)}>
+            <Select
+              value={selectedTimezone}
+              onValueChange={(v: any) => setSelectedTimezone(v)}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select time zone" />
               </SelectTrigger>
