@@ -2,12 +2,22 @@ import React from "react";
 import Table from "./table";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 
-export const EventStaffSection: React.FC<{ id?: string }> = () => {
+export const EventStaffSection: React.FC = () => {
   const { groupedByRole, staffColumns } = useEventViewModel();
+
+  const groups = groupedByRole ?? [];
+  
+  if (groups.length === 0) {
+    return (
+      <div className="bg-white rounded-lg border p-6 text-center text-gray-500">
+        No staff assigned for this event
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {groupedByRole.map(([role, members]) => (
+      {groups.map(([role, members]) => (
         <div key={role} className="bg-[var(--surface)] rounded -sm p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="font-medium">{role}</div>
@@ -16,17 +26,20 @@ export const EventStaffSection: React.FC<{ id?: string }> = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <Table
+          {(!members || members.length === 0) ? (
+            <div className="px-4 py-6 text-center text-gray-500">No members in this role</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table
                 columns={staffColumns}
                 data={members}
                 className="rounded-lg shadow-md"
               />
-          </div>
+            </div>
+          )}
+
         </div>
       ))}
     </div>
   );
 };
-
-export default EventStaffSection;

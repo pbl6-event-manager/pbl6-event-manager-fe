@@ -4,7 +4,7 @@ import type { EventFormData, MediaFileModel } from "../models/form-models/event-
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models"
 import { convertToISODateTime } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
-import { converTicketModelToTicketType } from "./ticket-converter"
+import { converTicketModelToTicketType, convertTicketDtoToTicketType } from "./ticket-converter"
 
 export const eventConverter = {
   convertDomainToDTO: (domain: EventModel): CreateEventRequestDto => {
@@ -155,8 +155,8 @@ export const eventConverter = {
       },
       lineUp: [],
       agenda: [],
-      ticketType: eventDetail.ticket ? eventDetail.ticket.map(converTicketModelToTicketType) : [],
-      capacity: eventDetail.ticket && eventDetail.ticket.length > 0 ? eventDetail.ticket.filter((ticket) => ticket.isActive === true).reduce((sum, ticket) => sum + Number(ticket.quantity || 0), 0) : 0,
+      ticketType: eventDetail.ticket ? eventDetail.ticket.map(convertTicketDtoToTicketType) : [],
+      capacity: eventDetail.ticket && eventDetail.ticket.length > 0 ? eventDetail.ticket.reduce((sum, ticket) => sum + Number(ticket.quantity || 0), 0) : 0,
       category: eventDetail.categories ? eventDetail.categories.map(category => category.id) : [],
       timezone: "UTC+7",
       language: eventInfo.language || "en",

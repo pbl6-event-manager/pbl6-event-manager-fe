@@ -4,6 +4,7 @@ import type { OrganizerModel } from "../models/bean/organizer-models"
 import type { TicketModel } from "../models/bean/ticket-models"
 import type { UserModel } from "../models/bean/user-models"
 import type { ListCategoryDto } from "./category-dto"
+import type { TicketDto } from "./ticket-dto"
 
 //#region Event Dtos
 export const EVENT_STATUS = {
@@ -84,7 +85,7 @@ export interface EventDashBoardDto {
 
 export interface EventDetailsDto {
   eventInfo?: EventModel
-  ticket?: TicketModel[],
+  ticket?: TicketDto[],
   categories?: CategoryModel[]
   organizer?: OrganizerModel 
   owner?: UserModel

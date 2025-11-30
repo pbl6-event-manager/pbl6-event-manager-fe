@@ -99,3 +99,13 @@ export const converTicketModelToTicketType = (ticketModel: TicketModel): TicketT
         currency: "USD",
     };
 };
+
+export const convertTicketDtoToTicketType = (ticketDto: TicketDto): TicketType => {
+    return {
+        ticketID: ticketDto.id,
+        nameTicket: ticketDto.name,
+        price: ticketDto.price,
+        quantityTotal: ticketDto.quantity,
+        currency: "USD",
+    };
+};

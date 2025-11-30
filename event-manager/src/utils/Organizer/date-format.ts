@@ -71,6 +71,41 @@ export function convertToISODateTime(date: string, time: string, timezone?: stri
 
 export const fmt = (s?: string | Date | null) =>
   s ? new Date(s).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
+export const formatExpiry = (raw: any) => {
+  const s =
+    raw?.expiresAt ?? raw?.validTo ?? raw?.valid_to ?? raw?.expiry ?? raw;
+  if (!s) return { local: "—", gmt: "—" };
+  const d = new Date(String(s));
+  if (isNaN(d.getTime())) return { local: String(s), gmt: "—" };
+
+  const local = d.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
+
+  let tzName = "";
+  try {
+    const parts = new Intl.DateTimeFormat(undefined, {
+      timeZoneName: "long",
+    }).formatToParts(d);
+    const tzPart = parts.find((p) => p.type === "timeZoneName");
+    tzName = tzPart ? tzPart.value : "";
+  } catch {
+    tzName = "";
+  }
+
+  const offsetMinutes = -d.getTimezoneOffset();
+  const sign = offsetMinutes >= 0 ? "+" : "-";
+  const hh = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(
+    2,
+    "0"
+  );
+  const mm = String(Math.abs(offsetMinutes) % 60).padStart(2, "0");
+  const gmt = `GMT${sign}${hh}:${mm}`;
+
+  return { local, gmt };
+};
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString("en-US", {
