@@ -4,7 +4,7 @@ import type { EventFormData, MediaFileModel } from "../models/form-models/event-
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models"
 import { convertToISODateTime } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
-
+import { converTicketModelToTicketType } from "./ticket-converter"
 
 export const eventConverter = {
   convertDomainToDTO: (domain: EventModel): CreateEventRequestDto => {
@@ -45,7 +45,10 @@ export const eventConverter = {
 
   convertEventDataToFormDTO: async (eventData: EventFormData, bannerFile?: File): Promise<EventFormDto> => {
     const effectiveEndDate = eventData.endDate && eventData.endDate.trim().length > 0 ? eventData.endDate : eventData.startDate
-    
+    console.log("[debug] Start Date:", eventData.startDate)
+    console.log("[debug] End Date:", eventData.endDate)
+    console.log("[debug] Effective End Date:", effectiveEndDate)
+    console.log("[debug] Timezone:", eventData.timezone)
     const startDateTime = convertToISODateTime(eventData.startDate, eventData.startTime, eventData.timezone)
     const endDateTime = convertToISODateTime(effectiveEndDate, eventData.endTime, eventData.timezone)
 
@@ -73,6 +76,7 @@ export const eventConverter = {
       longitude: coordinates?.lng ?? 0,
       bannerFile,
       categoryIds: (eventData.category || []).map((c) => Number.parseInt(String(c))).filter((n) => !isNaN(n)),
+      organizerId: eventData.organizerId
     }
   },
 
@@ -89,10 +93,11 @@ export const eventConverter = {
       location: eventModel.city + ", " + eventModel.country,
       startTime: eventModel.startTime.toDateString(),
       endTime: eventModel.endTime.toDateString(),
-      status: eventModel.status
+      status: eventModel.status,
+      capacity: 1000
     }
   },
-  convertEventListDtoToOrganizerEventsListItem: (eventListDto: EventListDto, organizerName: string) : OrganizerEventsListItem => {
+  convertEventListDtoToOrganizerEventsListItem: (eventListDto: EventListDto, organizerName: string, ticket: any) : OrganizerEventsListItem => {
     return {
       id: eventListDto.id,
       bannerImagePath: eventListDto.bannerImagePath ?? null,
@@ -101,8 +106,8 @@ export const eventConverter = {
       address: eventListDto.location,
       startDate: eventListDto.startTime.toString(),
       endDate: eventListDto.endTime.toString(),
-      soldTickets: 0,
-      capacity: 0,
+      soldTickets: ticket && ticket.length > 0 ? ticket.filter((t: any) => t.isActive === true).reduce((sum: number, t: any) => sum + Number(t.soldQuantity || 0), 0) : 0,
+      capacity: ticket && ticket.length > 0 ? ticket.filter((t: any) => t.isActive === true).reduce((sum: number, t: any) => sum + Number(t.quantity || 0), 0) : 0,
       status: eventListDto.status
     }
   },
@@ -120,10 +125,13 @@ export const eventConverter = {
     const formattedStartTime = startDate.toTimeString().slice(0, 5)
     const formattedEndTime = endDate.toTimeString().slice(0, 5)
 
+    
+
     const isSingleDay = formattedStartDate === formattedEndDate
     return {
       mediaFile: null, // Will be handled separately
       title: eventInfo.title,
+      status: eventInfo.status || "DRAFT",
       summary: eventInfo.summary,
       description: "", // Not in API response, might need to add later
       startDate: formattedStartDate,
@@ -147,11 +155,12 @@ export const eventConverter = {
       },
       lineUp: [],
       agenda: [],
-      ticketType: null,
-      capacity: "",
+      ticketType: eventDetail.ticket ? eventDetail.ticket.map(converTicketModelToTicketType) : [],
+      capacity: eventDetail.ticket && eventDetail.ticket.length > 0 ? eventDetail.ticket.filter((ticket) => ticket.isActive === true).reduce((sum, ticket) => sum + Number(ticket.quantity || 0), 0) : 0,
       category: eventDetail.categories ? eventDetail.categories.map(category => category.id) : [],
       timezone: "UTC+7",
-      language: eventInfo.language || "en-US",
+      language: eventInfo.language || "en",
+      organizerId: eventInfo.organizerId,
     }
   },
   convertBannerToMediaFile: (bannerUrl: string | null): MediaFileModel[] => {

@@ -1,5 +1,5 @@
 import { convertCategoryModelToListCategoryDto } from "../../converters/category-converter";
-import { addNewCategoryService, deleteCategoryService, getAllCategoriesService, recoverCateogoryService, updateCategoryService } from "../../service/category-service";
+import { addNewCategoryService, deleteCategoryService, getAllCategoriesService, recoverCateogoryService, updateCategoryService, getActiveCategoriesService } from "../../service/category-service";
 
 export const FETCH_CATEGORIES_REQUEST = "FETCH_CATEGORIES_REQUEST";
 export const FETCH_ACTIVE_CATEGORIES_SUCCESS = "FETCH_ACTIVE_CATEGORIES_SUCCESS";
@@ -18,6 +18,8 @@ export const UPDATE_CATEGORY_FAILED = "UPDATE_CATEGORY_FAILED";
 export const RECOVER_CATEGORY_REQUEST = "RECOVER_CATEGORY_REQUEST";
 export const RECOVER_CATEGORY_SUCCESS = "RECOVER_CATEGORY_SUCCESS";
 export const RECOVER_CATEGORY_FAILED = "RECOVER_CATEGORY_FAILED";
+export const FETCH_ACTIVE_CATEGORIES_REQUEST = "FETCH_ACTIVE_CATEGORIES_REQUEST";
+export const FETCH_ACTIVE_CATEGORIES_FAILED = "FETCH_ACTIVE_CATEGORIES_FAILED";
 import { store } from "../store";
  
 
@@ -45,6 +47,24 @@ export const getCategories = () => async(dispatch: any) => {
     throw error;
   }
 };
+
+export const getActiveCategories = () => async(dispatch: any) => {
+  dispatch({type: FETCH_ACTIVE_CATEGORIES_REQUEST})
+  try {
+    const data = await getActiveCategoriesService();
+    dispatch({
+      type: FETCH_ACTIVE_CATEGORIES_SUCCESS,
+      payload: data.listActiveCategoryDto
+    })
+  } catch (error: any) {
+    dispatch({
+      type: FETCH_ACTIVE_CATEGORIES_FAILED,
+      payload: error.response?.data?.message || error.message || "Failed to get active categories",
+    });
+    throw error;
+  }
+}
+  
 
 export const deleleCategory = (id: any) => async(dispatch: any) => {
   dispatch({type: DELETE_CATEGORY_REQUEST})

@@ -1,4 +1,4 @@
-import { addNewCategoryApi, deleteCategoryApi, getAllCategoriesApi, recoverCategoryApi, updateCategoryApi } from "../api/category-api"
+import { addNewCategoryApi, deleteCategoryApi, getAllCategoriesApi, recoverCategoryApi, updateCategoryApi, getActiveCategoriesApi } from "../api/category-api"
 import { convertCategoryModelToListCategoryDto } from "../converters/category-converter";
 import { mapToCategoryModel } from "../mappers/category-mapper";
 import type { CategoryModel } from "../models/bean/category-models";
@@ -13,6 +13,24 @@ export const getAllCategoriesService = async() => {
             categories,
             listActiveCategoryDto,
             listInActiveCategoryDto
+        };
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(error.response.data?.message || "Server error");
+        } else {
+            throw new Error(error.message || "Unexpected error occurred");
+        }
+    }
+}
+
+export const getActiveCategoriesService = async() => {
+    try {
+        const data = await getActiveCategoriesApi();
+        const categories = data.data.data.map(mapToCategoryModel).sort((a: any, b: any) => a.id - b.id);
+        const listActiveCategoryDto = categories.filter((cate: CategoryModel) => cate.isActive === true).map(convertCategoryModelToListCategoryDto);
+        return {
+            categories,
+            listActiveCategoryDto
         };
     } catch (error: any) {
         if (error.response) {

@@ -3,6 +3,7 @@ import type { TicketType } from "./ticket-form-models";
 //#region Event Form Models
 export interface EventFormData {
     mediaFile: MediaFileModel[] | null;
+    status?: "DRAFT" | "APPROVAL_PENDING" | "PUBLISHED" | string;
     title: string;
     summary: string;
     description: string;
@@ -15,10 +16,11 @@ export interface EventFormData {
     lineUp: LineUpItem[];
     agenda: AgendaSection[];
     ticketType: TicketType[] | null;
-    capacity: string;
+    capacity: number;
     category: number[];
     timezone: string;
-    language: string
+    language: string;
+    organizerId?: number;
 }
 
 export interface EventFormErrors {

@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../../store/store";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
-import { useCallback, useEffect, useState, useRef } from "react";
-import { getEventsByOwner, getEventDetailsById, setEventData } from "../../../store/actions/event-action";
+import { useCallback, useEffect, useState, useRef, useMemo } from "react";
+import { getEventsByOwner, getEventDetailsById, setEventData, updateEvent, publishEvent } from "../../../store/actions/event-action";
 import type { EventFormErrors, MediaFileModel, OrganizerEventsListItem } from "../../../models/form-models/event-form-models";
 import { showLoadingAlert, showSuccessAlert, showErrorAlert, closeLoadingAlert, showConfirmAlert } from "../../../helpers/alert-helpers";
 import type { EventFormData, GoodToKnowData } from "../../../models/form-models/event-form-models";
@@ -20,15 +20,18 @@ export const useEventViewModel = () => {
     const dispatch = useDispatch<AppDispatch>()
     const { eventsByUser, currentEvent, isLoading, error, isSaved } = useSelector((state: RootState) => state.eventReducer);
     const navigate = useNavigate()
-    const { eventId } = useParams<{ eventId: string }>()
+    const eventId = Number.parseInt(useParams<{ eventId: string }>().eventId || "")
     const [errors, setErrors] = useState<EventFormErrors>({})
+    const [activeTab, setActiveTab] = useState<"my" | "other">("my")
     const [events, setEvents] = useState<OrganizerEventsListItem[]>([])
+    const [otherEvents, setOtherEvents] = useState<OrganizerEventsListItem[]>([])
     const [searchQuery, setSearchQuery] = useState("")
     const [viewMode, setViewMode] = useState<"list" | "calendar">("list")
     const [statusFilter, setStatusFilter] = useState<string>("All")
     const [searchParams] = useSearchParams()
     const initialStep = Number.parseInt(searchParams.get("step") || "1")
     const [currentSection, setCurrentSection] = useState<string | number>(initialStep)
+    const [isPublishing, setIsPublishing] = useState(false)
 
     const [eventData, setEventDataLocal] = useState<EventFormData | null>(null)
     const [originalEventData, setOriginalEventData] = useState<EventFormData | null>(null)
@@ -39,6 +42,10 @@ export const useEventViewModel = () => {
         parkingInfo: null,
         faqs: [],
     })
+    const [publishOrganizerId, setPublishOrganizerId] = useState<number | undefined>(eventData?.organizerId)
+    const [publishCategoryIds, setPublishCategoryIds] = useState<number[]>(eventData?.category || [])
+
+    const { tickets: ticketsFromStore } = useSelector((state: RootState) => state.ticketReducer || { tickets: [] })
 
     // Refs for card components - để trigger expand
     const mediaCardRef = useRef<{ expand: () => void }>(null)
@@ -53,39 +60,71 @@ export const useEventViewModel = () => {
     const overviewRef = useRef<HTMLTextAreaElement>(null)
     const mediaRef = useRef<HTMLInputElement>(null)
 
-    useEffect(() => {
-        const fetchEventDetails = async () => {
-            if (!eventId) return
+    const completedSteps = useMemo(() => {
+        const steps: number[] = []
 
-            try {
-                showLoadingAlert("Loading event details...")
-                const result = await dispatch(getEventDetailsById(Number(eventId))) as unknown as EventDetailsDto
-                closeLoadingAlert()
+        if (!eventData) return steps
 
-                if (result) {
-                    
-                    // Map event details to form data
-                    const formData = eventConverter.convertEventDetailToFormData(result)
-                    const mediaFiles = eventConverter.convertBannerToMediaFile(result.eventInfo?.bannerImagePath ?? null)
-                    //const goodToKnow = eventConverter.convertGoodToKnowData(result)
+        const status = eventData.status?.toUpperCase() || ""
+        const ticketsCount = ticketsFromStore?.length || 0
 
-                    setEventDataLocal(formData)
-                    setOriginalEventData(formData) // Store original for comparison
-                    setUploadedMedia(mediaFiles)
-                    //setGoodToKnowData(goodToKnow)
-
-                    // Update Redux store
-                    dispatch(setEventData(formData))
-                }
-            } catch (err: any) {
-                closeLoadingAlert()
-                console.error("[EventViewModel] Failed to load event details:", err)
-                showErrorAlert("Failed to load event details", err.message)
-            }
+        // Step 1: Completed if status is DRAFT or higher
+        if (["DRAFT", "APPROVAL_PENDING", "PUBLISHED"].includes(status)) {
+            steps.push(1)
         }
 
+        // Step 2: Completed if status is DRAFT+ AND has at least 1 ticket
+        if (["DRAFT", "APPROVAL_PENDING", "PUBLISHED"].includes(status) && ticketsCount > 0) {
+            steps.push(2)
+        }
+
+        // Step 3: Completed if status is APPROVAL_PENDING or PUBLISHED
+        if (["APPROVAL_PENDING", "PUBLISHED"].includes(status)) {
+            steps.push(3)
+        }
+
+        return steps
+    }, [eventData?.status, ticketsFromStore?.length])
+    const fetchEventDetails = async () => {
+        if (!eventId) return
+
+        try {
+            showLoadingAlert("Loading event details...")
+            const result = await dispatch(getEventDetailsById(Number(eventId))) as unknown as EventDetailsDto
+            closeLoadingAlert()
+
+            if (result) {
+                console.log("[debug]Fetched event details:", result)
+                // Map event details to form data
+                const formData = eventConverter.convertEventDetailToFormData(result)
+                console.log("[debug]Converted form data:", formData)
+                const mediaFiles = eventConverter.convertBannerToMediaFile(result.eventInfo?.bannerImagePath ?? null)
+                //const goodToKnow = eventConverter.convertGoodToKnowData(result)
+                console.log("[debug]Converted media files:", mediaFiles)
+                setEventDataLocal(formData)
+                setOriginalEventData(formData) // Store original for comparison
+                setUploadedMedia(mediaFiles)
+                //setGoodToKnowData(goodToKnow)
+                // Update Redux store
+                dispatch(setEventData(formData))
+            }
+        } catch (err: any) {
+            closeLoadingAlert()
+            console.error("[EventViewModel] Failed to load event details:", err)
+            showErrorAlert("Failed to load event details", err.message)
+        }
+    }
+
+    useEffect(() => {
         fetchEventDetails()
     }, [eventId, dispatch])
+
+    useEffect(() => {
+        if (eventData) {
+            setPublishOrganizerId(eventData.organizerId)
+            setPublishCategoryIds(eventData.category || [])
+        }
+    }, [eventData])
 
     // Validation helper functions
     const validateTitle = (title: string): string | null => {
@@ -336,6 +375,18 @@ export const useEventViewModel = () => {
             showErrorAlert("Failed to fetch events", error.message || "An error occurred while fetching events.")
         }
     }, [dispatch])
+    const handleFetchOtherEvents = useCallback(async () => {
+        try {
+            showLoadingAlert("Fetching events...")
+            const result = await dispatch(getEventsByOwner()) as unknown as OrganizerEventsListItem[]
+
+            setOtherEvents(result)
+            closeLoadingAlert()
+        } catch (error: any) {
+            closeLoadingAlert()
+            showErrorAlert("Failed to fetch events", error.message || "An error occurred while fetching events.")
+        }
+    }, [dispatch])
     useEffect(() => {
         handleFetchOwnerEvents()
     }, [handleFetchOwnerEvents])
@@ -350,16 +401,42 @@ export const useEventViewModel = () => {
         return matchesSearch && matchesStatus
     })
 
+    const filteredMyEvents = events.filter((event) => {
+        const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesStatus = statusFilter === "All" || event.status === statusFilter.toUpperCase()
+        return matchesSearch && matchesStatus
+    })
+
+    const filteredOtherEvents = otherEvents.filter((event) => {
+        const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesStatus = statusFilter === "All" || event.status === statusFilter.toUpperCase()
+        return matchesSearch && matchesStatus
+    })
+
+    useEffect(() => {
+        if (activeTab === "other" && otherEvents.length === 0) {
+            handleFetchOtherEvents()
+        }
+    }, [activeTab, otherEvents.length, handleFetchOtherEvents])
+
+    const handleTabChange = (tab: "my" | "other") => {
+        setActiveTab(tab)
+        // Reset search và filter khi đổi tab
+        setSearchQuery("")
+        setStatusFilter("All")
+    }
+
     const getStatusColor = (status: string) => {
-        switch (status) {
-            case "Draft":
-                return "bg-gray-100 text-gray-700"
-            case "Published":
-                return "bg-green-100 text-green-700"
-            case "Pending":
-                return "bg-yellow-100 text-yellow-700"
+        const s = String(status || "").toUpperCase(); // normalize
+        switch (s) {
+            case "DRAFT":
+                return "bg-gray-100 text-gray-700";
+            case "PUBLISHED":
+                return "bg-green-100 text-green-700";
+            case "APPROVAL_PENDING":
+                return "bg-yellow-100 text-yellow-700";
             default:
-                return "bg-gray-100 text-gray-700"
+                return "bg-gray-100 text-gray-700";
         }
     }
 
@@ -372,8 +449,8 @@ export const useEventViewModel = () => {
         setCurrentSection(itemId)
     }
 
-    const handleSaveChanges = async () => {
-         const validationResult = validateForm()
+    const handleUpdateEvent = async () => {
+        const validationResult = validateForm()
 
         if (!validationResult.isValid) {
             focusErrorField(validationResult.firstErrorField)
@@ -383,15 +460,15 @@ export const useEventViewModel = () => {
 
         try {
             showLoadingAlert("Saving changes...")
-            
-            // TODO: Implement update API call here
-            // const bannerFile = uploadedMedia.find(m => m.type === 'image' && m.file)?.file
-            // const formDTO = await eventConverter.convertEventDataToFormDTO(eventData!, bannerFile)
-            // await dispatch(updateEvent(eventId, formDTO))
-            
+
+            //TODO: Implement update API call here
+            const bannerFile = uploadedMedia.find(m => m.type === 'image' && m.file)?.file
+            const formDTO = await eventConverter.convertEventDataToFormDTO(eventData!, bannerFile)
+            await dispatch(updateEvent(eventId, formDTO))
+
             closeLoadingAlert()
             await showSuccessAlert("Event updated successfully!")
-            
+
             // Update original data to prevent unsaved changes warning
             if (eventData) {
                 setOriginalEventData(eventData)
@@ -403,8 +480,73 @@ export const useEventViewModel = () => {
         }
     }
 
+    // Handler để update organizerId
+    const handleOrganizerChange = useCallback((newOrganizerId: number) => {
+        setPublishOrganizerId(newOrganizerId)
+        // Update vào eventData
+        if (eventData) {
+            const updatedEventData = {
+                ...eventData,
+                organizerId: newOrganizerId
+            }
+            setEventDataLocal(updatedEventData)
+            dispatch(setEventData(updatedEventData))
+        }
+    }, [eventData, dispatch])
+
+    // Handler để update categoryIds
+    const handleCategoryChange = useCallback((newCategoryIds: number[]) => {
+        setPublishCategoryIds(newCategoryIds)
+        // Update vào eventData
+        if (eventData) {
+            const updatedEventData = {
+                ...eventData,
+                category: newCategoryIds
+            }
+            setEventDataLocal(updatedEventData)
+            dispatch(setEventData(updatedEventData))
+        }
+    }, [eventData, dispatch])
+
+    const handlePublishEvent = useCallback(async () => {
+        if (!eventId || !eventData) {
+            showErrorAlert("Invalid Event", "Event data is missing.")
+            return false
+        }
+        // Validate categories
+        if (!publishOrganizerId) {
+            showErrorAlert("Missing Categories", "Please select at least one category.")
+            return false
+        }
+        if (!publishCategoryIds || publishCategoryIds.length === 0) {
+            showErrorAlert("Missing Organizer", "Please select an organizer for the event.")
+            return false
+        }
+        setIsPublishing(true)
+        try {
+            showLoadingAlert("Publishing event...")
+            const publishEventData: EventFormData = {
+                ...eventData,
+                organizerId: publishOrganizerId,
+                category: publishCategoryIds
+            }
+            const bannerFile = uploadedMedia.find(m => m.type === 'image' && m.file)?.file
+            const formDTO = await eventConverter.convertEventDataToFormDTO(publishEventData, bannerFile)
+            await dispatch(publishEvent(eventId, formDTO))
+
+            closeLoadingAlert()
+            await showSuccessAlert("Event Published!", "Your event has been submitted for approval.")
+            navigate("/organizer/events/all")
+            return true
+        } catch (error: any) {
+            showErrorAlert("Failed to publish event", error.message || "Please try again later.")
+            return false
+        } finally {
+            setIsPublishing(false)
+        }
+    }, [eventId, eventData, publishOrganizerId, publishCategoryIds, uploadedMedia, dispatch, navigate])
+
     const handleNavigateToEditEvent = useCallback(async (eventId: number) => {
-        await dispatch(getEventDetailsById(eventId));
         navigate(`/organizer/events/edit/${eventId}`)
     }, [dispatch, navigate])
 
@@ -425,6 +567,14 @@ export const useEventViewModel = () => {
         uploadedMedia,
         goodToKnowData,
         errors,
+        isPublishing,
+        publishOrganizerId,
+        publishCategoryIds,
+        activeTab,
+        filteredMyEvents,
+        filteredOtherEvents,
+        completedSteps,
+        ticketsCount: ticketsFromStore?.length || 0,
 
         // Refs
         mediaCardRef,
@@ -444,13 +594,17 @@ export const useEventViewModel = () => {
         setViewMode,
         statusFilter,
         handleBackClick,
-        handleSaveChanges,
+        handleUpdateEvent,
+        handlePublishEvent,
         handleStepClick,
         handleMenuItemClick,
+        handleTabChange,
         getStatusColor,
         setStatusFilter,
         handleNavigateToEditEvent,
         handleViewEvent,
+        handleOrganizerChange,
+        handleCategoryChange,
         setUploadedMedia,
         setGoodToKnowData,
         handleUpdateEventData,

@@ -1,35 +1,16 @@
 import { ExternalLink, Calendar1, Clock, Pin, CircleDollarSign, Camera, UsersRound } from "lucide-react"
-import type { EventFormData } from "../../models/form-models/event-form-models"
+import { formatDateRange } from "../../utils/Organizer/date-format"
+import type { EventPreviewCardProps } from "../../models/component-props/card-component-props"
 
-interface EventPreviewCardProps {
-    eventData: EventFormData
-}
-
-export function EventPreviewCard({ eventData }: EventPreviewCardProps) {
-    const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString("en-US", {
-            weekday: "short",
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-        })
-    }
-
-    const formatDateRange = (startDate: string, endDate: string, startTime: string, endTime: string) => {
-        console.log("[DEBUG] startDate:", startDate, "endDate:", endDate)
-        if (endDate === "") {
-            const formattedStartDate = formatDate(startDate)
-            return formattedStartDate
-        }
-        return `${formatDate(startDate)}, ${startTime} - ${formatDate(endDate)}, ${endTime}`
-    }
+export function EventPreviewCard({ eventData, mediaFile }: EventPreviewCardProps) {
+    const imageFiles = mediaFile?.filter((f) => f.type === "image") || []
     return (
         <div className="bg-card border rounded-lg overflow-hidden">
             {/* Event Banner */}
             <div className="bg-gray-900 h-48 flex items-center justify-center">
-                {eventData.mediaFile && eventData.mediaFile.length > 0 ? (
+                {imageFiles.length > 0 ? (
                     <img
-                        src={eventData.mediaFile[0].preview || "../../assets/react.svg"}
+                        src={imageFiles[0]?.preview || "../../assets/react.svg"}
                         alt="Event banner"
                         className="w-full h-full object-cover"
                     />

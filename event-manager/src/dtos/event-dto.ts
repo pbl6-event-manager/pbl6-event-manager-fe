@@ -1,6 +1,7 @@
 import type { CategoryModel } from "../models/bean/category-models"
 import type { EventModel } from "../models/bean/event-models"
 import type { OrganizerModel } from "../models/bean/organizer-models"
+import type { TicketModel } from "../models/bean/ticket-models"
 import type { UserModel } from "../models/bean/user-models"
 import type { ListCategoryDto } from "./category-dto"
 
@@ -55,7 +56,8 @@ export interface EventFormDto {
   latitude: number
   longitude: number
   bannerFile?: File
-  categoryIds: number[]
+  categoryIds: number[],
+  organizerId?: number
 };
 
 export interface EventListDto {
@@ -66,7 +68,8 @@ export interface EventListDto {
   startTime: string
   endTime: string
   location: string
-  status: string
+  status: string,
+  capacity?: number
 }
 
 export interface EventSelectionDto {
@@ -81,7 +84,7 @@ export interface EventDashBoardDto {
 
 export interface EventDetailsDto {
   eventInfo?: EventModel
-  ticket?: [],
+  ticket?: TicketModel[],
   categories?: CategoryModel[]
   organizer?: OrganizerModel 
   owner?: UserModel
