@@ -69,9 +69,9 @@ export const useOrganizerViewModel = () => {
 
   const handleFetchMyOrganizers = useCallback(async (): Promise<void> => {
     try {
-      showLoadingAlert("Loading organizers...")
+      //showLoadingAlert("Loading organizers...")
       await dispatch<any>(fetchMyOrganizers())
-      closeLoadingAlert()
+      //closeLoadingAlert()
     } catch (err) {
       showErrorAlert("Failed to load organizers", "Please try again later.")
     }

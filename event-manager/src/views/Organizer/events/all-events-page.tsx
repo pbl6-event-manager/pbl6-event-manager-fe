@@ -8,10 +8,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from "../../../components/ui/badge"
 import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
 
-
 export default function AllEventsPage() {
   const {
-    filteredEvents,
+    activeTab,
+    filteredMyEvents,
+    filteredOtherEvents,
     searchQuery,
     setSearchQuery,
     viewMode,
@@ -21,7 +22,11 @@ export default function AllEventsPage() {
     getStatusColor,
     handleNavigateToEditEvent,
     handleViewEvent,
+    handleTabChange,
   } = useEventViewModel()
+
+  // Get current filtered events based on active tab
+  const currentEvents = activeTab === "my" ? filteredMyEvents : filteredOtherEvents
 
   return (
     <div className="flex-1 bg-gray-50">
@@ -29,6 +34,27 @@ export default function AllEventsPage() {
         {/* Header */}
         <h1 className="text-5xl font-bold text-gray-900 mb-8">Events</h1>
 
+        {/* Tabs */}
+        <div className="flex gap-8 mb-6 border-b border-gray-200">
+          <button
+            onClick={() => handleTabChange("my")}
+            className={`pb-3 text-sm font-semibold transition-colors ${activeTab === "my"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-600 hover:text-gray-900"
+              }`}
+          >
+            My Events
+          </button>
+          <button
+            onClick={() => handleTabChange("other")}
+            className={`pb-3 text-sm font-semibold transition-colors ${activeTab === "other"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-600 hover:text-gray-900"
+              }`}
+          >
+            Other Events
+          </button>
+        </div>
 
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-6">
@@ -41,12 +67,12 @@ export default function AllEventsPage() {
                 placeholder="Search events"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-64"
+                className="pl-10 w-128"
               />
             </div>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Button
                 variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
@@ -64,7 +90,7 @@ export default function AllEventsPage() {
                 <CalendarIcon className="h-4 w-4 mr-2" />
                 Calendar
               </Button>
-            </div>
+            </div> */}
 
             {/* Status Filter */}
             <DropdownMenu>
@@ -77,41 +103,20 @@ export default function AllEventsPage() {
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => setStatusFilter("All")}>All</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setStatusFilter("Draft")}>Draft</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter("Pending")}>Pending</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter("Approval_Pending")}>Approval_Pending</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setStatusFilter("Published")}>Published</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
-          {/* Create Event Button */}
-          <Link to="/organizer/events/create-event">
-            <Button className="bg-[#f05537] hover:bg-[#d94829] text-white cursor-pointer">
-              Create Event
-            </Button>
-          </Link>
-        </div>
-
-        {/* Promotional Banner */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <Megaphone className="h-5 w-5 text-gray-700 mt-0.5" />
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-semibold text-gray-900">Showcase your artist lineup</h3>
-                <Badge variant="secondary" className="bg-white text-xs">
-                  NEW
-                </Badge>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                Add headliners and artist pages to your event listings to build hype and trust. Plus, your events can
-                get auto-posted to Spotify, Bandsintown, and more.
-              </p>
-              <div className="flex items-center gap-4">
-                <button className="text-sm text-blue-600 hover:underline font-medium">Add your lineup now</button>
-                <button className="text-sm text-blue-600 hover:underline font-medium">Learn more</button>
-              </div>
-            </div>
-          </div>
+          {/* Create Event Button - Only show on My Events tab */}
+          {activeTab === "my" && (
+            <Link to="/organizer/events/create-event">
+              <Button className="bg-[#f05537] hover:bg-[#d94829] text-white cursor-pointer">
+                Create Event
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Events Table */}
@@ -127,10 +132,12 @@ export default function AllEventsPage() {
           </div>
 
           {/* Table Body */}
-          {filteredEvents.length === 0 ? (
-            <div className="px-6 py-12 text-center text-gray-500">No events found</div>
+          {currentEvents.length === 0 ? (
+            <div className="px-6 py-12 text-center text-gray-500">
+              {activeTab === "my" ? "No events found" : "You are not assigned to any events"}
+            </div>
           ) : (
-            filteredEvents.map((event) => (
+            currentEvents.map((event) => (
               <div
                 key={event.id}
                 className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
@@ -172,6 +179,7 @@ export default function AllEventsPage() {
                     {event.status}
                   </Badge>
                 </div>
+
                 {/* Organizer Name */}
                 <div className="col-span-1 flex items-center text-sm text-gray-700">
                   <Badge variant="secondary">
@@ -188,25 +196,45 @@ export default function AllEventsPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleNavigateToEditEvent(event.id)
-                        }}
-                      >
-                        <Pencil className="h-4 w-4 mr-2" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        // onClick={(e) => {
-                        //   e.stopPropagation()
-                        //   handleDeleteEvent(event.id)
-                        // }}
-                        className="text-red-600"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
+                      {/* Only show Edit for My Events */}
+                      {activeTab === "my" && (
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleNavigateToEditEvent(event.id)
+                          }}
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                      )}
+
+                      {/* Show View Details for Other Events */}
+                      {activeTab === "other" && (
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleNavigateToEditEvent(event.id)
+                          }}
+                        >
+                          <Search className="h-4 w-4 mr-2" />
+                          View
+                        </DropdownMenuItem>
+                      )}
+
+                      {/* Only show Delete for My Events */}
+                      {activeTab === "my" && (
+                        <DropdownMenuItem
+                          // onClick={(e) => {
+                          //   e.stopPropagation()
+                          //   handleDeleteEvent(event.id)
+                          // }}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -214,41 +242,7 @@ export default function AllEventsPage() {
             ))
           )}
         </div>
-
-        {/* CSV Export */}
-        <div className="mt-4">
-          <button className="text-sm text-blue-600 hover:underline font-medium flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            CSV Export
-          </button>
-        </div>
       </div>
     </div>
-  )
-}
-
-function Megaphone({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
-      />
-    </svg>
-  )
-}
-
-function Download({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-      />
-    </svg>
   )
 }

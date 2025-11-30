@@ -27,4 +27,14 @@ export interface OverviewCardProps {
   description: string
   onUpdate: (description: string) => void
 }
+
+export interface EventCategoryCardProps {
+    selectedCategoryIds?: number[]
+    onCategoryChange?: (categoryIds: number[]) => void
+}
+
+export interface EventPreviewCardProps {
+    eventData: EventFormData,
+    mediaFile?: MediaFileModel[]
+}
 //#endregion

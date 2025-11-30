@@ -19,10 +19,10 @@ export interface TicketFormData {
 }
 
 export interface TicketType {
-  ticketID: string
+  ticketID: number
   nameTicket: string
   price: number
-  currency: string
+  currency: string,
   quantityTotal: number
 }
 

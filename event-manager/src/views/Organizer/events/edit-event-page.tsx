@@ -23,6 +23,11 @@ export default function EditEventPage() {
     eventData,
     uploadedMedia,
     goodToKnowData,
+    isPublishing,
+    publishOrganizerId,
+    publishCategoryIds,
+    completedSteps,
+    ticketsCount,
 
     // Refs
     mediaCardRef,
@@ -41,9 +46,14 @@ export default function EditEventPage() {
     handleStepClick,
     handleMenuItemClick,
     handleBackClick,
-    handleSaveChanges,
+
     handleUpdateEventData,
+    handlePublishEvent,
+    handleOrganizerChange,
+    handleCategoryChange,
   } = useEventViewModel()
+
+  
 
   if (isLoading || !eventData) {
     return (
@@ -71,7 +81,7 @@ export default function EditEventPage() {
               <Button size="sm" variant="outline" onClick={handleBackClick}>
                 Cancel
               </Button>
-              <Button size="sm" onClick={handleSaveChanges} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
+              <Button size="sm" onClick={() => { }} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
                 Save changes
               </Button>
             </div>
@@ -88,7 +98,7 @@ export default function EditEventPage() {
                 <EventSidebar
                   eventData={eventData}
                   currentStep={typeof currentSection === "number" ? currentSection : 1}
-                  completedSteps={[1]}
+                  completedSteps={completedSteps}
                   isCreating={false}
                   onStepClick={handleStepClick}
                   onMenuItemClick={handleMenuItemClick}
@@ -150,10 +160,13 @@ export default function EditEventPage() {
                   <div className="bg-card rounded-lg p-6 border">
                     <PublishEventPage
                       eventData={eventData}
-                      onPublish={(settings) => {
-                        console.log("[v0] Publishing event with settings:", settings)
-                        // TODO: Call publish action/API here
-                      }}
+                      mediaFile={uploadedMedia}
+                      isPublishing={isPublishing}
+                      publishOrganizerId={publishOrganizerId}
+                      publishCategoryIds={publishCategoryIds}
+                      handlePublishEvent={handlePublishEvent}
+                      handleOrganizerChange={handleOrganizerChange}
+                      handleCategoryChange={handleCategoryChange}
                     />
                   </div>
                 )}

@@ -58,7 +58,7 @@ export const eventMapper = {
   mapResponseToEventDetailsDto: (raw: any): EventDetailsDto => {
     return {
       eventInfo: eventMapper.mapCreateEventResponseDtoToEventModel(raw),
-      tickets: raw.tickets.map(mapToTicketModel).map(convertToTicketDto),
+      ticket: raw.tickets.map(mapToTicketModel).map(convertToTicketDto),
       categories: raw.categories.map(mapToCategoryModel),
       organizer: mapToOrganizerModel(raw.organizer),
       owner: mapToUserModel(raw.owner)

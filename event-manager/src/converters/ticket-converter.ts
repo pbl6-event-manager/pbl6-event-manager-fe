@@ -2,6 +2,7 @@ import type { CreateTicketRequestDto, TicketDto } from "../dtos/ticket-dto";
 import type { TicketFormData, TicketListItem } from "../models/form-models/ticket-form-models";
 import { isTicketOnSale } from "../utils/Organizer/ticket-util";
 import type { TicketModel } from "../models/bean/ticket-models";
+import type { TicketType } from "../models/form-models/ticket-form-models";
 
 export const convertToTicketDto = (model: TicketModel): TicketDto => ({
     id: model.id,
@@ -34,7 +35,7 @@ export const convertToTicketListItem = (dto: TicketDto): TicketListItem => {
     });
 
     return {
-        ticketID: dto.id.toString(),
+        ticketID: dto.id,
         nameTicket: dto.name,
         price: dto.price,
         currency: "USD", // Default currency, can be extended
@@ -86,5 +87,25 @@ export const convertFormDataToCreateRequest = (
         description: formData.description || "",
         saleStartDate: saleStartDateTime,
         saleEndDate: saleEndDateTime,
+    };
+};
+
+export const converTicketModelToTicketType = (ticketModel: TicketModel): TicketType => {
+    return {
+        ticketID: ticketModel.id,
+        nameTicket: ticketModel.name,
+        price: ticketModel.price,
+        quantityTotal: ticketModel.quantity,
+        currency: "USD",
+    };
+};
+
+export const convertTicketDtoToTicketType = (ticketDto: TicketDto): TicketType => {
+    return {
+        ticketID: ticketDto.id,
+        nameTicket: ticketDto.name,
+        price: ticketDto.price,
+        quantityTotal: ticketDto.quantity,
+        currency: "USD",
     };
 };

@@ -45,6 +45,12 @@ export function convertToISODateTime(date: string, time: string, timezone?: stri
     if (clean === "Z" || /^UTC$/i.test(clean)) return "+00:00"
     // Accept +HH:MM or -HH:MM
     if (/^[+-]\d{2}:\d{2}$/.test(clean)) return clean
+    // Accept GMT±HH or UTC±HH
+    if (/^UTC[+-]\d{1,2}$/.test(clean)) {
+      const sign = clean.includes("+") ? "+" : "-"
+      const hh = clean.split(sign)[1].padStart(2, "0")
+      return `${sign}${hh}:00`
+    }
     // Accept +HHMM or -HHMM
     const m = clean.match(/^([+-])(\d{2})(\d{2})$/)
     if (m) return `${m[1]}${m[2]}:${m[3]}`
@@ -65,7 +71,6 @@ export function convertToISODateTime(date: string, time: string, timezone?: stri
 
 export const fmt = (s?: string | Date | null) =>
   s ? new Date(s).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
-
 export const formatExpiry = (raw: any) => {
   const s =
     raw?.expiresAt ?? raw?.validTo ?? raw?.valid_to ?? raw?.expiry ?? raw;
@@ -101,3 +106,20 @@ export const formatExpiry = (raw: any) => {
 
   return { local, gmt };
 };
+
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
+export const formatDateRange = (startDate: string, endDate: string, startTime: string, endTime: string) => {
+  if (endDate === "") {
+    const formattedStartDate = formatDate(startDate)
+    return formattedStartDate
+  }
+  return `${formatDate(startDate)}, ${startTime} - ${formatDate(endDate)}, ${endTime}`
+}

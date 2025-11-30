@@ -81,7 +81,7 @@ export const useTicketViewModel = () => {
             const filtered = tickets.filter(ticket =>
                 ticket.nameTicket.toLowerCase().includes(query) ||
                 ticket.price.toString().includes(query) ||
-                ticket.ticketID.includes(query)
+                ticket.ticketID.toString().includes(query)
             );
             setFilteredTickets(filtered);
         }
@@ -118,14 +118,13 @@ export const useTicketViewModel = () => {
         setShowTicketForm(true)
     }
 
-    const handleEditTicket = async (ticketId: string) => {
+    const handleEditTicket = async (ticketId: number) => {
         if (!eventId) return;
 
         try {
             showLoadingAlert("Loading ticket...");
             await dispatch(getTicketByIdAction(Number(eventId), Number(ticketId)));
             
-
             closeLoadingAlert();
             if (currentTicketDto !== null) {
                 // Convert ticket DTO to form data
@@ -208,7 +207,7 @@ export const useTicketViewModel = () => {
         }
     };
 
-    const handleDeleteTicket = async (ticketId: string) => {
+    const handleDeleteTicket = async (ticketId: number) => {
         if (!eventId) return;
 
         const confirmed = await showConfirmAlert(

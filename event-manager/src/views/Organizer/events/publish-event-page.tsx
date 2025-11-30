@@ -1,41 +1,24 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "../../../components/ui/button"
 import { EventPreviewCard } from "../../../components/Organizer/event-preview-card"
 import { OrganizerByCard } from "../../../components/Organizer/organized-by-card"
-import { EventTypeCategoryCard } from "../../../components/Organizer/event-category-card"
-import type { EventFormData } from "../../../models/form-models/event-form-models"
+import { EventCategoryCard } from "../../../components/Organizer/event-category-card"
+import type { EventFormData, MediaFileModel } from "../../../models/form-models/event-form-models"
+import { RotateCw } from "lucide-react"
 
 interface PublishEventPageProps {
-    eventData: EventFormData
-    onPublish?: (settings: PublishSettings) => void
+    eventData: EventFormData,
+    mediaFile?: MediaFileModel[],
+    isPublishing: boolean,
+    publishOrganizerId: number | undefined,
+    publishCategoryIds: number[],
+    handlePublishEvent: () => void,
+    handleOrganizerChange: (organizerId: number) => void,
+    handleCategoryChange: (categoryIds: number[]) => void,
 }
 
-interface PublishSettings {
-    organizerId: string | number
-    categoryIds: number[]
-}
-
-export default function PublishEventPage({ eventData, onPublish }: PublishEventPageProps) {
-    const [categoryIds, setCategoryIds] = useState<number[]>([])
-    const [organizerId, setOrganizerId] = useState<string | number>("")
-    const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([])
-    const [isPublishing, setIsPublishing] = useState(false)
-
-    const handlePublish = async () => {
-        setIsPublishing(true)
-        try {
-            const settings: PublishSettings = {
-                organizerId,
-                categoryIds: selectedCategoryIds,
-            }
-            onPublish?.(settings)
-        } finally {
-            setIsPublishing(false)
-        }
-    }
-
+export default function PublishEventPage({ eventData, mediaFile, isPublishing, publishOrganizerId, publishCategoryIds, handlePublishEvent, handleOrganizerChange, handleCategoryChange }: PublishEventPageProps) {
     return (
         <div className="space-y-8 pb-24">
             {/* Header */}
@@ -48,24 +31,24 @@ export default function PublishEventPage({ eventData, onPublish }: PublishEventP
             <div className="grid grid-cols-2 gap-8">
                 {/* Left Column - Event Preview and Organizer*/}
                 <div className="lg:col-span-1 space-y-8">
-                    <EventPreviewCard eventData={eventData} />
-                    <OrganizerByCard organizerId={organizerId} onOrganizerChange={setOrganizerId} />
+                    <EventPreviewCard eventData={eventData} mediaFile={mediaFile}/>
+                    <OrganizerByCard organizerId={publishOrganizerId} onOrganizerChange={handleOrganizerChange} />
                 </div>
 
                 {/* Right Column - Categories */}
                 <div className="lg:col-span-1 space-y-8">
-                    <EventTypeCategoryCard selectedCategoryIds={selectedCategoryIds} onCategoryChange={setSelectedCategoryIds} />
+                    <EventCategoryCard selectedCategoryIds={publishCategoryIds} onCategoryChange={handleCategoryChange} />
                 </div>
             </div>
             {/* Publish Button */}
             <Button
-                onClick={handlePublish}
-                disabled={isPublishing || !organizerId}
+                onClick={() => handlePublishEvent()}
+                disabled={isPublishing || !publishOrganizerId || publishCategoryIds.length === 0}
                 className="w-full bg-[#f05537] hover:bg-[#d63c1f] text-white font-semibold py-3 h-auto"
             >
                 {isPublishing ? (
                     <>
-                        <span className="animate-spin inline-block mr-2">⟳</span>
+                        <RotateCw className="animate-spin inline-block mr-2" />
                         Publishing...
                     </>
                 ) : (

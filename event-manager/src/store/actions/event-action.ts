@@ -34,11 +34,14 @@ export const GET_EVENTS_BY_OWNER_FAILURE = "GET_EVENTS_BY_OWNER_FAILURE";
 export const UPDATE_EVENT_REQUEST = "UPDATE_EVENT_REQUEST";
 export const UPDATE_EVENT_SUCCESS = "UPDATE_EVENT_SUCCESS";
 export const UPDATE_EVENT_FAILURE = "UPDATE_EVENT_FAILURE";
+export const PUBLISH_EVENT_REQUEST = "PUBLISH_EVENT_REQUEST";
+export const PUBLISH_EVENT_SUCCESS = "PUBLISH_EVENT_SUCCESS";
+export const PUBLISH_EVENT_FAILURE = "PUBLISH_EVENT_FAILURE";
 
 import type { EventFormDto, EventListDto, EventSelectionDto } from "../../dtos/event-dto";
 import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
-import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService } from "../../service/event-service";
+import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService, publishEventService } from "../../service/event-service";
 import { store } from "../store";
 
 export const getAllEventsAdmin = () => async (dispatch: any) => {
@@ -197,6 +200,26 @@ export const updateEvent = (eventId: number, formData: EventFormDto) => async (d
     });
   } catch (error) {
     
+  }
+}
+
+export const publishEvent = (eventId: number, formData: EventFormDto) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: PUBLISH_EVENT_REQUEST
+    });
+    const result = await publishEventService(eventId, formData);
+    dispatch({
+      type: PUBLISH_EVENT_SUCCESS,
+      payload: result
+    });
+  } catch (error: any) {
+    dispatch({
+      type: PUBLISH_EVENT_FAILURE,
+      payload:
+        error.response?.data?.message || error.message || "Publish event failed",
+    });
+    throw error;
   }
 }
 
