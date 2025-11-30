@@ -1,7 +1,9 @@
+import { convertToTicketDto } from "../converters/ticket-converter";
 import type { EventDashBoardDto, EventDetailsDto } from "../dtos/event-dto";
 import type { EventModel } from "../models/bean/event-models";
 import { mapToCategoryModel } from "./category-mapper";
 import { mapToOrganizerModel } from "./organizer-mapper";
+import { mapToTicketModel } from "./ticket-mapper";
 import { mapToUserModel } from "./user-mapper";
 
 export const eventMapper = {
@@ -56,7 +58,7 @@ export const eventMapper = {
   mapResponseToEventDetailsDto: (raw: any): EventDetailsDto => {
     return {
       eventInfo: eventMapper.mapCreateEventResponseDtoToEventModel(raw),
-      ticket: raw.tickets,
+      tickets: raw.tickets.map(mapToTicketModel).map(convertToTicketDto),
       categories: raw.categories.map(mapToCategoryModel),
       organizer: mapToOrganizerModel(raw.organizer),
       owner: mapToUserModel(raw.owner)

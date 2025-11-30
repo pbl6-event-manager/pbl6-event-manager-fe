@@ -4,11 +4,9 @@ import TabItem from "../../components/Admin/tab-item";
 import { ArrowLeft } from "lucide-react";
 import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import { EventInfoSection } from "../../components/Admin/event-info-section";
-import EventStaffSection from "../../components/Admin/event-stafff-section";
+import { EventStaffSection } from "../../components/Admin/event-stafff-section";
+import { EventTicketSection } from "../../components/Admin/event-ticket-section";
 
-const EventTicketSection: React.FC<{ id: string }> = ({ id }) => {
-  return <div>Tickets for event id: {id}</div>;
-};
 const EventAttendeeSection: React.FC<{ id: string }> = ({ id }) => {
   return <div>Attendees for event id: {id}</div>;
 };
@@ -40,8 +38,8 @@ const AdminEventDetailPage: React.FC = () => {
 
       <div className="mt-6">
         {activeDelTab === "information" && <EventInfoSection/>}
-        {activeDelTab === "staff" && <EventStaffSection id={id} />}
-        {activeDelTab === "ticket" && <EventTicketSection id={id} />}
+        {activeDelTab === "staff" && <EventStaffSection/>}
+        {activeDelTab === "ticket" && <EventTicketSection tickets={eventDetails?.tickets}/>}
         {activeDelTab === "attendee" && <EventAttendeeSection id={id} />}
         {activeDelTab === "transaction" && <EventTransactionSection id={id} />}
       </div>
