@@ -28,9 +28,56 @@ export const useEventViewModel = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [viewMode, setViewMode] = useState<"list" | "calendar">("list")
     const [statusFilter, setStatusFilter] = useState<string>("All")
-    const [searchParams] = useSearchParams()
-    const initialStep = Number.parseInt(searchParams.get("step") || "1")
-    const [currentSection, setCurrentSection] = useState<string | number>(initialStep)
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    const allowedSections = [
+        "dashboard",
+        "team-management",
+        "manage-attendee",
+        "discount",
+    ]
+    const MAX_STEP = 3
+
+    const rawSection = searchParams.get("section")
+    const rawStep = searchParams.get("step")
+    const parsedStep = rawStep ? Number.parseInt(rawStep, 10) : undefined
+    const initialResolved: string | number = (rawSection && allowedSections.includes(rawSection))
+        ? rawSection
+        : (parsedStep && !Number.isNaN(parsedStep) ? Math.max(1, Math.min(MAX_STEP, parsedStep)) : 1)
+
+    const [currentSectionState, setCurrentSectionState] = useState<string | number>(initialResolved)
+
+    const setCurrentSection = (s: string | number) => {
+        let isStep = typeof s === "number" || (!Number.isNaN(Number(s)) && String(Number(s)) === String(s))
+        let stepVal: number | null = null
+        let sectionVal: string | null = null
+
+        if (isStep) {
+            const n = Number(s)
+            stepVal = Math.max(1, Math.min(MAX_STEP, Math.floor(n)))
+        } else {
+            const ss = String(s).trim()
+            sectionVal = allowedSections.includes(ss) ? ss : null
+        }
+
+        if (stepVal === null && sectionVal === null) return
+
+        const newState: string | number = stepVal !== null ? stepVal : (sectionVal as string)
+        setCurrentSectionState(newState)
+
+        try {
+            const sp = new URLSearchParams(searchParams.toString())
+            if (stepVal !== null) {
+                sp.set("step", String(stepVal))
+                sp.delete("section")
+            } else {
+                sp.set("section", sectionVal as string)
+                sp.delete("step")
+            }
+            setSearchParams(sp, { replace: true })
+        } catch (e) { }
+    }
+
     const [isPublishing, setIsPublishing] = useState(false)
 
     const [eventData, setEventDataLocal] = useState<EventFormData | null>(null)
@@ -392,7 +439,8 @@ export const useEventViewModel = () => {
     }, [handleFetchOwnerEvents])
 
     const handleViewEvent = (eventId: number) => {
-        navigate(`/organizer/events/dashboard/${eventId}`)
+        // append section param so edit page can read and persist it on reload
+        navigate(`/organizer/events/edit/${eventId}?section=dashboard`);
     }
 
     const filteredEvents = events.filter((event) => {
@@ -547,7 +595,7 @@ export const useEventViewModel = () => {
     }, [eventId, eventData, publishOrganizerId, publishCategoryIds, uploadedMedia, dispatch, navigate])
 
     const handleNavigateToEditEvent = useCallback(async (eventId: number) => {
-        navigate(`/organizer/events/edit/${eventId}`)
+        navigate(`/organizer/events/edit/${eventId}?step=1`);
     }, [dispatch, navigate])
 
     const handleUpdateEventData = useCallback((newData: EventFormData) => {
@@ -562,7 +610,7 @@ export const useEventViewModel = () => {
         isSaved,
         filteredEvents,
         searchQuery,
-        currentSection,
+        currentSection: currentSectionState,
         eventData,
         uploadedMedia,
         goodToKnowData,

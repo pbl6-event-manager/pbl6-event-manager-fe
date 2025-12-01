@@ -77,7 +77,7 @@ const VoucherListPage: React.FC = () => {
             />
             <button
               onClick={openCreateModal}
-              className="px-4 py-2 bg-[#f05537] text-white rounded-md"
+              className="px-4 py-2 bg-[#f05537] text-white rounded-md cursor-pointer"
             >
               Create voucher
             </button>
@@ -100,7 +100,7 @@ const VoucherListPage: React.FC = () => {
             <div>Expiry</div>
             <div>GMT</div>
             <div>Status</div>
-            <div className="text-right">Actions</div>
+            <div className="pr-10">Actions</div>
           </div>
 
           <div className="overflow-y-auto" style={{ maxHeight: "48vh" }}>
@@ -134,9 +134,20 @@ const VoucherListPage: React.FC = () => {
                     <div className="truncate">{local}</div>
                     <div className="text-sm text-gray-600 truncate">{gmt}</div>
                     <div className="text-center">
-                      <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-800">
-                        Active
-                      </span>
+                      {(() => {
+                        const status = (v.status || "").toString().toUpperCase();
+                        const map: Record<string, { label: string; bg: string; text: string }> = {
+                          ACTIVE: { label: "Active", bg: "bg-green-50", text: "text-green-800" },
+                          INACTIVE: { label: "Inactive", bg: "bg-gray-100", text: "text-gray-700" },
+                          EXPIRED: { label: "Expired", bg: "bg-red-50", text: "text-red-800" },
+                        };
+                        const s = map[status] ?? { label: status || "Unknown", bg: "bg-gray-100", text: "text-gray-700" };
+                        return (
+                          <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${s.bg} ${s.text}`}>
+                            {s.label}
+                          </span>
+                        );
+                      })()}
                     </div>
                     <div className="flex items-center justify-end gap-2">
                       <button

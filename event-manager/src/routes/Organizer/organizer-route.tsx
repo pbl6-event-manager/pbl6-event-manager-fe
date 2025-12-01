@@ -27,7 +27,6 @@ const OrganizerRoutes: RouteObject = {
     { path: "events/all", element: <AllEventsPage /> },
     { path: "events/create-event", element: <CreateEventPage /> },
     { path: "events/create-tickets/:eventId", element: <CreateTicketsPage /> },
-    { path: "events/dashboard/:eventId", element: <EventDashboardPage /> },
     { path: "events/team-management/:eventId", element: <EventTeamManagementPage /> },
     { path: "events/edit/:eventId", element: <EditEventPage /> },
     { path: "settings", element: <OrganizationSettingsPage /> },
