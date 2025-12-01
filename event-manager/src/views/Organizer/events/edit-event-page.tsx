@@ -46,6 +46,7 @@ export default function EditEventPage() {
     handleStepClick,
     handleMenuItemClick,
     handleBackClick,
+    setCurrentSection,
 
     handleUpdateEventData,
     handlePublishEvent,
@@ -72,7 +73,7 @@ export default function EditEventPage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={handleBackClick}>
+              <Button variant="ghost" size="sm" onClick={handleBackClick} className="cursor-pointer">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to events
               </Button>
@@ -143,12 +144,6 @@ export default function EditEventPage() {
                       onUpdate={(description) => handleUpdateEventData({ ...eventData, description })}
                       textareaRef={overviewRef}
                     />
-
-                    {/* Good To Know Section */}
-                    <GoodToKnowCard data={goodToKnowData} onUpdate={setGoodToKnowData} />
-
-                    {/* Additional Sections */}
-                    <LineupAndAgendaCard eventData={eventData} onUpdate={handleUpdateEventData} />
                   </>
                 )}
                 {currentSection === 2 && (
@@ -172,7 +167,7 @@ export default function EditEventPage() {
                 )}
                 {currentSection === "dashboard" && (
                   <div className="bg-card rounded-lg border">
-                    <EventDashboardPage />
+                    <EventDashboardPage setCurrentSection={setCurrentSection} />
                   </div>
                 )}
                 {currentSection === "team-management" && (

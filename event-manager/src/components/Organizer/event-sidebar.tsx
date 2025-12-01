@@ -156,7 +156,7 @@ export function EventSidebar({
                   <button
                     key={item.id}
                     onClick={() => onMenuItemClick?.(item.id)}
-                    className={`w-full flex items-center justify-between px-2 py-2 text-sm rounded-md transition-colors ${activeMenuItem === item.id
+                    className={`w-full flex items-center justify-between px-2 py-2 text-sm rounded-md transition-colors cursor-pointer ${activeMenuItem === item.id
                         ? "bg-primary/10 text-primary font-medium"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted"
                       }`}
