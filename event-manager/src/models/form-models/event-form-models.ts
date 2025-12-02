@@ -104,4 +104,16 @@ export interface OrganizerEventsListItem {
     status: string;
     organizerName: string;
 }
+
+export interface StaffEventsListItem {
+    id: number;
+    bannerImagePath: string | null;
+    title: string;
+    address: string;
+    startDate: string;
+    endDate: string;
+    status: string;
+    organizerName: string;
+    roleInEvent: string;
+}
 //#endregion

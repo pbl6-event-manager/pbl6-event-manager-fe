@@ -1,7 +1,8 @@
 import { FETCH_EVENTS_BY_USER, CLEAR_EVENTS, CREATE_EVENT_REQUEST, CREATE_EVENT_SUCCESS, CREATE_EVENT_FAILED, GET_ALL_EVENT_ADMIN_REQUEST, GET_ALL_EVENT_ADMIN_SUCCESS, GET_ALL_EVENT_ADMIN_FAILURE, GET_EVENTS_BY_ORGANIZERS_REQUEST, GET_EVENTS_BY_ORGANIZERS_FAILURE, GET_EVENTS_BY_ORGANIZERS_SUCCESS, GET_EVENT_DETAILS_REQUEST, GET_EVENT_DETAILS_SUCCESS, GET_EVENT_DETAILS_FAILURE, APPROVE_REJECT_EVENT_REQUEST, APPROVE_REJECT_EVENT_SUCCESS, APPROVE_REJECT_EVENT_FAILURE 
   ,GET_EVENTS_BY_OWNER_FAILURE, GET_EVENTS_BY_OWNER_REQUEST, GET_EVENTS_BY_OWNER_SUCCESS,
   UPDATE_EVENT_REQUEST, UPDATE_EVENT_SUCCESS, UPDATE_EVENT_FAILURE,
-  PUBLISH_EVENT_REQUEST, PUBLISH_EVENT_SUCCESS, PUBLISH_EVENT_FAILURE
+  PUBLISH_EVENT_REQUEST, PUBLISH_EVENT_SUCCESS, PUBLISH_EVENT_FAILURE,
+  GET_EVENTS_BY_STAFF_REQUEST, GET_EVENTS_BY_STAFF_SUCCESS, GET_EVENTS_BY_STAFF_FAILURE
 } from "../actions/event-action";
 import { DEFAULT_EVENT_STATE, type EventState } from "../../models/reducer-models/event-reducer-models";
 
@@ -132,6 +133,24 @@ export const eventReducer = (state = DEFAULT_EVENT_STATE, action: any): EventSta
 
       }
     case GET_EVENTS_BY_OWNER_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload
+      }
+    case GET_EVENTS_BY_STAFF_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null
+      }
+    case GET_EVENTS_BY_STAFF_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        eventByStaff: action.payload.eventListDto
+      }
+    case GET_EVENTS_BY_STAFF_FAILURE:
       return {
         ...state,
         isLoading: false,

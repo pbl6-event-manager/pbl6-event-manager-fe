@@ -37,11 +37,14 @@ export const UPDATE_EVENT_FAILURE = "UPDATE_EVENT_FAILURE";
 export const PUBLISH_EVENT_REQUEST = "PUBLISH_EVENT_REQUEST";
 export const PUBLISH_EVENT_SUCCESS = "PUBLISH_EVENT_SUCCESS";
 export const PUBLISH_EVENT_FAILURE = "PUBLISH_EVENT_FAILURE";
+export const GET_EVENTS_BY_STAFF_REQUEST = "GET_EVENTS_BY_STAFF_REQUEST";
+export const GET_EVENTS_BY_STAFF_SUCCESS = "GET_EVENTS_BY_STAFF_SUCCESS";
+export const GET_EVENTS_BY_STAFF_FAILURE = "GET_EVENTS_BY_STAFF_FAILURE";
 
 import type { EventFormDto, EventListDto, EventSelectionDto } from "../../dtos/event-dto";
 import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
-import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService, publishEventService } from "../../service/event-service";
+import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService, publishEventService, getEventsByStaffService } from "../../service/event-service";
 import { store } from "../store";
 
 export const getAllEventsAdmin = () => async (dispatch: any) => {
@@ -246,6 +249,31 @@ export const getEventsByOwner = () => async (dispatch: any) => {
     dispatch({
       type: GET_EVENTS_BY_OWNER_FAILURE,
       payload: error.response?.data?.message || error.message || "Failed to get events by owner",
+    });
+    throw error;
+  }
+}
+
+export const getEventsByStaff = () => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: GET_EVENTS_BY_STAFF_REQUEST,
+    });
+    const { eventListDto, staffEventsListItem } = await getEventsByStaffService();
+    console.log("[debug] Event List DTO from action:", eventListDto);
+    console.log("[debug] Staff Events List Item from action:", staffEventsListItem);
+    dispatch({
+      type: GET_EVENTS_BY_STAFF_SUCCESS,
+      payload: {
+        eventListDto
+      },
+    });
+    return staffEventsListItem;
+    
+  } catch (error: any) {
+    dispatch({
+      type: GET_EVENTS_BY_STAFF_FAILURE,
+      payload: error.response?.data?.message || error.message || "Failed to get events by staff",
     });
     throw error;
   }

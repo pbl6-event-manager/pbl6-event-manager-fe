@@ -1,6 +1,6 @@
 import type { EventModel} from "../models/bean/event-models"
 import type { CreateEventRequestDto, EventDetailsDto, EventFormDto, EventListDto } from "../dtos/event-dto"
-import type { EventFormData, MediaFileModel } from "../models/form-models/event-form-models"
+import type { EventFormData, MediaFileModel, StaffEventsListItem } from "../models/form-models/event-form-models"
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models"
 import { convertToISODateTime } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
@@ -178,5 +178,17 @@ export const eventConverter = {
       },
     ]
   },
-
+  convertEventListDtoToStaffEventsListItem: (eventListDto: EventListDto, organizerName: string, roleInEvent: string) : StaffEventsListItem => {
+    return {
+      id: eventListDto.id,
+      bannerImagePath: eventListDto.bannerImagePath ?? null,
+      organizerName: organizerName ?? "",
+      title: eventListDto.title,
+      address: eventListDto.location,
+      startDate: eventListDto.startTime.toString(),
+      endDate: eventListDto.endTime.toString(),
+      status: eventListDto.status,
+      roleInEvent: roleInEvent ?? "Staff"
+    }
+  }
 }
