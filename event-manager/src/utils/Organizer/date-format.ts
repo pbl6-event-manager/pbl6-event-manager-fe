@@ -71,6 +71,7 @@ export function convertToISODateTime(date: string, time: string, timezone?: stri
 
 export const fmt = (s?: string | Date | null) =>
   s ? new Date(s).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
+
 export const formatExpiry = (raw: any) => {
   const s =
     raw?.expiresAt ?? raw?.validTo ?? raw?.valid_to ?? raw?.expiry ?? raw;

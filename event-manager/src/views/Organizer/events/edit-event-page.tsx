@@ -13,6 +13,7 @@ import EventDashboardPage from "./event-dashboard-page"
 import EventTeamManagementPage from "./event-team-management-page"
 import CreateTicketsPage from "./create-ticket-page"
 import PublishEventPage from "./publish-event-page"
+import EventDiscountPage from "./event-discount-page"
 import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
 
 export default function EditEventPage() {
@@ -175,34 +176,15 @@ export default function EditEventPage() {
                     <EventTeamManagementPage />
                   </div>
                 )}
-                {currentSection === "order-options" && (
-                  <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Order Options</h2>
-                    <p className="text-muted-foreground">Order options will be displayed here.</p>
-                  </div>
-                )}
-                {currentSection === "payments" && (
-                  <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Payments & Tax</h2>
-                    <p className="text-muted-foreground">Payment and tax settings will be displayed here.</p>
-                  </div>
-                )}
-                {currentSection === "marketing" && (
-                  <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Marketing</h2>
-                    <p className="text-muted-foreground">Marketing tools and settings will be displayed here.</p>
-                  </div>
-                )}
                 {currentSection === "manage-attendees" && (
                   <div className="bg-card rounded-lg p-6 border">
                     <h2 className="text-2xl font-bold mb-4">Manage Attendees</h2>
                     <p className="text-muted-foreground">Attendee management section will be displayed here.</p>
                   </div>
                 )}
-                {currentSection === "reporting" && (
+                {currentSection === "discount" && (
                   <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Reporting</h2>
-                    <p className="text-muted-foreground">Event reporting and analytics will be displayed here.</p>
+                    <EventDiscountPage />
                   </div>
                 )}
               </div>
