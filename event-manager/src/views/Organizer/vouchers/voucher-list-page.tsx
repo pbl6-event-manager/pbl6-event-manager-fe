@@ -6,11 +6,14 @@ import VoucherForm from "./voucher-form";
 import VoucherDuplicateForm from "./voucher-duplicate-form";
 import useVoucherViewModel from "../../../viewmodels/Organizer/voucher/voucher-view-model";
 import { formatExpiry } from "../../../utils/Organizer/date-format";
+import { VoucherSearchFilter } from "../../../components/Organizer/voucher-search-filter";
 
 const VoucherListPage: React.FC = () => {
   const {
     q,
     setQ,
+    discountType,
+    setDiscountType,
     filtered,
     showForm,
     openCreateModal,
@@ -69,11 +72,12 @@ const VoucherListPage: React.FC = () => {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">Vouchers</h1>
           <div className="flex items-center gap-3">
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search code or expiry"
-              className="border px-3 py-2 rounded-md"
+            {/* Search and Filter */}
+            <VoucherSearchFilter 
+                searchTerm={q} 
+                discountType={discountType}
+                onSearchChange={setQ}
+                onTypeChange={setDiscountType}
             />
             <button
               onClick={openCreateModal}

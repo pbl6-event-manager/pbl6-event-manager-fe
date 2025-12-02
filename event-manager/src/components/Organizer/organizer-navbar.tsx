@@ -26,6 +26,9 @@ export default function OrganizerNavbar() {
     }
     return "U"
   }
+  const handleNavigateToCreateEvent = () => {
+    navigate("/organizer/events/create-event")
+  }
 
   const getDisplayName = () => {
     if (user?.firstName && user?.lastName) {
@@ -47,7 +50,7 @@ export default function OrganizerNavbar() {
 
         {/* Right side - Actions and User */}
         <div className="flex items-center gap-4">
-          <Button className="bg-[#f05537] hover:bg-[#e04527] text-white">
+          <Button className="bg-[#f05537] hover:bg-[#e04527] text-white cursor-pointer" onClick={handleNavigateToCreateEvent}>
             <Plus className="h-4 w-4 mr-2" />
             Create
           </Button>

@@ -1,4 +1,5 @@
 import type { ListUserDto } from "../../dtos/user-dto";
+import type { VoucherListDto } from "../../dtos/voucher-dto";
 import type { EventFormData, GoodToKnowData, MediaFileModel } from "../form-models/event-form-models";
 //#region Card Props
 
@@ -36,5 +37,12 @@ export interface EventCategoryCardProps {
 export interface EventPreviewCardProps {
     eventData: EventFormData,
     mediaFile?: MediaFileModel[]
+}
+
+export interface VoucherCardProps {
+  voucher: VoucherListDto
+  onDelete: (id: number) => void
+  onCopy: (code: string) => void
+  isDeleting?: boolean
 }
 //#endregion

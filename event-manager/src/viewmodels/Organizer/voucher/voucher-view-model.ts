@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { getEventsByOwner } from "../../../store/actions/event-action";
 import type { RootState } from "../../../store/store";
-import { generateRandomCode } from "../../../utils/voucher-code";
+import { generateRandomCode } from "../../../utils/Organizer/voucher-utils";
 import { showLoadingAlert, closeLoadingAlert, showErrorAlert, showWarningAlert, showSuccessAlert, showConfirmAlert } from "../../../helpers/alert-helpers";
 import { createNewVoucher, deleteVoucher, duplicateVoucher, getAllVoucher, getVoucherById, updateVoucher } from "../../../store/actions/voucher-action";
 import { convertToISODateTime } from "../../../utils/Organizer/date-format";
@@ -11,9 +12,11 @@ import type { VoucherModel } from "../../../models/bean/voucher-models";
 
 export const useVoucherViewModel = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const eventSelectionList = useSelector((root: RootState) => root.eventReducer.eventSelectionList);
-    const { voucherListDto } = useSelector((root: RootState) => root.voucherReducer);
+    const { isLoading, error, voucherListDto } = useSelector((root: RootState) => root.voucherReducer);
     const [q, setQ] = useState<string>("");
+    const [discountType, setDiscountType] = useState<"all" | "PERCENTAGE" | "FIXED_AMOUNT">("all");
     const [showForm, setShowForm] = useState<boolean>(false);
     const [stepTypeSelected, setStepTypeSelected] = useState<"PERCENTAGE" | "FIXED_AMOUNT" | null>(null);
     const [voucherId, setVoucherId] = useState<number>(0);
@@ -80,9 +83,18 @@ export const useVoucherViewModel = () => {
 
     const filtered = useMemo(() => {
         const term = q.trim().toLowerCase();
-        if (!term) return voucherListDto;
-        return voucherListDto.filter((v) => v.code.toLowerCase().includes(term));
-    }, [q, voucherListDto]);
+
+        //return voucherListDto.filter((v) => v.code.toLowerCase().includes(term));
+        return voucherListDto.filter((voucher) => {
+            const matchesSearch = !term ||
+                voucher.code.toLowerCase().includes(term) ||
+                voucher.amount?.toString().includes(term);
+
+            const matchesType = discountType === "all" || voucher.type === discountType;
+
+            return matchesSearch && matchesType;
+        });
+    }, [q, discountType, voucherListDto]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -289,10 +301,23 @@ export const useVoucherViewModel = () => {
             }
         })
     }
+    const handleCopyCode = (code: string) => {
+        navigator.clipboard.writeText(code)
+    }
+
+    const handleNavigateToManageVouchers = () => {
+        showConfirmAlert("Do you want to change to Manage Vouchers ?").then((confirmed) => {
+            if (confirmed) {
+                navigate("/organizer/vouchers");
+            }
+        })
+    }
 
     return {
         q,
         setQ,
+        discountType,
+        setDiscountType,
         filtered,
 
         showForm,
@@ -353,7 +378,12 @@ export const useVoucherViewModel = () => {
         pageSize,
         setCurrentPage,
         currentPage,
-        totalItems
+        totalItems,
+
+        isLoading,
+        error,
+        handleCopyCode,
+        handleNavigateToManageVouchers
     };
 };
 
