@@ -122,5 +122,9 @@ export const formatDateRange = (startDate: string, endDate: string, startTime: s
     const formattedStartDate = formatDate(startDate)
     return formattedStartDate
   }
+  //For list view where time is not shown
+  if (startDate === endDate && startTime === "" && endTime === "") {
+    return `${formatDate(startDate)}`
+  }
   return `${formatDate(startDate)}, ${startTime} - ${formatDate(endDate)}, ${endTime}`
 }

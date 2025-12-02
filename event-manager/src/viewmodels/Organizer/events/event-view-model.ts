@@ -2,8 +2,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../../store/store";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState, useRef, useMemo } from "react";
-import { getEventsByOwner, getEventDetailsById, setEventData, updateEvent, publishEvent } from "../../../store/actions/event-action";
-import type { EventFormErrors, MediaFileModel, OrganizerEventsListItem } from "../../../models/form-models/event-form-models";
+import { getEventsByOwner, getEventDetailsById, setEventData, updateEvent, publishEvent, getEventsByStaff } from "../../../store/actions/event-action";
+import type { EventFormErrors, MediaFileModel, OrganizerEventsListItem, StaffEventsListItem } from "../../../models/form-models/event-form-models";
 import { showLoadingAlert, showSuccessAlert, showErrorAlert, closeLoadingAlert, showConfirmAlert } from "../../../helpers/alert-helpers";
 import type { EventFormData, GoodToKnowData } from "../../../models/form-models/event-form-models";
 import { eventConverter } from "../../../converters/event-converter";
@@ -18,13 +18,13 @@ interface ValidationResult {
 
 export const useEventViewModel = () => {
     const dispatch = useDispatch<AppDispatch>()
-    const { eventsByUser, currentEvent, isLoading, error, isSaved } = useSelector((state: RootState) => state.eventReducer);
+    const { eventsByUser, eventByStaff, currentEvent, isLoading, error, isSaved } = useSelector((state: RootState) => state.eventReducer);
     const navigate = useNavigate()
     const eventId = Number.parseInt(useParams<{ eventId: string }>().eventId || "")
     const [errors, setErrors] = useState<EventFormErrors>({})
     const [activeTab, setActiveTab] = useState<"my" | "other">("my")
     const [events, setEvents] = useState<OrganizerEventsListItem[]>([])
-    const [otherEvents, setOtherEvents] = useState<OrganizerEventsListItem[]>([])
+    const [otherEvents, setOtherEvents] = useState<StaffEventsListItem[]>([])
     const [searchQuery, setSearchQuery] = useState("")
     const [viewMode, setViewMode] = useState<"list" | "calendar">("list")
     const [statusFilter, setStatusFilter] = useState<string>("All")
@@ -425,8 +425,8 @@ export const useEventViewModel = () => {
     const handleFetchOtherEvents = useCallback(async () => {
         try {
             showLoadingAlert("Fetching events...")
-            const result = await dispatch(getEventsByOwner()) as unknown as OrganizerEventsListItem[]
-
+            const result = await dispatch(getEventsByStaff()) as unknown as StaffEventsListItem[]
+            console.log("[debug] Staff Events List Item:", result);
             setOtherEvents(result)
             closeLoadingAlert()
         } catch (error: any) {
@@ -437,6 +437,9 @@ export const useEventViewModel = () => {
     useEffect(() => {
         handleFetchOwnerEvents()
     }, [handleFetchOwnerEvents])
+    useEffect(() => {
+        handleFetchOtherEvents()
+    }, [handleFetchOtherEvents])
 
     const handleViewEvent = (eventId: number) => {
         // append section param so edit page can read and persist it on reload

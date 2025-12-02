@@ -7,6 +7,7 @@ import { Input } from "../../../components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../../components/ui/dropdown-menu"
 import { Badge } from "../../../components/ui/badge"
 import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
+import { formatDateRange } from "../../../utils/Organizer/date-format"
 
 export default function AllEventsPage() {
   const {
@@ -25,8 +26,6 @@ export default function AllEventsPage() {
     handleTabChange,
   } = useEventViewModel()
 
-  // Get current filtered events based on active tab
-  const currentEvents = activeTab === "my" ? filteredMyEvents : filteredOtherEvents
 
   return (
     <div className="flex-1 bg-gray-50">
@@ -121,125 +120,202 @@ export default function AllEventsPage() {
 
         {/* Events Table */}
         <div className="bg-white rounded-lg border border-gray-200">
-          {/* Table Header */}
-          <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 text-sm font-semibold text-gray-700">
-            <div className="col-span-4">Event</div>
-            <div className="col-span-2">Sold</div>
-            <div className="col-span-2">Gross</div>
-            <div className="col-span-2">Status</div>
-            <div className="col-span-1">Organizer</div>
-            <div className="col-span-1"></div>
-          </div>
+          {activeTab === "my" ? (
+            <div>
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 text-sm font-semibold text-gray-700">
+                <div className="col-span-4">Event</div>
+                <div className="col-span-2">Sold</div>
+                <div className="col-span-2">Gross</div>
+                <div className="col-span-2">Status</div>
+                <div className="col-span-1">Organizer</div>
+                <div className="col-span-1"></div>
+              </div>
+              {filteredMyEvents.length === 0 ? (
+                <div className="px-6 py-12 text-center text-gray-500">
+                  No events found
+                </div>
+              ) : (
+                filteredMyEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+                    onClick={() => handleViewEvent(event.id)}
+                  >
+                    {/* Event Info */}
+                    <div className="col-span-4 flex items-center gap-4">
+                      <div className="flex flex-col items-center justify-center bg-orange-50 rounded px-2 py-1 min-w-[50px]">
+                        <span className="text-xs font-semibold text-orange-600 uppercase">
+                          {new Date(event.startDate).toLocaleDateString("en-US", { month: "short" })}
+                        </span>
+                        <span className="text-xl font-bold text-gray-900">{new Date(event.startDate).getDate()}</span>
+                      </div>
+                      <img
+                        src={event.bannerImagePath || "/placeholder.svg"}
+                        alt={event.title}
+                        className="w-16 h-16 rounded object-cover"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">{event.title}</h3>
+                        <p className="text-sm text-gray-600">{event.address}</p>
+                        <p className="text-sm text-gray-500">
+                          {formatDateRange(event.startDate, event.endDate, "", "")}
+                        </p>
+                      </div>
+                    </div>
 
-          {/* Table Body */}
-          {currentEvents.length === 0 ? (
-            <div className="px-6 py-12 text-center text-gray-500">
-              {activeTab === "my" ? "No events found" : "You are not assigned to any events"}
+                    {/* Sold */}
+                    <div className="col-span-2 flex items-center text-sm text-gray-700">
+                      {event.soldTickets} / {event.capacity}
+                    </div>
+
+                    {/* Gross */}
+                    <div className="col-span-2 flex items-center text-sm text-gray-700">$0</div>
+
+                    {/* Status */}
+                    <div className="col-span-2 flex items-center">
+                      <Badge variant="secondary" className={getStatusColor(event.status)}>
+                        {event.status}
+                      </Badge>
+                    </div>
+
+                    {/* Organizer Name */}
+                    <div className="col-span-1 flex items-center text-sm text-gray-700">
+                      <Badge variant="secondary" className="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <span className="block truncate">
+                          {event.organizerName}
+                        </span>
+                      </Badge>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="col-span-1 flex items-center justify-end">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {/* Only show Edit for My Events */}
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleNavigateToEditEvent(event.id)
+                            }}
+                          >
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          {/* Only show Delete for My Events */}
+                          <DropdownMenuItem
+                            // onClick={(e) => {
+                            //   e.stopPropagation()
+                            //   handleDeleteEvent(event.id)
+                            // }}
+                            className="text-red-600"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           ) : (
-            currentEvents.map((event) => (
-              <div
-                key={event.id}
-                className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
-                onClick={() => handleViewEvent(event.id)}
-              >
-                {/* Event Info */}
-                <div className="col-span-4 flex items-center gap-4">
-                  <div className="flex flex-col items-center justify-center bg-orange-50 rounded px-2 py-1 min-w-[50px]">
-                    <span className="text-xs font-semibold text-orange-600 uppercase">
-                      {new Date(event.startDate).toLocaleDateString("en-US", { month: "short" })}
-                    </span>
-                    <span className="text-xl font-bold text-gray-900">{new Date(event.startDate).getDate()}</span>
-                  </div>
-                  <img
-                    src={event.bannerImagePath || "/placeholder.svg"}
-                    alt={event.title}
-                    className="w-16 h-16 rounded object-cover"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{event.title}</h3>
-                    <p className="text-sm text-gray-600">{event.address}</p>
-                    <p className="text-sm text-gray-500">
-                      {event.startDate} - {event.endDate}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Sold */}
-                <div className="col-span-2 flex items-center text-sm text-gray-700">
-                  {event.soldTickets} / {event.capacity}
-                </div>
-
-                {/* Gross */}
-                <div className="col-span-2 flex items-center text-sm text-gray-700">$0</div>
-
-                {/* Status */}
-                <div className="col-span-2 flex items-center">
-                  <Badge variant="secondary" className={getStatusColor(event.status)}>
-                    {event.status}
-                  </Badge>
-                </div>
-
-                {/* Organizer Name */}
-                <div className="col-span-1 flex items-center text-sm text-gray-700">
-                  <Badge variant="secondary">
-                    {event.organizerName}
-                  </Badge>
-                </div>
-
-                {/* Actions */}
-                <div className="col-span-1 flex items-center justify-end">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {/* Only show Edit for My Events */}
-                      {activeTab === "my" && (
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleNavigateToEditEvent(event.id)
-                          }}
-                        >
-                          <Pencil className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                      )}
-
-                      {/* Show View Details for Other Events */}
-                      {activeTab === "other" && (
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleNavigateToEditEvent(event.id)
-                          }}
-                        >
-                          <Search className="h-4 w-4 mr-2" />
-                          View
-                        </DropdownMenuItem>
-                      )}
-
-                      {/* Only show Delete for My Events */}
-                      {activeTab === "my" && (
-                        <DropdownMenuItem
-                          // onClick={(e) => {
-                          //   e.stopPropagation()
-                          //   handleDeleteEvent(event.id)
-                          // }}
-                          className="text-red-600"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+            <div>
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 text-sm font-semibold text-gray-700">
+                <div className="col-span-5">Event</div>
+                <div className="col-span-2">Role</div>
+                <div className="col-span-2">Status</div>
+                <div className="col-span-2">Organizer</div>
+                <div className="col-span-1"></div>
               </div>
-            ))
+              {/* Table Body */}
+              {filteredMyEvents.length === 0 ? (
+                <div className="px-6 py-12 text-center text-gray-500">
+                  You are not assigned to any events
+                </div>
+              ) : (
+                filteredOtherEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+                    onClick={() => handleViewEvent(event.id)}
+                  >
+                    {/* Event Info */}
+                    <div className="col-span-5 flex items-center gap-4">
+                      <div className="flex flex-col items-center justify-center bg-orange-50 rounded px-2 py-1 min-w-[50px]">
+                        <span className="text-xs font-semibold text-orange-600 uppercase">
+                          {new Date(event.startDate).toLocaleDateString("en-US", { month: "short" })}
+                        </span>
+                        <span className="text-xl font-bold text-gray-900">{new Date(event.startDate).getDate()}</span>
+                      </div>
+                      <img
+                        src={event.bannerImagePath || "/placeholder.svg"}
+                        alt={event.title}
+                        className="w-16 h-16 rounded object-cover"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">{event.title}</h3>
+                        <p className="text-sm text-gray-600">{event.address}</p>
+                        <p className="text-sm text-gray-500">
+                          {formatDateRange(event.startDate, event.endDate, "", "")}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Role in Event */}
+                    <div className="col-span-2 flex items-center text-sm text-gray-700">
+                      {event.roleInEvent}
+                    </div>
+
+                    {/* Status */}
+                    <div className="col-span-2 flex items-center">
+                      <Badge variant="secondary" className={getStatusColor(event.status)}>
+                        {event.status}
+                      </Badge>
+                    </div>
+
+                    {/* Organizer Name */}
+                    <div className="col-span-2 flex items-center text-sm text-gray-700">
+                      <Badge variant="secondary" className="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <span className="block truncate">
+                          {event.organizerName}
+                        </span>
+                      </Badge>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="col-span-1 flex items-center justify-end">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {/* Show View Details for Other Events */}
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleNavigateToEditEvent(event.id)
+                            }}
+                          >
+                            <Search className="h-4 w-4 mr-2" />
+                            View
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           )}
         </div>
       </div>

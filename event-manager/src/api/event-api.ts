@@ -12,6 +12,8 @@ export const approveRejectEventApi = (eventId: number, isApprove: boolean) => ap
 
 export const getEventsByOwnerApi = () => apiClient.get(`/events/my-events`);
 
+export const getEventsByStaffApi = () => apiClient.get(`/events/my-event-staff`);
+
 export const updateEventApi = (eventId: number, event: any) => apiClient.put(`/events/${eventId}`, event, 
     {headers: {"Content-type": "multipart/form-data"}
 });

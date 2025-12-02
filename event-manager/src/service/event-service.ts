@@ -1,9 +1,9 @@
-import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi, getEventsByOwnerApi, updateEventApi, publishEventApi } from "../api/event-api"
+import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi, getEventsByOwnerApi, updateEventApi, publishEventApi, getEventsByStaffApi } from "../api/event-api"
 import { eventMapper } from "../mappers/event-mapper"
 import { eventConverter } from "../converters/event-converter"
 import type { EventFormDto, EventListDto, EventSelectionDto } from "../dtos/event-dto"
 import type { EventModel } from "../models/bean/event-models";
-import type { OrganizerEventsListItem } from "../models/form-models/event-form-models";
+import type { OrganizerEventsListItem, StaffEventsListItem } from "../models/form-models/event-form-models";
 import { getMyOrganizersService } from "./organizer-service";
 
 export const createEventService = async (formData: EventFormDto) => {
@@ -277,6 +277,36 @@ export const getEventsByOwnerService = async () => {
       };
     }
     else {
+      throw new Error("Unexpected error occurred");
+    }
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
+export const getEventsByStaffService = async () => {
+  try {
+    const response = await getEventsByStaffApi();
+    if (response.data.message === "success") {
+      const rawData = response.data.data;
+      console.log("[debug] Raw Data:", rawData);
+      const eventModelList: EventModel[] = rawData.map(eventMapper.mapResponseEventToEventModel);
+      const eventListDto: EventListDto[] = eventModelList.map(eventConverter.convertEventModelToEventListDto);
+      const staffEventsListItem: StaffEventsListItem[] = eventListDto.map((dto) => {
+        const organizerName = rawData.find((item: any) => item.id === dto.id)?.organizer?.name || "Organizer";
+        const roleInEvent = rawData.find((item: any) => item.id === dto.id)?.roleInEvent || "Staff";
+        return eventConverter.convertEventListDtoToStaffEventsListItem(dto, organizerName, roleInEvent);
+      });
+      console.log("[debug] Staff Events List Item:", staffEventsListItem);
+      return {
+        eventListDto,
+        staffEventsListItem
+      };
+    } else {
       throw new Error("Unexpected error occurred");
     }
   } catch (error: any) {
