@@ -1,4 +1,4 @@
-import { createVoucherApi, deleteVoucherApi, getAllVoucherApi, getVoucherByIdApi, updateVoucherApi } from "../api/voucher-api";
+import { createVoucherApi, deleteVoucherApi, getAllVoucherApi, getVoucherByIdApi, updateVoucherApi, getVouchersByEventIdApi } from "../api/voucher-api";
 import { convertVoucherModelToVoucherListDto } from "../converters/voucher-converter";
 import type { EventSelectionDto } from "../dtos/event-dto";
 import type { CreateVoucherDto, VoucherListDto } from "../dtos/voucher-dto";
@@ -92,6 +92,22 @@ export const deleteVoucherService = async (voucherId: number) => {
         if(response.data.message === "success") {
             return voucherId;
         }
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(error.response.data?.message || "Server error");
+        } else {
+            throw new Error(error.message || "Unexpected error occurred");
+        }
+    }
+}
+
+export const getVouchersByEventIdService = async (eventId: number) => {
+    try {
+        const response = await getVouchersByEventIdApi(eventId);
+        const voucherModelList = response.data.data.map(mapResponseToVoucherModel);
+        const voucherDtoList = voucherModelList.map(convertVoucherModelToVoucherListDto);
+        console.log("[debug] Vouchers for event", eventId, voucherDtoList);
+        return voucherDtoList;
     } catch (error: any) {
         if (error.response) {
             throw new Error(error.response.data?.message || "Server error");
