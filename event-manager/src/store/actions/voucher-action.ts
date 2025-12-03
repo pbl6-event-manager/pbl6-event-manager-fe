@@ -53,10 +53,31 @@ export const createNewVoucher = (createVoucherDto: CreateVoucherDto) => async (d
         const response = await createNewVoucherService(createVoucherDto);
         const voucherList = store.getState().voucherReducer.voucherListDto;
         const updatedVoucherList = [response, ...voucherList];
+        const eventListDto = (await getEventsByOwnerService()).eventListDto;
+        const eventListSelectionDto: EventSelectionDto[] = eventListDto;
+
+        const normalizedList = (updatedVoucherList || []).filter(
+            (v): v is VoucherListDto => v !== undefined && v !== null
+        );
+
+        const voucherDtoListWithEventTitle = normalizedList.map((voucher) => {
+            const evtId = (voucher as any).eventId ?? (voucher as any).event;
+            if (evtId != null) {
+                const event = eventListSelectionDto.find((e) => e.id === Number(evtId));
+                return {
+                    ...voucher,
+                    eventTitle: event?.title || "Unknown Event",
+                };
+            }
+            return {
+                ...voucher,
+                eventTitle: "All Events",
+            };
+        });
 
         dispatch({
             type: CREATE_NEW_VOUCHER_SUCCESS,
-            payload: updatedVoucherList
+            payload: voucherDtoListWithEventTitle
         })
     } catch (error: any) {
         dispatch({
