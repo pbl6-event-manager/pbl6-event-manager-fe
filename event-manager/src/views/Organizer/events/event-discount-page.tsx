@@ -11,7 +11,7 @@ export default function EventDiscountPage() {
     const {
         isLoading,
         error,
-        filtered,
+        eventFiltered,
         q,
         setQ,
         discountType,
@@ -63,7 +63,7 @@ export default function EventDiscountPage() {
             />
 
             {/* Empty State */}
-            {!isLoading && filtered.length === 0 && (
+            {!isLoading && eventFiltered.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12 bg-muted/30 rounded-lg border border-dashed">
                     <Ticket className="h-12 w-12 text-muted-foreground mb-3" />
                     <h3 className="text-lg font-medium text-muted-foreground mb-1">No vouchers yet</h3>
@@ -74,7 +74,7 @@ export default function EventDiscountPage() {
             )}
 
             {/* Vouchers Grid */}
-            {filtered.length > 0 && (
+            {eventFiltered.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {isLoading ? (
                         <>
@@ -83,7 +83,7 @@ export default function EventDiscountPage() {
                             ))}
                         </>
                     ) : (
-                        filtered.map((voucher) => (
+                        eventFiltered.map((voucher) => (
                             <VoucherCard key={voucher.id} voucher={voucher} onDelete={handleDeleteVoucher} onCopy={handleCopyCode} />
                         ))
                     )}
@@ -91,19 +91,19 @@ export default function EventDiscountPage() {
             )}
 
             {/* Summary Stats */}
-            {filtered.length > 0 && (
+            {eventFiltered.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t">
                     <div className="bg-card p-4 rounded-lg border">
                         <p className="text-sm text-muted-foreground mb-1">Total Vouchers</p>
-                        <p className="text-2xl font-bold">{filtered.length}</p>
+                        <p className="text-2xl font-bold">{eventFiltered.length}</p>
                     </div>
                     <div className="bg-card p-4 rounded-lg border">
                         <p className="text-sm text-muted-foreground mb-1">Active Vouchers</p>
-                        <p className="text-2xl font-bold text-green-600">{filtered.filter((v) => v.status).length}</p>
+                        <p className="text-2xl font-bold text-green-600">{eventFiltered.filter((v) => v.status).length}</p>
                     </div>
                     <div className="bg-card p-4 rounded-lg border">
                         <p className="text-sm text-muted-foreground mb-1">Total Uses</p>
-                        <p className="text-2xl font-bold">{calculateTotalUses(filtered)}</p>
+                        <p className="text-2xl font-bold">{calculateTotalUses(eventFiltered)}</p>
                     </div>
                 </div>
             )}

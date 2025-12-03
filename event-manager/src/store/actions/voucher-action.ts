@@ -1,7 +1,7 @@
 import type { EventSelectionDto } from "../../dtos/event-dto";
 import type { CreateVoucherDto, VoucherListDto } from "../../dtos/voucher-dto";
 import { getEventsByOwnerService } from "../../service/event-service";
-import { createNewVoucherService, deleteVoucherService, getAllVoucherService, getVoucherByIdService, updateVoucherService } from "../../service/voucher-service";
+import { createNewVoucherService, deleteVoucherService, getAllVoucherService, getVoucherByIdService, getVouchersByEventIdService, updateVoucherService } from "../../service/voucher-service";
 import { store } from "../store";
 
 export const GET_ALL_VOUCHER_REQUEST = "GET_ALL_VOUCHER_REQUEST";
@@ -22,6 +22,9 @@ export const UPDATE_VOUCHER_FAILURE = "UPDATE_VOUCHER_FAILURE";
 export const DELETE_VOUCHER_REQUEST = "DELETE_VOUCHER_REQUEST";
 export const DELETE_VOUCHER_SUCCESS = "DELETE_VOUCHER_SUCCESS";
 export const DELETE_VOUCHER_FAILURE = "DELETE_VOUCHER_FAILURE";
+export const GET_VOUCHERS_BY_EVENT_ID_REQUEST = "GET_VOUCHERS_BY_EVENT_ID_REQUEST";
+export const GET_VOUCHERS_BY_EVENT_ID_SUCCESS = "GET_VOUCHERS_BY_EVENT_ID_SUCCESS";
+export const GET_VOUCHERS_BY_EVENT_ID_FAILURE = "GET_VOUCHERS_BY_EVENT_ID_FAILURE";
 
 export const getAllVoucher = () => async (dispatch: any) => {
     try {
@@ -241,6 +244,26 @@ export const deleteVoucher = (voucherId: number) => async (dispatch: any) => {
         dispatch({
             type: DELETE_VOUCHER_FAILURE,
             payload: error?.message || "Failed to delete this voucher"
+        })
+        throw error;
+    }
+}
+
+export const getVouchersByEventId = (eventId: number) => async (dispatch: any) => {
+    try {
+        dispatch({
+            type: GET_VOUCHERS_BY_EVENT_ID_REQUEST
+        })
+        const voucherDtoList = await getVouchersByEventIdService(eventId);
+        console.log("[debug] Vouchers for event", eventId, voucherDtoList);
+        dispatch({
+            type: GET_VOUCHERS_BY_EVENT_ID_SUCCESS,
+            payload: voucherDtoList
+        })
+    } catch (error: any) {
+        dispatch({
+            type: GET_VOUCHERS_BY_EVENT_ID_FAILURE,
+            payload: error?.message || "Failed to get vouchers for this event"
         })
         throw error;
     }
