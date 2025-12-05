@@ -7,37 +7,43 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../../../components/ui/dropdown-menu"
 import { Textarea } from "../../../components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
-
 import { useTicketViewModel } from "../../../viewmodels/Organizer/events/ticket-view-model"
 
-export default function CreateTicketsPage() {
+interface CreateTicketsPageProps {
+  onNext?: () => void;
+}
+
+export default function CreateTicketsPage({ onNext }: CreateTicketsPageProps) {
   const {
     navigate,
-        eventId,
-        showTicketForm,
-        showTicketTypeSelection,
-        selectedTicketType,
-        setSelectedTicketType,
-        tickets,
-        filteredTickets,
-        searchQuery,
-        setSearchQuery,
-        ticketFormData,
-        setTicketFormData,
-        showCurrencyDialog,
-        setShowCurrencyDialog,
-        currency,
-        setCurrency,
-        isLoading,
-        error,
-        handleTicketTypeSelect,
-        handleCurrencyConfirm,
-        handleAddMoreTickets,
-        handleSaveTicket,
-        handleCancel,
-        editingTicketId,
-        handleEditTicket,
-        handleDeleteTicket,
+    eventId,
+    showTicketForm,
+    setShowTicketForm,
+    showTicketTypeSelection,
+    setShowTicketTypeSelection,
+    selectedTicketType,
+    setSelectedTicketType,
+    tickets,
+    setTickets,
+    filteredTickets,
+    searchQuery,
+    setSearchQuery,
+    ticketFormData,
+    setTicketFormData,
+    showCurrencyDialog,
+    setShowCurrencyDialog,
+    currency,
+    setCurrency,
+    isLoading,
+    error,
+    handleTicketTypeSelect,
+    handleCurrencyConfirm,
+    handleAddMoreTickets,
+    handleSaveTicket,
+    handleCancel,
+    editingTicketId,
+    handleEditTicket,
+    handleDeleteTicket,
   } = useTicketViewModel()
 
   return (
@@ -188,9 +194,7 @@ export default function CreateTicketsPage() {
                           <div className="flex items-start justify-between">
                             <div className="flex items-start gap-4 flex-1">
                               <div className="w-8 h-8 flex items-center justify-center">
-                                <div className="w-6 h-6 border-2 border-muted-foreground rounded">
-
-                                </div>
+                                <Ticket className="h-5 w-5 text-primary" />
                               </div>
                               <div className="flex-1">
                                 <h3 className="font-semibold text-lg">{ticket.nameTicket}</h3>
@@ -226,7 +230,7 @@ export default function CreateTicketsPage() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-40">
                                   <DropdownMenuItem
-                                  onClick={() => handleEditTicket(ticket.ticketID)}
+                                    onClick={() => handleEditTicket(ticket.ticketID)}
                                   >
                                     <Pencil className="h-4 w-4 mr-2" />
                                     Edit
@@ -493,7 +497,7 @@ export default function CreateTicketsPage() {
           <Button
             size="lg"
             className="bg-[#f05537] hover:bg-[#d63c1f] text-white"
-            onClick={() => navigate(`/organizer/events/edit/${eventId}?step=3`)}
+            onClick={onNext}
             disabled={tickets.length === 0}
           >
             Next

@@ -2,19 +2,16 @@
 
 import { ArrowLeft } from "lucide-react"
 import { Button } from "../../../components/ui/button"
-import { EventTitleCard } from "../../../components/Organizer/event-title-card"
-import { DateLocationCard } from "../../../components/Organizer/date-location-card"
 import { EventSidebar } from "../../../components/Organizer/event-sidebar"
-import { MediaUploadCard } from "../../../components/Organizer/media-upload-card"
-import { OverviewCard } from "../../../components/Organizer/overview-card"
 import EventDashboardPage from "./event-dashboard-page"
 import EventTeamManagementPage from "./event-team-management-page"
 import CreateTicketsPage from "./create-ticket-page"
 import PublishEventPage from "./publish-event-page"
 import EventDiscountPage from "./event-discount-page"
+import EditEventInfoPage from "./edit-event-info-page"
 import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
 
-export default function EditEventPage() {
+export default function EventDetailPage() {
   const {
     isLoading,
     currentSection,
@@ -42,14 +39,12 @@ export default function EditEventPage() {
     handleMenuItemClick,
     handleBackClick,
     setCurrentSection,
-
     handleUpdateEventData,
     handlePublishEvent,
     handleOrganizerChange,
     handleCategoryChange,
+    handleUpdateEvent,
   } = useEventViewModel()
-
-  
 
   if (isLoading || !eventData) {
     return (
@@ -73,14 +68,7 @@ export default function EditEventPage() {
                 Back to events
               </Button>
             </div>
-            <div className="container mx-auto px-4 flex justify-end gap-3">
-              <Button size="sm" variant="outline" onClick={handleBackClick} className="cursor-pointer">
-                Cancel
-              </Button>
-              <Button size="sm" onClick={() => { }} className="bg-[#f05537] hover:bg-[#d63c1f] text-white cursor-pointer">
-                Save changes
-              </Button>
-            </div>
+            
           </div>
         </div>
       </header>
@@ -103,49 +91,35 @@ export default function EditEventPage() {
               </div>
             </div>
 
+            {/* Main Content */}
             <div className="lg:col-span-3 overflow-y-auto max-h-[calc(100vh-120px)] pr-4">
               <div className="space-y-8 pb-24">
                 {currentSection === 1 && (
-                  <>
-                    {/* Upload Card */}
-                    <MediaUploadCard
-                      ref={mediaCardRef}
-                      uploadedMedia={uploadedMedia}
-                      onUpdate={setUploadedMedia}
-                      inputRef={mediaRef}
-                    />
-
-                    {/* Event Title Card */}
-                    <EventTitleCard
-                      ref={titleCardRef}
-                      eventData={eventData}
-                      onUpdate={handleUpdateEventData}
-                      inputRef={titleRef}
-                    />
-
-                    {/* Date and Location */}
-                    <DateLocationCard
-                      ref={dateLocationCardRef}
-                      eventData={eventData}
-                      onUpdate={handleUpdateEventData}
-                      dateInputRef={dateTimeRef}
-                      locationInputRef={locationRef}
-                    />
-
-                    {/* Overview Section */}
-                    <OverviewCard
-                      ref={overviewCardRef}
-                      description={eventData.description}
-                      onUpdate={(description) => handleUpdateEventData({ ...eventData, description })}
-                      textareaRef={overviewRef}
-                    />
-                  </>
+                  <EditEventInfoPage
+                    mediaCardRef={mediaCardRef}
+                    titleCardRef={titleCardRef}
+                    dateLocationCardRef={dateLocationCardRef}
+                    overviewCardRef={overviewCardRef}
+                    mediaRef={mediaRef}
+                    titleRef={titleRef}
+                    dateTimeRef={dateTimeRef}
+                    locationRef={locationRef}
+                    overviewRef={overviewRef}
+                    eventData={eventData}
+                    uploadedMedia={uploadedMedia}
+                    handleUpdateEventData={handleUpdateEventData}
+                    setUploadedMedia={setUploadedMedia}
+                    handleUpdateEvent={handleUpdateEvent}
+                    handleBackClick={handleBackClick}
+                  />
                 )}
+                
                 {currentSection === 2 && (
                   <div className="bg-card rounded-lg border">
-                    <CreateTicketsPage />
+                    <CreateTicketsPage onNext={() => setCurrentSection(3)} />
                   </div>
                 )}
+                
                 {currentSection === 3 && (
                   <div className="bg-card rounded-lg p-6 border">
                     <PublishEventPage
@@ -160,22 +134,26 @@ export default function EditEventPage() {
                     />
                   </div>
                 )}
+                
                 {currentSection === "dashboard" && (
                   <div className="bg-card rounded-lg border">
                     <EventDashboardPage setCurrentSection={setCurrentSection} />
                   </div>
                 )}
+                
                 {currentSection === "team-management" && (
                   <div className="bg-card rounded-lg border">
                     <EventTeamManagementPage />
                   </div>
                 )}
+                
                 {currentSection === "manage-attendees" && (
                   <div className="bg-card rounded-lg p-6 border">
                     <h2 className="text-2xl font-bold mb-4">Manage Attendees</h2>
                     <p className="text-muted-foreground">Attendee management section will be displayed here.</p>
                   </div>
                 )}
+                
                 {currentSection === "discount" && (
                   <div className="bg-card rounded-lg p-6 border">
                     <EventDiscountPage />
