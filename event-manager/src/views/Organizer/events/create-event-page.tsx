@@ -5,8 +5,6 @@ import { DateLocationCard } from "../../../components/Organizer/date-location-ca
 import { EventSidebar } from "../../../components/Organizer/event-sidebar"
 import { MediaUploadCard } from "../../../components/Organizer/media-upload-card"
 import { OverviewCard } from "../../../components/Organizer/overview-card"
-import { GoodToKnowCard } from "../../../components/Organizer/good-to-know-card"
-import { LineupAndAgendaCard } from "../../../components/Organizer/lineup-and-agenda-card"
 import { useCreateEventViewModel } from "../../../viewmodels/Organizer/events/create-event-view-model"
 
 export default function CreateEventPage() {
@@ -15,7 +13,6 @@ export default function CreateEventPage() {
     error,
     eventData,
     uploadedMedia,
-    goodToKnowData,
     currentStep,
 
     // Card refs
@@ -36,7 +33,6 @@ export default function CreateEventPage() {
     setEventData,
     handleStepClick,
     setUploadedMedia,
-    setGoodToKnowData,
   } = useCreateEventViewModel()
   
   return (
@@ -45,7 +41,7 @@ export default function CreateEventPage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={handleBackClick}>
+              <Button variant="ghost" size="sm" onClick={handleBackClick} className="cursor-pointer">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to events
               </Button>
@@ -102,10 +98,6 @@ export default function CreateEventPage() {
                   onUpdate={(description) => setEventData({ ...eventData, description })}
                   textareaRef={overviewRef}
                 />
-
-                <GoodToKnowCard data={goodToKnowData} onUpdate={setGoodToKnowData} />
-
-                <LineupAndAgendaCard eventData={eventData} onUpdate={setEventData} />
               </div>
             </div>
           </div>
@@ -119,7 +111,7 @@ export default function CreateEventPage() {
             size="lg"
             onClick={handleSaveAndContinue}
             disabled={isLoading}
-            className="bg-[#f05537] hover:bg-[#d63c1f] text-white"
+            className="bg-[#f05537] hover:bg-[#d63c1f] text-white cursor-pointer"
           >
             {isLoading ? (
               <>

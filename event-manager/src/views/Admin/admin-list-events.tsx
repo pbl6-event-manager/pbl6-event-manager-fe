@@ -49,8 +49,8 @@ const AdminEvents: React.FC = () => {
                 columns={eventColumns}
                 data={filteredPublishedEvents}
                 className="rounded-lg shadow-md"
-                getRowActions={(row) => [
-                  { type: "delete", onClick: () => handleDelete(row.id) },
+                getRowActions={() => [
+                  { type: "delete", onClick: () => handleDelete() },
                 ]}
                 onRowClick={(row) => handleViewDetail(row.id)}
               />

@@ -7,8 +7,6 @@ import { DateLocationCard } from "../../../components/Organizer/date-location-ca
 import { EventSidebar } from "../../../components/Organizer/event-sidebar"
 import { MediaUploadCard } from "../../../components/Organizer/media-upload-card"
 import { OverviewCard } from "../../../components/Organizer/overview-card"
-import { GoodToKnowCard } from "../../../components/Organizer/good-to-know-card"
-import { LineupAndAgendaCard } from "../../../components/Organizer/lineup-and-agenda-card"
 import EventDashboardPage from "./event-dashboard-page"
 import EventTeamManagementPage from "./event-team-management-page"
 import CreateTicketsPage from "./create-ticket-page"
@@ -19,16 +17,13 @@ import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-vi
 export default function EditEventPage() {
   const {
     isLoading,
-    currentEvent,
     currentSection,
     eventData,
     uploadedMedia,
-    goodToKnowData,
     isPublishing,
     publishOrganizerId,
     publishCategoryIds,
     completedSteps,
-    ticketsCount,
 
     // Refs
     mediaCardRef,
@@ -43,7 +38,6 @@ export default function EditEventPage() {
 
     // Actions
     setUploadedMedia,
-    setGoodToKnowData,
     handleStepClick,
     handleMenuItemClick,
     handleBackClick,
@@ -80,10 +74,10 @@ export default function EditEventPage() {
               </Button>
             </div>
             <div className="container mx-auto px-4 flex justify-end gap-3">
-              <Button size="sm" variant="outline" onClick={handleBackClick}>
+              <Button size="sm" variant="outline" onClick={handleBackClick} className="cursor-pointer">
                 Cancel
               </Button>
-              <Button size="sm" onClick={() => { }} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
+              <Button size="sm" onClick={() => { }} className="bg-[#f05537] hover:bg-[#d63c1f] text-white cursor-pointer">
                 Save changes
               </Button>
             </div>

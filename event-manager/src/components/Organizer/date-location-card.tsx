@@ -12,7 +12,6 @@ import { SearchableSelect } from "../ui/searchable-select"
 import type { EventFormData } from "../../models/form-models/event-form-models"
 import { useDateLocationViewModel } from "../../viewmodels/Organizer/events/date-location-view-model"
 import { TIMEZONES, LANGUAGES } from "../../utils/Organizer/timezone-language"
-import type { EventCardProps } from "../../models/component-props/card-component-props"
 
 interface DateLocationCardProps {
   eventData: EventFormData
@@ -93,7 +92,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
                       <Check className="h-5 w-5 text-white" />
                     </div>
                   )}
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
@@ -121,7 +120,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
                       <Check className="h-5 w-5 text-white" />
                     </div>
                   )}
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>

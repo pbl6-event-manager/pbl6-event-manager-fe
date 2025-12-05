@@ -11,9 +11,9 @@ export const convertRoleStaffModelToDto = (model: RoleStaffModel, permissions: R
     ownerId: model.ownerId
 });
 
-export const convertRoleStaffFormDataToDto = (formData: any) => ({
+// export const convertRoleStaffFormDataToDto = (formData: any) => ({
     
-})
+// })
 
 export const convertRoleStaffFormDataToCreateRequestDto = (formData: CreateRoleStaffFormData) : CreateRoleStaffRequestDto => ({
     name: formData.name,

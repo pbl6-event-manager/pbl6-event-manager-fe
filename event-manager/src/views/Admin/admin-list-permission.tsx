@@ -2,7 +2,6 @@ import React from "react";
 import Table from "../../components/Admin/table";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
 import { Plus } from "lucide-react";
-import { useCategoryViewModel } from "../../viewmodels/Admin/category-view-model";
 import { usePermissionViewModel } from "../../viewmodels/Admin/permission-view-model";
 import PermissionForm from "../../components/Admin/permission-form";
 

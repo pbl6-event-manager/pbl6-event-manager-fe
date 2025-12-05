@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 
-export const useImageUploadViewModel = (onChange?: (file: File | null) => void) => {
+export const useImageUploadViewModel = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // cleanup khi preview thay đổi
   useEffect(() => {
     return () => {
       if (preview) URL.revokeObjectURL(preview);

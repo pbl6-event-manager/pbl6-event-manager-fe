@@ -29,7 +29,6 @@ export function LineupAndAgendaCard({ eventData, onUpdate }: EventCardProps) {
     agendaForms,
     validateLineupForm,
     validateAllLineupForms,
-    validateAgendaForm,
     validateAllAgendaForms,
     addLineupForm,
     removeLineupForm,
@@ -41,7 +40,6 @@ export function LineupAndAgendaCard({ eventData, onUpdate }: EventCardProps) {
     saveAgenda,
     resetLineupForms,
     resetAgendaForms,
-    addAgendaSection,
     updateAgendaSectionName,
   } = useLineupAgendaViewModel(eventData.lineUp, eventData.agenda, (lineup, agenda) => {
     onUpdate({ ...eventData, lineUp: lineup, agenda: agenda })
@@ -115,7 +113,7 @@ export function LineupAndAgendaCard({ eventData, onUpdate }: EventCardProps) {
   }
 
   const handleAddNewAgenda = () => {
-    const newSection = addAgendaSection()
+    // const newSection = addAgendaSection()
     setActiveAgendaTab(agendaSections.length)
   }
 

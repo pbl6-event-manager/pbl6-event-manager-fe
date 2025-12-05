@@ -16,7 +16,6 @@ export default function EventTeamManagementPage() {
         selectedStaffIds,
         isLoading,
         error,
-        isStaffAssigned,
         handleToggleStaff,
         handleSyncStaffs,
     } = useEventTeamManagementViewModel();
