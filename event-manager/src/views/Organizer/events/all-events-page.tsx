@@ -1,7 +1,7 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import { Search, List, CalendarIcon, ChevronDown, MoreVertical, Pencil, Trash2 } from "lucide-react"
+import { Search, ChevronDown, MoreVertical, Pencil, Trash2 } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../../components/ui/dropdown-menu"
@@ -16,8 +16,6 @@ export default function AllEventsPage() {
     filteredOtherEvents,
     searchQuery,
     setSearchQuery,
-    viewMode,
-    setViewMode,
     statusFilter,
     setStatusFilter,
     getStatusColor,
@@ -37,7 +35,7 @@ export default function AllEventsPage() {
         <div className="flex gap-8 mb-6 border-b border-gray-200">
           <button
             onClick={() => handleTabChange("my")}
-            className={`pb-3 text-sm font-semibold transition-colors ${activeTab === "my"
+            className={`pb-3 text-sm font-semibold transition-colors cursor-pointer ${activeTab === "my"
               ? "text-blue-600 border-b-2 border-blue-600"
               : "text-gray-600 hover:text-gray-900"
               }`}
@@ -46,7 +44,7 @@ export default function AllEventsPage() {
           </button>
           <button
             onClick={() => handleTabChange("other")}
-            className={`pb-3 text-sm font-semibold transition-colors ${activeTab === "other"
+            className={`pb-3 text-sm font-semibold transition-colors cursor-pointer ${activeTab === "other"
               ? "text-blue-600 border-b-2 border-blue-600"
               : "text-gray-600 hover:text-gray-900"
               }`}
@@ -192,13 +190,14 @@ export default function AllEventsPage() {
                     <div className="col-span-1 flex items-center justify-end">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           {/* Only show Edit for My Events */}
                           <DropdownMenuItem
+                            className="cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation()
                               handleNavigateToEditEvent(event.id)
@@ -213,7 +212,7 @@ export default function AllEventsPage() {
                             //   e.stopPropagation()
                             //   handleDeleteEvent(event.id)
                             // }}
-                            className="text-red-600"
+                            className="text-red-600 cursor-pointer"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Delete

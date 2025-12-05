@@ -14,11 +14,8 @@ export default function OrganizerListPage() {
   const {
     organizers,
     loading,
-
-    handleFetchMyOrganizers,
     navigateToAddOrganizer,
     navigateToEditOrganizer,
-    navigateToViewOrganizer,
     handleDeleteOrganizer,
   } = useOrganizerViewModel()
 

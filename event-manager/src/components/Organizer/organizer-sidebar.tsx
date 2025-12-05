@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Home, Calendar, FileText, TicketPercent , Settings, HelpCircle, Grid3X3 } from "lucide-react"
+import { Calendar, FileText, TicketPercent , Settings, HelpCircle, Grid3X3 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "../../lib/utils"
 import { Link, useLocation } from "react-router-dom"
@@ -43,7 +43,7 @@ export default function OrganizerSidebar({ showLogo = false }: OrganizerSidebarP
                   variant="ghost"
                   size="icon"
                   className={cn(
-                    "w-12 h-12 rounded-lg",
+                    "w-12 h-12 rounded-lg cursor-pointer",
                     isActive
                       ? "bg-blue-100 text-blue-600 hover:bg-blue-100"
                       : "text-gray-600 hover:bg-gray-100"

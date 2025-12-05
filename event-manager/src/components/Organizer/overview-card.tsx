@@ -78,7 +78,7 @@ export const OverviewCard = forwardRef<OverviewCardHandle, OverviewCardProps>(
                     <Check className="h-4 w-4" />
                   </div>
                 )}
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="cursor-pointer">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>

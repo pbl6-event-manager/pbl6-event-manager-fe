@@ -46,7 +46,7 @@ export const useLoginViewModel = () => {
 
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     const hasLetter = /[a-zA-Z]/.test(password);
-    const hasNumber = /\d/.test(password);
+    // const hasNumber = /\d/.test(password);
     
     if (!hasSpecialChar && !hasLetter) {
       return { isValid: false, error: "Password is weak, please change to a stronger password" };

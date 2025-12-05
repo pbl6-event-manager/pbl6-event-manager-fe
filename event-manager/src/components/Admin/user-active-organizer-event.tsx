@@ -23,7 +23,7 @@ const UserActiveOrganizerEvents: React.FC = () => {
             columns={organizerColumns}
             data={activeOrganizers}
             className="rounded-lg"
-            onRowClick={(row) => handleSelectOrganizer(row.id, true)}
+            onRowClick={(row) => handleSelectOrganizer(row.id)}
           />
         </div>
       </div>
@@ -38,8 +38,8 @@ const UserActiveOrganizerEvents: React.FC = () => {
           columns={eventColumns}
           data={eventsByUser}
           className="rounded-lg"
-          getRowActions={(row) => [
-            { type: "delete", onClick: () => handleDelete(row.id) },
+          getRowActions={() => [
+            { type: "delete", onClick: () => handleDelete() },
           ]}
           onRowClick={(row) => handleViewDetail(row.id)}
         />

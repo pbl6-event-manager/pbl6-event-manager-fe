@@ -22,11 +22,10 @@ interface ValidationResult {
 
 export const useEventViewModel = () => {
     const dispatch = useDispatch<AppDispatch>()
-    const { eventsByUser, eventByStaff, currentEvent, isLoading, error, isSaved } = useSelector((state: RootState) => state.eventReducer);
+    const { currentEvent, isLoading, error, isSaved } = useSelector((state: RootState) => state.eventReducer);
     const navigate = useNavigate()
     const eventId = Number.parseInt(useParams<{ eventId: string }>().eventId || "")
     const [errors, setErrors] = useState<EventFormErrors>({})
-    const [activeTab, setActiveTab] = useState<"my" | "other">("my")
     const [events, setEvents] = useState<OrganizerEventsListItem[]>([])
     const [otherEvents, setOtherEvents] = useState<StaffEventsListItem[]>([])
     const [searchQuery, setSearchQuery] = useState("")
@@ -44,6 +43,10 @@ export const useEventViewModel = () => {
 
     const rawSection = searchParams.get("section")
     const rawStep = searchParams.get("step")
+    const rawTab = searchParams.get("tab")
+    const initialTab: "my" | "other" = (rawTab === "my" || rawTab === "other") ? rawTab : "my"
+    const [activeTab, _setActiveTab] = useState<"my" | "other">(initialTab)
+
     const parsedStep = rawStep ? Number.parseInt(rawStep, 10) : undefined
     const initialResolved: string | number = (rawSection && allowedSections.includes(rawSection))
         ? rawSection
@@ -78,6 +81,15 @@ export const useEventViewModel = () => {
                 sp.set("section", sectionVal as string)
                 sp.delete("step")
             }
+            setSearchParams(sp, { replace: true })
+        } catch (e) { }
+    }
+
+    const setActiveTab = (tab: "my" | "other") => {
+        _setActiveTab(tab)
+        try {
+            const sp = new URLSearchParams(searchParams.toString())
+            sp.set("tab", tab)
             setSearchParams(sp, { replace: true })
         } catch (e) { }
     }

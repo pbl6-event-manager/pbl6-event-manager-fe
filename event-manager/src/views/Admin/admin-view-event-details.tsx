@@ -39,7 +39,7 @@ const AdminEventDetailPage: React.FC = () => {
       <div className="mt-6">
         {activeDelTab === "information" && <EventInfoSection/>}
         {activeDelTab === "staff" && <EventStaffSection/>}
-        {activeDelTab === "ticket" && <EventTicketSection tickets={eventDetails?.tickets}/>}
+        {activeDelTab === "ticket" && <EventTicketSection tickets={eventDetails?.ticket}/>}
         {activeDelTab === "attendee" && <EventAttendeeSection id={id} />}
         {activeDelTab === "transaction" && <EventTransactionSection id={id} />}
       </div>

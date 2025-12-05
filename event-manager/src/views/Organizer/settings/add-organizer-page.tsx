@@ -1,8 +1,4 @@
-"use client"
-import type React from "react"
-import { useState, useRef } from "react"
 import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
-import { useNavigate } from "react-router-dom"
 import { Button } from "../../../components/ui/button"
 import { Label } from "../../../components/ui/label"
 import { Input } from "../../../components/ui/input"
@@ -14,10 +10,6 @@ export default function AddOrganizerPage() {
     const {
         // State
         imagePreview,
-        organizers,
-        currentOrganizer,
-        loading,
-        error,
         formData,
         validationErrors,
         fileInputRef,
@@ -25,17 +17,8 @@ export default function AddOrganizerPage() {
         // Actions
         handleImageUpload,
         handleRemoveImage,
-        handleFetchMyOrganizers,
-        loadOrganizerDetail,
-        loadOrganizerForEdit,
         updateFormData,
         handleCreateOrganizer,
-        handleUpdateOrganizer,
-        handleDeleteOrganizer,
-        navigateToAddOrganizer,
-        navigateToEditOrganizer,
-        navigateToViewOrganizer,
-        handleSubmit,
         handleBackClick,
     } = useOrganizerViewModel()
 

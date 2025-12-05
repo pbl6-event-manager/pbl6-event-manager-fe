@@ -4,12 +4,10 @@ import { useSideBarViewModel } from "../../viewmodels/Admin/sidebar-view-model";
 import {
   Home,
   Users,
-  Settings,
   LogOut,
   Banknote,
   Tags,
   Ticket,
-  UserCog,
   Shield,
 } from "lucide-react";
 import ConfirmDialog from "./confirm-dialog";

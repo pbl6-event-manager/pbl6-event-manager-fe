@@ -1,5 +1,5 @@
-import { useParams, useNavigate, Link } from "react-router-dom"
-import { ChevronLeft, Copy, Share2, ExternalLink, Pencil } from "lucide-react"
+import { useParams, useNavigate } from "react-router-dom"
+import { Copy, ExternalLink, Pencil } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { Card, CardContent } from "../../../components/ui/card"
 import type { EventDashboardSectionProps } from "../../../models/component-props/section-props"

@@ -85,17 +85,6 @@ export const formatExpiry = (raw: any) => {
     day: "2-digit",
   });
 
-  let tzName = "";
-  try {
-    const parts = new Intl.DateTimeFormat(undefined, {
-      timeZoneName: "long",
-    }).formatToParts(d);
-    const tzPart = parts.find((p) => p.type === "timeZoneName");
-    tzName = tzPart ? tzPart.value : "";
-  } catch {
-    tzName = "";
-  }
-
   const offsetMinutes = -d.getTimezoneOffset();
   const sign = offsetMinutes >= 0 ? "+" : "-";
   const hh = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(
