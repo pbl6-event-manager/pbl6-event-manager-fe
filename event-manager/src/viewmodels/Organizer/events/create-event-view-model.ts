@@ -47,7 +47,7 @@ export const useCreateEventViewModel = () => {
         lineUp: [],
         agenda: [],
         ticketType: null,
-        capacity: "",
+        capacity: 0,
         category: [],
         timezone: "",
         language: "en-US"
@@ -310,6 +310,7 @@ export const useCreateEventViewModel = () => {
 
         try {
             showLoadingAlert("Creating event...")
+            console.log("[debug] Creating event with data:", eventData)
             let formDTO: EventFormDto
             try {
                 const bannerFile : File | undefined = uploadedMedia.find(m => m.type === 'image')?.file

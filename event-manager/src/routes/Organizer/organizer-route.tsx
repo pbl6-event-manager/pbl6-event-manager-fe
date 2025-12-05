@@ -2,7 +2,7 @@ import type { RouteObject } from "react-router-dom"
 import OrganizerLayout from "../../layouts/Organizer/organizer-layout"
 import CreateEventPage from "../../views/Organizer/events/create-event-page"
 import CreateTicketsPage from "../../views/Organizer/events/create-ticket-page"
-import EditEventPage from "../../views/Organizer/events/edit-event-page"
+import EventDetailPage from "../../views/Organizer/events/event-detail-page"
 import OrganizerHomePage from "../../views/Organizer/organizer-home-page"
 import AllEventsPage from "../../views/Organizer/events/all-events-page"
 import EventDashboardPage from "../../views/Organizer/events/event-dashboard-page"
@@ -28,7 +28,7 @@ const OrganizerRoutes: RouteObject = {
     { path: "events/create-event", element: <CreateEventPage /> },
     { path: "events/create-tickets/:eventId", element: <CreateTicketsPage /> },
     { path: "events/team-management/:eventId", element: <EventTeamManagementPage /> },
-    { path: "events/edit/:eventId", element: <EditEventPage /> },
+    { path: "events/detail/:eventId", element: <EventDetailPage /> },
     { path: "settings", element: <OrganizationSettingsPage /> },
     { path: "settings/members/roles/create", element: <CreateRolePage/>},
     { path: "settings/members/roles/edit/:id", element: <EditRolePage/>},

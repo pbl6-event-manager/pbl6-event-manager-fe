@@ -324,7 +324,6 @@ export const useTicketViewModel = () => {
             willCall: false,
         });
     };
-
     return {
         navigate,
         eventId,

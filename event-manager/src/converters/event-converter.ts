@@ -1,14 +1,15 @@
-import type { EventModel} from "../models/bean/event-models"
+import type { EventModel } from "../models/bean/event-models"
 import type { CreateEventRequestDto, EventDetailsDto, EventFormDto, EventListDto } from "../dtos/event-dto"
 import type { EventFormData, MediaFileModel, StaffEventsListItem } from "../models/form-models/event-form-models"
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models"
 import { convertToISODateTime } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
 import { converTicketModelToTicketType, convertTicketDtoToTicketType } from "./ticket-converter"
+const DESCRIPTION_SEPARATOR = "|||DESCRIPTION|||";
 
 export const eventConverter = {
   convertDomainToDTO: (domain: EventModel): CreateEventRequestDto => {
-  
+
     const startDateTime = domain.startTime.toLocaleString("en-US", {
       year: "numeric",
       month: "short",
@@ -51,7 +52,9 @@ export const eventConverter = {
     console.log("[debug] Timezone:", eventData.timezone)
     const startDateTime = convertToISODateTime(eventData.startDate, eventData.startTime, eventData.timezone)
     const endDateTime = convertToISODateTime(effectiveEndDate, eventData.endTime, eventData.timezone)
-
+    const combineSummary = eventData.description
+      ? `${eventData.summary}${DESCRIPTION_SEPARATOR}${eventData.description}`
+      : eventData.summary;
     const startCheck = new Date(startDateTime)
     const endCheck = new Date(endDateTime)
     if (isNaN(startCheck.getTime())) {
@@ -62,10 +65,10 @@ export const eventConverter = {
     }
     console.log("[debug] Banner File:", bannerFile)
     const coordinates = await getCoordinates(eventData.location.address1, eventData.location.city, eventData.location.country)
-    
+
     return {
       title: eventData.title,
-      summary: eventData.summary,
+      summary: combineSummary,
       startTime: startDateTime,
       endTime: endDateTime,
       address: eventData.location.address1,
@@ -84,7 +87,7 @@ export const eventConverter = {
     return domainList.map((item) => eventConverter.convertDomainToDTO(item))
   },
 
-  convertEventModelToEventListDto: (eventModel: EventModel) : EventListDto => {
+  convertEventModelToEventListDto: (eventModel: EventModel): EventListDto => {
     return {
       id: eventModel.id,
       bannerImagePath: eventModel.bannerImagePath,
@@ -97,7 +100,7 @@ export const eventConverter = {
       capacity: 1000
     }
   },
-  convertEventListDtoToOrganizerEventsListItem: (eventListDto: EventListDto, organizerName: string, ticket: any) : OrganizerEventsListItem => {
+  convertEventListDtoToOrganizerEventsListItem: (eventListDto: EventListDto, organizerName: string, ticket: any): OrganizerEventsListItem => {
     return {
       id: eventListDto.id,
       bannerImagePath: eventListDto.bannerImagePath ?? null,
@@ -125,15 +128,21 @@ export const eventConverter = {
     const formattedStartTime = startDate.toTimeString().slice(0, 5)
     const formattedEndTime = endDate.toTimeString().slice(0, 5)
 
-    
+    let summary = eventInfo.summary || ""
+    let description = ""
+    if (summary.includes(DESCRIPTION_SEPARATOR)) {
+      const parts = summary.split(DESCRIPTION_SEPARATOR)
+      summary = parts[0]
+      description = parts[1]
+    }
 
     const isSingleDay = formattedStartDate === formattedEndDate
     return {
       mediaFile: null, // Will be handled separately
       title: eventInfo.title,
       status: eventInfo.status || "DRAFT",
-      summary: eventInfo.summary,
-      description: "", // Not in API response, might need to add later
+      summary: summary,
+      description: description,
       startDate: formattedStartDate,
       startTime: formattedStartTime,
       endDate: isSingleDay ? "" : formattedEndDate,
@@ -178,7 +187,7 @@ export const eventConverter = {
       },
     ]
   },
-  convertEventListDtoToStaffEventsListItem: (eventListDto: EventListDto, organizerName: string, roleInEvent: string) : StaffEventsListItem => {
+  convertEventListDtoToStaffEventsListItem: (eventListDto: EventListDto, organizerName: string, roleInEvent: string): StaffEventsListItem => {
     return {
       id: eventListDto.id,
       bannerImagePath: eventListDto.bannerImagePath ?? null,

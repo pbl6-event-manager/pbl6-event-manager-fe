@@ -8,6 +8,10 @@ import { showLoadingAlert, showSuccessAlert, showErrorAlert, closeLoadingAlert, 
 import type { EventFormData, GoodToKnowData } from "../../../models/form-models/event-form-models";
 import { eventConverter } from "../../../converters/event-converter";
 import type { EventDetailsDto } from "../../../dtos/event-dto";
+import type { OverviewCardHandle } from "../../../components/Organizer/overview-card";
+import type { DateLocationCardHandle } from "../../../components/Organizer/date-location-card";
+import type { EventTitleCardHandle } from "../../../components/Organizer/event-title-card";
+import type { MediaUploadCardHandle } from "../../../components/Organizer/media-upload-card";
 
 interface ValidationResult {
     isValid: boolean
@@ -95,10 +99,10 @@ export const useEventViewModel = () => {
     const { tickets: ticketsFromStore } = useSelector((state: RootState) => state.ticketReducer || { tickets: [] })
 
     // Refs for card components - để trigger expand
-    const mediaCardRef = useRef<{ expand: () => void }>(null)
-    const titleCardRef = useRef<{ expand: () => void }>(null)
-    const dateLocationCardRef = useRef<{ expand: () => void }>(null)
-    const overviewCardRef = useRef<{ expand: () => void }>(null)
+    const mediaCardRef = useRef<MediaUploadCardHandle>(null) 
+    const titleCardRef = useRef<EventTitleCardHandle>(null)
+    const dateLocationCardRef = useRef<DateLocationCardHandle>(null)
+    const overviewCardRef = useRef<OverviewCardHandle>(null)
 
     // Refs for focusing on error fields (trong các card)
     const titleRef = useRef<HTMLInputElement>(null)
@@ -598,7 +602,7 @@ export const useEventViewModel = () => {
     }, [eventId, eventData, publishOrganizerId, publishCategoryIds, uploadedMedia, dispatch, navigate])
 
     const handleNavigateToEditEvent = useCallback(async (eventId: number) => {
-        navigate(`/organizer/events/edit/${eventId}?step=1`);
+        navigate(`/organizer/events/detail/${eventId}?step=1`);
     }, [dispatch, navigate])
 
     const handleUpdateEventData = useCallback((newData: EventFormData) => {
