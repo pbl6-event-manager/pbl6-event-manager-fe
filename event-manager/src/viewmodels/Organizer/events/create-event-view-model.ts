@@ -47,7 +47,7 @@ export const useCreateEventViewModel = () => {
         lineUp: [],
         agenda: [],
         ticketType: null,
-        capacity: "",
+        capacity: 0,
         category: [],
         timezone: "",
         language: "en-US"

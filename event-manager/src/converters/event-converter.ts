@@ -4,7 +4,7 @@ import type { EventFormData, MediaFileModel, StaffEventsListItem } from "../mode
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models"
 import { convertToISODateTime } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
-import { converTicketModelToTicketType, convertTicketDtoToTicketType } from "./ticket-converter"
+import { convertTicketDtoToTicketType } from "./ticket-converter"
 
 export const eventConverter = {
   convertDomainToDTO: (domain: EventModel): CreateEventRequestDto => {

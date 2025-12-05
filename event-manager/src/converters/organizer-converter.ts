@@ -1,4 +1,4 @@
-import type { CreateOrganizerDto, ListOrganizerDto } from "../dtos/organizer-dto";
+import type { ListOrganizerDto } from "../dtos/organizer-dto";
 import type { OrganizerModel } from "../models/bean/organizer-models";
 import type { OrganizerFormData, OrganizerListItem } from "../models/form-models/organizer-form-models";
 

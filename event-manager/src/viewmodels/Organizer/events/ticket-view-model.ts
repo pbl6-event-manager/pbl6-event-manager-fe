@@ -10,7 +10,6 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { TicketFormData, TicketListItem } from "../../../models/form-models/ticket-form-models"
-import type { EventFormData } from "../../../models/form-models/event-form-models";
 import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert, showConfirmAlert } from "../../../helpers/alert-helpers";
 import { convertFormDataToCreateRequest, convertToTicketListItem, convertToTicketFormData } from "../../../converters/ticket-converter";
 
@@ -21,7 +20,7 @@ export const useTicketViewModel = () => {
     const { tickets: ticketsDto, currentTicket: currentTicketDto, isLoading, error } = useSelector(
         (state: RootState) => state.ticketReducer
     );
-    const currentStep = 2
+    // const currentStep = 2
     const [showTicketForm, setShowTicketForm] = useState(false)
     const [showTicketTypeSelection, setShowTicketTypeSelection] = useState(false)
     const [selectedTicketType, setSelectedTicketType] = useState<"paid" | "free" | null>(null)

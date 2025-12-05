@@ -122,7 +122,7 @@ export const useEventViewModel = () => {
     navigate(`/admin/events/details?id=${id}&tab=1`);
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = () => {
     setOpenDeleteDialog(true);
   }
 

@@ -1,13 +1,10 @@
-"use client"
-
-import { Ticket, Zap, ChevronRight, Calendar, MoreVertical, Search, Pencil, Trash2 } from "lucide-react"
+import { Ticket, Zap, ChevronRight, MoreVertical, Search, Pencil, Trash2 } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { Card, CardContent } from "../../../components/ui/card"
 import { Input } from "../../../components/ui/input"
 import { Label } from "../../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../../../components/ui/dropdown-menu"
-import { Switch } from "../../../components/ui/switch"
 import { Textarea } from "../../../components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
 
@@ -18,13 +15,10 @@ export default function CreateTicketsPage() {
     navigate,
         eventId,
         showTicketForm,
-        setShowTicketForm,
         showTicketTypeSelection,
-        setShowTicketTypeSelection,
         selectedTicketType,
         setSelectedTicketType,
         tickets,
-        setTickets,
         filteredTickets,
         searchQuery,
         setSearchQuery,
@@ -273,7 +267,7 @@ export default function CreateTicketsPage() {
                       <Button
                         variant={selectedTicketType === "paid" ? "default" : "outline"}
                         onClick={() => setSelectedTicketType("paid")}
-                        className="flex-1"
+                        className="flex-1 cursor-pointer"
                         disabled={isLoading}
                       >
                         Paid
@@ -281,7 +275,7 @@ export default function CreateTicketsPage() {
                       <Button
                         variant={selectedTicketType === "free" ? "default" : "outline"}
                         onClick={() => setSelectedTicketType("free")}
-                        className="flex-1"
+                        className="flex-1 cursor-pointer"
                         disabled={isLoading}
                       >
                         Free
@@ -401,7 +395,7 @@ export default function CreateTicketsPage() {
                         </summary>
                         <div className="mt-4 space-y-4">
                           <div>
-                            <Label htmlFor="description">Description</Label>
+                            <Label htmlFor="description" className="pb-2">Description</Label>
                             <Textarea
                               id="description"
                               placeholder="Tell attendees more about this ticket."
@@ -422,14 +416,14 @@ export default function CreateTicketsPage() {
                   <div className="flex gap-3 pt-4 border-t">
                     <Button
                       variant="outline"
-                      className="flex-1 bg-transparent"
+                      className="flex-1 bg-transparent cursor-pointer"
                       onClick={handleCancel}
                       disabled={isLoading}
                     >
                       Cancel
                     </Button>
                     <Button
-                      className="flex-1 bg-[#f05537] hover:bg-[#d63c1f] text-white"
+                      className="flex-1 bg-[#f05537] hover:bg-[#d63c1f] text-white cursor-pointer"
                       onClick={handleSaveTicket}
                       disabled={isLoading || !ticketFormData.name || !ticketFormData.availableQuantity}
                     >
@@ -486,7 +480,7 @@ export default function CreateTicketsPage() {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleCurrencyConfirm} className="bg-primary">
+            <Button onClick={handleCurrencyConfirm} className="bg-primary cursor-pointer">
               Continue
             </Button>
           </div>

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useEffect } from "react"
+import { useParams } from "react-router-dom"
 import { Button } from "../../../components/ui/button"
 import { Label } from "../../../components/ui/label"
 import { Input } from "../../../components/ui/input"
@@ -30,11 +30,11 @@ export default function EditOrganizerPage() {
         }
     }, [organizerId, loadOrganizerForEdit])
 
-    const handleSubmit = async () => {
-        if (organizerId) {
-            await handleUpdateOrganizer(Number(organizerId))
-        }
-    }
+    // const handleSubmit = async () => {
+    //     if (organizerId) {
+    //         await handleUpdateOrganizer(Number(organizerId))
+    //     }
+    // }
 
     return (
         <div className="min-h-screen bg-gray-50">

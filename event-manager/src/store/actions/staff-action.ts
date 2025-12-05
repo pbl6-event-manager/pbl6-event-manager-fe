@@ -100,27 +100,27 @@ export const fetchOwnerStaffs = () => async (dispatch: any) => {
     }
 }
 
-export const updateListStaffsOfEvent = (eventId: number, userIdList: number[]) => async (dispatch: any) => {
-    try {
-        dispatch({
-            type: ASSIGN_STAFF_REQUEST
-        })
+// export const updateListStaffsOfEvent = (eventId: number, userIdList: number[]) => async (dispatch: any) => {
+//     try {
+//         dispatch({
+//             type: ASSIGN_STAFF_REQUEST
+//         })
 
-        const data = "CALL SERVICE HERE";
+//         const data = "CALL SERVICE HERE";
 
-        dispatch({
-            type: ASSIGN_STAFF_SUCCESS,
-            payload: data
-        })
-    } catch (error: any) {
-        dispatch({
-            type: ASSIGN_STAFF_FAILURE,
-            payload:
-                error.response?.data?.message || error.message || "Assign staff to an event failed",
-        });
-        throw error;
-    }
-}
+//         dispatch({
+//             type: ASSIGN_STAFF_SUCCESS,
+//             payload: data
+//         })
+//     } catch (error: any) {
+//         dispatch({
+//             type: ASSIGN_STAFF_FAILURE,
+//             payload:
+//                 error.response?.data?.message || error.message || "Assign staff to an event failed",
+//         });
+//         throw error;
+//     }
+// }
 
 export const inviteStaffToOwner = (staffEmail: string, roleStaffId: number) => async (dispatch: any) => {
     try {
@@ -151,8 +151,8 @@ export const removeStaffOfOwner = (staffEmail: string) => async (dispatch: any) 
             type: REMOVE_STAFF_FROM_OWNER_REQUEST
         })
 
-        const data = await removeStaffOfOwnerService(staffEmail);
-
+        await removeStaffOfOwnerService(staffEmail);
+        
         dispatch({
             type: REMOVE_STAFF_FROM_OWNER_SUCCESS,
             payload: staffEmail

@@ -5,19 +5,17 @@ import {
     fetchOwnerStaffs,
     inviteStaffToOwner,
     removeStaffOfOwner,
-    fetchEventStaffs
 } from "../../../store/actions/staff-action";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
 export const useStaffViewModel = () => {
-    const { eventId } = useParams<{ eventId: string }>()
+    // const { eventId } = useParams<{ eventId: string }>()
     const dispatch = useDispatch();
     const [email, setEmail] = useState("");
     const [selectedRole, setSelectedRole] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [showInviteModal, setShowInviteModal] = useState(false);
-    const { organizerStaffs, eventStaffs, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
+    const { organizerStaffs, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
     const [selectedMember, setSelectedMember] = useState<number | null>(null);
 
     // Filter staffs based on search term
@@ -40,22 +38,22 @@ export const useStaffViewModel = () => {
         }
     }, [dispatch]);
 
-    const handleFetchEventStaff = useCallback(async (eventId: number | undefined) => {
-        try {
-            if (eventId === undefined) {
-                return
-            } else {
-                showLoadingAlert("Loading event staffs...");
-                await new Promise(resolve => setTimeout(resolve, 500));
-                await dispatch<any>(fetchEventStaffs(eventId));
-                closeLoadingAlert();
-            }
-        } catch (error) {
-            closeLoadingAlert();
-            showErrorAlert("Error loading event staffs");
-            throw new Error("Error loading event staffs: " + error);
-        }
-    }, [dispatch]);
+    // const handleFetchEventStaff = useCallback(async (eventId: number | undefined) => {
+    //     try {
+    //         if (eventId === undefined) {
+    //             return
+    //         } else {
+    //             showLoadingAlert("Loading event staffs...");
+    //             await new Promise(resolve => setTimeout(resolve, 500));
+    //             await dispatch<any>(fetchEventStaffs(eventId));
+    //             closeLoadingAlert();
+    //         }
+    //     } catch (error) {
+    //         closeLoadingAlert();
+    //         showErrorAlert("Error loading event staffs");
+    //         throw new Error("Error loading event staffs: " + error);
+    //     }
+    // }, [dispatch]);
 
     const handleInviteStaffToOwner = useCallback(async (email: string, roleStaffId: number) => {
         if (!email || !roleStaffId) {

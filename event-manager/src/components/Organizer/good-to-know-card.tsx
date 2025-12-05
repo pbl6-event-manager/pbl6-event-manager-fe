@@ -28,7 +28,7 @@ export function GoodToKnowCard({ data, onUpdate }: GoodToKnowCardProps) {
     const [faqs, setFaqs] = useState<FAQ[]>(data.faqs || [])
     const [newQuestion, setNewQuestion] = useState("")
     const [newAnswer, setNewAnswer] = useState("")
-    const [editingFaqId, setEditingFaqId] = useState<string | null>(null)
+    // const [editingFaqId, setEditingFaqId] = useState<string | null>(null)
 
     useEffect(() => {
         const hasAnyData =

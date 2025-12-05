@@ -7,7 +7,6 @@ import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
-import type { EventCardProps } from "../../models/component-props/card-component-props"
 import type { EventFormData } from "../../models/form-models/event-form-models"
 
 interface EventTitleCardProps {
@@ -93,7 +92,7 @@ export const EventTitleCard = forwardRef<EventTitleCardHandle, EventTitleCardPro
                 <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
                   <Check className="h-5 w-5 text-white" />
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => setIsExpanded(true)}>
+                <Button variant="ghost" size="sm" onClick={() => setIsExpanded(true)} className="cursor-pointer">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
@@ -116,7 +115,7 @@ export const EventTitleCard = forwardRef<EventTitleCardHandle, EventTitleCardPro
                 <h2 className="text-3xl font-bold mb-2">Event Title</h2>
                 <p className="text-muted-foreground">A short and sweet sentence about your event.</p>
               </div>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="cursor-pointer">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>

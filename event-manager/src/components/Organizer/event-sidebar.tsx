@@ -1,13 +1,7 @@
-"use client"
-
-import { Calendar, Plus, Check, ChevronDown, Ban, Info } from "lucide-react"
+import { Calendar, Check, Ban } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select"
-import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 import type { EventFormData } from "../../models/form-models/event-form-models"
-import { useTicketViewModel } from "../../viewmodels/Organizer/events/ticket-view-model"
-import { useState } from "react"
 
 interface EventSidebarProps {
   eventData: EventFormData
@@ -46,8 +40,6 @@ export function EventSidebar({
   activeMenuItem,
 }: EventSidebarProps) {
   const isStepCompleted = (stepId: number) => completedSteps.includes(stepId)
-  const [ticketsCount, setTicketsCount] = useState<number>(0)
-  const { tickets } = useTicketViewModel()
 
   // Get status badge color
   const getStatusBadgeColor = (status?: string) => {

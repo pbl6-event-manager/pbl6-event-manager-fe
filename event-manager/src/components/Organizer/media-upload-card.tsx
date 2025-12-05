@@ -1,5 +1,3 @@
-"use client"
-
 import { forwardRef, useImperativeHandle, useState, useRef, useEffect } from "react"
 import { Upload, X, ImageIcon, VideoIcon, Check, Plus } from "lucide-react"
 import { Button } from "../ui/button"
@@ -115,7 +113,7 @@ export const MediaUploadCard = forwardRef<MediaUploadCardHandle, MediaUploadCard
                     <Check className="h-5 w-5" />
                   </div>
                 ) : (
-                  <Button size="sm" variant="secondary">
+                  <Button size="sm" variant="secondary" className="cursor-pointer">
                     <Plus className="h-4 w-4" />
                   </Button>
                 )}
@@ -163,7 +161,7 @@ export const MediaUploadCard = forwardRef<MediaUploadCardHandle, MediaUploadCard
                     className="hidden"
                     onChange={handleImageSelect}
                   />
-                  <Button variant="outline" onClick={() => (inputRef || imageInputRef).current?.click()}>
+                  <Button variant="outline" onClick={() => (inputRef || imageInputRef).current?.click()} className="cursor-pointer">
                     <Upload className="h-4 w-4 mr-2" />
                     Upload Image
                   </Button>
@@ -222,7 +220,7 @@ export const MediaUploadCard = forwardRef<MediaUploadCardHandle, MediaUploadCard
                   className="hidden"
                   onChange={handleVideoSelect}
                 />
-                <Button variant="outline" onClick={() => videoInputRef.current?.click()}>
+                <Button variant="outline" onClick={() => videoInputRef.current?.click()} className="cursor-pointer">
                   <Upload className="h-4 w-4 mr-2" />
                   Upload video
                 </Button>

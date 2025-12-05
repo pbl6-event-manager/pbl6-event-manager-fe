@@ -1,9 +1,7 @@
 import type { CategoryModel } from "../models/bean/category-models"
 import type { EventModel } from "../models/bean/event-models"
 import type { OrganizerModel } from "../models/bean/organizer-models"
-import type { TicketModel } from "../models/bean/ticket-models"
 import type { UserModel } from "../models/bean/user-models"
-import type { ListCategoryDto } from "./category-dto"
 import type { TicketDto } from "./ticket-dto"
 
 //#region Event Dtos

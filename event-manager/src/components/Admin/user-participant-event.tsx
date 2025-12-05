@@ -12,8 +12,8 @@ const UserParticipantEvents: React.FC = () => {
         columns={eventColumns}
         data={eventsByUser}
         className="rounded-lg"
-        getRowActions={(row) => [
-          { type: "delete", onClick: () => handleDelete(row.id) },
+        getRowActions={() => [
+          { type: "delete", onClick: () => handleDelete() },
         ]}
         onRowClick={(row) => handleViewDetail(row.id)}
       />
