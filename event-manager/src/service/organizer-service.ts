@@ -1,4 +1,4 @@
-import { getMyOrganizers, getOrganizerByIdApi, createANewOrganizerApi, deleteOrganizerApi, updateOrganizerApi } from "../api/organizer-api";
+import { getMyOrganizers, getOrganizerByIdApi, createANewOrganizerApi, deleteOrganizerApi, updateOrganizerApi, getOrganizerByIdAdminSiteApi } from "../api/organizer-api";
 import { mapToOrganizerModel } from "../mappers/organizer-mapper";
 import type { OrganizerFormData, OrganizerListItem } from "../models/form-models/organizer-form-models";
 import type { ListOrganizerDto } from "../dtos/organizer-dto";
@@ -57,9 +57,9 @@ export const createOrganizerService = async (organizerData: OrganizerFormData) =
 }
 
 
-export const getOrganizerByIdService = async (id: number) => {
+export const getOrganizerByIdService = async (id: number, isAdmin: boolean) => {
     try {
-        const response = await getOrganizerByIdApi(id);
+        const response = !isAdmin ? await getOrganizerByIdApi(id) : await getOrganizerByIdAdminSiteApi(id);
         const rawOrganizerResponse = response.data.data;
         if (response.data.status || response.data.message === "success") {
             const organizerModel = mapToOrganizerModel(rawOrganizerResponse);

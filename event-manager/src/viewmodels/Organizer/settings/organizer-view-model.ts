@@ -90,7 +90,7 @@ export const useOrganizerViewModel = () => {
   // Load organizer detail
   const loadOrganizerDetail = useCallback(
     (organizerId: number) => {
-      dispatch(fetchOrganizerDetail(organizerId))
+      dispatch(fetchOrganizerDetail(organizerId, false))
     },
     [dispatch],
   )
@@ -222,7 +222,7 @@ export const useOrganizerViewModel = () => {
     async (organizerId: number) => {
       try {
         showLoadingAlert("Loading organizer data...")
-        const organizerFormData = await dispatch<any>(fetchOrganizerDetail(organizerId))
+        const organizerFormData = await dispatch<any>(fetchOrganizerDetail(organizerId, false))
         closeLoadingAlert()
 
         if (organizerFormData) {

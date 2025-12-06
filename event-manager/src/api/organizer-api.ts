@@ -6,6 +6,8 @@ export const getMyOrganizers = () => apiClient.get("/organizers/my/organizers");
 
 export const getOrganizerByIdApi = (id: number) => apiClient.get(`/organizers/${id}`);
 
+export const getOrganizerByIdAdminSiteApi = (id: number) => apiClient.get(`/organizers/admin/${id}`);
+
 export const createANewOrganizerApi = (organizer: any) => apiClient.post(
     "/organizers", 
     organizer, 
