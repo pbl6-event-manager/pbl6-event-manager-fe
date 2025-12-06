@@ -40,13 +40,13 @@ export const fetchMyOrganizers = () => async (dispatch: any) => {
     }
 }
 
-export const fetchOrganizerDetail = (organizerId: number) => async (dispatch: any) => {
+export const fetchOrganizerDetail = (organizerId: number, isAdmin: boolean) => async (dispatch: any) => {
     try {
         dispatch({
             type: FETCH_ORGANIZER_DETAIL_REQUEST
         });
 
-        const { organizerDto, organizerFormData } = await getOrganizerByIdService(organizerId);
+        const { organizerDto, organizerFormData } = await getOrganizerByIdService(organizerId, isAdmin);
 
         dispatch({
             type: FETCH_ORGANIZER_DETAIL_SUCCESS,
