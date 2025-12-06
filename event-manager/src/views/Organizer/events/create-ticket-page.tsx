@@ -15,16 +15,11 @@ interface CreateTicketsPageProps {
 
 export default function CreateTicketsPage({ onNext }: CreateTicketsPageProps) {
   const {
-    navigate,
-    eventId,
     showTicketForm,
-    setShowTicketForm,
     showTicketTypeSelection,
-    setShowTicketTypeSelection,
     selectedTicketType,
     setSelectedTicketType,
     tickets,
-    setTickets,
     filteredTickets,
     searchQuery,
     setSearchQuery,
