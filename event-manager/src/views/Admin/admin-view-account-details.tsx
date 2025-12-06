@@ -1,6 +1,5 @@
 import React from "react";
 import { useUserViewModel } from "../../viewmodels/Admin/user-view-model";
-import UserParticipantEvents from "../../components/Admin/user-participant-event";
 import ConfirmDialog from "../../components/Admin/confirm-dialog";
 import TabGroup from "../../components/Admin/tab-group";
 import TabItem from "../../components/Admin/tab-item";
@@ -8,6 +7,7 @@ import UserInformationCard from "../../components/Admin/user-information-card";
 import UserActiveOrganizerEvents from "../../components/Admin/user-active-organizer-event";
 import UserInActiveOrganizerEvents from "../../components/Admin/user-inactive-organizer-event";
 import { ArrowLeft } from "lucide-react";
+import OrderOfAnUser from "../../components/Admin/order-of-an-user";
 
 const UserViewDetailPage: React.FC = () => {
   const { user, openDelDialog, setOpenDelDialog, activeDetailTab, setActiveDetailTab, handleEdit, handleDelete, handleBack, confirmDelete, handleRecover, openRecDialog, setOpenRecDialog, confirmRecover } = useUserViewModel();
@@ -41,9 +41,9 @@ const UserViewDetailPage: React.FC = () => {
 
       <TabGroup>
         <TabItem
-          label="Attendee"
-          active={activeDetailTab === "participant"}
-          onClick={() => setActiveDetailTab("participant")}
+          label="Order"
+          active={activeDetailTab === "order"}
+          onClick={() => setActiveDetailTab("order")}
         />
         <TabItem
           label="Active Organizer"
@@ -57,9 +57,8 @@ const UserViewDetailPage: React.FC = () => {
         />
       </TabGroup>
 
-      {/* Nội dung tab */}
       <div>
-        {activeDetailTab === "participant" && <UserParticipantEvents />}
+        {activeDetailTab === "order" && <OrderOfAnUser customerId={user.id} />}
         {activeDetailTab === "active-organizer" && <UserActiveOrganizerEvents />}
         {activeDetailTab === "deleted-organizer" && <UserInActiveOrganizerEvents />}
       </div>

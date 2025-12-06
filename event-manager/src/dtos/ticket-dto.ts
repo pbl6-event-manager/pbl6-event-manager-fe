@@ -21,3 +21,9 @@ export interface CreateTicketRequestDto {
     saleStartDate: string; // ISO datetime string
     saleEndDate: string; // ISO datetime string
 }
+export interface TicketInfoDto {
+    ticketId: number,
+    ticketName: string,
+    email: string,
+    name: string
+}
