@@ -7,3 +7,7 @@ export interface EventTicketSectionProps {
 export interface EventDashboardSectionProps {
   setCurrentSection: (section: string | number) => void
 }
+
+export interface OrderOfAnUserSectionProps {
+  customerId: number;
+};

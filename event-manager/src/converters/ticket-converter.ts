@@ -1,4 +1,4 @@
-import type { CreateTicketRequestDto, TicketDto } from "../dtos/ticket-dto";
+import type { CreateTicketRequestDto, TicketDto, TicketInfoDto } from "../dtos/ticket-dto";
 import type { TicketFormData, TicketListItem } from "../models/form-models/ticket-form-models";
 import { isTicketOnSale } from "../utils/Organizer/ticket-util";
 import type { TicketModel } from "../models/bean/ticket-models";
@@ -109,3 +109,12 @@ export const convertTicketDtoToTicketType = (ticketDto: TicketDto): TicketType =
         currency: "USD",
     };
 };
+
+export const convertResponseToTicketInfoDto = (raw: any) : TicketInfoDto => {
+    return {
+        ticketId: raw.ticketId,
+        ticketName: raw.ticketName,
+        email: raw.email,
+        name: raw.name
+    }
+}
