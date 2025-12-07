@@ -11,13 +11,16 @@ import PrivateRoute from "../private-routes";
 import AdminEventDetailPage from "../../views/Admin/admin-view-event-details";
 import PermissionManagememtView from "../../views/Admin/admin-list-permission";
 import AdminDashboard from "../../views/Admin/admin-dashboard";
+import RequireRole from "../require-role";
 
 const adminRoutes: RouteObject = {
   path: "/admin",
   element: (
-    <PrivateRoute>
-      <AdminLayout />
-    </PrivateRoute>
+    <RequireRole role="admin">
+      <PrivateRoute>
+        <AdminLayout />
+      </PrivateRoute>
+    </RequireRole>
   ),
   children: [
     { path: "dashboard", element: <AdminDashboard /> },
