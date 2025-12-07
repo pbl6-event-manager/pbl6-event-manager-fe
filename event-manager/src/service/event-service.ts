@@ -263,7 +263,6 @@ export const getEventsByOwnerService = async () => {
     const response = await getEventsByOwnerApi();
     if (response.data.message === "success") {
       const rawData = response.data.data;
-      console.log("[debug] Raw Data:", rawData);
       const eventModelList: EventModel[] = rawData.map(eventMapper.mapResponseEventToEventModel);
       const eventListDto: EventListDto[] = eventModelList.map(eventConverter.convertEventModelToEventListDto);
       const organizerEventsListItem: OrganizerEventsListItem[] = eventListDto.map((dto) => {

@@ -19,6 +19,7 @@ export const converOrderModelToOrderListDto = (raw: OrderModel) : OrderListDto =
     createdAt: raw.createdAt,
     quantity: raw.orderDetails.length,
     status: raw.status,
-    total: raw.totalAmount
+    total: raw.totalAmount,
+    tickets: raw.orderDetails
 })
 
