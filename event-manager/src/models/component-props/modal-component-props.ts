@@ -1,3 +1,4 @@
+import type { OrderListDto } from "../../dtos/order-dto"
 import type { OrderModel } from "../bean/order-models"
 import type { OwnerStaffListItem } from "../form-models/staff-form-models"
 
@@ -17,6 +18,11 @@ export interface OrderDetailsAdminSiteProps {
   loading?: boolean;
   onClose: () => void;
 };
+
+export interface OrderDetailsOrgSiteProps {
+  order: OrderListDto;
+  onClose: () => void;
+}
 
 // export interface InviteUserModalProps {
 //   onClose: () => void
