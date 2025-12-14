@@ -10,6 +10,9 @@ import PublishEventPage from "./publish-event-page"
 import EventDiscountPage from "./event-discount-page"
 import EditEventInfoPage from "./edit-event-info-page"
 import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
+import { useEventPermissionViewModel } from "../../../viewmodels/Organizer/events/event-permission-view-model"
+import { PermissionBadge } from "../../../components/Permission/PermissionBadge"
+import { EventAccessGuard } from "../../../components/Permission/EventAccessGuard"
 
 export default function EventDetailPage() {
   const {
@@ -46,6 +49,31 @@ export default function EventDetailPage() {
     handleUpdateEvent,
   } = useEventViewModel()
 
+  const {
+    isOwner,
+    roleStaffName,
+    isLoading: isPermissionLoading,
+    canEditEvent,
+    canPublishEvent,
+    canAccessStep,
+    canAccessMenuItem,
+    checkStepPermission,
+    checkMenuItemPermission,
+    checkAndAllow,
+    PERMISSIONS,
+  } = useEventPermissionViewModel()
+
+  const handleUpdateEventWithPermission = () => {
+    checkAndAllow(PERMISSIONS.UPDATE_EVENT, () => handleUpdateEvent(isOwner, canEditEvent))
+  }
+
+  const handlePublishEventWithPermission = async () => {
+    const allowed = checkAndAllow(PERMISSIONS.PUBLISH_EVENT, () => {})
+    if (allowed) {
+      await handlePublishEvent(isOwner, canPublishEvent)
+    }
+  }
+
   if (isLoading || !eventData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -68,7 +96,6 @@ export default function EventDetailPage() {
                 Back to events
               </Button>
             </div>
-            
           </div>
         </div>
       </header>
@@ -81,12 +108,19 @@ export default function EventDetailPage() {
               <div className="sticky top-24 h-[calc(100vh-120px)] overflow-y-auto">
                 <EventSidebar
                   eventData={eventData}
-                  currentStep={typeof currentSection === "number" ? currentSection : 1}
+                  currentStep={typeof currentSection === "number" ? currentSection : 0}
                   completedSteps={completedSteps}
                   isCreating={false}
                   onStepClick={handleStepClick}
                   onMenuItemClick={handleMenuItemClick}
                   activeMenuItem={typeof currentSection === "string" ? currentSection : undefined}
+                  isOwner={isOwner}
+                  roleStaffName={roleStaffName}
+                  isPermissionLoading={isPermissionLoading}
+                  canAccessStep={canAccessStep}
+                  canAccessMenuItem={canAccessMenuItem}
+                  checkStepPermission={checkStepPermission}
+                  checkMenuItemPermission={checkMenuItemPermission}
                 />
               </div>
             </div>
@@ -109,17 +143,19 @@ export default function EventDetailPage() {
                     uploadedMedia={uploadedMedia}
                     handleUpdateEventData={handleUpdateEventData}
                     setUploadedMedia={setUploadedMedia}
-                    handleUpdateEvent={handleUpdateEvent}
+                    handleUpdateEvent={handleUpdateEventWithPermission}
                     handleBackClick={handleBackClick}
+                    isOwner={isOwner}
+                    canEditEvent={canEditEvent} 
                   />
                 )}
-                
+
                 {currentSection === 2 && (
                   <div className="bg-card rounded-lg border">
-                    <CreateTicketsPage onNext={() => setCurrentSection(3)} />
+                    <CreateTicketsPage onNext={() => setCurrentSection(3)} isOwner={isOwner} />
                   </div>
                 )}
-                
+
                 {currentSection === 3 && (
                   <div className="bg-card rounded-lg p-6 border">
                     <PublishEventPage
@@ -128,32 +164,32 @@ export default function EventDetailPage() {
                       isPublishing={isPublishing}
                       publishOrganizerId={publishOrganizerId}
                       publishCategoryIds={publishCategoryIds}
-                      handlePublishEvent={handlePublishEvent}
+                      handlePublishEvent={handlePublishEventWithPermission}
                       handleOrganizerChange={handleOrganizerChange}
                       handleCategoryChange={handleCategoryChange}
                     />
                   </div>
                 )}
-                
+
                 {currentSection === "dashboard" && (
                   <div className="bg-card rounded-lg border">
                     <EventDashboardPage setCurrentSection={setCurrentSection} />
                   </div>
                 )}
-                
+
                 {currentSection === "team-management" && (
                   <div className="bg-card rounded-lg border">
                     <EventTeamManagementPage />
                   </div>
                 )}
-                
+
                 {currentSection === "manage-attendees" && (
                   <div className="bg-card rounded-lg p-6 border">
                     <h2 className="text-2xl font-bold mb-4">Manage Attendees</h2>
                     <p className="text-muted-foreground">Attendee management section will be displayed here.</p>
                   </div>
                 )}
-                
+
                 {currentSection === "discount" && (
                   <div className="bg-card rounded-lg p-6 border">
                     <EventDiscountPage />

@@ -7,3 +7,5 @@ export const assignAndUpdateStaffToOwner = (staffEmail: string, roleStaffId: num
 export const getStaffGroupedByRole = () => apiClient.get("owner-user-rolestaff/staffs-grouped-by-role")
 
 export const deleteOwnerStaffByEmail = (staffEmail: string) => apiClient.delete("owner-user-rolestaff/assignment", { data: { staffEmail } })
+
+export const getEventAssignmentApi = (eventId: number) => apiClient.get(`owner-user-rolestaff/event-assignment/${eventId}`)

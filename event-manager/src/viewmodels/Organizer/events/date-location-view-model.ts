@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { fetchCountries, fetchCities } from "../../../store/actions/location-action"
 import type { RootState } from "../../../store/store"
 import type { EventFormData, LocationData } from "../../../models/form-models/event-form-models"
+import { toast } from "sonner"
 
 export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (data: EventFormData) => void) => {
   const dispatch = useDispatch()
@@ -75,10 +76,16 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
     onUpdate(newEventData)
   }
 
-  const handleCardClick = () => {
-    if (!isExpanded) {
+  const handleCardClick = (isOwner?: boolean, canEditEvent?: boolean) => {
+    const hasPermission = isOwner && canEditEvent
+    if (!hasPermission) {
+        toast.error("Permission Denied", {
+          description: 'You need "Update Event" permission to edit media',
+          duration: 4000,
+        })
+        return
+      }
       setIsExpanded(true)
-    }
   }
 
   useEffect(() => {

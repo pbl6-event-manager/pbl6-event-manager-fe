@@ -5,7 +5,7 @@ import { EventPreviewCard } from "../../../components/Organizer/event-preview-ca
 import { OrganizerByCard } from "../../../components/Organizer/organized-by-card"
 import { EventCategoryCard } from "../../../components/Organizer/event-category-card"
 import type { EventFormData, MediaFileModel } from "../../../models/form-models/event-form-models"
-import { RotateCw } from "lucide-react"
+import { RotateCw, Shield } from "lucide-react"
 
 interface PublishEventPageProps {
     eventData: EventFormData,
@@ -16,9 +16,11 @@ interface PublishEventPageProps {
     handlePublishEvent: () => void,
     handleOrganizerChange: (organizerId: number) => void,
     handleCategoryChange: (categoryIds: number[]) => void,
+    isOwner?: boolean,
+    canPublishEvent?: boolean,
 }
 
-export default function PublishEventPage({ eventData, mediaFile, isPublishing, publishOrganizerId, publishCategoryIds, handlePublishEvent, handleOrganizerChange, handleCategoryChange }: PublishEventPageProps) {
+export default function PublishEventPage({ eventData, mediaFile, isPublishing, publishOrganizerId, publishCategoryIds, handlePublishEvent, handleOrganizerChange, handleCategoryChange, isOwner = true, canPublishEvent = true }: PublishEventPageProps) {
     return (
         <div className="space-y-8 pb-24">
             {/* Header */}
@@ -27,11 +29,23 @@ export default function PublishEventPage({ eventData, mediaFile, isPublishing, p
                 <p className="text-base text-muted-foreground">Review your settings and let everyone find your event.</p>
             </div>
 
+            {(!isOwner && !canPublishEvent) && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
+                    <Shield className="h-5 w-5 text-amber-600" />
+                    <div>
+                        <p className="text-amber-800 font-medium">Limited Access</p>
+                        <p className="text-amber-700 text-sm">
+                            You don't have permission to publish this event. Contact the event owner to request access.
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* Main Content - Two Column Layout */}
             <div className="grid grid-cols-2 gap-8">
                 {/* Left Column - Event Preview and Organizer*/}
                 <div className="lg:col-span-1 space-y-8">
-                    <EventPreviewCard eventData={eventData} mediaFile={mediaFile}/>
+                    <EventPreviewCard eventData={eventData} mediaFile={mediaFile} />
                     <OrganizerByCard organizerId={publishOrganizerId} onOrganizerChange={handleOrganizerChange} />
                 </div>
 

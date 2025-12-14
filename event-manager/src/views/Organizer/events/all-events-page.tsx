@@ -100,7 +100,7 @@ export default function AllEventsPage() {
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => setStatusFilter("All")}>All</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setStatusFilter("Draft")}>Draft</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter("Approval_Pending")}>Approval_Pending</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter("Pending")}>Pending</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setStatusFilter("Published")}>Published</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -235,7 +235,7 @@ export default function AllEventsPage() {
                 <div className="col-span-1"></div>
               </div>
               {/* Table Body */}
-              {filteredMyEvents.length === 0 ? (
+              {filteredOtherEvents.length === 0 ? (
                 <div className="px-6 py-12 text-center text-gray-500">
                   You are not assigned to any events
                 </div>
@@ -270,7 +270,9 @@ export default function AllEventsPage() {
 
                     {/* Role in Event */}
                     <div className="col-span-2 flex items-center text-sm text-gray-700">
-                      {event.roleInEvent}
+                      <Badge variant="secondary" className="bg-green-100 text-green-700">
+                        {event.roleInEvent}
+                      </Badge>
                     </div>
 
                     {/* Status */}

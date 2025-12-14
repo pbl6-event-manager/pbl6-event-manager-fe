@@ -260,8 +260,6 @@ export const getEventsByStaff = () => async (dispatch: any) => {
       type: GET_EVENTS_BY_STAFF_REQUEST,
     });
     const { eventListDto, staffEventsListItem } = await getEventsByStaffService();
-    console.log("[debug] Event List DTO from action:", eventListDto);
-    console.log("[debug] Staff Events List Item from action:", staffEventsListItem);
     dispatch({
       type: GET_EVENTS_BY_STAFF_SUCCESS,
       payload: {

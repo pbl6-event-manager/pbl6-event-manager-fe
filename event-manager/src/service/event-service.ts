@@ -13,6 +13,7 @@ export const createEventService = async (formData: EventFormDto) => {
     multipartFormData.append("summary", formData.summary)
     multipartFormData.append("startTime", formData.startTime)
     multipartFormData.append("endTime", formData.endTime)
+    multipartFormData.append("timezone", formData.timezone)
     multipartFormData.append("address", formData.address)
     multipartFormData.append("city", formData.city)
     multipartFormData.append("country", formData.country)
@@ -292,7 +293,6 @@ export const getEventsByStaffService = async () => {
     const response = await getEventsByStaffApi();
     if (response.data.message === "success") {
       const rawData = response.data.data;
-      console.log("[debug] Raw Data:", rawData);
       const eventModelList: EventModel[] = rawData.map(eventMapper.mapResponseEventToEventModel);
       const eventListDto: EventListDto[] = eventModelList.map(eventConverter.convertEventModelToEventListDto);
       const staffEventsListItem: StaffEventsListItem[] = eventListDto.map((dto) => {
@@ -300,7 +300,6 @@ export const getEventsByStaffService = async () => {
         const roleInEvent = rawData.find((item: any) => item.id === dto.id)?.roleInEvent || "Staff";
         return eventConverter.convertEventListDtoToStaffEventsListItem(dto, organizerName, roleInEvent);
       });
-      console.log("[debug] Staff Events List Item:", staffEventsListItem);
       return {
         eventListDto,
         staffEventsListItem

@@ -324,6 +324,7 @@ export const useCreateEventViewModel = () => {
                 throw new Error("Event form data conversion failed" + String(convErr))
                 return
             }
+            console.log("[debug] Converted EventFormDto:", formDTO)
             await handleCreateEvent(formDTO)
             closeLoadingAlert()
             await showSuccessAlert("Event created successfully!")

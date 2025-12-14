@@ -48,6 +48,7 @@ export interface EventFormDto {
   summary: string
   startTime: string
   endTime: string
+  timezone: string
   address: string
   city: string
   country: string
