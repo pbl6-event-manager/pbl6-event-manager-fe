@@ -43,3 +43,11 @@ export interface OrderSearchParamsDto {
     searchTime: SEARCH_TIME_ENUM;
     searchBy?: SEARCH_BY_ENUM;
 }
+
+export interface DashboardOrderStatsDto {
+    date: string;
+    total: number;
+    paid: number;
+    pending: number;
+    canceled: number;
+}

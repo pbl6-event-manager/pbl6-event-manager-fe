@@ -18,8 +18,6 @@ export default function EventManageAttendeesPage() {
   const [filterCheckIn, setFilterCheckIn] = useState<string>("all")
   const [totalCount, setTotalCount] = useState(0)
   const [checkedInCount, setCheckedInCount] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
-
   // Mock data - replace with API call
   useEffect(() => {
     const mockAttendees: any[] = [

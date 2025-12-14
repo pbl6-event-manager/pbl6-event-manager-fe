@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { ArrowLeft } from "lucide-react"
 import { Button } from "../../../components/ui/button"
@@ -37,6 +37,10 @@ export default function EventDetailPage() {
     locationRef,
     overviewRef,
     mediaRef,
+    dashboardTicketInfo,
+    dashboardRevenueInfo,
+    dashboardAttendeeInfo,
+    dashboardOrderStats,
 
     // Actions
     setUploadedMedia,
@@ -49,7 +53,8 @@ export default function EventDetailPage() {
     handleOrganizerChange,
     handleCategoryChange,
     handleUpdateEvent,
-  } = useEventViewModel()
+    getStatusColor
+  } = useEventViewModel();
 
   const {
     isOwner,
@@ -76,18 +81,20 @@ export default function EventDetailPage() {
     checkMenuItemPermission,
     checkAndAllow,
     PERMISSIONS,
-  } = useEventPermissionViewModel()
+  } = useEventPermissionViewModel();
 
   const handleUpdateEventWithPermission = () => {
-    checkAndAllow(PERMISSIONS.UPDATE_EVENT, () => handleUpdateEvent(isOwner, canEditEvent))
-  }
+    checkAndAllow(PERMISSIONS.UPDATE_EVENT, () =>
+      handleUpdateEvent(isOwner, canEditEvent)
+    );
+  };
 
   const handlePublishEventWithPermission = async () => {
-    const allowed = checkAndAllow(PERMISSIONS.PUBLISH_EVENT, () => { })
+    const allowed = checkAndAllow(PERMISSIONS.PUBLISH_EVENT, () => {});
     if (allowed) {
-      await handlePublishEvent(isOwner, canPublishEvent)
+      await handlePublishEvent(isOwner, canPublishEvent);
     }
-  }
+  };
 
   if (isLoading || !eventData) {
     return (
@@ -97,7 +104,7 @@ export default function EventDetailPage() {
           <p className="text-muted-foreground">Loading event data...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -106,7 +113,12 @@ export default function EventDetailPage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={handleBackClick} className="cursor-pointer">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackClick}
+                className="cursor-pointer"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to events
               </Button>
@@ -123,12 +135,18 @@ export default function EventDetailPage() {
               <div className="sticky top-24 h-[calc(100vh-120px)] overflow-y-auto">
                 <EventSidebar
                   eventData={eventData}
-                  currentStep={typeof currentSection === "number" ? currentSection : 0}
+                  currentStep={
+                    typeof currentSection === "number" ? currentSection : 0
+                  }
                   completedSteps={completedSteps}
                   isCreating={false}
                   onStepClick={handleStepClick}
                   onMenuItemClick={handleMenuItemClick}
-                  activeMenuItem={typeof currentSection === "string" ? currentSection : undefined}
+                  activeMenuItem={
+                    typeof currentSection === "string"
+                      ? currentSection
+                      : undefined
+                  }
                   isOwner={isOwner}
                   roleStaffName={roleStaffName}
                   isPermissionLoading={isPermissionLoading}
@@ -167,7 +185,10 @@ export default function EventDetailPage() {
 
                 {currentSection === 2 && (
                   <div className="bg-card rounded-lg border">
-                    <CreateTicketsPage onNext={() => setCurrentSection(3)} isOwner={isOwner} />
+                    <CreateTicketsPage
+                      onNext={() => setCurrentSection(3)}
+                      isOwner={isOwner}
+                    />
                   </div>
                 )}
 
@@ -188,7 +209,15 @@ export default function EventDetailPage() {
 
                 {currentSection === "dashboard" && (
                   <div className="bg-card rounded-lg border">
-                    <EventDashboardPage setCurrentSection={setCurrentSection} />
+                    <EventDashboardPage
+                      setCurrentSection={setCurrentSection}
+                      eventData={eventData}
+                      getStatusColor={getStatusColor}
+                      ticketInfo={dashboardTicketInfo}
+                      revenueInfo={dashboardRevenueInfo}
+                      attendeeInfo={dashboardAttendeeInfo}
+                      orderStats={dashboardOrderStats}
+                    />
                   </div>
                 )}
 
@@ -221,5 +250,5 @@ export default function EventDetailPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
