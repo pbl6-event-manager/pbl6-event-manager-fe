@@ -8,7 +8,8 @@ export const useLayoutViewModel = () => {
         "/admin/categories", 
         "/admin/permissions",
         "admin/events/details",
-        "admin/dashboard"
+        "admin/dashboard",
+        "admin/users/details"
     ];
     const isScrollable = scrollablePaths.some((p) => path === p || path.startsWith(p + "/") || path.includes(p));
 

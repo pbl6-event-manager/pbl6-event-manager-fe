@@ -12,12 +12,12 @@ export const GET_ORDERS_REQUEST = "GET_ORDERS_REQUEST";
 export const GET_ORDERS_SUCCESS = "GET_ORDERS_SUCCESS";
 export const GET_ORDERS_FAILURE = "GET_ORDERS_FAILURE";
 
-export const getOrderByCustomerId = (customerId: number) => async (dispatch: any) => {
+export const getOrderByCustomerId = (customerId: any) => async (dispatch: any) => {
     try {
         dispatch({
             type: GET_ORDER_BY_CUSTOMER_ID_REQUEST
         })
-
+        
         const response = await getOrdersByCustomerIdService(customerId);
         if (response === null) {
             dispatch({
@@ -71,13 +71,13 @@ export const getOrderDetailsByOrderId = (orderId: number) => async (dispatch: an
     }
 }
 
-export const getOrders = (orderSearchParams: OrderSearchParamsDto) => async (dispatch: any) => {
+export const getOrders = (orderSearchParams: OrderSearchParamsDto, isAdminSite: boolean) => async (dispatch: any) => {
     try {
         dispatch({
             type: GET_ORDERS_REQUEST
         })
 
-        const response = await getOrdersService(orderSearchParams);
+        const response = await getOrdersService(orderSearchParams, isAdminSite);
         if (response === null) {
             dispatch({
                 type: GET_ORDERS_FAILURE,

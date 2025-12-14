@@ -72,7 +72,11 @@ export const showErrorAlert = (message: string, title: string = "Error") => {
     icon: "error",
     title,
     text: message,
+    confirmButtonText: "OK",
     confirmButtonColor: "#d33",
+    showConfirmButton: true,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
     didOpen: () => {
       lockBodyScroll();
     },
@@ -152,10 +156,6 @@ export const showLoadingAlert = (title = "Processing...") => {
 
 export const closeLoadingAlert = () => {
   if (!_loadingShownAt) {
-    try {
-      Swal.close();
-      unlockBodyScroll();
-    } catch {}
     return;
   }
 

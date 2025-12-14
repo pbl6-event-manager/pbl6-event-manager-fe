@@ -65,10 +65,10 @@ export const useOrderViewModel = () => {
             try {
                 showLoadingAlert();
                 await dispatch<any>(getEventsByOwner());
-            } catch (err: any) {
-                showErrorAlert(err?.message || "An error occurs when getting your events");
-            } finally {
                 closeLoadingAlert();
+            } catch (err: any) {
+                closeLoadingAlert();
+                showErrorAlert(err?.message || "An error occurs when getting your events");
             }
         };
 
@@ -91,12 +91,11 @@ export const useOrderViewModel = () => {
             if (dateRange) params.searchTime = dateRange;
 
             showLoadingAlert();
-            const response = await dispatch<any>(getOrders(params as OrderSearchParamsDto));
-            setOrders(response);
+            const response = await dispatch<any>(getOrders(params as OrderSearchParamsDto, false));
+            setOrders(response.orderListDtoList);
+            closeLoadingAlert();
         } catch (error: any) {
             showErrorAlert(error?.message || "Failed to get orders");
-        } finally {
-            closeLoadingAlert();
         }
     }
 

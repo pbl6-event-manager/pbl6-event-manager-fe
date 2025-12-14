@@ -1,20 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-export function useTableViewModel(data: any) {
+export function useTableViewModel(data: any[] | undefined) {
   const tableRef = useRef<HTMLDivElement | null>(null);
+  const safeData = Array.isArray(data) ? data : [];
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const itemsPerPage = 15;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
+  const totalPages = Math.ceil(safeData.length / itemsPerPage) || 1;
 
   useEffect(() => {
     if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [data, totalPages, currentPage]);
+  }, [safeData, totalPages, currentPage]);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = data.slice(startIndex, startIndex + itemsPerPage);
+  const currentData = safeData.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));

@@ -5,7 +5,6 @@ import {
   Home,
   Users,
   LogOut,
-  Banknote,
   Tags,
   Ticket,
   Shield,
@@ -36,11 +35,6 @@ const AdminSidebar: React.FC = () => {
       path: "/admin/categories",
       label: "Category Management",
       icon: <Tags size={18} />,
-    },
-    {
-      path: "/admin/payments",
-      label: "Transaction Management",
-      icon: <Banknote size={18} />,
     },
   ];
 
