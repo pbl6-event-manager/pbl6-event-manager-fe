@@ -97,6 +97,16 @@ const EventDashboardPage: React.FC<EventDashboardSectionProps> = ({setCurrentSec
         </div>
 
         <Card className="mb-6">
+          <CardContent>
+            <h3 className="font-semibold mb-4">Sales by ticket type</h3>
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="text-6xl mb-4">🎟️</div>
+              <p className="text-muted-foreground">No tickets for this event yet</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
           <CardContent className="p-6">
             <h3 className="font-semibold mb-4">Quick actions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -108,16 +118,6 @@ const EventDashboardPage: React.FC<EventDashboardSectionProps> = ({setCurrentSec
                 <span className="mr-2">📋</span>
                 Order form responses
               </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="mb-6">
-          <CardContent>
-            <h3 className="font-semibold mb-4">Sales by ticket type</h3>
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="text-6xl mb-4">🎟️</div>
-              <p className="text-muted-foreground">No tickets for this event yet</p>
             </div>
           </CardContent>
         </Card>

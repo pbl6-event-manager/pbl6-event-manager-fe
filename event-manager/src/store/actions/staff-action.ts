@@ -29,7 +29,15 @@ export const SYNC_STAFFS_TO_EVENT_FAILURE = "SYNC_STAFFS_TO_EVENT_FAILURE";
 
 import { convertEventStaffAdminModelToEventStaffAdminDto } from "../../converters/event-staff-converter";
 import { mapResponseToEventStaffModelAdmin } from "../../mappers/event-staff-mapper";
-import { syncStaffsToEventService, assignStaffToOwnerService, fetchStaffGroupedByRoleService, removeStaffOfOwnerService, fetchAssignedStaffsOfEventByListIds, getStaffOfEventAdminService } from "../../service/staff-service";
+import { 
+    syncStaffsToEventService, 
+    assignStaffToOwnerService, 
+    fetchStaffGroupedByRoleService, 
+    removeStaffOfOwnerService, 
+    fetchAssignedStaffsOfEventByListIds, 
+    fetchAssignedStaffsOfEventByStaffService, 
+    getStaffOfEventAdminService 
+} from "../../service/staff-service";
 
 export const fetchEventStaffs = (eventId: number) => async (dispatch: any) => {
     dispatch({ type: FETCH_EVENT_STAFFS_REQUEST });
@@ -189,4 +197,24 @@ export const syncStaffsToEvent = (eventId: number, staffIds: number[]) => {
             throw error;
         }
     };
+};
+
+export const fetchEventStaffsForStaff = (eventId: number) => async (dispatch: any) => {
+    dispatch({ type: FETCH_EVENT_STAFFS_REQUEST });
+    try {
+        const { allStaffDtos, allStaffItems } = await fetchAssignedStaffsOfEventByStaffService(eventId);
+
+        dispatch({
+            type: FETCH_EVENT_STAFFS_SUCCESS,
+            payload: allStaffDtos 
+        });
+        return allStaffItems;
+    } catch (error: any) {
+        console.error("[fetchEventStaffsForStaff] Error:", error);
+        dispatch({
+            type: FETCH_EVENT_STAFFS_FAILED,
+            payload: error.message
+        });
+        throw error;
+    }
 };

@@ -5,3 +5,5 @@ export const syncStaffToEvent = async (eventId: number, staffIds: number[]) => a
 export const getAllAssignedStaffIdsOfEvent = async (eventId: number) => apiClient.get(`/event-staff/${eventId}/staffs`);
 
 export const getStaffOfEventAdminApi = (eventId: number) => apiClient.get(`event-staff/admin/${eventId}/staffs`);
+
+export const getStaffOfEventStaffApi = (eventId: number) => apiClient.get(`event-staff/staff/${eventId}/staffs`);

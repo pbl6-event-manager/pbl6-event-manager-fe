@@ -13,8 +13,8 @@ import EventDiscountPage from "./event-discount-page"
 import EditEventInfoPage from "./edit-event-info-page"
 import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
 import { useEventPermissionViewModel } from "../../../viewmodels/Organizer/events/event-permission-view-model"
-import { PermissionBadge } from "../../../components/Permission/PermissionBadge"
-import { EventAccessGuard } from "../../../components/Permission/EventAccessGuard"
+//import { PermissionBadge } from "../../../components/Permission/PermissionBadge"
+//import { EventAccessGuard } from "../../../components/Permission/EventAccessGuard"
 
 export default function EventDetailPage() {
   const {
@@ -55,8 +55,21 @@ export default function EventDetailPage() {
     isOwner,
     roleStaffName,
     isLoading: isPermissionLoading,
+    // canViewEvent,
+    // canViewAnalytics,
+    // canViewEventStaff,
+    // canViewAttendees,
+    // canViewOrders,
+    // canViewDiscount,
     canEditEvent,
+    // canDeleteEvent,
     canPublishEvent,
+    // canCreateTickets,
+    // canUpdateTickets,
+    // canDeleteTickets,
+    canAssignStaffs,
+    // canDeleteDiscounts,
+    // canManageTickets,
     canAccessStep,
     canAccessMenuItem,
     checkStepPermission,
@@ -181,7 +194,7 @@ export default function EventDetailPage() {
 
                 {currentSection === "team-management" && (
                   <div className="bg-card rounded-lg border">
-                    <EventTeamManagementPage />
+                    <EventTeamManagementPage isOwner={isOwner} canAssignStaffs={canAssignStaffs} />
                   </div>
                 )}
 
