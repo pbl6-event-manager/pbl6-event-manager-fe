@@ -35,6 +35,7 @@ const additionalMenuItems = [
   { id: "dashboard", title: "Dashboard" },
   { id: "team-management", title: "Team Management" },
   { id: "manage-attendee", title: "Manage Attendees" },
+  { id: "manage-orders", title: "Manage Orders" },
   { id: "discount", title: "Discount" },
 ]
 

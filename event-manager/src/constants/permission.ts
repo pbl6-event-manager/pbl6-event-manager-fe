@@ -9,10 +9,12 @@ export const PERMISSIONS = {
     CREATE_TICKETS: "CREATE_TICKETS",
     UPDATE_TICKETS: "UPDATE_TICKETS",
     DELETE_TICKETS: "DELETE_TICKETS",
+    VIEW_ORDERS: "VIEW_ORDERS",
+    VIEW_ATTENDEES: "VIEW_ATTENDEES",
+    VIEW_TEAM_MANAGEMENT: "VIEW_TEAM_MANAGEMENT",
     // Future permissions can be added here
-    // MANAGE_ATTENDEES: "MANAGE_ATTENDEES",
     // MANAGE_VOUCHERS: "MANAGE_VOUCHERS",
-    // VIEW_ANALYTICS: "VIEW_ANALYTICS",
+    VIEW_ANALYTICS: "VIEW_ANALYTICS",
 }
 
 export type PermissionName = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
@@ -44,13 +46,19 @@ export const PERMISSION_LABELS: Record<string, string> = {
   [PERMISSIONS.CREATE_TICKETS]: "Create Tickets",
   [PERMISSIONS.UPDATE_TICKETS]: "Update Tickets",
   [PERMISSIONS.DELETE_TICKETS]: "Delete Tickets",
+  [PERMISSIONS.VIEW_ORDERS]: "View Orders",
+  [PERMISSIONS.VIEW_ATTENDEES]: "View Attendees",
+  [PERMISSIONS.VIEW_TEAM_MANAGEMENT]: "View Team Management",
+  // [PERMISSIONS.MANAGE_VOUCHERS]: "Manage Vouchers",
+  [PERMISSIONS.VIEW_ANALYTICS]: "View Analytics",
 }
 
 // Map permissions to event sidebar menu items
 export const MENU_PERMISSION_MAP: Record<string, PermissionName[]> = {
-  "dashboard": [PERMISSIONS.VIEW_EVENT],
+  "dashboard": [PERMISSIONS.VIEW_EVENT, PERMISSIONS.VIEW_ANALYTICS],
   "team-management": [PERMISSIONS.UPDATE_EVENT, PERMISSIONS.VIEW_EVENT],
-  "manage-attendee": [PERMISSIONS.VIEW_EVENT],
+  "manage-attendee": [PERMISSIONS.VIEW_ATTENDEES],
+  "manage-orders": [PERMISSIONS.VIEW_ORDERS],
   "discount": [PERMISSIONS.UPDATE_EVENT],
 }
 
