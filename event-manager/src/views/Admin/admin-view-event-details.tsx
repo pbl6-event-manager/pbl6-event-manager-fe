@@ -6,13 +6,7 @@ import { useEventViewModel } from "../../viewmodels/Admin/event-view-model";
 import { EventInfoSection } from "../../components/Admin/event-info-section";
 import { EventStaffSection } from "../../components/Admin/event-stafff-section";
 import { EventTicketSection } from "../../components/Admin/event-ticket-section";
-
-const EventAttendeeSection: React.FC<{ id: string }> = ({ id }) => {
-  return <div>Attendees for event id: {id}</div>;
-};
-const EventTransactionSection: React.FC<{ id: string }> = ({ id }) => {
-  return <div>Transactions for event id: {id}</div>;
-};
+import { EventTransactionSection } from "../../components/Admin/event-transaction-section";
 
 const AdminEventDetailPage: React.FC = () => {
   const { id, handleBack, activeDelTab, setActiveDelTab, eventDetails } = useEventViewModel();
@@ -32,7 +26,6 @@ const AdminEventDetailPage: React.FC = () => {
         <TabItem label="Information" active={activeDelTab === "information"} onClick={() => setActiveDelTab("information")} />
         <TabItem label="Staff" active={activeDelTab === "staff"} onClick={() => setActiveDelTab("staff")} />
         <TabItem label="Ticket" active={activeDelTab === "ticket"} onClick={() => setActiveDelTab("ticket")} />
-        <TabItem label="Attendee" active={activeDelTab === "attendee"} onClick={() => setActiveDelTab("attendee")} />
         <TabItem label="Transaction" active={activeDelTab === "transaction"} onClick={() => setActiveDelTab("transaction")} />
       </TabGroup>
 
@@ -40,8 +33,7 @@ const AdminEventDetailPage: React.FC = () => {
         {activeDelTab === "information" && <EventInfoSection/>}
         {activeDelTab === "staff" && <EventStaffSection/>}
         {activeDelTab === "ticket" && <EventTicketSection tickets={eventDetails?.ticket}/>}
-        {activeDelTab === "attendee" && <EventAttendeeSection id={id} />}
-        {activeDelTab === "transaction" && <EventTransactionSection id={id} />}
+        {activeDelTab === "transaction" && <EventTransactionSection eventId={Number.parseInt(id)} />}
       </div>
     </div>
   );

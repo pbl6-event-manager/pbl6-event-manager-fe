@@ -28,13 +28,11 @@ export const useEventViewModel = () => {
       : n === "3"
         ? ("ticket" as const)
         : n === "4"
-          ? ("attendee" as const)
-          : n === "5"
-            ? ("transaction" as const)
+          ? ("transaction" as const)
             : ("information" as const);
 
-  const mapTabToNum = (t: "information" | "staff" | "ticket" | "attendee" | "transaction") =>
-    t === "staff" ? "2" : t === "ticket" ? "3" : t === "attendee" ? "4" : t === "transaction" ? "5" : "1";
+  const mapTabToNum = (t: "information" | "staff" | "ticket" | "transaction") =>
+    t === "staff" ? "2" : t === "ticket" ? "3" : t === "transaction" ? "4" : "1";
   const params = new URLSearchParams(location.search);
   const id = params.get("id") ?? "";
   const qTab = params.get("tab");
@@ -70,7 +68,7 @@ export const useEventViewModel = () => {
   }, [dispatch]);
 
   const setActiveDelTab = useCallback(
-    (tab: "information" | "staff" | "ticket" | "attendee" | "transaction") => {
+    (tab: "information" | "staff" | "ticket" | "transaction") => {
       _setActiveDelTab(tab);
       const p = new URLSearchParams(location.search);
       p.set("tab", mapTabToNum(tab));

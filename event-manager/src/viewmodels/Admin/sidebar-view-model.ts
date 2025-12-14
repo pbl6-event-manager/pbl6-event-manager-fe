@@ -2,11 +2,10 @@ import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/actions/auth-action";
-import { useNavigate } from "react-router-dom";
+import { closeLoadingAlert, showLoadingAlert } from "../../helpers/alert-helpers";
 
 export const useSideBarViewModel = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
@@ -14,7 +13,9 @@ export const useSideBarViewModel = () => {
   const handleLogout = () => {
     setOpenDialog(false);
     dispatch(logout());
-    navigate("/login");
+    showLoadingAlert();
+    window.location.href = ("/login");
+    closeLoadingAlert();
   };
 
   const toggleSubmenu = (label: string) => {

@@ -1,11 +1,10 @@
 import { getOrderByCustomerIdApi, getOrdersApi } from "../api/order-api";
 import { converOrderModelToOrderListDto, convertOrderModelToOrderListAdminDto } from "../converters/order-converter";
-import type { EventSelectionDto } from "../dtos/event-dto";
 import type { OrderSearchParamsDto } from "../dtos/order-dto";
 import { mapResponseToOrderModel } from "../mappers/order-mapper";
 import { getAllEventsAdminService, getEventsByOwnerService } from "./event-service";
 
-export const getOrdersByCustomerIdService = async (customerId: number) => {
+export const getOrdersByCustomerIdService = async (customerId: any) => {
     try {
         const response = await getOrderByCustomerIdApi(customerId);
         if (response.data.message === "success") {
@@ -42,17 +41,16 @@ export const getOrdersByCustomerIdService = async (customerId: number) => {
     }
 }
 
-export const getOrdersService = async (orderSearchParams: OrderSearchParamsDto) => {
+export const getOrdersService = async (orderSearchParams: OrderSearchParamsDto, isAdminSite: boolean) => {
     try {
         const response = await getOrdersApi(orderSearchParams);
         if (response.data.message === "success") {
             const orderModelList = response.data.data.map(mapResponseToOrderModel);
-            const orderListDtoList = orderModelList.map(converOrderModelToOrderListDto).sort((a: any, b: any) => a.id - b.id);
-            const eventListDto = (await getEventsByOwnerService()).eventListDto;
-            const eventListSelectionDto: EventSelectionDto[] = eventListDto;
+            const orderListDtoList = orderModelList.map(isAdminSite ? convertOrderModelToOrderListAdminDto : converOrderModelToOrderListDto).sort((a: any, b: any) => a.id - b.id);
+            const eventListDto = isAdminSite ? (await getAllEventsAdminService()).eventListDtoList : (await getEventsByOwnerService()).eventListDto;
 
             const eventMap = new Map<string, any>(
-                eventListSelectionDto.map((e: any) => [String(e.id), e])
+                eventListDto.map((e: any) => [String(e.id), e])
             );
 
             const orderListDtoListWithTitle = orderListDtoList.map((o: any) => {
@@ -66,7 +64,7 @@ export const getOrdersService = async (orderSearchParams: OrderSearchParamsDto) 
 
             return {
                 orderModelList,
-                orderListDtoList: orderListDtoListWithTitle
+                orderListDtoList: orderListDtoListWithTitle,
             };
         } else {
             return null;

@@ -13,7 +13,7 @@ const OrderOfAnUser: React.FC<OrderOfAnUserSectionProps> = ({ customerId }) => {
     selectedOrder,
     detailLoading,
     closeDetail,
-  } = useOrderViewModel(customerId);
+  } = useOrderViewModel({customerId: customerId});
 
   return (
     <div className="mt-4">
