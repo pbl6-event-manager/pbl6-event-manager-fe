@@ -6,42 +6,49 @@ import { getMyEventPermissionService, getAllPermissionsService } from "../servic
 
 
 interface EventPermissionContextType {
-    // Current permission state
-    eventId: number | null;
-    isOwner: boolean;
-    isStaff: boolean;
-    isLoading: boolean;
-    error: string | null;
-    permissions: Permission[];
-    allSystemPermissions: Permission[];
-    roleStaffName: string | null;
+  // Current permission state
+  eventId: number | null;
+  isOwner: boolean;
+  isStaff: boolean;
+  isLoading: boolean;
+  error: string | null;
+  permissions: Permission[];
+  allSystemPermissions: Permission[];
+  roleStaffName: string | null;
 
-    // Permission check functions
-    hasPermission: (permissionName: PermissionName | string) => boolean;
-    hasAnyPermission: (permissionNames: (PermissionName | string)[]) => boolean;
-    hasAllPermissions: (permissionNames: (PermissionName | string)[]) => boolean;
-    canViewEvent: () => boolean;
-    canEditEvent: () => boolean;
-    canDeleteEvent: () => boolean;
-    canPublishEvent: () => boolean;
-    canCreateTickets: () => boolean;
-    canUpdateTickets: () => boolean;
-    canDeleteTickets: () => boolean;
-    canManageTickets: () => boolean;
+  // Permission check functions
+  hasPermission: (permissionName: PermissionName | string) => boolean;
+  hasAnyPermission: (permissionNames: (PermissionName | string)[]) => boolean;
+  hasAllPermissions: (permissionNames: (PermissionName | string)[]) => boolean;
+  canViewEvent: () => boolean;
+  canViewAnalytics: () => boolean;
+  canViewEventStaff: () => boolean;
+  canViewAttendees: () => boolean;
+  canViewOrders: () => boolean;
+  canViewDiscount: () => boolean;
+  canEditEvent: () => boolean;
+  canDeleteEvent: () => boolean;
+  canPublishEvent: () => boolean;
+  canCreateTickets: () => boolean;
+  canUpdateTickets: () => boolean;
+  canDeleteTickets: () => boolean;
+  canManageTickets: () => boolean;
+  canAssignStaffs: () => boolean
+  canDeleteDiscounts: () => boolean
 
-    // Actions
-    loadPermissions: (eventId: number, isEventOwner?: boolean) => Promise<void>
-    clearPermissions: () => void;
-    refreshPermissions: () => Promise<void>;
-    loadAllSystemPermissions: () => Promise<void>;
+  // Actions
+  loadPermissions: (eventId: number, isEventOwner?: boolean) => Promise<void>
+  clearPermissions: () => void;
+  refreshPermissions: () => Promise<void>;
+  loadAllSystemPermissions: () => Promise<void>;
 }
 
 const EventPermissionContext = createContext<EventPermissionContextType | undefined>(undefined);
 
 interface EventPermissionProviderProps {
-    children: React.ReactNode;
-    initialEventId?: number;
-    initialIsOwner?: boolean; // Allow passing ownership from parent
+  children: React.ReactNode;
+  initialEventId?: number;
+  initialIsOwner?: boolean; // Allow passing ownership from parent
 }
 
 export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = ({
@@ -86,7 +93,6 @@ export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = (
         } else {
           // User is staff - fetch their assignment permissions
           const result = await getMyEventPermissionService(targetEventId)
-          console.log("Loaded event permissions for eventId:", targetEventId, ":", result)
           setEventId(targetEventId)
 
           if (result) {
@@ -173,12 +179,19 @@ export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = (
   )
 
   const canViewEvent = useCallback(() => checkPermission(PERMISSIONS.VIEW_EVENT), [checkPermission])
+  const canViewAnalytics = useCallback(() => checkPermission(PERMISSIONS.VIEW_ANALYTICS), [checkPermission])
+  const canViewEventStaff = useCallback(() => checkPermission(PERMISSIONS.VIEW_EVENT_STAFF), [checkPermission])
+  const canViewAttendees = useCallback(() => checkPermission(PERMISSIONS.VIEW_ATTENDEES), [checkPermission])
+  const canViewOrders = useCallback(() => checkPermission(PERMISSIONS.VIEW_ORDERS), [checkPermission])
+  const canViewDiscount = useCallback(() => checkPermission(PERMISSIONS.VIEW_DISCOUNT), [checkPermission])
   const canEditEvent = useCallback(() => checkPermission(PERMISSIONS.UPDATE_EVENT), [checkPermission])
   const canDeleteEvent = useCallback(() => checkPermission(PERMISSIONS.DELETE_EVENT), [checkPermission])
   const canPublishEvent = useCallback(() => checkPermission(PERMISSIONS.PUBLISH_EVENT), [checkPermission])
   const canCreateTickets = useCallback(() => checkPermission(PERMISSIONS.CREATE_TICKETS), [checkPermission])
   const canUpdateTickets = useCallback(() => checkPermission(PERMISSIONS.UPDATE_TICKETS), [checkPermission])
   const canDeleteTickets = useCallback(() => checkPermission(PERMISSIONS.DELETE_TICKETS), [checkPermission])
+  const canAssignStaffs = useCallback(() => checkPermission(PERMISSIONS.ASSIGN_STAFFS), [checkPermission])
+  const canDeleteDiscounts = useCallback(() => checkPermission(PERMISSIONS.DELETE_DISCOUNTS), [checkPermission])
   const canManageTickets = useCallback(
     () => checkAnyPermission([PERMISSIONS.CREATE_TICKETS, PERMISSIONS.UPDATE_TICKETS, PERMISSIONS.DELETE_TICKETS]),
     [checkAnyPermission],
@@ -197,6 +210,11 @@ export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = (
     hasAnyPermission: checkAnyPermission,
     hasAllPermissions: checkAllPermissions,
     canViewEvent,
+    canViewAnalytics,
+    canViewEventStaff,
+    canViewAttendees,
+    canViewOrders,
+    canViewDiscount,
     canEditEvent,
     canDeleteEvent,
     canPublishEvent,
@@ -204,11 +222,13 @@ export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = (
     canUpdateTickets,
     canDeleteTickets,
     canManageTickets,
+    canAssignStaffs,
+    canDeleteDiscounts,
     loadPermissions,
     clearPermissions,
     refreshPermissions,
     loadAllSystemPermissions,
-  } 
+  }
   return <EventPermissionContext.Provider value={contextValue}>{children}</EventPermissionContext.Provider>
 }
 

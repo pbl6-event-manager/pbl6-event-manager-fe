@@ -1,5 +1,5 @@
 import { assignAndUpdateStaffToOwner, getStaffGroupedByRole, deleteOwnerStaffByEmail } from "../api/owner-staff-api";
-import { syncStaffToEvent, getAllAssignedStaffIdsOfEvent } from "../api/event-staff-api";
+import { syncStaffToEvent, getAllAssignedStaffIdsOfEvent, getStaffOfEventStaffApi } from "../api/event-staff-api";
 import { convertToOwnerStaffListItem, convertToStaffDto } from "../converters/staff-converter";
 import { mapToStaffModel } from "../mappers/staff-mapper";
 import { mapToRoleStaffModel } from "../mappers/role-staff-mapper";
@@ -120,12 +120,10 @@ export const syncStaffsToEventService = async (eventId: number, staffIds: number
 export const fetchAssignedStaffsOfEventByListIds = async (eventId: number) => {
     try {
         const response = await getAllAssignedStaffIdsOfEvent(eventId);
-        const assignedStaffIds: number[] = response.data.data; // Lấy mảng IDs từ API
+        const assignedStaffIds: number[] = response.data.data;
 
-        // Lấy tất cả staff của organizer
         const { allStaffDtos, allStaffItems } = await fetchStaffGroupedByRoleService();
 
-        // Filter để lấy những staff đã được assign
         const assignedStaffsDto = allStaffDtos.filter(staff =>
             assignedStaffIds.includes(staff.id)
         );
@@ -142,4 +140,47 @@ export const fetchAssignedStaffsOfEventByListIds = async (eventId: number) => {
     } catch (error: any) {
         throw new Error(error.response?.data?.message || "Failed to fetch assigned staffs of event");
     }
+}
+
+export const fetchAssignedStaffsOfEventByStaffService = async (eventId: number) => {
+    const response = await getStaffOfEventStaffApi(eventId);
+    const rawData = response?.data;
+
+    if (!rawData.status || !rawData.data) {
+        throw new Error(rawData.message || "Failed to fetch assigned staffs");
+    }
+
+    const { assignments, staffIds } = rawData.data;
+    const allStaffDtos: StaffDto[] = [];
+    const allStaffItems: OwnerStaffListItem[] = [];
+
+    for (const assignment of assignments) {
+        // Map role staff to Model
+        const roleStaffModel: RoleStaffModel = mapToRoleStaffModel(assignment.roleStaff);
+
+        // Map user to UserModel
+        const staffModel: UserModel = mapToStaffModel(assignment.user);
+
+        const staffWithRole = {
+            ...staffModel,
+            name: `${staffModel.firstName} ${staffModel.lastName}`.trim() || staffModel.email,
+            role: roleStaffModel.name,
+            roleId: roleStaffModel.id,
+        };
+
+        const staffDto: StaffDto = convertToStaffDto(staffWithRole);
+        allStaffDtos.push(staffDto);
+
+        const displayItem = convertToOwnerStaffListItem(staffDto);
+
+        if (displayItem) {
+            allStaffItems.push(displayItem);
+        }
+    }
+
+    return { 
+        allStaffItems, 
+        allStaffDtos,
+        assignedStaffIds: staffIds 
+    };
 }

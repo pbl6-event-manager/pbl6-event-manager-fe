@@ -6,6 +6,7 @@ import type { EventStaffDtoAdmin } from "../../dtos/event-staff-dto"
 export interface StaffsState {
   eventStaffs: StaffDto[]
   organizerStaffs: StaffDto[]
+  organizerStaffsByStaff: StaffDto[]
   eventStaffsAdmin: EventStaffDtoAdmin[],
   roles: RoleStaffDto[]
   isLoading: boolean
@@ -15,6 +16,7 @@ export interface StaffsState {
 export const DEFAULT_STAFF_STATE: StaffsState = {
     eventStaffs: [],
     organizerStaffs: [],
+    organizerStaffsByStaff: [],
     eventStaffsAdmin: [],
     roles: [],
     isLoading: false,

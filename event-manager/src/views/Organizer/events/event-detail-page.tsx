@@ -1,18 +1,20 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
-import { Button } from "../../../components/ui/button";
-import { EventSidebar } from "../../../components/Organizer/event-sidebar";
-import EventDashboardPage from "./event-dashboard-page";
-import EventTeamManagementPage from "./event-team-management-page";
-import EventManageAttendeesPage from "./event-manage-attendees-page";
-import EventManageOrdersPage from "./event-manage-orders-page";
-import CreateTicketsPage from "./create-ticket-page";
-import PublishEventPage from "./publish-event-page";
-import EventDiscountPage from "./event-discount-page";
-import EditEventInfoPage from "./edit-event-info-page";
-import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model";
-import { useEventPermissionViewModel } from "../../../viewmodels/Organizer/events/event-permission-view-model";
+import { ArrowLeft } from "lucide-react"
+import { Button } from "../../../components/ui/button"
+import { EventSidebar } from "../../../components/Organizer/event-sidebar"
+import EventDashboardPage from "./event-dashboard-page"
+import EventTeamManagementPage from "./event-team-management-page"
+import EventManageAttendeesPage from "./event-manage-attendees-page"
+import EventManageOrdersPage from "./event-manage-orders-page"
+import CreateTicketsPage from "./create-ticket-page"
+import PublishEventPage from "./publish-event-page"
+import EventDiscountPage from "./event-discount-page"
+import EditEventInfoPage from "./edit-event-info-page"
+import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
+import { useEventPermissionViewModel } from "../../../viewmodels/Organizer/events/event-permission-view-model"
+//import { PermissionBadge } from "../../../components/Permission/PermissionBadge"
+//import { EventAccessGuard } from "../../../components/Permission/EventAccessGuard"
 
 export default function EventDetailPage() {
   const {
@@ -58,8 +60,21 @@ export default function EventDetailPage() {
     isOwner,
     roleStaffName,
     isLoading: isPermissionLoading,
+    // canViewEvent,
+    // canViewAnalytics,
+    // canViewEventStaff,
+    // canViewAttendees,
+    // canViewOrders,
+    // canViewDiscount,
     canEditEvent,
+    // canDeleteEvent,
     canPublishEvent,
+    // canCreateTickets,
+    // canUpdateTickets,
+    // canDeleteTickets,
+    canAssignStaffs,
+    // canDeleteDiscounts,
+    // canManageTickets,
     canAccessStep,
     canAccessMenuItem,
     checkStepPermission,
@@ -208,7 +223,7 @@ export default function EventDetailPage() {
 
                 {currentSection === "team-management" && (
                   <div className="bg-card rounded-lg border">
-                    <EventTeamManagementPage />
+                    <EventTeamManagementPage isOwner={isOwner} canAssignStaffs={canAssignStaffs} />
                   </div>
                 )}
 
