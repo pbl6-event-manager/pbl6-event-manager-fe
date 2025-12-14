@@ -5,6 +5,8 @@ import { Button } from "../../../components/ui/button"
 import { EventSidebar } from "../../../components/Organizer/event-sidebar"
 import EventDashboardPage from "./event-dashboard-page"
 import EventTeamManagementPage from "./event-team-management-page"
+import EventManageAttendeesPage from "./event-manage-attendees-page"
+import EventManageOrdersPage from "./event-manage-orders-page"
 import CreateTicketsPage from "./create-ticket-page"
 import PublishEventPage from "./publish-event-page"
 import EventDiscountPage from "./event-discount-page"
@@ -68,7 +70,7 @@ export default function EventDetailPage() {
   }
 
   const handlePublishEventWithPermission = async () => {
-    const allowed = checkAndAllow(PERMISSIONS.PUBLISH_EVENT, () => {})
+    const allowed = checkAndAllow(PERMISSIONS.PUBLISH_EVENT, () => { })
     if (allowed) {
       await handlePublishEvent(isOwner, canPublishEvent)
     }
@@ -146,7 +148,7 @@ export default function EventDetailPage() {
                     handleUpdateEvent={handleUpdateEventWithPermission}
                     handleBackClick={handleBackClick}
                     isOwner={isOwner}
-                    canEditEvent={canEditEvent} 
+                    canEditEvent={canEditEvent}
                   />
                 )}
 
@@ -183,10 +185,15 @@ export default function EventDetailPage() {
                   </div>
                 )}
 
-                {currentSection === "manage-attendees" && (
+                {currentSection === "manage-attendee" && (
                   <div className="bg-card rounded-lg p-6 border">
-                    <h2 className="text-2xl font-bold mb-4">Manage Attendees</h2>
-                    <p className="text-muted-foreground">Attendee management section will be displayed here.</p>
+                    <EventManageAttendeesPage />
+                  </div>
+                )}
+
+                {currentSection === "manage-orders" && (
+                  <div className="bg-card rounded-lg p-6 border">
+                    <EventManageOrdersPage />
                   </div>
                 )}
 

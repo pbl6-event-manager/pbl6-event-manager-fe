@@ -38,6 +38,7 @@ export const useEventViewModel = () => {
         "dashboard",
         "team-management",
         "manage-attendee",
+        "manage-orders",
         "discount",
     ]
     const MAX_STEP = 3
