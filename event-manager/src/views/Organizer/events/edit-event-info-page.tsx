@@ -77,6 +77,8 @@ export default function EditEventInfoPage({
         eventData={eventData}
         onUpdate={handleUpdateEventData}
         inputRef={titleRef}
+        isOwner={isOwner}
+        canEditEvent={canEditEvent}
       />
 
       {/* Date and Location */}
@@ -86,6 +88,8 @@ export default function EditEventInfoPage({
         onUpdate={handleUpdateEventData}
         dateInputRef={dateTimeRef}
         locationInputRef={locationRef}
+        isOwner={isOwner}
+        canEditEvent={canEditEvent}
       />
 
       {/* Overview Section */}
@@ -94,6 +98,8 @@ export default function EditEventInfoPage({
         description={eventData.description}
         onUpdate={(description) => handleUpdateEventData({ ...eventData, description })}
         textareaRef={overviewRef}
+        isOwner={isOwner}
+        canEditEvent={canEditEvent}
       />
       <div className="flex justify-end gap-3">
         <Button size="sm" variant="outline" onClick={handleBackClick}>

@@ -5,11 +5,14 @@ import { Check, Plus} from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Textarea } from "../ui/textarea"
+import { toast } from "sonner"
 
 interface OverviewCardProps {
   description: string
   onUpdate: (description: string) => void
   textareaRef?: React.RefObject<HTMLTextAreaElement | null>
+  isOwner?: boolean
+  canEditEvent?: boolean
 }
 
 export interface OverviewCardHandle {
@@ -17,20 +20,38 @@ export interface OverviewCardHandle {
 }
 
 export const OverviewCard = forwardRef<OverviewCardHandle, OverviewCardProps>(
-  ({ description, onUpdate, textareaRef }, ref) => {
+  ({ description, onUpdate, textareaRef, isOwner = true, canEditEvent = true }, ref) => {
     const [isExpanded, setIsExpanded] = useState(false)
     const [isValid, setIsValid] = useState(false)
     const [localDescription, setLocalDescription] = useState(description)
     const cardRef = useRef<HTMLDivElement>(null)
+    const hasPermission = isOwner && canEditEvent
 
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({
       expand: () => {
-        setIsExpanded(true)
-        // Focus after expand
-        setTimeout(() => textareaRef?.current?.focus(), 100)
+        if (hasPermission) {
+          setIsExpanded(true)
+          setTimeout(() => textareaRef?.current?.focus(), 100)
+        } else {
+          toast.error("Permission Denied", {
+            description: 'You need "Update Event" permission to edit media',
+            duration: 4000,
+          })
+        }
       }
     }))
+    const handleCardClick = () => {
+      if (!hasPermission) {
+        toast.error("Permission Denied", {
+          description: 'You need "Update Event" permission to edit media',
+          duration: 4000,
+        })
+        return
+      }
+      setIsExpanded(true)
+      setTimeout(() => textareaRef?.current?.focus(), 100)
+    }
 
     useEffect(() => {
       setLocalDescription(description)
@@ -67,7 +88,7 @@ export const OverviewCard = forwardRef<OverviewCardHandle, OverviewCardProps>(
         <Card
           ref={cardRef}
           className="border-2 border-gray-300 hover:border-blue-700 transition-colors duration-300 cursor-pointer"
-          onClick={() => setIsExpanded(true)}
+          onClick={() => handleCardClick()}
         >
           <CardHeader>
             <div className="flex items-center justify-between">

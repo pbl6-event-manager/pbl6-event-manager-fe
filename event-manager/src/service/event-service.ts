@@ -13,6 +13,7 @@ export const createEventService = async (formData: EventFormDto) => {
     multipartFormData.append("summary", formData.summary)
     multipartFormData.append("startTime", formData.startTime)
     multipartFormData.append("endTime", formData.endTime)
+    multipartFormData.append("timezone", formData.timezone)
     multipartFormData.append("address", formData.address)
     multipartFormData.append("city", formData.city)
     multipartFormData.append("country", formData.country)

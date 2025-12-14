@@ -117,3 +117,33 @@ export const formatDateRange = (startDate: string, endDate: string, startTime: s
   }
   return `${formatDate(startDate)}, ${startTime} - ${formatDate(endDate)}, ${endTime}`
 }
+
+export const splitTimezone = (timezone: string): string => {
+  if (!timezone) return "";
+
+  let tz = timezone.trim();
+  // Remove leading GMT/UTC (case-insensitive)
+  tz = tz.replace(/^GMT/i, "").replace(/^UTC/i, "").trim();
+
+  // Z or empty -> UTC zero offset
+  if (tz === "Z" || tz === "z" || tz === "") return "00:00";
+
+  // Capture sign if negative; for positive we'll omit '+'
+  const sign = tz.startsWith("-") ? "-" : "";
+  tz = tz.replace(/^[+-]/, "");
+
+  // If already HH:MM
+  if (/^\d{2}:\d{2}$/.test(tz)) return sign + tz;
+
+  // If HHMM (e.g. 0700)
+  const m = tz.match(/^(\d{2})(\d{2})$/);
+  if (m) return sign + `${m[1]}:${m[2]}`;
+
+  // If only hours (e.g. "7" or "07")
+  if (/^\d{1,2}$/.test(tz)) {
+    const hh = tz.padStart(2, "0");
+    return sign + `${hh}:00`;
+  }
+
+  throw new Error("Invalid timezone format");
+};

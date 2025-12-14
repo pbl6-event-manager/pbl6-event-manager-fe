@@ -18,6 +18,7 @@ interface CreateTicketsPageProps {
 
 export default function CreateTicketsPage({ onNext, isOwner = true }: CreateTicketsPageProps) {
   const {
+    eventId,
     showTicketForm,
     showTicketTypeSelection,
     selectedTicketType,

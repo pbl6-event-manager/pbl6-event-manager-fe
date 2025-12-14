@@ -12,12 +12,15 @@ import { SearchableSelect } from "../ui/searchable-select"
 import type { EventFormData } from "../../models/form-models/event-form-models"
 import { useDateLocationViewModel } from "../../viewmodels/Organizer/events/date-location-view-model"
 import { TIMEZONES, LANGUAGES } from "../../utils/Organizer/timezone-language"
+import { toast } from "sonner"
 
 interface DateLocationCardProps {
   eventData: EventFormData
   onUpdate: (data: EventFormData) => void
   dateInputRef?: React.RefObject<HTMLInputElement | null>
   locationInputRef?: React.RefObject<HTMLButtonElement | null>
+  isOwner?: boolean
+  canEditEvent?: boolean
 }
 
 export interface DateLocationCardHandle {
@@ -25,7 +28,7 @@ export interface DateLocationCardHandle {
 }
 
 export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationCardProps>(
-  ({ eventData, onUpdate, dateInputRef, locationInputRef }, ref) => {
+  ({ eventData, onUpdate, dateInputRef, locationInputRef, isOwner = true, canEditEvent = true }, ref) => {
     const {
       isExpanded,
       cardRef,
@@ -47,23 +50,30 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
       setIsValidating,
       handleCardClick,
     } = useDateLocationViewModel(eventData, onUpdate)
-
+    const hasPermission = isOwner && canEditEvent
 
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({
       expand: () => {
-        setIsValidating(true)
-        setIsExpanded(true)
-        // Focus on the appropriate field
-        setTimeout(() => {
-          if (dateInputRef?.current) {
-            dateInputRef.current.focus()
-          } else if (locationInputRef?.current) {
-            locationInputRef.current.click()
-          }
-          // Reset validating state sau khi focus xong
-          setTimeout(() => setIsValidating(false), 500)
-        }, 100)
+        if (hasPermission) {
+          setIsValidating(true)
+          setIsExpanded(true)
+          // Focus on the appropriate field
+          setTimeout(() => {
+            if (dateInputRef?.current) {
+              dateInputRef.current.focus()
+            } else if (locationInputRef?.current) {
+              locationInputRef.current.click()
+            }
+            // Reset validating state sau khi focus xong
+            setTimeout(() => setIsValidating(false), 500)
+          }, 100)
+        } else {
+          toast.error("Permission Denied", {
+            description: 'You need "Update Event" permission to edit media',
+            duration: 4000,
+          })
+        }
       }
     }))
 
@@ -75,7 +85,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
           <Card
             ref={cardRef}
             className="border-2 border-gray-300 hover:border-blue-700 transition-colors duration-300 cursor-pointer"
-            onClick={handleCardClick}
+            onClick={() => handleCardClick(isOwner, canEditEvent)}
           >
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -103,7 +113,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
           {/* Location Card - Collapsed */}
           <Card
             className="border-2 border-gray-300 hover:border-blue-700 transition-colors duration-300 cursor-pointer"
-            onClick={handleCardClick}
+            onClick={() => handleCardClick(isOwner, canEditEvent)}
           >
             <CardContent className="p-6">
               <div className="flex items-start justify-between">

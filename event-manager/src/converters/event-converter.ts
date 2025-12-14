@@ -2,7 +2,7 @@ import type { EventModel } from "../models/bean/event-models"
 import type { CreateEventRequestDto, EventDetailsDto, EventFormDto, EventListDto } from "../dtos/event-dto"
 import type { EventFormData, MediaFileModel, StaffEventsListItem } from "../models/form-models/event-form-models"
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models"
-import { convertToISODateTime } from "../utils/Organizer/date-format"
+import { convertToISODateTime, splitTimezone } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
 import { convertTicketDtoToTicketType } from "./ticket-converter"
 const DESCRIPTION_SEPARATOR = "|||DESCRIPTION|||";
@@ -71,6 +71,7 @@ export const eventConverter = {
       summary: combineSummary,
       startTime: startDateTime,
       endTime: endDateTime,
+      timezone: splitTimezone(eventData.timezone),
       address: eventData.location.address1,
       city: eventData.location.city,
       country: eventData.location.country,

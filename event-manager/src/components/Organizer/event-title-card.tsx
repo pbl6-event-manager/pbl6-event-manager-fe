@@ -8,11 +8,14 @@ import { Textarea } from "../ui/textarea"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
 import type { EventFormData } from "../../models/form-models/event-form-models"
+import { toast } from "sonner"
 
 interface EventTitleCardProps {
   eventData: EventFormData
   onUpdate: (data: EventFormData) => void
   inputRef?: React.RefObject<HTMLInputElement | null>
+  isOwner?: boolean
+  canEditEvent?: boolean
 }
 
 export interface EventTitleCardHandle {
@@ -20,7 +23,7 @@ export interface EventTitleCardHandle {
 }
 
 export const EventTitleCard = forwardRef<EventTitleCardHandle, EventTitleCardProps>(
-  ({ eventData, onUpdate, inputRef }, ref) => {
+  ({ eventData, onUpdate, inputRef, isOwner = true, canEditEvent = true }, ref) => {
     const [isExpanded, setIsExpanded] = useState(false)
     const [touched, setTouched] = useState({ title: false, summary: false })
     const [charCount, setCharCount] = useState(eventData.summary.length)
@@ -29,13 +32,19 @@ export const EventTitleCard = forwardRef<EventTitleCardHandle, EventTitleCardPro
     const isTitleValid = eventData.title.trim().length >= 5 && eventData.title.length <= 100 
     const isSummaryValid = eventData.summary.trim().length >= 50 && eventData.summary.length <= 140
     const isFormValid = isTitleValid && isSummaryValid
+    const hasPermission = isOwner && canEditEvent
 
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({
       expand: () => {
-        setIsExpanded(true)
-        // Focus after expand
-        setTimeout(() => inputRef?.current?.focus(), 100)
+        if (hasPermission) {
+          setIsExpanded(true)
+        } else {
+          toast.error("Permission Denied", {
+            description: 'You need "Update Event" permission to edit media',
+            duration: 4000,
+          })
+        }
       }
     }))
 
@@ -60,6 +69,18 @@ export const EventTitleCard = forwardRef<EventTitleCardHandle, EventTitleCardPro
       }
     }, [isExpanded, isFormValid])
 
+    const handleCardClick = () => {
+      if (!hasPermission) {
+        toast.error("Permission Denied", {
+          description: 'You need "Update Event" permission to edit media',
+          duration: 4000,
+        })
+        return
+      }
+      setIsExpanded(true)
+    }
+
+
     const handleTitleChange = (value: string) => {
       onUpdate({ ...eventData, title: value })
     }
@@ -80,7 +101,7 @@ export const EventTitleCard = forwardRef<EventTitleCardHandle, EventTitleCardPro
         <Card
           ref={cardRef}
           className="border-2 border-gray-300 hover:border-blue-700 transition-colors duration-300 cursor-pointer"
-          onClick={() => setIsExpanded(true)}
+          onClick={() => handleCardClick()}
         >
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
