@@ -1,5 +1,3 @@
-"use client"
-
 import { MediaUploadCard } from "../../../components/Organizer/media-upload-card"
 import { EventTitleCard } from "../../../components/Organizer/event-title-card"
 import { DateLocationCard } from "../../../components/Organizer/date-location-card"
@@ -10,6 +8,8 @@ import type { EventTitleCardHandle } from "../../../components/Organizer/event-t
 import type { DateLocationCardHandle } from "../../../components/Organizer/date-location-card"
 import type { OverviewCardHandle } from "../../../components/Organizer/overview-card"
 import { Button } from "../../../components/ui/button"
+import { Lock } from "lucide-react"
+import { toast } from "sonner"
 
 interface EditEventInfoPageProps {
   // Card refs
@@ -34,6 +34,9 @@ interface EditEventInfoPageProps {
   setUploadedMedia: (media: MediaFileModel[]) => void
   handleUpdateEvent: () => void
   handleBackClick: () => void
+
+  isOwner?: boolean
+  canEditEvent?: boolean
 }
 
 export default function EditEventInfoPage({
@@ -50,8 +53,12 @@ export default function EditEventInfoPage({
   uploadedMedia,
   handleUpdateEventData,
   setUploadedMedia,
+  handleUpdateEvent,
   handleBackClick,
+  isOwner = true,
+  canEditEvent = true,
 }: EditEventInfoPageProps) {
+
   return (
     <>
       {/* Upload Card */}
@@ -60,6 +67,8 @@ export default function EditEventInfoPage({
         uploadedMedia={uploadedMedia}
         onUpdate={setUploadedMedia}
         inputRef={mediaRef}
+        isOwner={isOwner}
+        canEditEvent={canEditEvent}
       />
 
       {/* Event Title Card */}
@@ -90,9 +99,25 @@ export default function EditEventInfoPage({
         <Button size="sm" variant="outline" onClick={handleBackClick}>
           Cancel
         </Button>
-        <Button size="sm" onClick={() => { }} className="bg-[#f05537] hover:bg-[#d63c1f] text-white">
-          Save changes
-        </Button>
+
+        {(!isOwner || !canEditEvent) ? (
+          <Button
+            size="sm"
+            onClick={handleUpdateEvent}
+            className="bg-gray-400 hover:bg-gray-400 text-gray-200 cursor-not-allowed"
+          >
+            <Lock className="h-3.5 w-3.5 mr-1.5" />
+            Save changes
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            onClick={handleUpdateEvent}
+            className="bg-[#f05537] hover:bg-[#d63c1f] text-white"
+          >
+            Save changes
+          </Button>
+        )}
       </div>
     </>
   )

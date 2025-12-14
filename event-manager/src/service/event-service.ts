@@ -263,7 +263,6 @@ export const getEventsByOwnerService = async () => {
     const response = await getEventsByOwnerApi();
     if (response.data.message === "success") {
       const rawData = response.data.data;
-      console.log("[debug] Raw Data:", rawData);
       const eventModelList: EventModel[] = rawData.map(eventMapper.mapResponseEventToEventModel);
       const eventListDto: EventListDto[] = eventModelList.map(eventConverter.convertEventModelToEventListDto);
       const organizerEventsListItem: OrganizerEventsListItem[] = eventListDto.map((dto) => {
@@ -293,7 +292,6 @@ export const getEventsByStaffService = async () => {
     const response = await getEventsByStaffApi();
     if (response.data.message === "success") {
       const rawData = response.data.data;
-      console.log("[debug] Raw Data:", rawData);
       const eventModelList: EventModel[] = rawData.map(eventMapper.mapResponseEventToEventModel);
       const eventListDto: EventListDto[] = eventModelList.map(eventConverter.convertEventModelToEventListDto);
       const staffEventsListItem: StaffEventsListItem[] = eventListDto.map((dto) => {
@@ -301,7 +299,6 @@ export const getEventsByStaffService = async () => {
         const roleInEvent = rawData.find((item: any) => item.id === dto.id)?.roleInEvent || "Staff";
         return eventConverter.convertEventListDtoToStaffEventsListItem(dto, organizerName, roleInEvent);
       });
-      console.log("[debug] Staff Events List Item:", staffEventsListItem);
       return {
         eventListDto,
         staffEventsListItem

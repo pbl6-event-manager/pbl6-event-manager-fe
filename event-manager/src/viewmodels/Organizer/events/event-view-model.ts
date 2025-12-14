@@ -12,6 +12,7 @@ import type { OverviewCardHandle } from "../../../components/Organizer/overview-
 import type { DateLocationCardHandle } from "../../../components/Organizer/date-location-card";
 import type { EventTitleCardHandle } from "../../../components/Organizer/event-title-card";
 import type { MediaUploadCardHandle } from "../../../components/Organizer/media-upload-card";
+import { toast } from "sonner";
 
 interface ValidationResult {
     isValid: boolean
@@ -111,7 +112,7 @@ export const useEventViewModel = () => {
     const { tickets: ticketsFromStore } = useSelector((state: RootState) => state.ticketReducer || { tickets: [] })
 
     // Refs for card components - để trigger expand
-    const mediaCardRef = useRef<MediaUploadCardHandle>(null) 
+    const mediaCardRef = useRef<MediaUploadCardHandle>(null)
     const titleCardRef = useRef<EventTitleCardHandle>(null)
     const dateLocationCardRef = useRef<DateLocationCardHandle>(null)
     const overviewCardRef = useRef<OverviewCardHandle>(null)
@@ -157,13 +158,10 @@ export const useEventViewModel = () => {
             closeLoadingAlert()
 
             if (result) {
-                console.log("[debug]Fetched event details:", result)
                 // Map event details to form data
                 const formData = eventConverter.convertEventDetailToFormData(result)
-                console.log("[debug]Converted form data:", formData)
                 const mediaFiles = eventConverter.convertBannerToMediaFile(result.eventInfo?.bannerImagePath ?? null)
                 //const goodToKnow = eventConverter.convertGoodToKnowData(result)
-                console.log("[debug]Converted media files:", mediaFiles)
                 setEventDataLocal(formData)
                 setOriginalEventData(formData) // Store original for comparison
                 setUploadedMedia(mediaFiles)
@@ -453,30 +451,27 @@ export const useEventViewModel = () => {
     useEffect(() => {
         handleFetchOwnerEvents()
     }, [handleFetchOwnerEvents])
-    useEffect(() => {
-        handleFetchOtherEvents()
-    }, [handleFetchOtherEvents])
 
     const handleViewEvent = (eventId: number) => {
         // append section param so edit page can read and persist it on reload
         navigate(`/organizer/events/edit/${eventId}?section=dashboard`);
     }
 
-    const filteredEvents = events.filter((event) => {
-        const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase())
-        const matchesStatus = statusFilter === "All" || event.status === statusFilter.toUpperCase()
-        return matchesSearch && matchesStatus
-    })
-
     const filteredMyEvents = events.filter((event) => {
         const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase())
         const matchesStatus = statusFilter === "All" || event.status === statusFilter.toUpperCase()
+        if (statusFilter === "Pending") {
+            return matchesSearch && (event.status === "APPROVAL_PENDING")
+        }
         return matchesSearch && matchesStatus
     })
 
     const filteredOtherEvents = otherEvents.filter((event) => {
         const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase())
         const matchesStatus = statusFilter === "All" || event.status === statusFilter.toUpperCase()
+        if (statusFilter === "Pending") {
+            return matchesSearch && (event.status === "APPROVAL_PENDING")
+        }
         return matchesSearch && matchesStatus
     })
 
@@ -516,7 +511,15 @@ export const useEventViewModel = () => {
         setCurrentSection(itemId)
     }
 
-    const handleUpdateEvent = async () => {
+    const handleUpdateEvent = async (isOwner: boolean, canEditEvent: boolean) => {
+        if (!isOwner || !canEditEvent) {
+            toast.error("Permission Denied", {
+                description: 'You need "Update Event" permission to save changes',
+                duration: 4000,
+            })
+            return
+        }
+
         const validationResult = validateForm()
 
         if (!validationResult.isValid) {
@@ -575,7 +578,14 @@ export const useEventViewModel = () => {
         }
     }, [eventData, dispatch])
 
-    const handlePublishEvent = useCallback(async () => {
+    const handlePublishEvent = useCallback(async (isOwner: boolean, canPublishEvent: boolean) => {
+        if (!isOwner && !canPublishEvent) {
+            toast.error("Permission Denied", {
+                description: 'You need "Publish Event" permission to publish this event',
+                duration: 4000,
+            })
+            return
+        }
         if (!eventId || !eventData) {
             showErrorAlert("Invalid Event", "Event data is missing.")
             return false
@@ -627,7 +637,6 @@ export const useEventViewModel = () => {
         isLoading,
         error,
         isSaved,
-        filteredEvents,
         searchQuery,
         currentSection: currentSectionState,
         eventData,

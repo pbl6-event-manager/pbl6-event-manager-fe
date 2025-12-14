@@ -3,11 +3,14 @@ import { Upload, X, ImageIcon, VideoIcon, Check, Plus } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
 import type { MediaFileModel } from "../../models/form-models/event-form-models"
+import { toast } from "sonner"
 
 interface MediaUploadCardProps {
   uploadedMedia: MediaFileModel[]
   onUpdate: (files: MediaFileModel[]) => void
   inputRef?: React.RefObject<HTMLInputElement | null>
+  isOwner?: boolean
+  canEditEvent?: boolean
 }
 
 export interface MediaUploadCardHandle {
@@ -15,16 +18,26 @@ export interface MediaUploadCardHandle {
 }
 
 export const MediaUploadCard = forwardRef<MediaUploadCardHandle, MediaUploadCardProps>(
-  ({ uploadedMedia, onUpdate, inputRef }, ref) => {
+  ({ uploadedMedia, onUpdate, inputRef, isOwner = true, canEditEvent = true }, ref) => {
     const [isExpanded, setIsExpanded] = useState(false)
     const [isValid, setIsValid] = useState(false)
     const cardRef = useRef<HTMLDivElement>(null)
     const imageInputRef = useRef<HTMLInputElement>(null)
     const videoInputRef = useRef<HTMLInputElement>(null)
+    const hasPermission = isOwner && canEditEvent
 
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({
-      expand: () => setIsExpanded(true)
+      expand: () => {
+        if (hasPermission) {
+          setIsExpanded(true)
+        } else {
+          toast.error("Permission Denied", {
+            description: 'You need "Update Event" permission to edit media',
+            duration: 4000,
+          })
+        }
+      }
     }))
 
     useEffect(() => {
@@ -45,6 +58,17 @@ export const MediaUploadCard = forwardRef<MediaUploadCardHandle, MediaUploadCard
       document.addEventListener("mousedown", handleClickOutside)
       return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [isExpanded, isValid])
+
+    const handleCardClick = () => {
+      if (!hasPermission) {
+        toast.error("Permission Denied", {
+          description: 'You need "Update Event" permission to edit media',
+          duration: 4000,
+        })
+        return
+      }
+      setIsExpanded(true)
+    }
 
     const handleFileUpload = (file: File, type: "image" | "video") => {
       const newFile: MediaFileModel = {
@@ -84,7 +108,7 @@ export const MediaUploadCard = forwardRef<MediaUploadCardHandle, MediaUploadCard
         <Card
           ref={cardRef}
           className={`p-0 border-2 border-gray-300 hover:border-blue-700 transition-colors duration-300 cursor-pointer`}
-          onClick={() => setIsExpanded(true)}
+          onClick={() => handleCardClick()}
         >
           <CardContent className="p-0">
             <div className="relative aspect-[2/1] bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg overflow-hidden group">

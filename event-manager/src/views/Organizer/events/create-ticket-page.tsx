@@ -8,12 +8,15 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Textarea } from "../../../components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
 import { useTicketViewModel } from "../../../viewmodels/Organizer/events/ticket-view-model"
+import { usePermission } from "../../../hooks/usePermission"
+import { toast } from "sonner"
 
 interface CreateTicketsPageProps {
   onNext?: () => void;
+  isOwner?: boolean;
 }
 
-export default function CreateTicketsPage({ onNext }: CreateTicketsPageProps) {
+export default function CreateTicketsPage({ onNext, isOwner = true }: CreateTicketsPageProps) {
   const {
     navigate,
     eventId,
@@ -45,6 +48,69 @@ export default function CreateTicketsPage({ onNext }: CreateTicketsPageProps) {
     handleEditTicket,
     handleDeleteTicket,
   } = useTicketViewModel()
+
+  const { canCreateTickets, canUpdateTickets, canDeleteTickets, hasPermission } = usePermission({
+    eventId: eventId ? Number(eventId) : null,
+    autoLoad: true,
+  })
+
+  const handleAddMoreTicketsWithPermission = () => {
+    if (!isOwner && !canCreateTickets) {
+      toast.error("Permission Denied", {
+        description: 'You need "Create Tickets" permission to add new tickets',
+        duration: 4000,
+      })
+      return
+    }
+    handleAddMoreTickets()
+  }
+
+  const handleTicketTypeSelectWithPermission = (type: "paid" | "free") => {
+    if (!isOwner && !canCreateTickets) {
+      toast.error("Permission Denied", {
+        description: 'You need "Create Tickets" permission to create tickets',
+        duration: 4000,
+      })
+      return
+    }
+    handleTicketTypeSelect(type)
+  }
+
+  const handleEditTicketWithPermission = (ticketId: number) => {
+    if (!isOwner && !canUpdateTickets) {
+      toast.error("Permission Denied", {
+        description: 'You need "Update Tickets" permission to edit tickets',
+        duration: 4000,
+      })
+      return
+    }
+    handleEditTicket(ticketId)
+  }
+
+  const handleDeleteTicketWithPermission = (ticketId: number) => {
+    if (!isOwner && !canDeleteTickets) {
+      toast.error("Permission Denied", {
+        description: 'You need "Delete Tickets" permission to delete tickets',
+        duration: 4000,
+      })
+      return
+    }
+    handleDeleteTicket(ticketId)
+  }
+
+  const handleSaveTicketWithPermission = () => {
+    const requiredPermission = editingTicketId ? canUpdateTickets : canCreateTickets
+    const permissionName = editingTicketId ? "Update Tickets" : "Create Tickets"
+
+    if (!isOwner && !requiredPermission) {
+      toast.error("Permission Denied", {
+        description: `You need "${permissionName}" permission to ${editingTicketId ? "update" : "create"} tickets`,
+        duration: 4000,
+      })
+      return
+    }
+    handleSaveTicket()
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -100,7 +166,7 @@ export default function CreateTicketsPage({ onNext }: CreateTicketsPageProps) {
                   {/* Paid Ticket Option */}
                   <Card
                     className="cursor-pointer hover:border-primary transition-colors"
-                    onClick={() => handleTicketTypeSelect("paid")}
+                    onClick={() => handleTicketTypeSelectWithPermission("paid")}
                   >
                     <CardContent className="flex items-center justify-between p-6">
                       <div className="flex items-center gap-4">
@@ -152,8 +218,8 @@ export default function CreateTicketsPage({ onNext }: CreateTicketsPageProps) {
                   <h1 className="text-3xl font-bold">Tickets</h1>
                   <Button
                     className="bg-[#f05537] hover:bg-[#d63c1f] text-white cursor-pointer"
-                    onClick={() => handleAddMoreTickets()}
-                  >
+                    onClick={() => handleAddMoreTicketsWithPermission()}
+                  > 
                     Add more tickets
                   </Button>
                 </div>
@@ -230,14 +296,14 @@ export default function CreateTicketsPage({ onNext }: CreateTicketsPageProps) {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-40">
                                   <DropdownMenuItem
-                                    onClick={() => handleEditTicket(ticket.ticketID)}
+                                    onClick={() => handleEditTicketWithPermission(ticket.ticketID)}
                                   >
                                     <Pencil className="h-4 w-4 mr-2" />
                                     Edit
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     variant="destructive"
-                                    onClick={() => handleDeleteTicket(ticket.ticketID)}
+                                    onClick={() => handleDeleteTicketWithPermission(ticket.ticketID)}
                                   >
                                     <Trash2 className="h-4 w-4 mr-2" />
                                     Delete
@@ -428,7 +494,7 @@ export default function CreateTicketsPage({ onNext }: CreateTicketsPageProps) {
                     </Button>
                     <Button
                       className="flex-1 bg-[#f05537] hover:bg-[#d63c1f] text-white cursor-pointer"
-                      onClick={handleSaveTicket}
+                      onClick={handleSaveTicketWithPermission}
                       disabled={isLoading || !ticketFormData.name || !ticketFormData.availableQuantity}
                     >
                       {isLoading ? (
