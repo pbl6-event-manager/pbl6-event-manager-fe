@@ -453,8 +453,7 @@ export const useEventViewModel = () => {
     }, [handleFetchOwnerEvents])
 
     const handleViewEvent = (eventId: number) => {
-        // append section param so edit page can read and persist it on reload
-        navigate(`/organizer/events/edit/${eventId}?section=dashboard`);
+        navigate(`/organizer/events/detail/${eventId}?section=dashboard`);
     }
 
     const filteredMyEvents = events.filter((event) => {

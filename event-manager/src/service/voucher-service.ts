@@ -10,9 +10,9 @@ export const getAllVoucherService = async () => {
         const response = await getAllVoucherApi();
         const voucherModelList = response.data.data.map(mapResponseToVoucherModel);
         const voucherDtoList = voucherModelList.map(convertVoucherModelToVoucherListDto);
-        const eventListDto  = (await getEventsByOwnerService()).eventListDto;
-        const eventListSelectionDto : EventSelectionDto[] = eventListDto;
-        const voucherDtoListWithEventTitle = voucherDtoList.map((voucher : VoucherListDto) => {
+        const eventListDto = (await getEventsByOwnerService()).eventListDto;
+        const eventListSelectionDto: EventSelectionDto[] = eventListDto;
+        const voucherDtoListWithEventTitle = voucherDtoList.map((voucher: VoucherListDto) => {
             if (voucher.event) {
                 const event = eventListSelectionDto.find(e => e.id === voucher.event);
                 return {
@@ -39,7 +39,7 @@ export const getAllVoucherService = async () => {
 export const createNewVoucherService = async (createVoucherDto: CreateVoucherDto) => {
     try {
         const response = await createVoucherApi(createVoucherDto);
-        if(response.data.message === "success") {
+        if (response.data.message === "success") {
             const voucherModel = mapResponseToVoucherModel(response.data.data);
             const voucherDto = convertVoucherModelToVoucherListDto(voucherModel);
             return voucherDto;
@@ -56,7 +56,7 @@ export const createNewVoucherService = async (createVoucherDto: CreateVoucherDto
 export const getVoucherByIdService = async (voucherId: number) => {
     try {
         const response = await getVoucherByIdApi(voucherId);
-        if(response.data.message === "success") {
+        if (response.data.message === "success") {
             const voucherModel = mapResponseToVoucherModel(response.data.data);
             return voucherModel;
         }
@@ -72,7 +72,7 @@ export const getVoucherByIdService = async (voucherId: number) => {
 export const updateVoucherService = async (voucherId: number, updateVoucherDto: CreateVoucherDto) => {
     try {
         const response = await updateVoucherApi(voucherId, updateVoucherDto);
-        if(response.data.message === "success") {
+        if (response.data.message === "success") {
             const voucherModel = mapResponseToVoucherModel(response.data.data);
             const voucherDto = convertVoucherModelToVoucherListDto(voucherModel);
             return voucherDto;
@@ -89,7 +89,7 @@ export const updateVoucherService = async (voucherId: number, updateVoucherDto: 
 export const deleteVoucherService = async (voucherId: number) => {
     try {
         const response = await deleteVoucherApi(voucherId);
-        if(response.data.message === "success") {
+        if (response.data.message === "success") {
             return voucherId;
         }
     } catch (error: any) {

@@ -12,7 +12,7 @@ export const useOrganizerViewModel = () => {
     const handleSelectOrganizer = async (id: number) => {
         try {
             showLoadingAlert();
-            const data = await dispatch<any>(fetchOrganizerDetail(id));
+            const data = await dispatch<any>(fetchOrganizerDetail(id, true));
             setSelectedOrganizer(data);
             closeLoadingAlert();
         } catch (error: any) {

@@ -3,7 +3,8 @@ import { store } from "../store/store";
 import { refreshAccessToken, logout } from "../store/actions/auth-action";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:3000/api", // URL backend
+  // baseURL: "http://localhost:3000/api", // URL backend
+  baseURL: "https://api.eventmanager.click/api", // URL backend
   headers: { "Content-Type": "application/json" },
   timeout: 30000,
 });

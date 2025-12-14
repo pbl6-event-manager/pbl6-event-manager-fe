@@ -25,11 +25,11 @@ export const useUserViewModel = () => {
   const mapListTabToNum = (t: "active" | "deleted") => (t === "deleted" ? "2" : "1");
   const mapNumToListTab = (n: string | null) => (n === "2" ? ("deleted" as const) : ("active" as const));
   const mapNumToDetailTab = (n: string | null) =>
-    n === "2" ? ("active-organizer" as const) : n === "3" ? ("deleted-organizer" as const) : ("participant" as const);
-  const mapDetailTabToNum = (t: "participant" | "active-organizer" | "deleted-organizer") =>
+    n === "2" ? ("active-organizer" as const) : n === "3" ? ("deleted-organizer" as const) : ("order" as const);
+  const mapDetailTabToNum = (t: "order" | "active-organizer" | "deleted-organizer") =>
     t === "active-organizer" ? "2" : t === "deleted-organizer" ? "3" : "1";
   const [activeTab, _setActiveTab] = useState<"active" | "deleted">(mapNumToListTab(qTab));
-  const [activeDetailTab, _setActiveDetailTab] = useState<"participant" | "active-organizer" | "deleted-organizer">(mapNumToDetailTab(qTab));
+  const [activeDetailTab, _setActiveDetailTab] = useState<"order" | "active-organizer" | "deleted-organizer">(mapNumToDetailTab(qTab));
 
   const setActiveTab = useCallback(
     (tab: "active" | "deleted") => {
@@ -45,7 +45,7 @@ export const useUserViewModel = () => {
   );
 
   const setActiveDetailTab = useCallback(
-    (tab: "participant" | "active-organizer" | "deleted-organizer") => {
+    (tab: "order" | "active-organizer" | "deleted-organizer") => {
       _setActiveDetailTab(tab);
       try {
         const params = new URLSearchParams(location.search);
