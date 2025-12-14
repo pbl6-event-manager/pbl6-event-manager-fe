@@ -15,7 +15,6 @@ export const useEventPermissionViewModel = () => {
         error,
         permissions,
         roleStaffName,
-        permissionData,
         hasPermission,
         hasAnyPermission,
         hasAllPermissions,

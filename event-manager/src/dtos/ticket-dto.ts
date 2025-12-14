@@ -27,3 +27,17 @@ export interface TicketInfoDto {
     email: string,
     name: string
 }
+
+export interface DashboardTicketInfoDto {
+    totalTicket: number,
+    soldTicket: number,
+    paidTicket: number,
+    freeTicket: number,
+    ticketTypes?: Array<{
+        name: string;
+        price: number;
+        type: "PAID" | "FREE";
+        sold: number;
+        total: number;
+    }>;
+}

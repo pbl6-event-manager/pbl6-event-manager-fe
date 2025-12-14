@@ -13,6 +13,11 @@ import type { DateLocationCardHandle } from "../../../components/Organizer/date-
 import type { EventTitleCardHandle } from "../../../components/Organizer/event-title-card";
 import type { MediaUploadCardHandle } from "../../../components/Organizer/media-upload-card";
 import { toast } from "sonner";
+import { convertTicketListToDashboardTicketInfo } from "../../../converters/ticket-converter";
+import type { DashboardTicketInfoDto } from "../../../dtos/ticket-dto";
+import { getOrders } from "../../../store/actions/order-action";
+import type { DashboardOrderStatsDto, OrderSearchParamsDto } from "../../../dtos/order-dto";
+import { convertOrderListToDashboardOrderInfoDto } from "../../../converters/order-converter";
 
 interface ValidationResult {
     isValid: boolean
@@ -111,6 +116,10 @@ export const useEventViewModel = () => {
     const [publishCategoryIds, setPublishCategoryIds] = useState<number[]>(eventData?.category || [])
 
     const { tickets: ticketsFromStore } = useSelector((state: RootState) => state.ticketReducer || { tickets: [] })
+    const [dashboardTicketInfo, setDashboardTicketInfo] = useState<DashboardTicketInfoDto>();
+    const [dashboardRevenueInfo, setDashboardRevenueInfo] = useState<number>(0);
+    const [dashboardAttendeeInfo, setDashboardAttendeeInfo] = useState<number>(0);
+    const [dashboardOrderStats, setDashboardOrderStats] = useState<DashboardOrderStatsDto[]>();
 
     // Refs for card components - để trigger expand
     const mediaCardRef = useRef<MediaUploadCardHandle>(null)
@@ -150,18 +159,28 @@ export const useEventViewModel = () => {
 
         return steps
     }, [eventData?.status, ticketsFromStore?.length])
+
     const fetchEventDetails = async () => {
-        if (!eventId) return
+        if (!eventId) return;
 
         try {
             showLoadingAlert("Loading event details...")
             const result = await dispatch(getEventDetailsById(Number(eventId))) as unknown as EventDetailsDto
+            const params: Partial<OrderSearchParamsDto> = {};
+            params.eventId = eventId;
+
+            const response = convertOrderListToDashboardOrderInfoDto(await dispatch<any>(getOrders(params as OrderSearchParamsDto, false)));
+            setDashboardRevenueInfo(response.totalRevenue);
+            setDashboardAttendeeInfo(response.totalAttendee);
+            setDashboardOrderStats(response.orderStats);
             closeLoadingAlert()
 
             if (result) {
                 // Map event details to form data
                 const formData = eventConverter.convertEventDetailToFormData(result)
                 const mediaFiles = eventConverter.convertBannerToMediaFile(result.eventInfo?.bannerImagePath ?? null)
+                const ticketInfo = convertTicketListToDashboardTicketInfo(result.ticket);
+                setDashboardTicketInfo(ticketInfo);
                 //const goodToKnow = eventConverter.convertGoodToKnowData(result)
                 setEventDataLocal(formData)
                 setOriginalEventData(formData) // Store original for comparison
@@ -171,8 +190,6 @@ export const useEventViewModel = () => {
                 dispatch(setEventData(formData))
             }
         } catch (err: any) {
-            closeLoadingAlert()
-            console.error("[EventViewModel] Failed to load event details:", err)
             showErrorAlert("Failed to load event details", err.message)
         }
     }
@@ -507,8 +524,11 @@ export const useEventViewModel = () => {
         setCurrentSection(stepId)
     }
 
-    const handleMenuItemClick = (itemId: string) => {
+    const handleMenuItemClick = async (itemId: string) => {
         setCurrentSection(itemId)
+        if (itemId === "dashboard") {
+            await fetchEventDetails();
+        }
     }
 
     const handleUpdateEvent = async (isOwner: boolean, canEditEvent: boolean) => {
@@ -662,6 +682,8 @@ export const useEventViewModel = () => {
         locationRef,
         overviewRef,
         mediaRef,
+        dashboardTicketInfo,
+        dashboardOrderStats,
 
         // Actions
         setCurrentSection,
@@ -685,5 +707,7 @@ export const useEventViewModel = () => {
         setGoodToKnowData,
         handleUpdateEventData,
         validateForm,
+        dashboardRevenueInfo,
+        dashboardAttendeeInfo
     }
 }

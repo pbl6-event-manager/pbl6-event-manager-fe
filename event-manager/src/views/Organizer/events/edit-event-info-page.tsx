@@ -9,7 +9,6 @@ import type { DateLocationCardHandle } from "../../../components/Organizer/date-
 import type { OverviewCardHandle } from "../../../components/Organizer/overview-card"
 import { Button } from "../../../components/ui/button"
 import { Lock } from "lucide-react"
-import { toast } from "sonner"
 
 interface EditEventInfoPageProps {
   // Card refs

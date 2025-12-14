@@ -149,6 +149,8 @@ export const getEventDetailsById = (eventId: number) => async (dispatch: any) =>
 
     const response = await getEventDetailsByIdService(eventId);
 
+    console.log(response);
+
     dispatch({
       type: GET_EVENT_DETAILS_SUCCESS,
       payload: response

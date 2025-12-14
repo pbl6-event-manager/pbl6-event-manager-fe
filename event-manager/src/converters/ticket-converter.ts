@@ -1,4 +1,4 @@
-import type { CreateTicketRequestDto, TicketDto, TicketInfoDto } from "../dtos/ticket-dto";
+import type { CreateTicketRequestDto, DashboardTicketInfoDto, TicketDto, TicketInfoDto } from "../dtos/ticket-dto";
 import type { TicketFormData, TicketListItem } from "../models/form-models/ticket-form-models";
 import { isTicketOnSale } from "../utils/Organizer/ticket-util";
 import type { TicketModel } from "../models/bean/ticket-models";
@@ -116,5 +116,36 @@ export const convertResponseToTicketInfoDto = (raw: any) : TicketInfoDto => {
         ticketName: raw.ticketName,
         email: raw.email,
         name: raw.name
+    }
+}
+
+export const convertTicketListToDashboardTicketInfo = (ticketList: TicketDto[] | undefined) : DashboardTicketInfoDto => {
+    let totalTicketQuantity = 0;
+    let totalSoldQuantity = 0;
+    let totalPaidTicketQuantity = 0;
+    let totalFreeTicketQuantity = 0;
+    
+    const ticketTypes = ticketList?.map(ticket => ({
+        name: ticket.name,
+        price: ticket.price,
+        type: ticket.type,
+        sold: ticket.soldQuantity,
+        total: ticket.quantity
+    })) || [];
+    
+    if(ticketList) {
+        ticketList.forEach(ticket => {
+            totalTicketQuantity += ticket.quantity
+            totalSoldQuantity += ticket.soldQuantity
+            totalPaidTicketQuantity += ticket.type === "PAID" ? ticket.quantity : 0
+            totalFreeTicketQuantity += ticket.type === "FREE" ? ticket.quantity : 0
+        });
+    }
+    return {
+        totalTicket: totalTicketQuantity,
+        soldTicket: totalSoldQuantity,
+        paidTicket: totalPaidTicketQuantity,
+        freeTicket: totalFreeTicketQuantity,
+        ticketTypes: ticketTypes
     }
 }

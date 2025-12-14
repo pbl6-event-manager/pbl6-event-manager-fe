@@ -45,7 +45,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true }: CreateTick
     handleDeleteTicket,
   } = useTicketViewModel()
 
-  const { canCreateTickets, canUpdateTickets, canDeleteTickets, hasPermission } = usePermission({
+  const { canCreateTickets, canUpdateTickets, canDeleteTickets } = usePermission({
     eventId: eventId ? Number(eventId) : null,
     autoLoad: true,
   })

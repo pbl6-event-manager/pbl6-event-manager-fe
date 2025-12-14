@@ -1,4 +1,4 @@
-import { Calendar, Check, Ban, Shield, Lock } from "lucide-react"
+import { Calendar, Check, Ban, Lock } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { PermissionBadge } from "../Permission/PermissionBadge"
