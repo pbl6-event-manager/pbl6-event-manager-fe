@@ -92,7 +92,7 @@ export const useOrderViewModel = () => {
 
             showLoadingAlert();
             const response = await dispatch<any>(getOrders(params as OrderSearchParamsDto, false));
-            setOrders(response.orderListDtoList);
+            setOrders(response);
             closeLoadingAlert();
         } catch (error: any) {
             showErrorAlert(error?.message || "Failed to get orders");
