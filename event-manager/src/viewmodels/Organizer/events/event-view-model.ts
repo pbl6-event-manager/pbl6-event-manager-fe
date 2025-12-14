@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { convertTicketListToDashboardTicketInfo } from "../../../converters/ticket-converter";
 import type { DashboardTicketInfoDto } from "../../../dtos/ticket-dto";
 import { getOrders } from "../../../store/actions/order-action";
-import type { DashboardOrderStatsDto, OrderSearchParamsDto } from "../../../dtos/order-dto";
+import type { DashboardOrderStatsDto, OrderListDto, OrderSearchParamsDto } from "../../../dtos/order-dto";
 import { convertOrderListToDashboardOrderInfoDto } from "../../../converters/order-converter";
 
 interface ValidationResult {
@@ -173,7 +173,6 @@ export const useEventViewModel = () => {
             setDashboardRevenueInfo(response.totalRevenue);
             setDashboardAttendeeInfo(response.totalAttendee);
             setDashboardOrderStats(response.orderStats);
-            closeLoadingAlert()
 
             if (result) {
                 // Map event details to form data
@@ -189,6 +188,7 @@ export const useEventViewModel = () => {
                 // Update Redux store
                 dispatch(setEventData(formData))
             }
+            closeLoadingAlert()
         } catch (err: any) {
             showErrorAlert("Failed to load event details", err.message)
         }
@@ -529,7 +529,66 @@ export const useEventViewModel = () => {
         if (itemId === "dashboard") {
             await fetchEventDetails();
         }
+
+        if (itemId === "manage-orders") {
+            await fetchOrdersByEventId(eventId);
+        }
     }
+    const [orders, setOrders] = useState<OrderListDto[]>();
+    const [selectedOrder, setSelectedOrder] = useState<OrderListDto>();
+    const [filteredOrders, setFilteredOrders] = useState<OrderListDto[]>();
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [filterStatus, setFilterStatus] = useState<string>("");
+    const [totalCount, setTotalCount] = useState<number>(0);
+    const [totalRevenue, setTotalRevenue] = useState<number>(0);
+    const [totalTicket, setTotalTicket] = useState<number>(0);
+    const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
+
+    const handleViewOrderDetails = () => {
+        setIsDetailsOpen(true);
+    }
+
+    useEffect(() => {
+        let filtered = orders;
+
+        if (searchTerm) {
+            filtered = filtered?.filter(
+                (o) =>
+                    o.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    o.buyerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    o.buyerEmail.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        if (filterStatus !== "all") {
+            filtered = filtered?.filter((o) => o.status === filterStatus);
+        }
+
+        setFilteredOrders(filtered);
+    }, [searchTerm, filterStatus, orders]);
+
+    const fetchOrdersByEventId = useCallback(async (eid?: number) => {
+        const params: Partial<OrderSearchParamsDto> = {};
+        params.eventId = typeof eid === "number" ? eid : eventId;
+        try {
+            showLoadingAlert("Loading orders");
+            const response: OrderListDto[] = await dispatch<any>(getOrders(params as OrderSearchParamsDto, false));
+            setOrders(response);
+            setTotalCount(response.length);
+            const converted = convertOrderListToDashboardOrderInfoDto(response);
+            setTotalRevenue(converted.totalRevenue);
+            setTotalTicket(converted.totalAttendee);
+            closeLoadingAlert();
+        } catch (error: any) {
+            showErrorAlert(error?.message || "Failed to get orders of this event");
+        }
+    }, [dispatch, eventId]);
+
+    useEffect(() => {
+        if (currentSectionState === "manage-orders") {
+            fetchOrdersByEventId();
+        }
+    }, [currentSectionState, fetchOrdersByEventId]);
 
     const handleUpdateEvent = async (isOwner: boolean, canEditEvent: boolean) => {
         if (!isOwner || !canEditEvent) {
@@ -653,6 +712,7 @@ export const useEventViewModel = () => {
     }, [dispatch])
 
     return {
+        eventId,
         currentEvent,
         isLoading,
         error,
@@ -708,6 +768,20 @@ export const useEventViewModel = () => {
         handleUpdateEventData,
         validateForm,
         dashboardRevenueInfo,
-        dashboardAttendeeInfo
+        dashboardAttendeeInfo,
+        totalCount,
+        totalRevenue,
+        isDetailsOpen,
+        handleViewOrderDetails,
+        searchTerm,
+        setSearchTerm,
+        filteredOrders,
+        setFilterStatus,
+        filterStatus,
+        orders,
+        selectedOrder,
+        setSelectedOrder,
+        setIsDetailsOpen,
+        totalTicket
     }
 }
