@@ -9,7 +9,7 @@ import OrganizationSettingsPage from "../../views/Organizer/settings/organizatio
 import AddOrganizerPage from "../../views/Organizer/settings/add-organizer-page";
 import EditOrganizerPage from "../../views/Organizer/settings/edit-organizer-page";
 import RolesListPage from "../../views/Organizer/settings/roles-list-page";
-import EventTeamManagementPage from "../../views/Organizer/events/event-team-management-page";
+// import EventTeamManagementPage from "../../views/Organizer/events/event-team-management-page";
 import CreateRolePage from "../../views/Organizer/settings/create-role-page";
 import EditRolePage from "../../views/Organizer/settings/edit-role-page";
 import StaffsListPage from "../../views/Organizer/settings/staffs-list-page";
@@ -33,10 +33,10 @@ const OrganizerRoutes: RouteObject = {
     { path: "events/all", element: <AllEventsPage /> },
     { path: "events/create-event", element: <CreateEventPage /> },
     { path: "events/create-tickets/:eventId", element: <CreateTicketsPage /> },
-    {
-      path: "events/team-management/:eventId",
-      element: <EventTeamManagementPage />,
-    },
+    // {
+    //   path: "events/team-management/:eventId",
+    //   element: <EventTeamManagementPage />,
+    // },
     { path: "events/detail/:eventId", element: <EventDetailPage /> },
     { path: "settings", element: <OrganizationSettingsPage /> },
     { path: "settings/members/roles/create", element: <CreateRolePage /> },

@@ -43,25 +43,8 @@ import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Separator } from "../../../components/ui/separator";
 import { fmt } from "../../../utils/Organizer/date-format";
 import type { TicketInfoDto } from "../../../dtos/ticket-dto";
-import type { OrderListDto } from "../../../dtos/order-dto";
 import { getInitials } from "../../../utils/Organizer/ava-format";
-
-type Props = {
-  orders: OrderListDto[] | undefined;
-  totalCount: number;
-  totalRevenue: number;
-  searchTerm: string;
-  setSearchTerm: (s: string) => void;
-  filterStatus: string;
-  setFilterStatus: (s: string) => void;
-  handleViewDetails: (order?: OrderListDto) => void;
-  isDetailsOpen: boolean;
-  setIsDetailsOpen: (b: boolean) => void;
-  selectedOrder?: OrderListDto;
-  totalTicket: number;
-  statusText: (s: string) => string;
-  statusColor: (s: string) => void;
-};
+import type { EventOrderPageProps } from "../../../models/component-props/page-component-props";
 
 export default function EventManageOrdersPage({
   totalCount,
@@ -78,7 +61,7 @@ export default function EventManageOrdersPage({
   statusColor,
   statusText,
   totalTicket,
-}: Props) {
+}: EventOrderPageProps) {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState<number>(1);
 
