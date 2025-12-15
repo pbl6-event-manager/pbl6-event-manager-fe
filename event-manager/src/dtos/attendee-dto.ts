@@ -3,7 +3,8 @@ export interface AttendeeListDto {
     email: string,
     name: string,
     isCheckin: string,
-    orderId: number
+    orderId: number,
+    qrCode: string
 }
 
 export interface AttendeeInfoDto {

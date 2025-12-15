@@ -14,6 +14,7 @@ export const convertResponseToAttendeeListDto = (raw: any) : AttendeeListDto => 
         name: raw.fullName,
         email: raw.email,
         isCheckin: raw.isCheckin.toString(),
-        orderId: raw.orderId
+        orderId: raw.orderId,
+        qrCode: raw.qrcode
     }
 }
