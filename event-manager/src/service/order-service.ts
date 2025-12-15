@@ -1,4 +1,5 @@
-import { getOrderByCustomerIdApi, getOrdersApi } from "../api/order-api";
+import { getAttendeeApi, getOrderByCustomerIdApi, getOrdersApi } from "../api/order-api";
+import { convertResponseToAttendeeListDto } from "../converters/attendee-converter";
 import { converOrderModelToOrderListDto, convertOrderModelToOrderListAdminDto } from "../converters/order-converter";
 import type { OrderSearchParamsDto } from "../dtos/order-dto";
 import { mapResponseToOrderModel } from "../mappers/order-mapper";
@@ -68,6 +69,23 @@ export const getOrdersService = async (orderSearchParams: OrderSearchParamsDto, 
             };
         } else {
             return null;
+        }
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(error.response.data?.message || "Server error");
+        } else {
+            throw new Error(error.message || "Unexpected error occurred");
+        }
+    }
+}
+
+export const getAttendeeService = async (eventId: number) => {
+    try {
+        const response = await getAttendeeApi(eventId);
+        if (response.data.message === "success") {
+            const attendeeListDtoList = response.data.data.map(convertResponseToAttendeeListDto);
+
+            return attendeeListDtoList;
         }
     } catch (error: any) {
         if (error.response) {
