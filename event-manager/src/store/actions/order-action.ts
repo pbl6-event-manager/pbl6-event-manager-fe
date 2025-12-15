@@ -1,5 +1,5 @@
 import type { OrderSearchParamsDto } from "../../dtos/order-dto";
-import { getOrdersByCustomerIdService, getOrdersService } from "../../service/order-service";
+import { getAttendeeService, getOrdersByCustomerIdService, getOrdersService } from "../../service/order-service";
 import { store } from "../store";
 
 export const GET_ORDER_BY_CUSTOMER_ID_REQUEST = "GET_ORDER_BY_CUSTOMER_ID_REQUEST";
@@ -11,6 +11,9 @@ export const GET_ORDER_DETAILS_BY_ORDER_ID_FAILURE = "GET_ORDER_DETAILS_BY_ORDER
 export const GET_ORDERS_REQUEST = "GET_ORDERS_REQUEST";
 export const GET_ORDERS_SUCCESS = "GET_ORDERS_SUCCESS";
 export const GET_ORDERS_FAILURE = "GET_ORDERS_FAILURE";
+export const GET_ATTENDEE_REQUEST = "GET_ATTENDEE_REQUEST";
+export const GET_ATTENDEE_SUCCESS = "GET_ATTENDEE_SUCCESS";
+export const GET_ATTENDEE_FAILURE = "GET_ATTENDEE_FAILURE";
 
 export const getOrderByCustomerId = (customerId: any) => async (dispatch: any) => {
     try {
@@ -103,6 +106,38 @@ export const getOrders = (orderSearchParams: OrderSearchParamsDto, isAdminSite: 
             type: GET_ORDERS_FAILURE,
             payload:
                 error.response?.data?.message || error.message || "Get order failed",
+        });
+        throw error;
+    }
+}
+
+export const getAttendee = (eventId: number) => async (dispatch: any) => {
+    try {
+        dispatch({
+            type: GET_ATTENDEE_REQUEST
+        })
+
+        const response = await getAttendeeService(eventId);
+
+        if (response === null) {
+            dispatch({
+                type: GET_ATTENDEE_FAILURE,
+                payload: "Get attendee failed",
+            });
+            return null;
+        }
+
+        dispatch({
+            type: GET_ATTENDEE_SUCCESS,
+            payload: response
+        })
+
+        return response;
+    } catch (error: any) {
+        dispatch({
+            type: GET_ATTENDEE_FAILURE,
+            payload:
+                error.response?.data?.message || error.message || "Get attendee failed",
         });
         throw error;
     }

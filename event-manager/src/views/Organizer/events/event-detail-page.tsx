@@ -66,7 +66,13 @@ export default function EventDetailPage() {
     handleViewOrderDetails,
     isDetailsOpen,
     setIsDetailsOpen,
-    totalTicket
+    totalTicket,
+    filteredAttendees,
+    checkedInCount,
+    filterCheckIn,
+    setFilterCheckIn,
+    handleCheckIn,
+
   } = useEventViewModel();
 
   const {
@@ -237,7 +243,16 @@ export default function EventDetailPage() {
 
                 {currentSection === "manage-attendee" && (
                   <div className="bg-card rounded-lg p-6 border">
-                    <EventManageAttendeesPage />
+                    <EventManageAttendeesPage 
+                      checkedInCount={checkedInCount}
+                      filterCheckIn={filterCheckIn}
+                      filteredAttendees={filteredAttendees}
+                      searchTerm={searchTerm}
+                      totalCount={totalCount}
+                      setSearchTerm={setSearchTerm}
+                      setFilterCheckIn={setFilterCheckIn}
+                      handleCheckIn={handleCheckIn}
+                    />
                   </div>
                 )}
 

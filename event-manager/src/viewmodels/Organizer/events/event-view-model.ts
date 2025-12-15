@@ -15,9 +15,11 @@ import type { MediaUploadCardHandle } from "../../../components/Organizer/media-
 import { toast } from "sonner";
 import { convertTicketListToDashboardTicketInfo } from "../../../converters/ticket-converter";
 import type { DashboardTicketInfoDto } from "../../../dtos/ticket-dto";
-import { getOrders } from "../../../store/actions/order-action";
+import { getAttendee, getOrders } from "../../../store/actions/order-action";
 import type { DashboardOrderStatsDto, OrderListDto, OrderSearchParamsDto } from "../../../dtos/order-dto";
 import { convertOrderListToDashboardOrderInfoDto } from "../../../converters/order-converter";
+import type { AttendeeListDto } from "../../../dtos/attendee-dto";
+import { convertResponseToAttendeeInfoDto } from "../../../converters/attendee-converter";
 
 interface ValidationResult {
     isValid: boolean
@@ -587,9 +589,61 @@ export const useEventViewModel = () => {
 
     useEffect(() => {
         if (currentSectionState === "manage-orders") {
+            setSearchTerm("");
             fetchOrdersByEventId();
         }
     }, [currentSectionState, fetchOrdersByEventId]);
+
+    const [attendees, setAttendees] = useState<AttendeeListDto[]>();
+    const [filteredAttendees, setFilteredAttendees] = useState<AttendeeListDto[]>();
+    const [filterCheckIn, setFilterCheckIn] = useState<string>("all");
+    const [checkedInCount, setCheckedInCount] = useState<number>();
+
+    useEffect(() => {
+        let filtered = attendees;
+
+        if (searchTerm) {
+            filtered = filtered?.filter(
+                (a) =>
+                    a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    a.ticketName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    a.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    a.orderId.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        if (filterCheckIn !== "all") {
+            filtered = filtered?.filter((a) => a.isCheckin === filterCheckIn);
+        }
+
+        setFilteredAttendees(filtered);
+    }, [searchTerm, filterCheckIn, attendees]);
+
+    const handleCheckIn = () => {
+
+    }
+
+    const fetchAttendeesByEventId = useCallback(async (eid?: number) => {
+        try {
+            showLoadingAlert("Loading attendees");
+            const response: AttendeeListDto[] = await dispatch<any>(getAttendee(eid ? eid : eventId));
+            setAttendees(response);
+            setFilteredAttendees(response);
+            const attendeeInfo = convertResponseToAttendeeInfoDto(response);
+            setTotalCount(attendeeInfo.totalAttendees);
+            setCheckedInCount(attendeeInfo.totalCheckedIn);
+            closeLoadingAlert();
+        } catch (error: any) {
+            showErrorAlert(error?.message || "Failed to get attendees of this event");
+        }
+    }, [dispatch, eventId]);
+
+    useEffect(() => {
+        if (currentSectionState === "manage-attendee") {
+            fetchAttendeesByEventId();
+            setSearchTerm("");
+        }
+    }, [currentSectionState, fetchAttendeesByEventId]);
 
     const handleUpdateEvent = async (isOwner: boolean, canEditEvent: boolean) => {
         if (!isOwner || !canEditEvent) {
@@ -784,6 +838,14 @@ export const useEventViewModel = () => {
         setSelectedOrder,
         setIsDetailsOpen,
         totalTicket,
-        setOrders
+        setOrders,
+        attendees,
+        setAttendees,
+        filterCheckIn,
+        setFilterCheckIn,
+        checkedInCount,
+        setCheckedInCount,
+        handleCheckIn,
+        filteredAttendees
     }
 }
