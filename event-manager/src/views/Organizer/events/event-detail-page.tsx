@@ -62,7 +62,7 @@ export default function EventDetailPage() {
     setFilterStatus,
     searchTerm,
     setSearchTerm,
-    orders,
+    filteredOrders,
     handleViewOrderDetails,
     isDetailsOpen,
     setIsDetailsOpen,
@@ -244,7 +244,7 @@ export default function EventDetailPage() {
                 {currentSection === "manage-orders" && (
                   <div className="bg-card rounded-lg p-6 border">
                     <EventManageOrdersPage
-                      orders={orders}
+                      orders={filteredOrders}
                       selectedOrder={selectedOrder}
                       filterStatus={filterStatus}
                       searchTerm={searchTerm}

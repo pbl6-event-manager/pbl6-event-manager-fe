@@ -544,7 +544,8 @@ export const useEventViewModel = () => {
     const [totalTicket, setTotalTicket] = useState<number>(0);
     const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
 
-    const handleViewOrderDetails = () => {
+    const handleViewOrderDetails = (order?: OrderListDto) => {
+        setSelectedOrder(order);
         setIsDetailsOpen(true);
     }
 
@@ -573,7 +574,7 @@ export const useEventViewModel = () => {
         try {
             showLoadingAlert("Loading orders");
             const response: OrderListDto[] = await dispatch<any>(getOrders(params as OrderSearchParamsDto, false));
-            setOrders(response);
+            setFilteredOrders(response);
             setTotalCount(response.length);
             const converted = convertOrderListToDashboardOrderInfoDto(response);
             setTotalRevenue(converted.totalRevenue);
@@ -782,6 +783,7 @@ export const useEventViewModel = () => {
         selectedOrder,
         setSelectedOrder,
         setIsDetailsOpen,
-        totalTicket
+        totalTicket,
+        setOrders
     }
 }
