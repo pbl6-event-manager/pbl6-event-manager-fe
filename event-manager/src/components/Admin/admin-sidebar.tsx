@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useSideBarViewModel } from "../../viewmodels/Admin/sidebar-view-model";
+import { useSideBarViewModel } from "../../viewmodels/Admin/component/sidebar-view-model";
 import {
   Home,
   Users,

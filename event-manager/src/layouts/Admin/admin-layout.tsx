@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "../../components/Admin/admin-sidebar";
-import { useLayoutViewModel } from "../../viewmodels/Admin/layout-view-model";
+import { useLayoutViewModel } from "../../viewmodels/Admin/component/layout-view-model";
 
 const AdminLayout: React.FC = () => {
   const { isScrollable } = useLayoutViewModel();

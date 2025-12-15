@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocationViewModel } from "../../viewmodels/Admin/location-view-model";
+import { useLocationViewModel } from "../../viewmodels/Admin/component/location-view-model";
 import type { CountryCitySelectProps } from "../../models/component-props/country-city-component-props";
 
 const CountryCitySelect: React.FC<CountryCitySelectProps> = ({ country, city, onChange }) => {
