@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { Search, ChevronDown, MoreVertical, Pencil, Trash2 } from "lucide-react"
 import { Button } from "../../../components/ui/button"
@@ -23,6 +24,28 @@ export default function AllEventsPage() {
     handleViewEvent,
     handleTabChange,
   } = useEventViewModel()
+
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const totalItems = activeTab === "my" ? filteredMyEvents.length : filteredOtherEvents.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+
+  useEffect(() => {
+    setCurrentPage((p) => Math.min(p, totalPages));
+  }, [activeTab, totalItems, totalPages]);
+
+  const paginatedMyEvents = useMemo(() => {
+    if (!filteredMyEvents || filteredMyEvents.length === 0) return [];
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredMyEvents.slice(start, start + itemsPerPage);
+  }, [filteredMyEvents, currentPage]);
+
+  const paginatedOtherEvents = useMemo(() => {
+    if (!filteredOtherEvents || filteredOtherEvents.length === 0) return [];
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredOtherEvents.slice(start, start + itemsPerPage);
+  }, [filteredOtherEvents, currentPage]);
 
 
   return (
@@ -134,7 +157,7 @@ export default function AllEventsPage() {
                   No events found
                 </div>
               ) : (
-                filteredMyEvents.map((event) => (
+                paginatedMyEvents.map((event) => (
                   <div
                     key={event.id}
                     className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
@@ -223,6 +246,61 @@ export default function AllEventsPage() {
                   </div>
                 ))
               )}
+              {filteredMyEvents.length > itemsPerPage && (
+                <div className="border-t px-6 py-3">
+                  <div className="flex items-center justify-between w-full text-sm">
+                    <div className="text-muted-foreground">
+                      Showing{" "}
+                      <span className="font-medium">
+                        {filteredMyEvents && filteredMyEvents.length > 0
+                          ? (currentPage - 1) * itemsPerPage + 1
+                          : 0}
+                      </span>{" "}
+                      -{" "}
+                      <span className="font-medium">
+                        {Math.min(currentPage * itemsPerPage, filteredMyEvents?.length ?? 0)}
+                      </span>{" "}
+                      / <span className="font-medium">{filteredMyEvents?.length ?? 0}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="cursor-pointer"
+                      >
+                        Prev
+                      </Button>
+
+                      <div className="hidden md:flex items-center gap-1">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                          <button
+                            key={p}
+                            onClick={() => setCurrentPage(p)}
+                            className={`px-3 py-1 rounded text-sm cursor-pointer ${
+                              p === currentPage ? "bg-primary text-white" : "bg-transparent text-muted-foreground hover:bg-gray-100"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="cursor-pointer"
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div>
@@ -240,7 +318,7 @@ export default function AllEventsPage() {
                   You are not assigned to any events
                 </div>
               ) : (
-                filteredOtherEvents.map((event) => (
+                paginatedOtherEvents.map((event) => (
                   <div
                     key={event.id}
                     className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
@@ -315,6 +393,55 @@ export default function AllEventsPage() {
                     </div>
                   </div>
                 ))
+              )}
+              {filteredOtherEvents.length > itemsPerPage && (
+                <div className="border-t px-6 py-3">
+                  <div className="flex items-center justify-between w-full text-sm">
+                    <div className="text-muted-foreground">
+                      Hiển thị{" "}
+                      <span className="font-medium">
+                        {(currentPage - 1) * itemsPerPage + 1}
+                      </span>{" "}
+                      -{" "}
+                      <span className="font-medium">
+                        {Math.min(currentPage * itemsPerPage, filteredOtherEvents.length)}
+                      </span>{" "}
+                      / <span className="font-medium">{filteredOtherEvents.length}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 rounded border"
+                      >
+                        Prev
+                      </button>
+
+                      <div className="hidden md:flex items-center gap-1">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                          <button
+                            key={p}
+                            onClick={() => setCurrentPage(p)}
+                            className={`px-3 py-1 rounded text-sm ${
+                              p === currentPage ? "bg-blue-600 text-white" : "bg-transparent text-gray-600 hover:bg-gray-100"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1 rounded border"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           )}

@@ -13,6 +13,7 @@ import EventDiscountPage from "./event-discount-page"
 import EditEventInfoPage from "./edit-event-info-page"
 import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-view-model"
 import { useEventPermissionViewModel } from "../../../viewmodels/Organizer/events/event-permission-view-model"
+import { useOrderViewModel } from "../../../viewmodels/Organizer/orders/order-view-model";
 //import { PermissionBadge } from "../../../components/Permission/PermissionBadge"
 //import { EventAccessGuard } from "../../../components/Permission/EventAccessGuard"
 
@@ -53,7 +54,19 @@ export default function EventDetailPage() {
     handleOrganizerChange,
     handleCategoryChange,
     handleUpdateEvent,
-    getStatusColor
+    getStatusColor,
+    selectedOrder,
+    totalCount,
+    totalRevenue,
+    filterStatus,
+    setFilterStatus,
+    searchTerm,
+    setSearchTerm,
+    filteredOrders,
+    handleViewOrderDetails,
+    isDetailsOpen,
+    setIsDetailsOpen,
+    totalTicket
   } = useEventViewModel();
 
   const {
@@ -83,6 +96,8 @@ export default function EventDetailPage() {
     PERMISSIONS,
   } = useEventPermissionViewModel();
 
+  const { statusColor, statusText } = useOrderViewModel();
+
   const handleUpdateEventWithPermission = () => {
     checkAndAllow(PERMISSIONS.UPDATE_EVENT, () =>
       handleUpdateEvent(isOwner, canEditEvent)
@@ -97,14 +112,7 @@ export default function EventDetailPage() {
   };
 
   if (isLoading || !eventData) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading event data...</p>
-        </div>
-      </div>
-    );
+    return;
   }
 
   return (
@@ -235,7 +243,22 @@ export default function EventDetailPage() {
 
                 {currentSection === "manage-orders" && (
                   <div className="bg-card rounded-lg p-6 border">
-                    <EventManageOrdersPage />
+                    <EventManageOrdersPage
+                      orders={filteredOrders}
+                      selectedOrder={selectedOrder}
+                      filterStatus={filterStatus}
+                      searchTerm={searchTerm}
+                      setFilterStatus={setFilterStatus}
+                      setSearchTerm={setSearchTerm}
+                      handleViewDetails={handleViewOrderDetails}
+                      totalRevenue={totalRevenue}
+                      totalCount={totalCount}
+                      isDetailsOpen={isDetailsOpen}
+                      setIsDetailsOpen={setIsDetailsOpen}
+                      statusColor={statusColor}
+                      statusText={statusText}
+                      totalTicket={totalTicket}
+                    />
                   </div>
                 )}
 

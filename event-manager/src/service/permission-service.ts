@@ -25,8 +25,6 @@ export const getAllPermissionsService = async () => {
     }
 };
 
-
-
 export const addNewPermissionService = async (permission: any) => {
     try {
         const data = await addPermissionApi(permission);
