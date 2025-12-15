@@ -1,5 +1,5 @@
 import type { OrderSearchParamsDto } from "../../dtos/order-dto";
-import { getAttendeeService, getOrdersByCustomerIdService, getOrdersService } from "../../service/order-service";
+import { checkInService, getAttendeeService, getOrdersByCustomerIdService, getOrdersService } from "../../service/order-service";
 import { store } from "../store";
 
 export const GET_ORDER_BY_CUSTOMER_ID_REQUEST = "GET_ORDER_BY_CUSTOMER_ID_REQUEST";
@@ -14,6 +14,9 @@ export const GET_ORDERS_FAILURE = "GET_ORDERS_FAILURE";
 export const GET_ATTENDEE_REQUEST = "GET_ATTENDEE_REQUEST";
 export const GET_ATTENDEE_SUCCESS = "GET_ATTENDEE_SUCCESS";
 export const GET_ATTENDEE_FAILURE = "GET_ATTENDEE_FAILURE";
+export const CHECK_IN_REQUEST = "CHECK_IN_REQUEST";
+export const CHECK_IN_SUCCESS = "CHECK_IN_SUCCESS";
+export const CHECK_IN_FAILURE = "CHECK_IN_FAILURE";
 
 export const getOrderByCustomerId = (customerId: any) => async (dispatch: any) => {
     try {
@@ -138,6 +141,41 @@ export const getAttendee = (eventId: number) => async (dispatch: any) => {
             type: GET_ATTENDEE_FAILURE,
             payload:
                 error.response?.data?.message || error.message || "Get attendee failed",
+        });
+        throw error;
+    }
+}
+
+export const checkIn = (qrCode: string) => async (dispatch: any) => {
+    try {
+        dispatch({
+            type: CHECK_IN_REQUEST
+        })
+
+        const response = await checkInService(qrCode);
+
+        if (response === null) {
+            dispatch({
+                type: CHECK_IN_FAILURE,
+                payload: "Checked in failed",
+            });
+            return null;
+        }
+
+        const attendeeList = store.getState().orderReducer.attenddeeList;
+        const updatedAttendeeList = attendeeList.map((attendee) => attendee.qrCode === response ? { ...attendee, isCheckin: "true"} : attendee);
+
+        dispatch({
+            type: CHECK_IN_SUCCESS,
+            payload: updatedAttendeeList
+        })
+
+        return updatedAttendeeList;
+    } catch (error: any) {
+        dispatch({
+            type: CHECK_IN_FAILURE,
+            payload:
+                error.response?.data?.message || error.message || "Checked in failed",
         });
         throw error;
     }

@@ -1,4 +1,4 @@
-import { getAttendeeApi, getOrderByCustomerIdApi, getOrdersApi } from "../api/order-api";
+import { checkInApi, getAttendeeApi, getOrderByCustomerIdApi, getOrdersApi } from "../api/order-api";
 import { convertResponseToAttendeeListDto } from "../converters/attendee-converter";
 import { converOrderModelToOrderListDto, convertOrderModelToOrderListAdminDto } from "../converters/order-converter";
 import type { OrderSearchParamsDto } from "../dtos/order-dto";
@@ -83,9 +83,24 @@ export const getAttendeeService = async (eventId: number) => {
     try {
         const response = await getAttendeeApi(eventId);
         if (response.data.message === "success") {
-            const attendeeListDtoList = response.data.data.map(convertResponseToAttendeeListDto);
+            const attendeeListDtoList = response.data.data.map(convertResponseToAttendeeListDto).sort((a: any, b: any) => a.orderId - b.orderId);
 
             return attendeeListDtoList;
+        }
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(error.response.data?.message || "Server error");
+        } else {
+            throw new Error(error.message || "Unexpected error occurred");
+        }
+    }
+}
+
+export const checkInService = async (qrCode: string) => {
+    try {
+        const response = await checkInApi(qrCode);
+        if (response.data.message === "success") {
+            return qrCode;
         }
     } catch (error: any) {
         if (error.response) {

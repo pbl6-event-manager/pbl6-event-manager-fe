@@ -31,19 +31,8 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
-import type { AttendeeListDto } from "../../../dtos/attendee-dto";
 import { getInitials } from "../../../utils/Organizer/ava-format";
-
-type Props = {
-  filteredAttendees: AttendeeListDto[] | undefined;
-  filterCheckIn: string | undefined;
-  setFilterCheckIn: (s: string) => void;
-  searchTerm: string;
-  setSearchTerm: (s: string) => void;
-  checkedInCount: number | undefined;
-  totalCount: number;
-  handleCheckIn: (n: number) => void;
-};
+import type { EventAttendeePageProps } from "../../../models/component-props/page-component-props";
 
 export default function EventManageAttendeesPage({
   filteredAttendees,
@@ -54,7 +43,7 @@ export default function EventManageAttendeesPage({
   totalCount,
   filterCheckIn,
   setFilterCheckIn
-}: Props) {
+}: EventAttendeePageProps) {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -110,7 +99,7 @@ export default function EventManageAttendeesPage({
             <div className="text-2xl font-bold">{checkedInCount ? checkedInCount : 0}</div>
             <p className="text-xs text-muted-foreground mt-1">
               {totalCount > 0
-                ? Math.round((checkedInCount ? checkedInCount : 0 / totalCount) * 100)
+                ? Math.round(((checkedInCount ? checkedInCount : 0) / totalCount) * 100)
                 : 0}
               % of total
             </p>
@@ -242,7 +231,7 @@ export default function EventManageAttendeesPage({
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleCheckIn(startIndex + index)}
+                              onClick={() => handleCheckIn(attendee.qrCode)}
                               className="gap-2 cursor-pointer"
                             >
                               <UserCheck className="h-4 w-4" />

@@ -15,7 +15,7 @@ import type { MediaUploadCardHandle } from "../../../components/Organizer/media-
 import { toast } from "sonner";
 import { convertTicketListToDashboardTicketInfo } from "../../../converters/ticket-converter";
 import type { DashboardTicketInfoDto } from "../../../dtos/ticket-dto";
-import { getAttendee, getOrders } from "../../../store/actions/order-action";
+import { checkIn, getAttendee, getOrders } from "../../../store/actions/order-action";
 import type { DashboardOrderStatsDto, OrderListDto, OrderSearchParamsDto } from "../../../dtos/order-dto";
 import { convertOrderListToDashboardOrderInfoDto } from "../../../converters/order-converter";
 import type { AttendeeListDto } from "../../../dtos/attendee-dto";
@@ -619,8 +619,24 @@ export const useEventViewModel = () => {
         setFilteredAttendees(filtered);
     }, [searchTerm, filterCheckIn, attendees]);
 
-    const handleCheckIn = () => {
-
+    const handleCheckIn = async (qrCode: string) => {
+        try {
+            const confirmed = await showConfirmAlert(
+                "Are you sure you want to check in this attendee?",
+            )
+            if (confirmed) {
+                showLoadingAlert();
+                const response = await dispatch<any>(checkIn(qrCode));
+                await showSuccessAlert("Checkin successfully");
+                setFilteredAttendees(response);
+                const attendeeInfo = convertResponseToAttendeeInfoDto(response);
+                setTotalCount(attendeeInfo.totalAttendees);
+                setCheckedInCount(attendeeInfo.totalCheckedIn);
+                closeLoadingAlert();
+            }
+        } catch (error: any) {
+            showErrorAlert(error?.message || "Failed to get attendees of this event");
+        }
     }
 
     const fetchAttendeesByEventId = useCallback(async (eid?: number) => {
