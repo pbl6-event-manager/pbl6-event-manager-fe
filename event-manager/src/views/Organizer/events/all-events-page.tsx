@@ -144,10 +144,9 @@ export default function AllEventsPage() {
           {activeTab === "my" ? (
             <div>
               {/* Table Header */}
-              <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 text-sm font-semibold text-gray-700">
+              <div className="grid grid-cols-10 gap-4 px-6 py-4 border-b border-gray-200 text-sm font-semibold text-gray-700">
                 <div className="col-span-4">Event</div>
                 <div className="col-span-2">Sold</div>
-                <div className="col-span-2">Gross</div>
                 <div className="col-span-2">Status</div>
                 <div className="col-span-1">Organizer</div>
                 <div className="col-span-1"></div>
@@ -160,7 +159,7 @@ export default function AllEventsPage() {
                 paginatedMyEvents.map((event) => (
                   <div
                     key={event.id}
-                    className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+                    className="grid grid-cols-10 gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
                     onClick={() => handleViewEvent(event.id)}
                   >
                     {/* Event Info */}
@@ -189,9 +188,6 @@ export default function AllEventsPage() {
                     <div className="col-span-2 flex items-center text-sm text-gray-700">
                       {event.soldTickets} / {event.capacity}
                     </div>
-
-                    {/* Gross */}
-                    <div className="col-span-2 flex items-center text-sm text-gray-700">$0</div>
 
                     {/* Status */}
                     <div className="col-span-2 flex items-center">
