@@ -10,7 +10,7 @@ interface EventPermissionContextType {
   eventId: number | null;
   isOwner: boolean;
   isStaff: boolean;
-  isLoading: boolean;
+  isLoading: boolean; 
   error: string | null;
   permissions: Permission[];
   allSystemPermissions: Permission[];
@@ -35,7 +35,7 @@ interface EventPermissionContextType {
   canManageTickets: () => boolean;
   canAssignStaffs: () => boolean
   canDeleteDiscounts: () => boolean
-
+  canCheckInAttendees: () => boolean;
   // Actions
   loadPermissions: (eventId: number, isEventOwner?: boolean) => Promise<void>
   clearPermissions: () => void;
@@ -192,6 +192,7 @@ export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = (
   const canDeleteTickets = useCallback(() => checkPermission(PERMISSIONS.DELETE_TICKETS), [checkPermission])
   const canAssignStaffs = useCallback(() => checkPermission(PERMISSIONS.ASSIGN_STAFFS), [checkPermission])
   const canDeleteDiscounts = useCallback(() => checkPermission(PERMISSIONS.DELETE_DISCOUNTS), [checkPermission])
+  const canCheckInAttendees = useCallback(() => checkPermission(PERMISSIONS.CHECK_IN_ATTENDEES), [checkPermission])
   const canManageTickets = useCallback(
     () => checkAnyPermission([PERMISSIONS.CREATE_TICKETS, PERMISSIONS.UPDATE_TICKETS, PERMISSIONS.DELETE_TICKETS]),
     [checkAnyPermission],
@@ -224,6 +225,7 @@ export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = (
     canManageTickets,
     canAssignStaffs,
     canDeleteDiscounts,
+    canCheckInAttendees, 
     loadPermissions,
     clearPermissions,
     refreshPermissions,

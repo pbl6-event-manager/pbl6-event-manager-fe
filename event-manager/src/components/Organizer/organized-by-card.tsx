@@ -1,25 +1,41 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { Lock } from "lucide-react"
 import { useOrganizerViewModel } from "../../viewmodels/Organizer/settings/organizer-view-model"
 
 interface OrganizerByCardProps {
-    organizerId?: number
-    onOrganizerChange?: (organizerId: number) => void
+  organizerId?: number
+  onOrganizerChange?: (organizerId: number) => void
+  readOnly?: boolean
 }
 
-export function OrganizerByCard({ organizerId, onOrganizerChange }: OrganizerByCardProps) {
-    const {
-        organizers,
-        loading: isLoading,
-    } = useOrganizerViewModel()
-    
-    const selectedOrganizer = organizers.find(org => org.id === organizerId) || null;
+export function OrganizerByCard({ organizerId, onOrganizerChange, readOnly }: OrganizerByCardProps) {
+  const {
+    organizers,
+    loading: isLoading,
+  } = useOrganizerViewModel()
 
-    return (
+  const selectedOrganizer = organizers.find(org => org.id === organizerId) || null;
+
+  return (
     <div className="bg-card border rounded-lg p-6">
-      <h3 className="text-lg font-bold text-foreground mb-4">Organized by</h3>
-
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-lg font-bold text-foreground">
+          Organized by
+        </h3>
+        {readOnly && (
+          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground 
+                         bg-gray-100 border px-2 py-1 rounded-full">
+            <Lock className="h-3 w-3" />
+            Read only
+          </span>
+        )}
+      </div>
       <div className="flex flex-col gap-4">
-        <Select value={organizers.find(org => org.id === organizerId)?.id.toString()} onValueChange={value => onOrganizerChange?.(Number(value))}>
+        <Select
+          value={organizers.find(org => org.id === organizerId)?.id.toString()}
+          onValueChange={value => onOrganizerChange?.(Number(value))}
+          disabled={readOnly || isLoading}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder={isLoading ? "Loading organizers..." : "Select an organizer"} />
           </SelectTrigger>
@@ -35,7 +51,9 @@ export function OrganizerByCard({ organizerId, onOrganizerChange }: OrganizerByC
         </Select>
 
         <p className="text-sm text-muted-foreground">
-          Selecting an organizer will display this event on their organizer profile page.
+          {readOnly
+            ? "This event is organized by the selected organizer profile."
+            : "Selecting an organizer will display this event on their organizer profile page."}
         </p>
 
         {selectedOrganizer && (

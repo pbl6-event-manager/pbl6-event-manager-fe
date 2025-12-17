@@ -18,6 +18,7 @@ export const PERMISSIONS = {
     DELETE_TICKETS: "DELETE_TICKETS",
     ASSIGN_STAFFS: "ASSIGN_STAFFS",
     DELETE_DISCOUNTS: "DELETE_DISCOUNTS",
+    CHECK_IN_ATTENDEES: "CHECK_IN_ATTENDEES",
 }
 
 export type PermissionName = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
@@ -56,22 +57,23 @@ export const PERMISSION_LABELS: Record<string, string> = {
   [PERMISSIONS.DELETE_TICKETS]: "Delete Tickets",
   [PERMISSIONS.ASSIGN_STAFFS]: "Assign Staffs",
   [PERMISSIONS.DELETE_DISCOUNTS]: "Delete Discounts",
+  [PERMISSIONS.CHECK_IN_ATTENDEES]: "Check In Attendees",
 }
 
 // Map permissions to event sidebar menu items
 export const MENU_PERMISSION_MAP: Record<string, PermissionName[]> = {
-  "dashboard": [PERMISSIONS.VIEW_EVENT, PERMISSIONS.VIEW_ANALYTICS],
-  "team-management": [PERMISSIONS.VIEW_EVENT_STAFF, PERMISSIONS.ASSIGN_STAFFS],
+  "dashboard": [PERMISSIONS.VIEW_EVENT],
+  "team-management": [PERMISSIONS.VIEW_EVENT_STAFF],
   "manage-attendee": [PERMISSIONS.VIEW_ATTENDEES],
   "manage-orders": [PERMISSIONS.VIEW_ORDERS],
-  "discount": [PERMISSIONS.VIEW_DISCOUNT, PERMISSIONS.DELETE_DISCOUNTS],
+  "discount": [PERMISSIONS.VIEW_DISCOUNT],
 }
 
 // Map permissions to event steps
 export const STEP_PERMISSION_MAP: Record<number, PermissionName[]> = {
-  1: [PERMISSIONS.VIEW_EVENT, PERMISSIONS.UPDATE_EVENT], // Build event page
-  2: [PERMISSIONS.VIEW_EVENT, PERMISSIONS.CREATE_TICKETS, PERMISSIONS.UPDATE_TICKETS, PERMISSIONS.DELETE_TICKETS], // Add tickets
-  3: [PERMISSIONS.VIEW_EVENT, PERMISSIONS.PUBLISH_EVENT], // Publish
+  1: [PERMISSIONS.VIEW_EVENT], // Build event page
+  2: [PERMISSIONS.VIEW_EVENT], // Add tickets
+  3: [PERMISSIONS.VIEW_EVENT], // Publish
 }
 
 // Check if user is owner of event (has all permissions)

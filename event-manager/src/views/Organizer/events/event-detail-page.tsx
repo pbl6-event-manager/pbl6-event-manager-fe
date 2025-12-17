@@ -72,27 +72,27 @@ export default function EventDetailPage() {
     filterCheckIn,
     setFilterCheckIn,
     handleCheckIn,
-
   } = useEventViewModel();
 
   const {
     isOwner,
     roleStaffName,
     isLoading: isPermissionLoading,
-    // canViewEvent,
-    // canViewAnalytics,
-    // canViewEventStaff,
-    // canViewAttendees,
-    // canViewOrders,
-    // canViewDiscount,
+    canViewEvent,
+    canViewAnalytics,
+    canViewEventStaff,
+    canViewAttendees,
+    canViewOrders,
+    canViewDiscount,
     canEditEvent,
     // canDeleteEvent,
     canPublishEvent,
-    // canCreateTickets,
-    // canUpdateTickets,
-    // canDeleteTickets,
+    canCreateTickets,
+    canUpdateTickets,
+    canDeleteTickets,
     canAssignStaffs,
-    // canDeleteDiscounts,
+    canDeleteDiscounts,
+    canCheckInAttendees,
     // canManageTickets,
     canAccessStep,
     canAccessMenuItem,
@@ -193,6 +193,7 @@ export default function EventDetailPage() {
                     handleUpdateEvent={handleUpdateEventWithPermission}
                     handleBackClick={handleBackClick}
                     isOwner={isOwner}
+                    canViewEvent={canViewEvent}
                     canEditEvent={canEditEvent}
                   />
                 )}
@@ -202,6 +203,10 @@ export default function EventDetailPage() {
                     <CreateTicketsPage
                       onNext={() => setCurrentSection(3)}
                       isOwner={isOwner}
+                      canViewEvent={canViewEvent}
+                      canCreateTickets={canCreateTickets}
+                      canUpdateTickets={canUpdateTickets}
+                      canDeleteTickets={canDeleteTickets}
                     />
                   </div>
                 )}
@@ -217,6 +222,9 @@ export default function EventDetailPage() {
                       handlePublishEvent={handlePublishEventWithPermission}
                       handleOrganizerChange={handleOrganizerChange}
                       handleCategoryChange={handleCategoryChange}
+                      isOwner={isOwner}
+                      canViewEvent={canViewEvent}
+                      canPublishEvent={canPublishEvent}
                     />
                   </div>
                 )}
@@ -231,13 +239,16 @@ export default function EventDetailPage() {
                       revenueInfo={dashboardRevenueInfo}
                       attendeeInfo={dashboardAttendeeInfo}
                       orderStats={dashboardOrderStats}
+                      canViewEvent={canViewEvent}
+                      canViewAnalytics={canViewAnalytics}
                     />
                   </div>
                 )}
 
                 {currentSection === "team-management" && (
                   <div className="bg-card rounded-lg border">
-                    <EventTeamManagementPage isOwner={isOwner} canAssignStaffs={canAssignStaffs} />
+                    <EventTeamManagementPage 
+                    isOwner={isOwner} canAssignStaffs={canAssignStaffs} canViewEventStaff={canViewEventStaff} />
                   </div>
                 )}
 
@@ -252,6 +263,9 @@ export default function EventDetailPage() {
                       setSearchTerm={setSearchTerm}
                       setFilterCheckIn={setFilterCheckIn}
                       handleCheckIn={handleCheckIn}
+                      isOwner={isOwner}
+                      canViewAttendees={canViewAttendees}
+                      canCheckInAttendees={canCheckInAttendees}
                     />
                   </div>
                 )}
@@ -273,13 +287,19 @@ export default function EventDetailPage() {
                       statusColor={statusColor}
                       statusText={statusText}
                       totalTicket={totalTicket}
+                      isOwner={isOwner}
+                      canViewOrders={canViewOrders}
                     />
                   </div>
                 )}
 
                 {currentSection === "discount" && (
                   <div className="bg-card rounded-lg p-6 border">
-                    <EventDiscountPage />
+                    <EventDiscountPage
+                      isOwner={isOwner}
+                      canViewDiscount={canViewDiscount}
+                      canDeleteDiscounts={canDeleteDiscounts}
+                     />
                   </div>
                 )}
               </div>

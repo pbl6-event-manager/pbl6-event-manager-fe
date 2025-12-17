@@ -5,9 +5,11 @@ import { VoucherCard } from "../../../components/Organizer/voucher-card";
 import { VoucherSearchFilter } from "../../../components/Organizer/voucher-search-filter";
 import useVoucherViewModel from "../../../viewmodels/Organizer/voucher/voucher-view-model";
 import { calculateTotalUses } from "../../../utils/Organizer/voucher-utils";
+import type { EventDiscountPageProps } from "../../../models/component-props/section-props";
+import { LockedContent } from "../../../components/Permission/LockedContent";
 
-export default function EventDiscountPage() {
-    
+export default function EventDiscountPage({ isOwner, canViewDiscount, canDeleteDiscounts }: EventDiscountPageProps) {
+
     const {
         isLoading,
         error,
@@ -35,15 +37,17 @@ export default function EventDiscountPage() {
                     <p className="text-muted-foreground mt-2">Create and manage discount vouchers for your event</p>
                 </div>
                 {/* <CreateVoucherModal isLoading={isLoading} onSubmit={createVoucher} /> */}
-                <div>
-                    <Button
-                        variant="secondary"
-                        className="bg-[#f05537] hover:bg-[#e04527] text-white cursor-pointer"
-                        onClick={handleNavigateToManageVouchers}
-                    >
-                        Manage Vouchers
-                    </Button>
-                </div>
+                {isOwner && (
+                    <div>
+                        <Button
+                            variant="secondary"
+                            className="bg-[#f05537] hover:bg-[#e04527] text-white cursor-pointer"
+                            onClick={handleNavigateToManageVouchers}
+                        >
+                            Manage Vouchers
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {/* Error Alert */}
@@ -54,58 +58,65 @@ export default function EventDiscountPage() {
                 </Alert>
             )}
 
-            {/* Search and Filter */}
-            <VoucherSearchFilter 
-                searchTerm={q} 
-                discountType={discountType}
-                onSearchChange={setQ}
-                onTypeChange={setDiscountType}
-            />
+            {/* Content - Requires VIEW_DISCOUNT permission */}
+            {isOwner || canViewDiscount ? (
+                <div className="space-y-6">
+                    {/* Search and Filter */}
+                    <VoucherSearchFilter
+                        searchTerm={q}
+                        discountType={discountType}
+                        onSearchChange={setQ}
+                        onTypeChange={setDiscountType}
+                    />
 
-            {/* Empty State */}
-            {!isLoading && eventFiltered.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-12 bg-muted/30 rounded-lg border border-dashed">
-                    <Ticket className="h-12 w-12 text-muted-foreground mb-3" />
-                    <h3 className="text-lg font-medium text-muted-foreground mb-1">No vouchers yet</h3>
-                    <p className="text-sm text-muted-foreground text-center mb-4">
-                        No found vouchers matching your criteria. Try adjusting your search or filter settings.
-                    </p>
-                </div>
-            )}
+                    {/* Empty State */}
+                    {!isLoading && eventFiltered.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-12 bg-muted/30 rounded-lg border border-dashed">
+                            <Ticket className="h-12 w-12 text-muted-foreground mb-3" />
+                            <h3 className="text-lg font-medium text-muted-foreground mb-1">No vouchers yet</h3>
+                            <p className="text-sm text-muted-foreground text-center mb-4">
+                                No found vouchers matching your criteria. Try adjusting your search or filter settings.
+                            </p>
+                        </div>
+                    )}
 
-            {/* Vouchers Grid */}
-            {eventFiltered.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {isLoading ? (
-                        <>
-                            {[...Array(3)].map((_, i) => (
-                                <div key={i} className="h-56 bg-muted rounded-lg animate-pulse" />
-                            ))}
-                        </>
-                    ) : (
-                        eventFiltered.map((voucher) => (
-                            <VoucherCard key={voucher.id} voucher={voucher} onDelete={handleDeleteVoucher} onCopy={handleCopyCode} />
-                        ))
+                    {/* Vouchers Grid */}
+                    {eventFiltered.length > 0 && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {isLoading ? (
+                                <>
+                                    {[...Array(3)].map((_, i) => (
+                                        <div key={i} className="h-56 bg-muted rounded-lg animate-pulse" />
+                                    ))}
+                                </>
+                            ) : (
+                                eventFiltered.map((voucher) => (
+                                    <VoucherCard key={voucher.id} voucher={voucher} onDelete={handleDeleteVoucher} onCopy={handleCopyCode} canDelete={canDeleteDiscounts}/>
+                                ))
+                            )}
+                        </div>
+                    )}
+
+                    {/* Summary Stats */}
+                    {eventFiltered.length > 0 && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t">
+                            <div className="bg-card p-4 rounded-lg border">
+                                <p className="text-sm text-muted-foreground mb-1">Total Vouchers</p>
+                                <p className="text-2xl font-bold">{eventFiltered.length}</p>
+                            </div>
+                            <div className="bg-card p-4 rounded-lg border">
+                                <p className="text-sm text-muted-foreground mb-1">Active Vouchers</p>
+                                <p className="text-2xl font-bold text-green-600">{eventFiltered.filter((v) => v.status).length}</p>
+                            </div>
+                            <div className="bg-card p-4 rounded-lg border">
+                                <p className="text-sm text-muted-foreground mb-1">Total Uses</p>
+                                <p className="text-2xl font-bold">{calculateTotalUses(eventFiltered)}</p>
+                            </div>
+                        </div>
                     )}
                 </div>
-            )}
-
-            {/* Summary Stats */}
-            {eventFiltered.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t">
-                    <div className="bg-card p-4 rounded-lg border">
-                        <p className="text-sm text-muted-foreground mb-1">Total Vouchers</p>
-                        <p className="text-2xl font-bold">{eventFiltered.length}</p>
-                    </div>
-                    <div className="bg-card p-4 rounded-lg border">
-                        <p className="text-sm text-muted-foreground mb-1">Active Vouchers</p>
-                        <p className="text-2xl font-bold text-green-600">{eventFiltered.filter((v) => v.status).length}</p>
-                    </div>
-                    <div className="bg-card p-4 rounded-lg border">
-                        <p className="text-sm text-muted-foreground mb-1">Total Uses</p>
-                        <p className="text-2xl font-bold">{calculateTotalUses(eventFiltered)}</p>
-                    </div>
-                </div>
+            ) : (
+                <LockedContent message="You do not have permission to view this content. Please contact your event administrator." />
             )}
         </div>
     )

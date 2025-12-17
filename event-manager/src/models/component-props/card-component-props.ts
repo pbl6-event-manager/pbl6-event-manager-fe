@@ -32,6 +32,7 @@ export interface OverviewCardProps {
 export interface EventCategoryCardProps {
     selectedCategoryIds?: number[]
     onCategoryChange?: (categoryIds: number[]) => void
+    readOnly?: boolean
 }
 
 export interface EventPreviewCardProps {
@@ -44,5 +45,6 @@ export interface VoucherCardProps {
   onDelete: (id: number) => void
   onCopy: (code: string) => void
   isDeleting?: boolean
+  canDelete?: boolean
 }
 //#endregion

@@ -759,6 +759,7 @@ export const useEventViewModel = () => {
             }
             const bannerFile = uploadedMedia.find(m => m.type === 'image' && m.file)?.file
             const formDTO = await eventConverter.convertEventDataToFormDTO(publishEventData, bannerFile)
+            console.log("[debug] Publish Event DTO:", formDTO);
             await dispatch(publishEvent(eventId, formDTO))
 
             closeLoadingAlert()

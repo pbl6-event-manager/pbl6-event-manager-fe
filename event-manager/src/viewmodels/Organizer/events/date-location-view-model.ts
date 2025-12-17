@@ -32,6 +32,17 @@ export const useDateLocationViewModel = (eventData: EventFormData, onUpdate: (da
     }
   }, [eventData.location.country, dispatch])
 
+  // Đồng bộ eventType dựa trên startDate và endDate
+  useEffect(() => {
+    if (eventData.startDate && eventData.endDate) {
+      if (eventData.startDate === eventData.endDate) {
+        setEventType("single")
+      } else {
+        setEventType("multi")
+      }
+    }
+  }, [eventData.startDate, eventData.endDate])
+
   const validateFields = () => {
     const newErrors: { date?: string; endDate?: string; location?: string } = {}
 

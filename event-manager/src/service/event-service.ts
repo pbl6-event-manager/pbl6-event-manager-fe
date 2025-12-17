@@ -75,6 +75,7 @@ export const getEventDetailsByIdService = async (eventId: number) => {
     const response = await getEventByIdApi(eventId);
     if (response.data.message === "success") {
       const eventDetails = eventMapper.mapResponseToEventDetailsDto(response.data.data);
+      console.log("[debug] Event Details:", eventDetails);
       return eventDetails;
     }
   } catch (error: any) {
@@ -119,7 +120,7 @@ export const updateEventService = async (eventId: number, formData: EventFormDto
 
     const eventModel = eventMapper.mapCreateEventResponseDtoToEventModel(rawResponse.data.data)
     const dto = eventConverter.convertDomainToDTO(eventModel)
-
+    
     return dto
   } catch (error: any) {
     console.error("[EventService] Update event error:", error)

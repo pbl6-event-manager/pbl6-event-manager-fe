@@ -1,7 +1,7 @@
 "use client"
 
 import { forwardRef, useImperativeHandle } from "react"
-import { Calendar, MapPin, Plus, Check, AlertCircle, Clock, Globe } from "lucide-react"
+import { Calendar, MapPin, Plus, Check, AlertCircle, Clock } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { SearchableSelect } from "../ui/searchable-select"
 import type { EventFormData } from "../../models/form-models/event-form-models"
 import { useDateLocationViewModel } from "../../viewmodels/Organizer/events/date-location-view-model"
-import { TIMEZONES, LANGUAGES } from "../../utils/Organizer/timezone-language"
+import { TIMEZONES } from "../../utils/Organizer/timezone-language"
 import { toast } from "sonner"
 
 interface DateLocationCardProps {
@@ -38,8 +38,6 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
       setErrors,
       eventType,
       setEventType,
-      showLocationDetails,
-      setShowLocationDetails,
       countries,
       cities,
       loading,
@@ -77,6 +75,25 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
       }
     }))
 
+    // Handler khi thay đổi event type
+    const handleEventTypeChange = (value: "single" | "multi") => {
+      setEventType(value)
+      if (value === "single") {
+        // Nếu chọn single day, set endDate = startDate
+        onUpdate({
+          ...eventData,
+          endDate: eventData.startDate,
+        })
+      } else {
+        // Nếu chọn multi day và endDate = startDate, clear endDate để user nhập lại
+        if (eventData.endDate === eventData.startDate) {
+          onUpdate({
+            ...eventData,
+            endDate: "",
+          })
+        }
+      }
+    }
 
     if (!isExpanded) {
       return (
@@ -125,7 +142,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {isValid && (eventData.location.type !== "venue" || (eventData.location.address1 && eventData.location.city && eventData.location.country)) && (
+                  {isValid && eventData.location.country && eventData.location.city && eventData.location.address1 && (
                     <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
                       <Check className="h-5 w-5 text-white" />
                     </div>
@@ -161,7 +178,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
               <Label className="text-sm font-medium">Type of event</Label>
               <RadioGroup
                 value={eventType}
-                onValueChange={(value: "single" | "multi") => setEventType(value)}
+                onValueChange={handleEventTypeChange}
                 className="mt-2 space-y-2"
               >
                 <div className="flex items-center space-x-2 p-3 border rounded-lg">
@@ -200,10 +217,12 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
                     className={`mt-1 ${errors.date ? "border-destructive" : ""}`}
                     value={eventData.startDate}
                     onChange={(e) => {
+                      const newStartDate = e.target.value
                       onUpdate({
                         ...eventData,
-                        startDate: e.target.value,
-                        endDate: eventType === "single" ? e.target.value : eventData.endDate,
+                        startDate: newStartDate,
+                        // Nếu là single day hoặc endDate chưa được set, tự động set endDate = startDate
+                        endDate: eventType === "single" || !eventData.endDate ? newStartDate : eventData.endDate,
                       })
                       if (errors.date) {
                         setErrors({ ...errors, date: undefined })
@@ -230,6 +249,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
                       id="endDate"
                       className={`mt-1 ${errors.endDate ? "border-destructive" : ""}`}
                       value={eventData.endDate}
+                      min={eventData.startDate}
                       onChange={(e) => {
                         onUpdate({ ...eventData, endDate: e.target.value })
                         if (errors.endDate) {
@@ -285,61 +305,30 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
             <div className="space-y-4 pt-4 border-t">
               <h4 className="text-sm font-medium">More options</h4>
 
-              {/* Grid chia 2 cột */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Event timezone */}
-                <div>
-                  <Label htmlFor="timezone" className="text-sm font-medium">
-                    Event timezone
-                  </Label>
-                  <Select
-                    value={eventData.timezone}
-                    onValueChange={(value) => {
-                      console.log("Timezone changed to:", value)
-                      setIsValidating(true)
-                      onUpdate({ ...eventData, timezone: value })
-                      setTimeout(() => setIsValidating(false), 100)
-                    }}
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select timezone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TIMEZONES.map((tz) => (
-                        <SelectItem key={tz} value={tz}>
-                          {tz}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Event page language */}
-                <div>
-                  <Label htmlFor="language" className="text-sm font-medium">
-                    Event page language
-                  </Label>
-                  <Select
-                    value={eventData.language}
-                    onValueChange={(value) => {
-                      console.log("Language changed to:", value)
-                      setIsValidating(true)
-                      onUpdate({ ...eventData, language: value })
-                      setTimeout(() => setIsValidating(false), 100)
-                    }}
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LANGUAGES.map((lang) => (
-                        <SelectItem key={lang.code} value={lang.code}>
-                          {lang.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Event timezone */}
+              <div>
+                <Label htmlFor="timezone" className="text-sm font-medium">
+                  Event timezone
+                </Label>
+                <Select
+                  value={eventData.timezone}
+                  onValueChange={(value) => {
+                    setIsValidating(true)
+                    onUpdate({ ...eventData, timezone: value })
+                    setTimeout(() => setIsValidating(false), 100)
+                  }}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select timezone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIMEZONES.map((tz) => (
+                      <SelectItem key={tz} value={tz}>
+                        {tz}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -360,179 +349,100 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <RadioGroup
-              value={eventData.location.type}
-              onValueChange={(value: "venue" | "online" | "tba") => updateLocation({ type: value })}
-            >
-              <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                <RadioGroupItem value="venue" id="venue" />
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  <Label htmlFor="venue" className="text-sm cursor-pointer">
-                    Venue
-                  </Label>
-                </div>
+            {/* Country and City Selection */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Select country with search */}
+              <div>
+                <Label htmlFor="country" className="flex items-center gap-1 text-sm font-medium">
+                  Country
+                  <span className="text-destructive">*</span>
+                </Label>
+                <SearchableSelect
+                  ref={locationInputRef}
+                  value={eventData.location.country}
+                  onValueChange={(value) => {
+                    setIsValidating(true)
+                    updateLocation({ country: value, city: "" })
+                    if (errors.location) {
+                      setErrors({ ...errors, location: undefined })
+                    }
+                    setTimeout(() => setIsValidating(false), 100)
+                  }}
+                  options={countries}
+                  placeholder="Select country"
+                  searchPlaceholder="Search countries..."
+                  emptyMessage="No country found."
+                  loading={loading}
+                  error={!!errors.location}
+                  className="mt-1.5"
+                />
               </div>
-              <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                <RadioGroupItem value="online" id="online" />
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  <Label htmlFor="online" className="text-sm cursor-pointer">
-                    Online event
-                  </Label>
-                </div>
+
+              {/* Select city with search */}
+              <div>
+                <Label htmlFor="city" className="flex items-center gap-1 text-sm font-medium">
+                  City
+                  <span className="text-destructive">*</span>
+                </Label>
+                <SearchableSelect
+                  value={eventData.location.city}
+                  onValueChange={(value) => {
+                    setIsValidating(true)
+                    updateLocation({ city: value })
+                    if (errors.location) {
+                      setErrors({ ...errors, location: undefined })
+                    }
+                    setTimeout(() => setIsValidating(false), 100)
+                  }}
+                  options={cities}
+                  placeholder={eventData.location.country ? "Select city" : "Select country first"}
+                  searchPlaceholder="Search cities..."
+                  emptyMessage="No city found."
+                  disabled={!eventData.location.country}
+                  loading={loading}
+                  error={!!errors.location}
+                  className="mt-1.5"
+                />
               </div>
-              <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                <RadioGroupItem value="tba" id="tba" />
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <Label htmlFor="tba" className="text-sm cursor-pointer">
-                    To be announced
-                  </Label>
-                </div>
-              </div>
-            </RadioGroup>
+            </div>
 
-            {eventData.location.type === "venue" && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Select country with search */}
-                  <div>
-                    <Label htmlFor="country" className="flex items-center gap-1">
-                      Country
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <SearchableSelect
-                      ref={locationInputRef}
-                      value={eventData.location.country}
-                      onValueChange={(value) => {
-                        console.log("Country changed to:", value)
-                        // Ngăn card collapse khi đang thay đổi
-                        setIsValidating(true)
-                        updateLocation({ country: value, city: "" })
-                        if (errors.location) {
-                          setErrors({ ...errors, location: undefined })
-                        }
-                        setTimeout(() => setIsValidating(false), 100)
-                      }}
-                      options={countries}
-                      placeholder="Select country"
-                      searchPlaceholder="Search countries..."
-                      emptyMessage="No country found."
-                      loading={loading}
-                      error={!!errors.location}
-                      className="mt-1"
-                    />
-                  </div>
+            {/* Address */}
+            <div>
+              <Label htmlFor="address1" className="flex items-center gap-1 text-sm font-medium">
+                Venue Address
+                <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="address1"
+                placeholder="Enter street address, building name, etc."
+                className="mt-1.5"
+                value={eventData.location.address1}
+                onChange={(e) => updateLocation({ address1: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1.5">
+                Provide the complete venue address for attendees to find the location easily
+              </p>
+            </div>
 
-                  {/* Select city with search */}
-                  <div>
-                    <Label htmlFor="city" className="flex items-center gap-1">
-                      City
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <SearchableSelect
-                      value={eventData.location.city}
-                      onValueChange={(value) => {
-                        console.log("City changed to:", value)
-                        // Ngăn card collapse khi đang thay đổi
-                        setIsValidating(true)
-                        updateLocation({ city: value })
-                        if (errors.location) {
-                          setErrors({ ...errors, location: undefined })
-                        }
-                        setTimeout(() => setIsValidating(false), 100)
-                      }}
-                      options={cities}
-                      placeholder={eventData.location.country ? "Select city" : "Select country first"}
-                      searchPlaceholder="Search cities..."
-                      emptyMessage="No city found."
-                      disabled={!eventData.location.country}
-                      loading={loading}
-                      error={!!errors.location}
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-
-                {errors.location && (
-                  <div className="flex items-center gap-1 text-sm text-destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>{errors.location}</span>
-                  </div>
-                )}
-
-                {/* Add location details */}
-                <div>
-                  <Button
-                    variant="link"
-                    className="text-primary p-0 h-auto"
-                    onClick={() => setShowLocationDetails(!showLocationDetails)}
-                  >
-                    {showLocationDetails ? "- Hide location details" : "+ Add location details"}
-                  </Button>
-
-                  {showLocationDetails && (
-                    <div className="mt-4 space-y-3">
-                      {/* <div>
-                        <Label htmlFor="venueName">Venue Name</Label>
-                        <Input
-                          id="venueName"
-                          placeholder="Enter venue name"
-                          className="mt-1"
-                          value={eventData.location.venueName}
-                          onChange={(e) => updateLocation({ venueName: e.target.value })}
-                        />
-                      </div> */}
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="address1">Address</Label>
-                          <Input
-                            id="address1"
-                            placeholder="Street address"
-                            className="mt-1"
-                            value={eventData.location.address1}
-                            onChange={(e) => updateLocation({ address1: e.target.value })}
-                          />
-                        </div>
-                        {/* <div>
-                          <Label htmlFor="address2">Address 2</Label>
-                          <Input
-                            id="address2"
-                            placeholder="Apt, suite, etc."
-                            className="mt-1"
-                            value={eventData.location.address2}
-                            onChange={(e) => updateLocation({ address2: e.target.value })}
-                          />
-                        </div> */}
-                      </div>
-
-                      {/* <div>
-                        <Label htmlFor="stateProvince">State/Province</Label>
-                        <Input
-                          id="stateProvince"
-                          placeholder="e.g. California"
-                          className="mt-1"
-                          value={eventData.location.stateProvince}
-                          onChange={(e) => updateLocation({ stateProvince: e.target.value })}
-                        />
-                      </div> */}
-                    </div>
-                  )}
-                </div>
+            {errors.location && (
+              <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-3 rounded-lg">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span>{errors.location}</span>
               </div>
             )}
 
-            {/* <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-              <div>
-                <Label htmlFor="reserved-seating" className="text-sm font-medium">
-                  Reserved seating
-                </Label>
-                <p className="text-xs text-muted-foreground">Use your venue map to set price tiers for each section</p>
+            {/* Location Preview */}
+            {eventData.location.country && eventData.location.city && eventData.location.address1 && (
+              <div className="flex items-start gap-2 text-sm text-primary bg-primary/10 p-3 rounded-lg">
+                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-medium">Location Preview:</p>
+                  <p className="text-primary/80 mt-1">
+                    {eventData.location.address1}, {eventData.location.city}, {eventData.location.country}
+                  </p>
+                </div>
               </div>
-              <Switch id="reserved-seating" />
-            </div> */}
+            )}
           </CardContent>
         </Card>
       </div>
