@@ -12,3 +12,5 @@ export const updateVoucherApi = (voucherId: number, updateVoucherDto: CreateVouc
 export const deleteVoucherApi = (voucherId: number) => apiClient.delete(`/vouchers/${voucherId}`);
 
 export const getVouchersByEventIdApi = (eventId: number) => apiClient.get(`/vouchers/event/${eventId}`);
+
+//Delete discount by param event id & voucher id

@@ -10,6 +10,9 @@ export interface EventAttendeePageProps  {
   checkedInCount: number | undefined;
   totalCount: number;
   handleCheckIn: (s: string) => void;
+  isOwner: boolean;
+  canViewAttendees: boolean;
+  canCheckInAttendees: boolean;
 };
 
 export interface EventOrderPageProps {
@@ -27,5 +30,12 @@ export interface EventOrderPageProps {
   totalTicket: number;
   statusText: (s: string) => string;
   statusColor: (s: string) => void;
+  isOwner: boolean;
+  canViewOrders: boolean;
 };
 
+export interface EventTeamManagementPageProps {
+  isOwner: boolean, 
+  canViewEventStaff: boolean,
+  canAssignStaffs: boolean,
+}

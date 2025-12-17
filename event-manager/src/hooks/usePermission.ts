@@ -36,6 +36,7 @@ interface UsePermissionReturn {
     canDeleteTickets: boolean
     canAssignStaffs: boolean
     canDeleteDiscounts: boolean
+    canCheckInAttendees: boolean
     canManageTickets: boolean
 
     //Actions
@@ -121,6 +122,7 @@ export const usePermission = ({ eventId, autoLoad = true }: UsePermissionOptions
     const canDeleteTickets = isOwner || hasPermission(permissions, PERMISSIONS.DELETE_TICKETS)
     const canAssignStaffs = isOwner || hasPermission(permissions, PERMISSIONS.ASSIGN_STAFFS)
     const canDeleteDiscounts = isOwner || hasPermission(permissions, PERMISSIONS.DELETE_DISCOUNTS)
+    const canCheckInAttendees = isOwner || hasPermission(permissions, PERMISSIONS.CHECK_IN_ATTENDEES)
     const canManageTickets =
         isOwner ||
         hasAnyPermission(permissions, [PERMISSIONS.CREATE_TICKETS, PERMISSIONS.UPDATE_TICKETS, PERMISSIONS.DELETE_TICKETS])
@@ -150,6 +152,7 @@ export const usePermission = ({ eventId, autoLoad = true }: UsePermissionOptions
         canDeleteTickets,
         canAssignStaffs,
         canDeleteDiscounts,
+        canCheckInAttendees,
         canManageTickets,
         loadPermissions,
         refreshPermissions,

@@ -12,6 +12,9 @@ import { useEffect, useState } from "react";
 import type { TicketFormData, TicketListItem } from "../../../models/form-models/ticket-form-models"
 import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert, showConfirmAlert } from "../../../helpers/alert-helpers";
 import { convertFormDataToCreateRequest, convertToTicketListItem, convertToTicketFormData } from "../../../converters/ticket-converter";
+import { usePermission } from "../../../hooks/usePermission";
+import { usePermissionCheck } from "../../../hooks/usePermissionCheck";
+import { PERMISSIONS } from "../../../constants/permission";
 
 export const useTicketViewModel = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -30,6 +33,17 @@ export const useTicketViewModel = () => {
     const [showCurrencyDialog, setShowCurrencyDialog] = useState(false)
     const [currency, setCurrency] = useState({ country: "United States", code: "USD" })
     const [editingTicketId, setEditingTicketId] = useState<number | null>(null);
+    const {
+        isOwner,
+        hasPermission,
+        hasAnyPermission,
+    } = usePermission({ eventId: parseInt(eventId || "0", 10), autoLoad: true });
+
+    const { showPermissionDenied } = usePermissionCheck({
+        isOwner,
+        hasPermission,
+        hasAnyPermission,
+    });
 
     const [ticketFormData, setTicketFormData] = useState<TicketFormData>({
         name: "",
@@ -59,7 +73,6 @@ export const useTicketViewModel = () => {
         } catch (err: any) {
             closeLoadingAlert();
             console.error("[TicketViewModel] Load tickets error:", err);
-            // Don't show error alert for initial load
         }
     };
     // Load tickets when component mounts or eventId changes
@@ -87,7 +100,11 @@ export const useTicketViewModel = () => {
     }, [searchQuery, tickets]);
 
 
-    const handleTicketTypeSelect = (type: "paid" | "free") => {
+    const handleTicketTypeSelect = (type: "paid" | "free", isOwner: boolean, canCreateTickets: boolean) => {
+        if (!isOwner && !canCreateTickets) {
+            showPermissionDenied(PERMISSIONS.CREATE_TICKETS);
+            return;
+        }
         setSelectedTicketType(type)
         setTicketFormData({
             ...ticketFormData,
@@ -104,7 +121,11 @@ export const useTicketViewModel = () => {
         }
     }
 
-    const handleAddMoreTickets = () => {
+    const handleAddMoreTickets = (isOwner: boolean, canCreateTickets: boolean) => {
+        if (!isOwner && !canCreateTickets) {
+            showPermissionDenied(PERMISSIONS.CREATE_TICKETS);
+            return
+        }
         setShowTicketTypeSelection(true)
         setSelectedTicketType(null)
         setShowTicketForm(false)
@@ -117,13 +138,18 @@ export const useTicketViewModel = () => {
         setShowTicketForm(true)
     }
 
-    const handleEditTicket = async (ticketId: number) => {
+    const handleEditTicket = async (ticketId: number, isOwner: boolean, canUpdateTickets: boolean) => {
         if (!eventId) return;
+
+        if (!isOwner && !canUpdateTickets) {
+            showPermissionDenied(PERMISSIONS.UPDATE_TICKETS);
+            return;
+        }
 
         try {
             showLoadingAlert("Loading ticket...");
             await dispatch(getTicketByIdAction(Number(eventId), Number(ticketId)));
-            
+
             closeLoadingAlert();
             if (currentTicketDto !== null) {
                 // Convert ticket DTO to form data
@@ -169,7 +195,7 @@ export const useTicketViewModel = () => {
 
             const requestData = convertFormDataToCreateRequest(Number(eventId), ticketFormData);
 
-            await dispatch(updateTicketByIdAction(Number(eventId), editingTicketId,requestData));
+            await dispatch(updateTicketByIdAction(Number(eventId), editingTicketId, requestData));
 
             closeLoadingAlert();
             showSuccessAlert("Ticket updated successfully!");
@@ -206,8 +232,13 @@ export const useTicketViewModel = () => {
         }
     };
 
-    const handleDeleteTicket = async (ticketId: number) => {
+    const handleDeleteTicket = async (ticketId: number, isOwner: boolean, canDeleteTickets: boolean) => {
         if (!eventId) return;
+
+        if (!isOwner && !canDeleteTickets) {
+            showPermissionDenied(PERMISSIONS.DELETE_TICKETS);
+            return;
+        }
 
         const confirmed = await showConfirmAlert(
             "Delete Ticket",
@@ -232,7 +263,12 @@ export const useTicketViewModel = () => {
         }
     };
 
-    const handleSaveTicket = async () => {
+    const handleSaveTicket = async (isOwner: boolean, canCreateTickets: boolean, canUpdateTickets: boolean) => {
+        if (!isOwner && !(editingTicketId ? canUpdateTickets : canCreateTickets)) {
+            const requiredPermission = editingTicketId ? PERMISSIONS.UPDATE_TICKETS : PERMISSIONS.CREATE_TICKETS;
+            showPermissionDenied(requiredPermission);
+            return;
+        }
         if (editingTicketId) {
             await handleUpdateTicket();
         } else {

@@ -1,10 +1,12 @@
 import { Checkbox } from "../ui/checkbox"
+import { Lock } from "lucide-react"
 import { useCategoryViewModel } from "../../viewmodels/Organizer/events/category-view-model"
 import type { EventCategoryCardProps } from "../../models/component-props/card-component-props"
 
 export function EventCategoryCard({
     selectedCategoryIds = [],
     onCategoryChange,
+    readOnly = false
 }: EventCategoryCardProps) {
     const {
         categories,
@@ -14,9 +16,22 @@ export function EventCategoryCard({
 
     return (
         <div className="bg-card border rounded-lg p-6">
-            <h3 className="text-lg font-bold text-foreground mb-2">Event category</h3>
+            <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-bold text-foreground">
+                    Event category
+                </h3>
+                {readOnly && (
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground 
+                         bg-gray-100 border px-2 py-1 rounded-full">
+                        <Lock className="h-3 w-3" />
+                        Read only
+                    </span>
+                )}
+            </div>
             <p className="text-sm text-muted-foreground mb-6">
-                Your category helps your event appear in more searches.
+                {readOnly
+                    ? "Categories assigned to this event."
+                    : "Your category helps your event appear in more searches."}
             </p>
 
             <div className="space-y-4">
@@ -29,13 +44,15 @@ export function EventCategoryCard({
                                 <Checkbox
                                     id={`category-${category.id}`}
                                     checked={selectedCategoryIds.includes(category.id)}
-                                    onCheckedChange={() => handleCategoryToggle(category.id)}
+                                    onCheckedChange={() => !readOnly && handleCategoryToggle(category.id)}
+                                    disabled={readOnly}
+                                    className={readOnly ? 'cursor-not-allowed opacity-70' : ''}
                                 />
                                 <label
                                     htmlFor={`category-${category.id}`}
-                                    className="flex-1 cursor-pointer"
+                                    className={`flex-1 ${!readOnly ? 'cursor-pointer' : 'cursor-default'}`}
                                 >
-                                    <div className="font-medium text-foreground hover:text-blue-600 transition-colors">
+                                    <div className={`font-medium text-foreground ${!readOnly ? 'hover:text-blue-600' : ''} transition-colors`}>
                                         {category.name}
                                     </div>
                                     <div className="text-sm text-muted-foreground">
@@ -47,7 +64,7 @@ export function EventCategoryCard({
                     </div>
                 )}
 
-                
+
             </div>
 
             {selectedCategoryIds.length > 0 && (

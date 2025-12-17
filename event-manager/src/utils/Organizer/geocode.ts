@@ -9,7 +9,6 @@ export const getCoordinates = async (address: string, city: string, country: str
       params: {
         q: query,
         key: apiKey,
-        // Không cần language, để OpenCage tự xác định
       },
     });
 

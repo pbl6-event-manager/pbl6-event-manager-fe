@@ -7,6 +7,7 @@ export interface EventModel {
   summary: string
   startTime: Date
   endTime: Date
+  timezone: string
   address: string
   city: string
   country: string

@@ -37,7 +37,7 @@ export const eventConverter = {
       location,
       city: domain.city,
       country: domain.country,
-      language: domain.language,
+      language: domain.language || "en",
       bannerUrl: domain.bannerImagePath,
       categories: [],
     }
@@ -75,7 +75,7 @@ export const eventConverter = {
       address: eventData.location.address1,
       city: eventData.location.city,
       country: eventData.location.country,
-      language: eventData.language,
+      language: eventData.language || "en",
       latitude: coordinates?.lat ?? 0,
       longitude: coordinates?.lng ?? 0,
       bannerFile,
@@ -168,7 +168,7 @@ export const eventConverter = {
       ticketType: eventDetail.ticket ? eventDetail.ticket.map(convertTicketDtoToTicketType) : [],
       capacity: eventDetail.ticket && eventDetail.ticket.length > 0 ? eventDetail.ticket.reduce((sum, ticket) => sum + Number(ticket.quantity || 0), 0) : 0,
       category: eventDetail.categories ? eventDetail.categories.map(category => category.id) : [],
-      timezone: "UTC+7",
+      timezone: "GMT+" + eventDetail.eventInfo?.timezone || "UTC",
       language: eventInfo.language || "en",
       organizerId: eventInfo.organizerId,
     }
