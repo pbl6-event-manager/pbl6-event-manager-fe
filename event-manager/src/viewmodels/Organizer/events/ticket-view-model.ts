@@ -15,6 +15,8 @@ import { convertFormDataToCreateRequest, convertToTicketListItem, convertToTicke
 import { usePermission } from "../../../hooks/usePermission";
 import { usePermissionCheck } from "../../../hooks/usePermissionCheck";
 import { PERMISSIONS } from "../../../constants/permission";
+import { set } from "react-hook-form";
+import type { TicketDto } from "../../../dtos/ticket-dto";
 
 export const useTicketViewModel = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -148,16 +150,17 @@ export const useTicketViewModel = () => {
 
         try {
             showLoadingAlert("Loading ticket...");
-            await dispatch(getTicketByIdAction(Number(eventId), Number(ticketId)));
+            const ticketData = await dispatch(getTicketByIdAction(Number(eventId), Number(ticketId))) as unknown as TicketDto;
 
             closeLoadingAlert();
-            if (currentTicketDto !== null) {
+            if (ticketData) {
                 // Convert ticket DTO to form data
-                const formData = convertToTicketFormData(currentTicketDto);
+                const formData = convertToTicketFormData(ticketData);
                 setTicketFormData(formData);
                 setSelectedTicketType(formData.type);
                 setEditingTicketId(Number(ticketId));
                 setShowTicketForm(true);
+                setShowTicketTypeSelection(false);
             }
 
 
@@ -327,7 +330,6 @@ export const useTicketViewModel = () => {
 
                 await dispatch(getTicketsByEventIdAction(Number(eventId)));
             } catch (err: any) {
-                closeLoadingAlert();
                 console.error("[TicketViewModel] Create ticket error:", err);
                 showErrorAlert("Failed to create ticket", err.message);
             }

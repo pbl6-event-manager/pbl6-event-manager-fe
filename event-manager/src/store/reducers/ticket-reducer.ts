@@ -63,6 +63,7 @@ export const ticketReducer = (state = DEFAULT_TICKET_STATE, action: any): Ticket
             return {
                 ...state,
                 isLoading: true,
+                currentTicket: null,
                 error: null,
             };
         case GET_TICKET_BY_ID_SUCCESS:

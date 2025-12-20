@@ -17,11 +17,17 @@ interface PublishEventPageProps {
     handleOrganizerChange: (organizerId: number) => void,
     handleCategoryChange: (categoryIds: number[]) => void,
     isOwner?: boolean,
+    currentOrganizerName?: string,
     canViewEvent?: boolean,
+    canEditEvent?: boolean,
     canPublishEvent?: boolean,
 }
 
-export default function PublishEventPage({ eventData, mediaFile, isPublishing, publishOrganizerId, publishCategoryIds, handlePublishEvent, handleOrganizerChange, handleCategoryChange, isOwner = true, canViewEvent = true, canPublishEvent = true }: PublishEventPageProps) {
+export default function PublishEventPage({ eventData, mediaFile, isPublishing, publishOrganizerId, publishCategoryIds, handlePublishEvent, handleOrganizerChange, handleCategoryChange, isOwner = true, currentOrganizerName, canViewEvent = true, canEditEvent = true, canPublishEvent = true }: PublishEventPageProps) {
+    console.log("isOwner:", isOwner, "canViewEvent:", canViewEvent, "canPublishEvent:", canPublishEvent, "canEditEvent:", canEditEvent);
+    const readOnly = !isOwner && (!canPublishEvent || !canEditEvent);
+    console.log("readOnly:", readOnly);
+    console.log("currentOrganizerName:", currentOrganizerName);
     return (
         (isOwner || canViewEvent) ? (
             <div className="space-y-8 pb-24">
@@ -38,8 +44,9 @@ export default function PublishEventPage({ eventData, mediaFile, isPublishing, p
                         <EventPreviewCard eventData={eventData} mediaFile={mediaFile} />
                         <OrganizerByCard
                             organizerId={publishOrganizerId}
+                            organizerName={currentOrganizerName}
                             onOrganizerChange={handleOrganizerChange}
-                            readOnly={(!isOwner || !canPublishEvent)}
+                            readOnly={(!isOwner && (!canPublishEvent || !canEditEvent))}
                         />
                     </div>
 
@@ -48,18 +55,18 @@ export default function PublishEventPage({ eventData, mediaFile, isPublishing, p
                         <EventCategoryCard
                             selectedCategoryIds={publishCategoryIds}
                             onCategoryChange={handleCategoryChange}
-                            readOnly={(!isOwner || !canPublishEvent)}
+                            readOnly={(!isOwner && (!canPublishEvent || !canEditEvent))}
                         />
                     </div>
                 </div>
                 {/* Publish Button */}
                 <div className="sticky bottom-0 bg-gradient-to-t from-background via-background to-transparent pt-6 -mx-6 px-6 pb-6">
                     <div className="bg-card border rounded-lg p-6 shadow-lg">
-                        {(!isOwner && !canPublishEvent) && (
+                        {(!isOwner && (!canPublishEvent || !canEditEvent)) && (
                             <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2 mb-4">
                                 <Lock className="h-4 w-4 text-red-600 flex-shrink-0" />
                                 <p className="text-red-700 text-sm font-medium">
-                                    You don't have permission to publish this event. Contact the event owner to request access.
+                                    You need Update and Publish permissions for this action. Contact the event owner to request access.
                                 </p>
                             </div>
                         )}
@@ -80,7 +87,7 @@ export default function PublishEventPage({ eventData, mediaFile, isPublishing, p
                             
                             <Button
                                 onClick={() => handlePublishEvent()}
-                                disabled={isPublishing || !publishOrganizerId || publishCategoryIds.length === 0 || !canPublishEvent}
+                                disabled={isPublishing || !publishOrganizerId || publishCategoryIds.length === 0 || (!canPublishEvent || !canEditEvent)}
                                 size="lg"
                                 className="bg-[#f05537] hover:bg-[#d63c1f] disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold px-8 h-12 text-base transition-all hover:shadow-lg disabled:shadow-none"
                             >
@@ -89,7 +96,7 @@ export default function PublishEventPage({ eventData, mediaFile, isPublishing, p
                                         <RotateCw className="animate-spin mr-2 h-5 w-5" />
                                         Publishing...
                                     </>
-                                ) : !canPublishEvent ? (
+                                ) : !canPublishEvent || !canEditEvent ? (
                                     <>
                                         <Lock className="mr-2 h-5 w-5" />
                                         Locked

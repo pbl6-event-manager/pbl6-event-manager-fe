@@ -15,11 +15,17 @@ export const useStaffViewModel = () => {
     const [selectedRole, setSelectedRole] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [showInviteModal, setShowInviteModal] = useState(false);
-    const { organizerStaffs, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
+    const { organizerStaffs, organizerStaffsForAssignment, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
     const [selectedMember, setSelectedMember] = useState<number | null>(null);
 
     // Filter staffs based on search term
     const filteredStaffs = organizerStaffs.filter(staff =>
+        staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.role.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const filteredStaffsForAssignment = organizerStaffsForAssignment.filter(staff =>
         staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         staff.role.toLowerCase().includes(searchTerm.toLowerCase())
@@ -85,6 +91,10 @@ export const useStaffViewModel = () => {
         }
     }, [dispatch, handleFetchOwnerStaff]);
 
+    const handleNavigateToUpdateStaffOfOwner = useCallback(() => {
+
+    }, []);
+
     const handleRemoveStaffOfOwner = useCallback(async (staffEmail: string) => {
         try {
             const result = await showConfirmAlert(
@@ -116,6 +126,7 @@ export const useStaffViewModel = () => {
         email,
         selectedRole,
         organizerStaffs: filteredStaffs,
+        organizerStaffsForAssignment: filteredStaffsForAssignment,
         isLoading,
         error,
         searchTerm,
@@ -131,5 +142,6 @@ export const useStaffViewModel = () => {
         handleInviteStaffToOwner,
         handleRemoveStaffOfOwner,
         handleFetchOwnerStaff,
+        handleNavigateToUpdateStaffOfOwner
     };
 }

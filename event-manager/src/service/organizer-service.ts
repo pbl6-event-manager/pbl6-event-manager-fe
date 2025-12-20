@@ -1,4 +1,4 @@
-import { getMyOrganizers, getOrganizerByIdApi, createANewOrganizerApi, deleteOrganizerApi, updateOrganizerApi, getOrganizerByIdAdminSiteApi } from "../api/organizer-api";
+import { getMyOrganizers, getOrganizerByIdApi, createANewOrganizerApi, deleteOrganizerApi, updateOrganizerApi, getOrganizerByIdAdminSiteApi, getOrganizerOfAnEventForPublicApi } from "../api/organizer-api";
 import { mapToOrganizerModel } from "../mappers/organizer-mapper";
 import type { OrganizerFormData, OrganizerListItem } from "../models/form-models/organizer-form-models";
 import type { ListOrganizerDto } from "../dtos/organizer-dto";
@@ -21,6 +21,34 @@ export const getMyOrganizersService = async () => {
         return {
             listOrganizerDto,
             listOrganizerFormData,
+        };
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(error.response.data?.message || "Server error");
+        } else {
+            throw new Error(error.message || "Unexpected error occurred");
+        }
+    }
+}
+
+export const getOrganizerOfAnEventForPublicService = async (eventId: number) => {
+    try {
+        const dataResponse = await getOrganizerOfAnEventForPublicApi(eventId);
+        const rawList = dataResponse?.data?.data ?? [];
+        console.log("[Organizer Service] Raw organizer data for event:", rawList);
+
+        const myOrganizersForPublish = Array.isArray(rawList)
+            ? rawList.map((raw: any) => mapToOrganizerModel(raw)).filter(Boolean)
+            : [];
+
+        const listOrganizerForPublishDto: ListOrganizerDto[] = myOrganizersForPublish.map((org: any) => convertOrgModelToListOrgDto(org));
+        const listOrganizerForPublishFormData: OrganizerListItem[] = listOrganizerForPublishDto
+            .map((org: any) => convertToOrganizerListItem(org))
+            .filter((item): item is OrganizerListItem => item != null);
+
+        return {
+            listOrganizerForPublishDto,
+            listOrganizerForPublishFormData,
         };
     } catch (error: any) {
         if (error.response) {
@@ -86,7 +114,7 @@ export const updateOrganizerService = async (id: number, organizerData: Organize
         const formData = convertOrganizerFormDataToFormData(organizerData);
         const response = await updateOrganizerApi(id, formData);
         const rawOrganizerResponse = response.data.data;
-        
+
         if (response.data.status && response.data.message === "success") {
             const organizerModel = mapToOrganizerModel(rawOrganizerResponse);
             const organizerDto: ListOrganizerDto = convertOrgModelToListOrgDto(organizerModel);
@@ -111,7 +139,7 @@ export const updateOrganizerService = async (id: number, organizerData: Organize
 export const deleteOrganizerService = async (id: number) => {
     try {
         const response = await deleteOrganizerApi(id);
-        
+
         if (response.data.status && response.data.message === "success") {
             return {
                 id,

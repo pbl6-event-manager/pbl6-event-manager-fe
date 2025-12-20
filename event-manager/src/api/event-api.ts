@@ -19,3 +19,5 @@ export const updateEventApi = (eventId: number, event: any) => apiClient.put(`/e
 });
 
 export const publishEventApi = (eventId: number) => apiClient.post(`/events/${eventId}/publish`);
+
+export const deleteEventApi = (id: number) => apiClient.delete(`/events/${id}`);

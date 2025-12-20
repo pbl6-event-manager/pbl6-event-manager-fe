@@ -5,7 +5,8 @@ import type { EventStaffDtoAdmin } from "../../dtos/event-staff-dto"
 //#region Reducer Models
 export interface StaffsState {
   eventStaffs: StaffDto[]
-  organizerStaffs: StaffDto[]
+  organizerStaffs: StaffDto[],
+  organizerStaffsForAssignment: StaffDto[],
   organizerStaffsByStaff: StaffDto[]
   eventStaffsAdmin: EventStaffDtoAdmin[],
   roles: RoleStaffDto[]
@@ -16,6 +17,7 @@ export interface StaffsState {
 export const DEFAULT_STAFF_STATE: StaffsState = {
     eventStaffs: [],
     organizerStaffs: [],
+    organizerStaffsForAssignment: [],
     organizerStaffsByStaff: [],
     eventStaffsAdmin: [],
     roles: [],

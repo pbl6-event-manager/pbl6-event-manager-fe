@@ -1,4 +1,4 @@
-import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi, getEventsByOwnerApi, updateEventApi, publishEventApi, getEventsByStaffApi } from "../api/event-api"
+import { approveRejectEventApi, createEvent, getAllEventsAdminApi, getEventByIdApi, getEventsByOrganizerApi, getEventsByOwnerApi, updateEventApi, publishEventApi, getEventsByStaffApi, deleteEventApi } from "../api/event-api"
 import { eventMapper } from "../mappers/event-mapper"
 import { eventConverter } from "../converters/event-converter"
 import type { EventFormDto, EventListDto } from "../dtos/event-dto"
@@ -75,7 +75,6 @@ export const getEventDetailsByIdService = async (eventId: number) => {
     const response = await getEventByIdApi(eventId);
     if (response.data.message === "success") {
       const eventDetails = eventMapper.mapResponseToEventDetailsDto(response.data.data);
-      console.log("[debug] Event Details:", eventDetails);
       return eventDetails;
     }
   } catch (error: any) {
@@ -100,6 +99,7 @@ export const updateEventService = async (eventId: number, formData: EventFormDto
     multipartFormData.append("language", formData.language)
     multipartFormData.append("latitude", formData.latitude.toString())
     multipartFormData.append("longitude", formData.longitude.toString())
+    multipartFormData.append("timezone", formData.timezone)
 
     // Only append banner if it's a new file
     if (formData.bannerFile instanceof File) {
@@ -148,6 +148,7 @@ export const publishEventService = async (
     multipartFormData.append("language", formData.language)
     multipartFormData.append("latitude", formData.latitude.toString())
     multipartFormData.append("longitude", formData.longitude.toString())
+    multipartFormData.append("timezone", formData.timezone)
     if (formData.bannerFile instanceof File) {
       multipartFormData.append("banner", formData.bannerFile)
     }
@@ -308,6 +309,22 @@ export const getEventsByStaffService = async () => {
     } else {
       throw new Error("Unexpected error occurred");
     }
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
+export const deleteEventService = async (eventId: number) => {
+  try {
+    const response = await deleteEventApi(eventId);
+    if (response.data.message === "success") {
+      return true;
+    }
+    return false;
   } catch (error: any) {
     if (error.response) {
       throw new Error(error.response.data?.message || "Server error");

@@ -4,6 +4,9 @@ export const FETCH_EVENT_STAFFS_SUCCESS = "FETCH_EVENT_STAFFS_SUCCESS";
 export const FETCH_ORGANIZER_STAFFS_REQUEST = "FETCH_ORGANIZER_STAFFS_REQUEST";
 export const FETCH_ORGANIZER_STAFFS_SUCCESS = "FETCH_ORGANIZER_STAFFS_SUCCESS";
 export const FETCH_ORGANIZER_STAFFS_FAILURE = "FETCH_ORGANIZER_STAFFS_FAILURE";
+export const FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_REQUEST = "FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_REQUEST";
+export const FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_SUCCESS = "FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_SUCCESS";
+export const FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_FAILURE = "FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_FAILURE";
 export const ASSIGN_STAFF_REQUEST = "ASSIGN_STAFF_REQUEST";
 export const ASSIGN_STAFF_SUCCESS = "ASSIGN_STAFF_SUCCESS";
 export const ASSIGN_STAFF_FAILURE = "ASSIGN_STAFF_FAILURE";
@@ -29,37 +32,17 @@ export const SYNC_STAFFS_TO_EVENT_FAILURE = "SYNC_STAFFS_TO_EVENT_FAILURE";
 
 import { convertEventStaffAdminModelToEventStaffAdminDto } from "../../converters/event-staff-converter";
 import { mapResponseToEventStaffModelAdmin } from "../../mappers/event-staff-mapper";
-import { 
-    syncStaffsToEventService, 
-    assignStaffToOwnerService, 
-    fetchStaffGroupedByRoleService, 
-    removeStaffOfOwnerService, 
-    fetchAssignedStaffsOfEventByListIds, 
-    fetchAssignedStaffsOfEventByStaffService, 
-    getStaffOfEventAdminService 
+import {
+    syncStaffsToEventService,
+    assignStaffToOwnerService,
+    fetchStaffGroupedByRoleService,
+    fetchStaffForAssignmentGroupedByRoleService,
+    removeStaffOfOwnerService,
+    fetchAssignedStaffsOfEventByStaffService,
+    getStaffOfEventAdminService
 } from "../../service/staff-service";
 
-export const fetchEventStaffs = (eventId: number) => async (dispatch: any) => {
-    dispatch({ type: FETCH_EVENT_STAFFS_REQUEST });
-    try {
-        const { assignedStaffsDto, assignedStaffsItems } = await fetchAssignedStaffsOfEventByListIds(eventId);
 
-        dispatch({
-            type: FETCH_EVENT_STAFFS_SUCCESS,
-            payload: assignedStaffsDto
-        });
-
-        return assignedStaffsItems;
-    } catch (error: any) {
-        console.error("[fetchEventStaffs] Error:", error);
-
-        dispatch({
-            type: FETCH_EVENT_STAFFS_FAILED,
-            payload: error.message
-        });
-        throw error;
-    }
-};
 
 export const fetchEventStaffsAdmin = (eventId: number) => async (dispatch: any) => {
     try {
@@ -101,6 +84,29 @@ export const fetchOwnerStaffs = () => async (dispatch: any) => {
     } catch (error: any) {
         dispatch({
             type: FETCH_ORGANIZER_STAFFS_FAILURE,
+            payload:
+                error.response?.data?.message || error.message || "Get staffs of an owner failed",
+        });
+        throw error;
+    }
+}
+
+export const fetchOwnerStaffsForAssignment = (eventId: number) => async (dispatch: any) => {
+    try {
+        dispatch({
+            type: FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_REQUEST
+        });
+
+        const { allStaffDtos, allStaffItems } = await fetchStaffForAssignmentGroupedByRoleService(eventId);
+
+        dispatch({
+            type: FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_SUCCESS,
+            payload: allStaffDtos
+        });
+        return allStaffItems;
+    } catch (error: any) {
+        dispatch({
+            type: FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_FAILURE,
             payload:
                 error.response?.data?.message || error.message || "Get staffs of an owner failed",
         });
@@ -160,7 +166,7 @@ export const removeStaffOfOwner = (staffEmail: string) => async (dispatch: any) 
         })
 
         await removeStaffOfOwnerService(staffEmail);
-        
+
         dispatch({
             type: REMOVE_STAFF_FROM_OWNER_SUCCESS,
             payload: staffEmail
@@ -181,11 +187,10 @@ export const syncStaffsToEvent = (eventId: number, staffIds: number[]) => {
         try {
             const response = await syncStaffsToEventService(eventId, staffIds);
 
-            const { assignedStaffsDto } = await fetchAssignedStaffsOfEventByListIds(eventId);
-
+            const { allStaffDtos } = await fetchAssignedStaffsOfEventByStaffService(eventId);
             dispatch({
                 type: SYNC_STAFFS_TO_EVENT_SUCCESS,
-                payload: assignedStaffsDto
+                payload: allStaffDtos
             });
 
             return response;
@@ -206,7 +211,7 @@ export const fetchEventStaffsForStaff = (eventId: number) => async (dispatch: an
 
         dispatch({
             type: FETCH_EVENT_STAFFS_SUCCESS,
-            payload: allStaffDtos 
+            payload: allStaffDtos
         });
         return allStaffItems;
     } catch (error: any) {

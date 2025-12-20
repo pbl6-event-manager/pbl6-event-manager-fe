@@ -51,8 +51,8 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
     <div>
       {isOwner || canViewEvent ? (
         <div className="min-h-screen bg-background flex flex-col">
-          <div className="flex-1 overflow-hidden">
-            <div className="container mx-auto px-4 py-8 h-full">
+          <div className="flex-1">
+            <div className="container mx-auto px-4 py-8">
               {/* Loading State */}
               {isLoading && tickets.length === 0 && (
                 <div className="text-center py-12">
@@ -69,16 +69,30 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
               )}
 
               {/* Main Content */}
-              <div className="overflow-y-auto max-h-[calc(100vh-120px)]">
+              <div className="space-y-6">
                 {showTicketTypeSelection || (!showTicketForm && tickets.length === 0 && !isLoading) ? (
                   // Ticket Type Selection View
                   <div className="space-y-6">
-                    <div>
-                      <h1 className="text-3xl font-bold mb-2">Create tickets</h1>
-                      <p className="text-muted-foreground">
-                        Choose a ticket type or build a section with multiple ticket types.
-                      </p>
+                    <div className="flex items-center justify-between">
+                      {/* Left: Title + Description */}
+                      <div>
+                        <h1 className="text-3xl font-bold mb-2">Create tickets</h1>
+                        <p className="text-muted-foreground">
+                          Choose a ticket type or build a section with multiple ticket types.
+                        </p>
+                      </div>
+
+                      {/* Right: Next button */}
+                      <Button
+                        size="lg"
+                        className="bg-[#f05537] hover:bg-[#d63c1f] text-white"
+                        onClick={onNext}
+                        disabled={tickets.length === 0}
+                      >
+                        Next
+                      </Button>
                     </div>
+
 
                     <div className="space-y-4">
                       {/* Paid Ticket Option */}
@@ -240,12 +254,25 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                         </div>
                       )}
                     </div>
+                    <div className="bottom-0 left-0 right-0 bg-card border-t py-4 z-50">
+                      <div className="container mx-auto px-4 flex justify-end">
+                        <Button
+                          size="lg"
+                          className="bg-[#f05537] hover:bg-[#d63c1f] text-white"
+                          onClick={onNext}
+                          disabled={tickets.length === 0}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
+
                   </div>
                 ) : (
                   // Ticket Form View
                   <Card>
-                    <CardContent className="p-6 space-y-6">
-                      <div>
+                    <CardContent className="p-6">
+                      <div className="space-y-6">
                         <h2 className="text-xl font-semibold mb-4">
                           {editingTicketId ? "Edit ticket" : "Add tickets"}
                         </h2>
@@ -271,7 +298,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                         </div>
 
                         {/* Form Fields */}
-                        <div className="space-y-4">
+                        <div className="space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto pr-2">
                           <div>
                             <Label htmlFor="name">Name *</Label>
                             <Input
@@ -475,19 +502,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
             </DialogContent>
           </Dialog>
 
-          {/* Bottom Action Bar */}
-          <div className="bottom-0 left-0 right-0 bg-card border-t py-4 z-50">
-            <div className="container mx-auto px-4 flex justify-end">
-              <Button
-                size="lg"
-                className="bg-[#f05537] hover:bg-[#d63c1f] text-white"
-                onClick={onNext}
-                disabled={tickets.length === 0}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+
         </div>
       ) : (
         <div>

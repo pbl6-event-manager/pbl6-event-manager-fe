@@ -7,7 +7,10 @@ import {
     ASSIGN_STAFF_SUCCESS,
     FETCH_ORGANIZER_STAFFS_FAILURE, 
     FETCH_ORGANIZER_STAFFS_REQUEST,
-    FETCH_ORGANIZER_STAFFS_SUCCESS, 
+    FETCH_ORGANIZER_STAFFS_SUCCESS,
+    FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_FAILURE, 
+    FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_REQUEST,
+    FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_SUCCESS,
     INVITE_STAFF_TO_OWNER_FAILURE, 
     INVITE_STAFF_TO_OWNER_REQUEST,
     INVITE_STAFF_TO_OWNER_SUCCESS,
@@ -192,6 +195,25 @@ export const staffReducer = (state = DEFAULT_STAFF_STATE, action: any): StaffsSt
                 error: null,
             };
         case SYNC_STAFFS_TO_EVENT_FAILURE:
+            return {
+                ...state,
+                isLoading: false,
+                error: action.payload,
+            };
+        case FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_REQUEST:
+            return {
+                ...state,
+                isLoading: true,
+                error: null,
+            };
+        case FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                organizerStaffsForAssignment: action.payload,
+                error: null,
+            };
+        case FETCH_ORGANIZER_STAFFS_FOR_ASSIGNMENT_FAILURE:
             return {
                 ...state,
                 isLoading: false,

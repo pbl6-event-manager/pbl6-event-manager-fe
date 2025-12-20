@@ -1,4 +1,4 @@
-import { Copy, Trash2, Calendar, TrendingUp, Lock } from "lucide-react"
+import { Copy, Trash2, Calendar, TrendingUp } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
 //import type { VoucherListItem } from "../../../models/discount-models"
@@ -7,12 +7,12 @@ import { Badge } from "../ui/badge"
 import { formatExpiry } from "../../utils/Organizer/date-format"
 import { toast } from "sonner"
 
-export function VoucherCard({ voucher, onDelete, onCopy, isDeleting = false, canDelete = false }: VoucherCardProps) {
+export function VoucherCard({ voucher, onDelete, onCopy, isDeleting = false, isOwner = false }: VoucherCardProps) {
     const statusColor = voucher.status === "ACTIVE" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
     const discountDisplay =
         voucher.type === "PERCENTAGE" ? `${voucher.amount}%` : `$${voucher.amount.toFixed(2)}`
     const handleDeleteWithPermission = () => {
-        if (canDelete) {
+        if (isOwner) {
             onDelete(voucher.id)
         } else {
             toast.error("You don't have permission to delete this voucher.")
@@ -68,7 +68,7 @@ export function VoucherCard({ voucher, onDelete, onCopy, isDeleting = false, can
                 )}
 
                 {/* Delete button */}
-                {canDelete ? (
+                {isOwner && (
                     <Button
                         variant="destructive"
                         size="sm"
@@ -78,16 +78,6 @@ export function VoucherCard({ voucher, onDelete, onCopy, isDeleting = false, can
                     >
                         <Trash2 className="h-4 w-4" />
                         {isDeleting ? "Deleting..." : "Delete"}
-                    </Button>
-                ) : (
-                    <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteWithPermission()}
-                        className="w-full gap-2 bg-gray-400 hover:bg-gray-400 text-gray-200 cursor-not-allowed"
-                    >
-                        <Lock className="h-4 w-4" />
-                        Delete
                     </Button>
                 )}
             </div>

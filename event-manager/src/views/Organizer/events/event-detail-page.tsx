@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, AlertCircle } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { EventSidebar } from "../../../components/Organizer/event-sidebar"
 import EventDashboardPage from "./event-dashboard-page"
@@ -15,13 +15,15 @@ import { useEventViewModel } from "../../../viewmodels/Organizer/events/event-vi
 import { useEventPermissionViewModel } from "../../../viewmodels/Organizer/events/event-permission-view-model"
 import { useOrderViewModel } from "../../../viewmodels/Organizer/orders/order-view-model";
 //import { PermissionBadge } from "../../../components/Permission/PermissionBadge"
-//import { EventAccessGuard } from "../../../components/Permission/EventAccessGuard"
+import { EventAccessGuard } from "../../../components/Permission/EventAccessGuard"
 
 export default function EventDetailPage() {
   const {
-    isLoading,
+    eventId,
+    isLoading: isEventLoading,
     currentSection,
-    eventData,
+    currentEvent,
+    displayEventData,
     uploadedMedia,
     isPublishing,
     publishOrganizerId,
@@ -76,22 +78,21 @@ export default function EventDetailPage() {
 
   const {
     isOwner,
+    isStaff,
     roleStaffName,
     isLoading: isPermissionLoading,
     canViewEvent,
-    canViewAnalytics,
     canViewEventStaff,
     canViewAttendees,
-    canViewOrders,
-    canViewDiscount,
+    canViewOrder,
+    canViewEventVouchers,
     canEditEvent,
     // canDeleteEvent,
     canPublishEvent,
     canCreateTickets,
     canUpdateTickets,
     canDeleteTickets,
-    canAssignStaffs,
-    canDeleteDiscounts,
+    canAssignStaff,
     canCheckInAttendees,
     // canManageTickets,
     canAccessStep,
@@ -111,18 +112,38 @@ export default function EventDetailPage() {
   };
 
   const handlePublishEventWithPermission = async () => {
-    const allowed = checkAndAllow(PERMISSIONS.PUBLISH_EVENT, () => {});
+    const allowed = checkAndAllow(PERMISSIONS.PUBLISH_EVENT, () => { });
     if (allowed) {
       await handlePublishEvent(isOwner, canPublishEvent);
     }
   };
-
-  if (isLoading || !eventData) {
-    return;
+  const shouldShowAccessDenied = !isEventLoading && !isPermissionLoading  && (!isOwner && !isStaff);
+  if (isEventLoading || isPermissionLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading event...</p>
+        </div>
+      </div>
+    );
   }
+
+  if (shouldShowAccessDenied) {
+    return (
+      <EventAccessGuard
+        shouldShow={true}
+        eventId={eventId}
+      >
+        <></>
+      </EventAccessGuard>
+    )
+  }
+  
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* Header with warning if no VIEW_EVENT permission */}
       <header className="border-b bg-card sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -137,6 +158,14 @@ export default function EventDetailPage() {
                 Back to events
               </Button>
             </div>
+            
+            {/* Show warning if staff without VIEW_EVENT */}
+            {isStaff && !canViewEvent && (
+              <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 px-3 py-1.5 rounded-md border border-amber-200">
+                <AlertCircle className="h-4 w-4" />
+                <span>Limited access - Some event information is restricted</span>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -148,19 +177,13 @@ export default function EventDetailPage() {
             <div className="lg:col-span-1 hidden lg:block">
               <div className="sticky top-24 h-[calc(100vh-120px)] overflow-y-auto">
                 <EventSidebar
-                  eventData={eventData}
-                  currentStep={
-                    typeof currentSection === "number" ? currentSection : 0
-                  }
+                  eventData={displayEventData}
+                  currentStep={typeof currentSection === "number" ? currentSection : 0}
                   completedSteps={completedSteps}
                   isCreating={false}
                   onStepClick={handleStepClick}
                   onMenuItemClick={handleMenuItemClick}
-                  activeMenuItem={
-                    typeof currentSection === "string"
-                      ? currentSection
-                      : undefined
-                  }
+                  activeMenuItem={typeof currentSection === "string" ? currentSection : undefined}
                   isOwner={isOwner}
                   roleStaffName={roleStaffName}
                   isPermissionLoading={isPermissionLoading}
@@ -174,7 +197,7 @@ export default function EventDetailPage() {
 
             {/* Main Content */}
             <div className="lg:col-span-3 overflow-y-auto max-h-[calc(100vh-120px)] pr-4">
-              <div className="space-y-8 pb-24">
+              <div className="space-y-8 pb-8">
                 {currentSection === 1 && (
                   <EditEventInfoPage
                     mediaCardRef={mediaCardRef}
@@ -186,7 +209,7 @@ export default function EventDetailPage() {
                     dateTimeRef={dateTimeRef}
                     locationRef={locationRef}
                     overviewRef={overviewRef}
-                    eventData={eventData}
+                    eventData={displayEventData}
                     uploadedMedia={uploadedMedia}
                     handleUpdateEventData={handleUpdateEventData}
                     setUploadedMedia={setUploadedMedia}
@@ -214,7 +237,7 @@ export default function EventDetailPage() {
                 {currentSection === 3 && (
                   <div className="bg-card rounded-lg p-6 border">
                     <PublishEventPage
-                      eventData={eventData}
+                      eventData={displayEventData}
                       mediaFile={uploadedMedia}
                       isPublishing={isPublishing}
                       publishOrganizerId={publishOrganizerId}
@@ -223,7 +246,9 @@ export default function EventDetailPage() {
                       handleOrganizerChange={handleOrganizerChange}
                       handleCategoryChange={handleCategoryChange}
                       isOwner={isOwner}
+                      currentOrganizerName={currentEvent?.organizer?.name || "Unknown"}
                       canViewEvent={canViewEvent}
+                      canEditEvent={canEditEvent}
                       canPublishEvent={canPublishEvent}
                     />
                   </div>
@@ -233,14 +258,14 @@ export default function EventDetailPage() {
                   <div className="bg-card rounded-lg border">
                     <EventDashboardPage
                       setCurrentSection={setCurrentSection}
-                      eventData={eventData}
+                      eventData={displayEventData}
                       getStatusColor={getStatusColor}
                       ticketInfo={dashboardTicketInfo}
                       revenueInfo={dashboardRevenueInfo}
                       attendeeInfo={dashboardAttendeeInfo}
                       orderStats={dashboardOrderStats}
                       canViewEvent={canViewEvent}
-                      canViewAnalytics={canViewAnalytics}
+                      canViewOrder={canViewOrder}
                     />
                   </div>
                 )}
@@ -248,7 +273,10 @@ export default function EventDetailPage() {
                 {currentSection === "team-management" && (
                   <div className="bg-card rounded-lg border">
                     <EventTeamManagementPage 
-                    isOwner={isOwner} canAssignStaffs={canAssignStaffs} canViewEventStaff={canViewEventStaff} />
+                      isOwner={isOwner} 
+                      canAssignStaff={canAssignStaff} 
+                      canViewEventStaff={canViewEventStaff} 
+                    />
                   </div>
                 )}
 
@@ -288,7 +316,7 @@ export default function EventDetailPage() {
                       statusText={statusText}
                       totalTicket={totalTicket}
                       isOwner={isOwner}
-                      canViewOrders={canViewOrders}
+                      canViewOrder={canViewOrder}
                     />
                   </div>
                 )}
@@ -297,9 +325,8 @@ export default function EventDetailPage() {
                   <div className="bg-card rounded-lg p-6 border">
                     <EventDiscountPage
                       isOwner={isOwner}
-                      canViewDiscount={canViewDiscount}
-                      canDeleteDiscounts={canDeleteDiscounts}
-                     />
+                      canViewEventVouchers={canViewEventVouchers}
+                    />
                   </div>
                 )}
               </div>

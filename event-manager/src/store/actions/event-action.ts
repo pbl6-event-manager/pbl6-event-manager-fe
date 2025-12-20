@@ -40,11 +40,14 @@ export const PUBLISH_EVENT_FAILURE = "PUBLISH_EVENT_FAILURE";
 export const GET_EVENTS_BY_STAFF_REQUEST = "GET_EVENTS_BY_STAFF_REQUEST";
 export const GET_EVENTS_BY_STAFF_SUCCESS = "GET_EVENTS_BY_STAFF_SUCCESS";
 export const GET_EVENTS_BY_STAFF_FAILURE = "GET_EVENTS_BY_STAFF_FAILURE";
+export const DELETE_EVENT_REQUEST = "DELETE_EVENT_REQUEST";
+export const DELETE_EVENT_SUCCESS = "DELETE_EVENT_SUCCESS";
+export const DELETE_EVENT_FAILURE = "DELETE_EVENT_FAILURE";
 
 import type { EventFormDto, EventListDto, EventSelectionDto } from "../../dtos/event-dto";
 import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
-import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService, publishEventService, getEventsByStaffService } from "../../service/event-service";
+import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService, publishEventService, getEventsByStaffService, deleteEventService } from "../../service/event-service";
 import { store } from "../store";
 
 export const getAllEventsAdmin = () => async (dispatch: any) => {
@@ -148,8 +151,6 @@ export const getEventDetailsById = (eventId: number) => async (dispatch: any) =>
     })
 
     const response = await getEventDetailsByIdService(eventId);
-
-    console.log(response);
 
     dispatch({
       type: GET_EVENT_DETAILS_SUCCESS,
@@ -274,6 +275,27 @@ export const getEventsByStaff = () => async (dispatch: any) => {
     dispatch({
       type: GET_EVENTS_BY_STAFF_FAILURE,
       payload: error.response?.data?.message || error.message || "Failed to get events by staff",
+    });
+    throw error;
+  }
+}
+
+export const deleteEvent = (eventId: number) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: DELETE_EVENT_REQUEST,
+    });
+    const response = await deleteEventService(eventId);
+    dispatch({
+      type: DELETE_EVENT_SUCCESS,
+      payload: eventId,
+    });
+    return response;
+  }
+  catch (error: any) {
+    dispatch({
+      type: DELETE_EVENT_FAILURE,
+      payload: error.response?.data?.message || error.message || "Failed to delete event",
     });
     throw error;
   }

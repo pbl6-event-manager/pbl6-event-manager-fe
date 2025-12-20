@@ -48,13 +48,12 @@ export interface EventDashboardSectionProps {
   attendeeInfo: number | undefined;
   orderStats?: DashboardOrderStatsDto[];
   canViewEvent: boolean;
-  canViewAnalytics: boolean;
+  canViewOrder: boolean;
 };
 
 export interface EventDiscountPageProps {
     isOwner?: boolean;
-    canViewDiscount?: boolean;
-    canDeleteDiscounts?: boolean;
+    canViewEventVouchers?: boolean;
 }
 
 export interface OrderOfAnUserSectionProps {

@@ -1,5 +1,10 @@
 import { assignAndUpdateStaffToOwner, getStaffGroupedByRole, deleteOwnerStaffByEmail } from "../api/owner-staff-api";
-import { syncStaffToEvent, getAllAssignedStaffIdsOfEvent, getStaffOfEventStaffApi } from "../api/event-staff-api";
+import { 
+    syncStaffToEvent, 
+    getStaffOfEventStaffApi,
+    getStaffOfEventAdminApi,
+    getStaffForAssignmentGroupedByRole
+} from "../api/event-staff-api";
 import { convertToOwnerStaffListItem, convertToStaffDto } from "../converters/staff-converter";
 import { mapToStaffModel } from "../mappers/staff-mapper";
 import { mapToRoleStaffModel } from "../mappers/role-staff-mapper";
@@ -7,7 +12,6 @@ import type { OwnerStaffListItem } from "../models/form-models/staff-form-models
 import type { RoleStaffModel } from "../models/bean/role-staff-models";
 import type { UserModel } from "../models/bean/user-models";
 import type { StaffDto } from "../dtos/staff-dto";
-import { getStaffOfEventAdminApi } from "../api/event-staff-api";
 
 export const assignStaffToOwnerService = async (staffEmail: string, roleStaffId: number) => {
     try {
@@ -38,6 +42,43 @@ export const assignStaffToOwnerService = async (staffEmail: string, roleStaffId:
 
 export const fetchStaffGroupedByRoleService = async () => {
     const response = await getStaffGroupedByRole();
+    const rawData = response?.data;
+
+    if (!rawData.status || !rawData.data) {
+        throw new Error(rawData.message || "Failed to fetch staffs");
+    }
+    const groupedData = rawData.data;
+    const allStaffDtos: StaffDto[] = [];
+    const allStaffItems: OwnerStaffListItem[] = [];
+    for (const group of groupedData) {
+        //Map role staff to Model
+        const roleStaffModel: RoleStaffModel = mapToRoleStaffModel(group.roleStaff);
+
+        for (const rawStaff of group.staffs) {
+            //Map raw data to UserModel
+            const staffModel: UserModel = mapToStaffModel(rawStaff);
+            const staffWithRole = {
+                ...staffModel,
+                name: `${staffModel.firstName} ${staffModel.lastName}`.trim() || staffModel.email,
+                role: roleStaffModel.name,
+                roleId: roleStaffModel.id,
+            };
+
+            const staffDto: StaffDto = convertToStaffDto(staffWithRole);
+            allStaffDtos.push(staffDto);
+
+            const displayItem = convertToOwnerStaffListItem(staffDto);
+
+            if (displayItem) {
+                allStaffItems.push(displayItem);
+            }
+        }
+    }
+    return { allStaffItems, allStaffDtos };
+}
+
+export const fetchStaffForAssignmentGroupedByRoleService = async (eventId: number) => {
+    const response = await getStaffForAssignmentGroupedByRole(eventId);
     const rawData = response?.data;
 
     if (!rawData.status || !rawData.data) {
@@ -116,31 +157,6 @@ export const syncStaffsToEventService = async (eventId: number, staffIds: number
     }
 }
 
-
-export const fetchAssignedStaffsOfEventByListIds = async (eventId: number) => {
-    try {
-        const response = await getAllAssignedStaffIdsOfEvent(eventId);
-        const assignedStaffIds: number[] = response.data.data;
-
-        const { allStaffDtos, allStaffItems } = await fetchStaffGroupedByRoleService();
-
-        const assignedStaffsDto = allStaffDtos.filter(staff =>
-            assignedStaffIds.includes(staff.id)
-        );
-
-        const assignedStaffsItems = allStaffItems.filter(staff =>
-            assignedStaffIds.includes(staff.id)
-        );
-
-        return {
-            assignedStaffsDto,
-            assignedStaffsItems,
-            assignedStaffIds
-        };
-    } catch (error: any) {
-        throw new Error(error.response?.data?.message || "Failed to fetch assigned staffs of event");
-    }
-}
 
 export const fetchAssignedStaffsOfEventByStaffService = async (eventId: number) => {
     const response = await getStaffOfEventStaffApi(eventId);

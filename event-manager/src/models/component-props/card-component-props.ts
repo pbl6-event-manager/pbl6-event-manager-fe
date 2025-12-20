@@ -45,6 +45,6 @@ export interface VoucherCardProps {
   onDelete: (id: number) => void
   onCopy: (code: string) => void
   isDeleting?: boolean
-  canDelete?: boolean
+  isOwner?: boolean
 }
 //#endregion

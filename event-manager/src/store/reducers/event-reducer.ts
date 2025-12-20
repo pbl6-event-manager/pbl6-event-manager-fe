@@ -2,7 +2,8 @@ import { FETCH_EVENTS_BY_USER, CLEAR_EVENTS, CREATE_EVENT_REQUEST, CREATE_EVENT_
   ,GET_EVENTS_BY_OWNER_FAILURE, GET_EVENTS_BY_OWNER_REQUEST, GET_EVENTS_BY_OWNER_SUCCESS,
   UPDATE_EVENT_REQUEST, UPDATE_EVENT_SUCCESS, UPDATE_EVENT_FAILURE,
   PUBLISH_EVENT_REQUEST, PUBLISH_EVENT_SUCCESS, PUBLISH_EVENT_FAILURE,
-  GET_EVENTS_BY_STAFF_REQUEST, GET_EVENTS_BY_STAFF_SUCCESS, GET_EVENTS_BY_STAFF_FAILURE
+  GET_EVENTS_BY_STAFF_REQUEST, GET_EVENTS_BY_STAFF_SUCCESS, GET_EVENTS_BY_STAFF_FAILURE,
+  DELETE_EVENT_REQUEST, DELETE_EVENT_SUCCESS, DELETE_EVENT_FAILURE
 } from "../actions/event-action";
 import { DEFAULT_EVENT_STATE, type EventState } from "../../models/reducer-models/event-reducer-models";
 
@@ -194,6 +195,26 @@ export const eventReducer = (state = DEFAULT_EVENT_STATE, action: any): EventSta
         isSuccess: true
       }
     case PUBLISH_EVENT_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+        isSuccess: false
+      }
+    case DELETE_EVENT_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null
+      }
+    case DELETE_EVENT_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        isSuccess: true,
+        eventsByUser: state.eventsByUser.filter(event => event.id !== action.payload),
+      }
+    case DELETE_EVENT_FAILURE:
       return {
         ...state,
         isLoading: false,

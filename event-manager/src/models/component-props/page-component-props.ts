@@ -31,11 +31,11 @@ export interface EventOrderPageProps {
   statusText: (s: string) => string;
   statusColor: (s: string) => void;
   isOwner: boolean;
-  canViewOrders: boolean;
+  canViewOrder: boolean;
 };
 
 export interface EventTeamManagementPageProps {
   isOwner: boolean, 
   canViewEventStaff: boolean,
-  canAssignStaffs: boolean,
+  canAssignStaff: boolean,
 }

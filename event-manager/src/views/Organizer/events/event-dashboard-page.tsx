@@ -30,7 +30,7 @@ const EventDashboardPage: React.FC<EventDashboardSectionProps> = ({
   attendeeInfo,
   orderStats,
   canViewEvent,
-  canViewAnalytics,
+  canViewOrder,
 }) => {
 
   return (
@@ -193,7 +193,7 @@ const EventDashboardPage: React.FC<EventDashboardSectionProps> = ({
                 <CardTitle className="text-base font-semibold">Order Statistics (Last 7 Days)</CardTitle>
               </CardHeader>
               <CardContent className="px-6 py-6">
-                {canViewAnalytics ? (
+                {canViewOrder ? (
                   orderStats && orderStats.length > 0 ? (
                     <ResponsiveContainer width="100%" height={350}>
                       <ComposedChart data={orderStats}>

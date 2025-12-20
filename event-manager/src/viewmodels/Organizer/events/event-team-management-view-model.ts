@@ -9,11 +9,13 @@ import {
     showErrorAlert
 } from "../../../helpers/alert-helpers";
 import {
-    fetchOwnerStaffs,
     syncStaffsToEvent,
-    fetchEventStaffsForStaff
+    fetchEventStaffsForStaff,
+    fetchOwnerStaffsForAssignment
 } from "../../../store/actions/staff-action";
-import { toast } from "sonner";
+import { usePermission } from "../../../hooks/usePermission";
+import { usePermissionCheck } from "../../../hooks/usePermissionCheck";
+import { PERMISSIONS } from "../../../constants/permission";
 
 export const useEventTeamManagementViewModel = () => {
     const [showAssignModal, setShowAssignModal] = useState(false);
@@ -21,8 +23,19 @@ export const useEventTeamManagementViewModel = () => {
     const dispatch = useDispatch();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStaffIds, setSelectedStaffIds] = useState<number[]>([]);
+    const {
+        isOwner,
+        hasPermission,
+        hasAnyPermission,
+    } = usePermission({ eventId: parseInt(eventId || "0", 10), autoLoad: true });
 
-    const { organizerStaffs, eventStaffs, isLoading, error } = useSelector(
+    const { showPermissionDenied } = usePermissionCheck({
+        isOwner,
+        hasPermission,
+        hasAnyPermission,
+    });
+
+    const { organizerStaffsForAssignment, eventStaffs, isLoading, error } = useSelector(
         (state: RootState) => state.staffReducer
     );
 
@@ -46,7 +59,7 @@ export const useEventTeamManagementViewModel = () => {
     }, [eventStaffs, currentUserEmail]);
 
     // Filter organizer staffs based on search
-    const filteredOrganizerStaffs = organizerStaffs.filter(staff =>
+    const filteredOrganizerStaffsForAssignment = organizerStaffsForAssignment.filter(staff =>
         staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         staff.role.toLowerCase().includes(searchTerm.toLowerCase())
@@ -80,17 +93,22 @@ export const useEventTeamManagementViewModel = () => {
         if (!eventId) return;
 
         try {
-            showLoadingAlert("Loading staffs...");
-            const results = await Promise.all([
-                dispatch<any>(fetchOwnerStaffs()),
+            await Promise.all([
+                dispatch<any>(fetchOwnerStaffsForAssignment(Number(eventId))),
                 dispatch<any>(fetchEventStaffsForStaff(Number(eventId)))
             ]);
-            console.log('Fetch results:', results);
-            console.log('Event staffs from Redux:', eventStaffs);
-            closeLoadingAlert();
         } catch (error: any) {
-            console.error('Error in handleFetchStaffs:', error);
-            showErrorAlert(error?.message || "Error loading staffs");
+            throw new Error('Error in handleFetchStaffs:', error);
+        }
+    }, [dispatch, eventId]);
+
+    const handleFetchStaffForAssignment = useCallback(async () => {
+        if (!eventId) return;
+
+        try {
+            await dispatch<any>(fetchEventStaffsForStaff(Number(eventId)));
+        } catch (error: any) {
+            throw new Error('Error in handleFetchStaffForAssignment:', error);
         }
     }, [dispatch, eventId]);
 
@@ -127,14 +145,11 @@ export const useEventTeamManagementViewModel = () => {
         setShowAssignModal(false);
     };
 
-    const handleShowAssignModalWithPermission = (isOwner: boolean, canAssignStaffs: boolean) => {
-        if (canAssignStaffs || isOwner) {
+    const handleShowAssignModalWithPermission = (isOwner: boolean, canAssignStaff: boolean) => {
+        if (canAssignStaff || isOwner) {
             setShowAssignModal(true);
         } else {
-            toast.error("Permission Denied", {
-                description: 'You need "Assign Staffs" permission to add new staffs',
-                duration: 4000,
-            })
+            showPermissionDenied(PERMISSIONS.ASSIGN_STAFF);
             return
         }
     }
@@ -144,12 +159,16 @@ export const useEventTeamManagementViewModel = () => {
         handleFetchStaffs();
     }, [handleFetchStaffs]);
 
+    useEffect(() => {
+        handleFetchStaffForAssignment();
+    }, [handleFetchStaffForAssignment]);
+
     return {
         searchTerm,
         setSearchTerm,
         showAssignModal,
         setShowAssignModal,
-        organizerStaffs: filteredOrganizerStaffs,
+        organizerStaffsForAssignment: filteredOrganizerStaffsForAssignment,
         eventStaffs: filteredEventStaffs,
         selectedStaffIds,
         isLoading,
