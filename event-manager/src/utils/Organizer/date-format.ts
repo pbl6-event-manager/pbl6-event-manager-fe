@@ -147,3 +147,19 @@ export const splitTimezone = (timezone: string): string => {
 
   throw new Error("Invalid timezone format");
 };
+
+export const formatToGMT = (timezone: string): string => {
+  if (!timezone) return "GMT+00:00"
+
+  // Nếu không có dấu + hoặc -, mặc định là +
+  const sign = timezone.startsWith("-")
+    ? "-"
+    : timezone.startsWith("+")
+      ? "+"
+      : "+"
+
+  // Loại bỏ dấu + hoặc - nếu có
+  const time = timezone.replace(/^[-+]/, "")
+
+  return `GMT${sign}${time}`
+}
