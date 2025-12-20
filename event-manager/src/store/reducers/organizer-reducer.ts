@@ -14,7 +14,10 @@ import {
   UPDATE_ORGANIZER_SUCCESS,
   CREATE_ORGANIZER_FAILURE,
   CREATE_ORGANIZER_REQUEST,
-  CREATE_ORGANIZER_SUCCESS
+  CREATE_ORGANIZER_SUCCESS,
+  FETCH_ORGANIZERS_FOR_PUBLISH_REQUEST,
+  FETCH_ORGANIZERS_FOR_PUBLISH_SUCCESS,
+  FETCH_ORGANIZERS_FOR_PUBLISH_FAILURE,
 } from "../actions/organizer-action";
 
 export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): OrganizerState => {
@@ -100,6 +103,25 @@ export const organizerReducer = (state = DEFAULT_ORGANIZER_STATE, action: any): 
       }
     case CREATE_ORGANIZER_FAILURE:
     case UPDATE_ORGANIZER_FAILURE:
+    case FETCH_ORGANIZERS_FOR_PUBLISH_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case FETCH_ORGANIZERS_FOR_PUBLISH_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        organizerForPublish: action.payload || [],
+        error: null,
+      }
+    case FETCH_ORGANIZERS_FOR_PUBLISH_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      }
     default:
       return state
   }

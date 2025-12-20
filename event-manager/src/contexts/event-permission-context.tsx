@@ -21,20 +21,17 @@ interface EventPermissionContextType {
   hasAnyPermission: (permissionNames: (PermissionName | string)[]) => boolean;
   hasAllPermissions: (permissionNames: (PermissionName | string)[]) => boolean;
   canViewEvent: () => boolean;
-  canViewAnalytics: () => boolean;
   canViewEventStaff: () => boolean;
   canViewAttendees: () => boolean;
-  canViewOrders: () => boolean;
-  canViewDiscount: () => boolean;
+  canViewOrder: () => boolean;
+  canViewEventVouchers: () => boolean;
   canEditEvent: () => boolean;
   canDeleteEvent: () => boolean;
   canPublishEvent: () => boolean;
   canCreateTickets: () => boolean;
   canUpdateTickets: () => boolean;
   canDeleteTickets: () => boolean;
-  canManageTickets: () => boolean;
-  canAssignStaffs: () => boolean
-  canDeleteDiscounts: () => boolean
+  canAssignStaff: () => boolean
   canCheckInAttendees: () => boolean;
   // Actions
   loadPermissions: (eventId: number, isEventOwner?: boolean) => Promise<void>
@@ -179,24 +176,18 @@ export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = (
   )
 
   const canViewEvent = useCallback(() => checkPermission(PERMISSIONS.VIEW_EVENT), [checkPermission])
-  const canViewAnalytics = useCallback(() => checkPermission(PERMISSIONS.VIEW_ANALYTICS), [checkPermission])
   const canViewEventStaff = useCallback(() => checkPermission(PERMISSIONS.VIEW_EVENT_STAFF), [checkPermission])
   const canViewAttendees = useCallback(() => checkPermission(PERMISSIONS.VIEW_ATTENDEES), [checkPermission])
-  const canViewOrders = useCallback(() => checkPermission(PERMISSIONS.VIEW_ORDERS), [checkPermission])
-  const canViewDiscount = useCallback(() => checkPermission(PERMISSIONS.VIEW_DISCOUNT), [checkPermission])
+  const canViewOrder = useCallback(() => checkPermission(PERMISSIONS.VIEW_ORDER), [checkPermission])
+  const canViewEventVouchers = useCallback(() => checkPermission(PERMISSIONS.VIEW_EVENT_VOUCHERS), [checkPermission])
   const canEditEvent = useCallback(() => checkPermission(PERMISSIONS.UPDATE_EVENT), [checkPermission])
   const canDeleteEvent = useCallback(() => checkPermission(PERMISSIONS.DELETE_EVENT), [checkPermission])
   const canPublishEvent = useCallback(() => checkPermission(PERMISSIONS.PUBLISH_EVENT), [checkPermission])
   const canCreateTickets = useCallback(() => checkPermission(PERMISSIONS.CREATE_TICKETS), [checkPermission])
   const canUpdateTickets = useCallback(() => checkPermission(PERMISSIONS.UPDATE_TICKETS), [checkPermission])
   const canDeleteTickets = useCallback(() => checkPermission(PERMISSIONS.DELETE_TICKETS), [checkPermission])
-  const canAssignStaffs = useCallback(() => checkPermission(PERMISSIONS.ASSIGN_STAFFS), [checkPermission])
-  const canDeleteDiscounts = useCallback(() => checkPermission(PERMISSIONS.DELETE_DISCOUNTS), [checkPermission])
+  const canAssignStaff = useCallback(() => checkPermission(PERMISSIONS.ASSIGN_STAFF), [checkPermission])
   const canCheckInAttendees = useCallback(() => checkPermission(PERMISSIONS.CHECK_IN_ATTENDEES), [checkPermission])
-  const canManageTickets = useCallback(
-    () => checkAnyPermission([PERMISSIONS.CREATE_TICKETS, PERMISSIONS.UPDATE_TICKETS, PERMISSIONS.DELETE_TICKETS]),
-    [checkAnyPermission],
-  )
 
   const contextValue: EventPermissionContextType = {
     eventId,
@@ -211,20 +202,17 @@ export const EventPermissionProvider: React.FC<EventPermissionProviderProps> = (
     hasAnyPermission: checkAnyPermission,
     hasAllPermissions: checkAllPermissions,
     canViewEvent,
-    canViewAnalytics,
     canViewEventStaff,
     canViewAttendees,
-    canViewOrders,
-    canViewDiscount,
+    canViewOrder,
+    canViewEventVouchers,
     canEditEvent,
     canDeleteEvent,
     canPublishEvent,
     canCreateTickets,
     canUpdateTickets,
     canDeleteTickets,
-    canManageTickets,
-    canAssignStaffs,
-    canDeleteDiscounts,
+    canAssignStaff,
     canCheckInAttendees, 
     loadPermissions,
     clearPermissions,

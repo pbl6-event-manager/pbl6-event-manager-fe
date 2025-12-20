@@ -4,20 +4,17 @@
 export const PERMISSIONS = {
   // View permissions
     VIEW_EVENT: "VIEW_EVENT",
-    VIEW_ANALYTICS: "VIEW_ANALYTICS",
     VIEW_EVENT_STAFF: "VIEW_EVENT_STAFF",
     VIEW_ATTENDEES: "VIEW_ATTENDEES",
-    VIEW_ORDERS: "VIEW_ORDERS",
-    VIEW_DISCOUNT: "VIEW_DISCOUNT",
-    
+    VIEW_ORDER: "VIEW_ORDER",
+    VIEW_EVENT_VOUCHERS: "VIEW_EVENT_VOUCHERS",
     UPDATE_EVENT: "UPDATE_EVENT",
     DELETE_EVENT: "DELETE_EVENT",
     PUBLISH_EVENT: "PUBLISH_EVENT",
     CREATE_TICKETS: "CREATE_TICKETS",
     UPDATE_TICKETS: "UPDATE_TICKETS",
     DELETE_TICKETS: "DELETE_TICKETS",
-    ASSIGN_STAFFS: "ASSIGN_STAFFS",
-    DELETE_DISCOUNTS: "DELETE_DISCOUNTS",
+    ASSIGN_STAFF: "ASSIGN_STAFF",
     CHECK_IN_ATTENDEES: "CHECK_IN_ATTENDEES",
 }
 
@@ -44,19 +41,17 @@ export interface StaffEventPermission {
 // Map permission names to UI-friendly labels
 export const PERMISSION_LABELS: Record<string, string> = {
   [PERMISSIONS.VIEW_EVENT]: "View Event",
-  [PERMISSIONS.VIEW_ANALYTICS]: "View Analytics",
   [PERMISSIONS.VIEW_EVENT_STAFF]: "View Event Staff",
-  [PERMISSIONS.VIEW_ORDERS]: "View Orders",
+  [PERMISSIONS.VIEW_ORDER]: "View Order",
   [PERMISSIONS.VIEW_ATTENDEES]: "View Attendees",
-  [PERMISSIONS.VIEW_DISCOUNT]: "View Discount",
+  [PERMISSIONS.VIEW_EVENT_VOUCHERS]: "View Event Vouchers",
   [PERMISSIONS.UPDATE_EVENT]: "Update Event",
   [PERMISSIONS.DELETE_EVENT]: "Delete Event",
   [PERMISSIONS.PUBLISH_EVENT]: "Publish Event",
   [PERMISSIONS.CREATE_TICKETS]: "Create Tickets",
   [PERMISSIONS.UPDATE_TICKETS]: "Update Tickets",
   [PERMISSIONS.DELETE_TICKETS]: "Delete Tickets",
-  [PERMISSIONS.ASSIGN_STAFFS]: "Assign Staffs",
-  [PERMISSIONS.DELETE_DISCOUNTS]: "Delete Discounts",
+  [PERMISSIONS.ASSIGN_STAFF]: "Assign Staff",
   [PERMISSIONS.CHECK_IN_ATTENDEES]: "Check In Attendees",
 }
 
@@ -65,8 +60,8 @@ export const MENU_PERMISSION_MAP: Record<string, PermissionName[]> = {
   "dashboard": [PERMISSIONS.VIEW_EVENT],
   "team-management": [PERMISSIONS.VIEW_EVENT_STAFF],
   "manage-attendee": [PERMISSIONS.VIEW_ATTENDEES],
-  "manage-orders": [PERMISSIONS.VIEW_ORDERS],
-  "discount": [PERMISSIONS.VIEW_DISCOUNT],
+  "manage-orders": [PERMISSIONS.VIEW_ORDER],
+  "discount": [PERMISSIONS.VIEW_EVENT_VOUCHERS],
 }
 
 // Map permissions to event steps

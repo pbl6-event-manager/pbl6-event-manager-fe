@@ -8,7 +8,7 @@ import { calculateTotalUses } from "../../../utils/Organizer/voucher-utils";
 import type { EventDiscountPageProps } from "../../../models/component-props/section-props";
 import { LockedContent } from "../../../components/Permission/LockedContent";
 
-export default function EventDiscountPage({ isOwner, canViewDiscount, canDeleteDiscounts }: EventDiscountPageProps) {
+export default function EventDiscountPage({ isOwner, canViewEventVouchers }: EventDiscountPageProps) {
 
     const {
         isLoading,
@@ -59,7 +59,7 @@ export default function EventDiscountPage({ isOwner, canViewDiscount, canDeleteD
             )}
 
             {/* Content - Requires VIEW_DISCOUNT permission */}
-            {isOwner || canViewDiscount ? (
+            {isOwner || canViewEventVouchers ? (
                 <div className="space-y-6">
                     {/* Search and Filter */}
                     <VoucherSearchFilter
@@ -91,7 +91,7 @@ export default function EventDiscountPage({ isOwner, canViewDiscount, canDeleteD
                                 </>
                             ) : (
                                 eventFiltered.map((voucher) => (
-                                    <VoucherCard key={voucher.id} voucher={voucher} onDelete={handleDeleteVoucher} onCopy={handleCopyCode} canDelete={canDeleteDiscounts}/>
+                                    <VoucherCard key={voucher.id} voucher={voucher} onDelete={handleDeleteVoucher} onCopy={handleCopyCode} isOwner={isOwner} />
                                 ))
                             )}
                         </div>

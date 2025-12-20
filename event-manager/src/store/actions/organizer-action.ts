@@ -1,6 +1,9 @@
 export const FETCH_ORGANIZERS_REQUEST = "FETCH_ORGANIZERS_REQUEST"
 export const FETCH_ORGANIZERS_SUCCESS = "FETCH_ORGANIZERS_SUCCESS"
 export const FETCH_ORGANIZERS_FAILURE = "FETCH_ORGANIZERS_FAILURE"
+export const FETCH_ORGANIZERS_FOR_PUBLISH_REQUEST = "FETCH_ORGANIZERS_FOR_PUBLISH_REQUEST"
+export const FETCH_ORGANIZERS_FOR_PUBLISH_SUCCESS = "FETCH_ORGANIZERS_FOR_PUBLISH_SUCCESS"
+export const FETCH_ORGANIZERS_FOR_PUBLISH_FAILURE = "FETCH_ORGANIZERS_FOR_PUBLISH_FAILURE"
 export const FETCH_ORGANIZER_DETAIL_REQUEST = "FETCH_ORGANIZER_DETAIL_REQUEST"
 export const FETCH_ORGANIZER_DETAIL_SUCCESS = "FETCH_ORGANIZER_DETAIL_SUCCESS"
 export const FETCH_ORGANIZER_DETAIL_FAILURE = "FETCH_ORGANIZER_DETAIL_FAILURE"
@@ -15,7 +18,7 @@ export const CREATE_ORGANIZER_SUCCESS = "CREATE_ORGANIZER_SUCCESS"
 export const CREATE_ORGANIZER_FAILURE = "CREATE_ORGANIZER_FAILURE"
 
 import type { OrganizerFormData } from "../../models/form-models/organizer-form-models"
-import { getMyOrganizersService, getOrganizerByIdService, createOrganizerService, updateOrganizerService, deleteOrganizerService } from "../../service/organizer-service";
+import { getMyOrganizersService, getOrganizerByIdService, createOrganizerService, updateOrganizerService, deleteOrganizerService, getOrganizerOfAnEventForPublicService } from "../../service/organizer-service";
 
 export const fetchMyOrganizers = () => async (dispatch: any) => {
     try {
@@ -35,6 +38,30 @@ export const fetchMyOrganizers = () => async (dispatch: any) => {
             type: FETCH_ORGANIZERS_FAILURE,
             payload:
                 error.response?.data?.message || error.message || "Get organizers failed",
+        });
+        throw error;
+    }
+}
+
+export const fetchOrganizersForPublish = (eventId: number) => async (dispatch: any) => {
+    try {
+        dispatch({
+            type: FETCH_ORGANIZERS_FOR_PUBLISH_REQUEST
+        });
+
+        const { listOrganizerForPublishDto, listOrganizerForPublishFormData } = await getOrganizerOfAnEventForPublicService(eventId);
+
+        dispatch({
+            type: FETCH_ORGANIZERS_FOR_PUBLISH_SUCCESS,
+            payload: listOrganizerForPublishDto
+        });
+
+        return listOrganizerForPublishFormData;
+    } catch (error: any) {
+        dispatch({
+            type: FETCH_ORGANIZERS_FOR_PUBLISH_FAILURE,
+            payload:
+                error.response?.data?.message || error.message || "Get organizers for publish failed",
         });
         throw error;
     }

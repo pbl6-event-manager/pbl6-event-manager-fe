@@ -7,13 +7,13 @@ import { Lock } from "lucide-react"
 import type { EventTeamManagementPageProps } from "../../../models/component-props/page-component-props"
 import { LockedContent } from "../../../components/Permission/LockedContent"
 
-export default function EventTeamManagementPage({ isOwner, canAssignStaffs, canViewEventStaff }: EventTeamManagementPageProps) {
+export default function EventTeamManagementPage({ isOwner, canAssignStaff, canViewEventStaff }: EventTeamManagementPageProps) {
     const {
         searchTerm,
         setSearchTerm,
         showAssignModal,
         setShowAssignModal,
-        organizerStaffs,
+        organizerStaffsForAssignment,
         eventStaffs,
         selectedStaffIds,
         isLoading,
@@ -44,9 +44,9 @@ export default function EventTeamManagementPage({ isOwner, canAssignStaffs, canV
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="flex-1"
                             />
-                            {(!isOwner && !canAssignStaffs) ? (
+                            {(!isOwner && !canAssignStaff) ? (
                                 <Button
-                                    onClick={() => handleShowAssignModalWithPermission(isOwner, canAssignStaffs)}
+                                    onClick={() => handleShowAssignModalWithPermission(isOwner, canAssignStaff)}
                                     className="bg-gray-400 hover:bg-gray-400 text-gray-200 cursor-not-allowed"
                                 >
                                     <Lock className="h-3.5 w-3.5 mr-1.5" />
@@ -54,7 +54,7 @@ export default function EventTeamManagementPage({ isOwner, canAssignStaffs, canV
                                 </Button>
                             ) : (
                                 <Button
-                                    onClick={() => handleShowAssignModalWithPermission(isOwner, canAssignStaffs)}
+                                    onClick={() => handleShowAssignModalWithPermission(isOwner, canAssignStaff)}
                                     className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium cursor-pointer"
                                 >
                                     Assign staffs
@@ -124,7 +124,7 @@ export default function EventTeamManagementPage({ isOwner, canAssignStaffs, canV
 
                         {showAssignModal && (
                             <AssignMemberModal
-                                availableMembers={organizerStaffs}
+                                availableMembers={organizerStaffsForAssignment}
                                 selectedStaffIds={selectedStaffIds}
                                 onToggle={handleToggleStaff}
                                 onSave={handleSaveAssignments}

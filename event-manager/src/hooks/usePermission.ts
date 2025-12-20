@@ -23,21 +23,18 @@ interface UsePermissionReturn {
     hasAnyPermission: (permissionNames: (PermissionName | string)[]) => boolean
     hasAllPermissions: (permissionNames: (PermissionName | string)[]) => boolean
     canViewEvent: boolean
-    canViewAnalytics: boolean
     canViewEventStaff: boolean
     canViewAttendees: boolean
-    canViewOrders: boolean
-    canViewDiscount: boolean
+    canViewOrder: boolean
+    canViewEventVouchers: boolean
     canEditEvent: boolean
     canDeleteEvent: boolean
     canPublishEvent: boolean
     canCreateTickets: boolean
     canUpdateTickets: boolean
     canDeleteTickets: boolean
-    canAssignStaffs: boolean
-    canDeleteDiscounts: boolean
+    canAssignStaff: boolean
     canCheckInAttendees: boolean
-    canManageTickets: boolean
 
     //Actions
     loadPermissions: () => Promise<void>
@@ -50,22 +47,32 @@ export const usePermission = ({ eventId, autoLoad = true }: UsePermissionOptions
     const [permissionData, setPermissionData] = useState<StaffEventPermission | null>(null)
 
     const loadPermissions = useCallback(async () => {
-        if (!eventId) return
+    if (!eventId) return
 
-        setIsLoading(true)
-        setError(null)
+    setIsLoading(true)
+    setError(null)
 
-        try {
-            const result = await getMyEventPermissionService(eventId)
-            setPermissionData(result)
-        } catch (err: any) {
-            console.error("[usePermission] Error loading permissions:", err)
-            setError(err.message || "Failed to load permissions")
-            setPermissionData(null)
-        } finally {
-            setIsLoading(false)
-        }
-    }, [eventId])
+    try {
+        const result = await getMyEventPermissionService(eventId)
+        
+        // result = null có nghĩa:
+        // - User không có assignment (404)
+        // - User không có quyền xem (403)  
+        // - No assignments found
+        // Đây KHÔNG phải là error, chỉ là user không có quyền
+        setPermissionData(result)
+        
+        console.log("[usePermission] Permission data loaded:", result)
+        
+    } catch (err: any) {
+        // Chỉ những lỗi thực sự (500, network, etc.) mới vào đây
+        console.error("[usePermission] Error loading permissions:", err)
+        setError(err.message || "Failed to load permissions")
+        setPermissionData(null)
+    } finally {
+        setIsLoading(false)
+    }
+}, [eventId])
 
     const refreshPermissions = useCallback(async () => {
         await loadPermissions()
@@ -109,23 +116,18 @@ export const usePermission = ({ eventId, autoLoad = true }: UsePermissionOptions
 
     // Pre-computed permission checks
     const canViewEvent = isOwner || hasPermission(permissions, PERMISSIONS.VIEW_EVENT)
-    const canViewAnalytics = isOwner || hasPermission(permissions, PERMISSIONS.VIEW_ANALYTICS)
     const canViewEventStaff = isOwner || hasPermission(permissions, PERMISSIONS.VIEW_EVENT_STAFF)
     const canViewAttendees = isOwner || hasPermission(permissions, PERMISSIONS.VIEW_ATTENDEES)
-    const canViewOrders = isOwner || hasPermission(permissions, PERMISSIONS.VIEW_ORDERS)
-    const canViewDiscount = isOwner || hasPermission(permissions, PERMISSIONS.VIEW_DISCOUNT)
+    const canViewOrder = isOwner || hasPermission(permissions, PERMISSIONS.VIEW_ORDER)
+    const canViewEventVouchers = isOwner || hasPermission(permissions, PERMISSIONS.VIEW_EVENT_VOUCHERS)
     const canEditEvent = isOwner || hasPermission(permissions, PERMISSIONS.UPDATE_EVENT)
     const canDeleteEvent = isOwner || hasPermission(permissions, PERMISSIONS.DELETE_EVENT)
     const canPublishEvent = isOwner || hasPermission(permissions, PERMISSIONS.PUBLISH_EVENT)
     const canCreateTickets = isOwner || hasPermission(permissions, PERMISSIONS.CREATE_TICKETS)
     const canUpdateTickets = isOwner || hasPermission(permissions, PERMISSIONS.UPDATE_TICKETS)
     const canDeleteTickets = isOwner || hasPermission(permissions, PERMISSIONS.DELETE_TICKETS)
-    const canAssignStaffs = isOwner || hasPermission(permissions, PERMISSIONS.ASSIGN_STAFFS)
-    const canDeleteDiscounts = isOwner || hasPermission(permissions, PERMISSIONS.DELETE_DISCOUNTS)
+    const canAssignStaff = isOwner || hasPermission(permissions, PERMISSIONS.ASSIGN_STAFF)
     const canCheckInAttendees = isOwner || hasPermission(permissions, PERMISSIONS.CHECK_IN_ATTENDEES)
-    const canManageTickets =
-        isOwner ||
-        hasAnyPermission(permissions, [PERMISSIONS.CREATE_TICKETS, PERMISSIONS.UPDATE_TICKETS, PERMISSIONS.DELETE_TICKETS])
 
     return {
         isOwner,
@@ -139,21 +141,18 @@ export const usePermission = ({ eventId, autoLoad = true }: UsePermissionOptions
         hasAnyPermission: checkAnyPermission,
         hasAllPermissions: checkAllPermissions,
         canViewEvent,
-        canViewAnalytics,
         canViewEventStaff,
         canViewAttendees,
-        canViewOrders,
-        canViewDiscount,
+        canViewOrder,
+        canViewEventVouchers,
         canEditEvent,
         canDeleteEvent,
         canPublishEvent,
         canCreateTickets,
         canUpdateTickets,
         canDeleteTickets,
-        canAssignStaffs,
-        canDeleteDiscounts,
+        canAssignStaff,
         canCheckInAttendees,
-        canManageTickets,
         loadPermissions,
         refreshPermissions,
     }

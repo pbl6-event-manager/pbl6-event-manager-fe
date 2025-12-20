@@ -1,7 +1,7 @@
 "use client"
 
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { RootState, AppDispatch } from "../../../store/store"
 import type { OrganizerFormData, OrganizerListItem } from "../../../models/form-models/organizer-form-models"
@@ -11,15 +11,19 @@ import {
   createOrganizer,
   updateOrganizer,
   deleteOrganizer,
+  fetchOrganizersForPublish,
 } from "../../../store/actions/organizer-action"
 import { showErrorAlert, showLoadingAlert, closeLoadingAlert, showSuccessAlert, showConfirmAlert } from "../../../helpers/alert-helpers"
 import { convertToOrganizerListItem } from "../../../converters/organizer-converter"
+import { usePermission } from "../../../hooks/usePermission"
 
 export const useOrganizerViewModel = () => {
+  const { eventId } = useParams<{ eventId: string }>()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const { organizers: organizerDtos, currentOrganizer, loading, error } = useSelector((state: RootState) => state.organizerReducer)
-  const [organizers, setOrganizers] = useState<OrganizerListItem[]>([])
+  const { organizers: organizerDtos, organizerForPublish, currentOrganizer, loading, error } = useSelector((state: RootState) => state.organizerReducer)
+  const [ organizers, setOrganizers ] = useState<OrganizerListItem[]>([])
+  const [ organizersItemForPublish, setOrganizersItemForPublish ] = useState<OrganizerListItem[]>([])
   const [formData, setFormData] = useState<OrganizerFormData>({
     name: "",
     website: "",
@@ -33,6 +37,11 @@ export const useOrganizerViewModel = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedOrganizer, setSelectedOrganizer] = useState<number | null>(null)
+
+  const {
+          isOwner,
+          canPublishEvent,
+      } = usePermission({ eventId: parseInt(eventId || "0", 10), autoLoad: true });
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -69,11 +78,17 @@ export const useOrganizerViewModel = () => {
 
   const handleFetchMyOrganizers = useCallback(async (): Promise<void> => {
     try {
-      //showLoadingAlert("Loading organizers...")
       await dispatch<any>(fetchMyOrganizers())
-      //closeLoadingAlert()
     } catch (err) {
       showErrorAlert("Failed to load organizers", "Please try again later.")
+    }
+  }, [dispatch])
+
+  const handleFetchOrganizersForPublish = useCallback(async (eventId: number): Promise<void> => {
+    try {
+      await dispatch<any>(fetchOrganizersForPublish(eventId))
+    } catch (err) {
+      showErrorAlert("Failed to load organizers for publish", "Please try again later.")
     }
   }, [dispatch])
 
@@ -82,10 +97,23 @@ export const useOrganizerViewModel = () => {
   }, [handleFetchMyOrganizers])
 
   useEffect(() => {
+  // Chỉ fetch nếu có quyền publish hoặc là owner
+  if (isOwner || canPublishEvent) {
+    handleFetchOrganizersForPublish(Number(eventId))
+  }
+}, [handleFetchOrganizersForPublish, eventId, isOwner, canPublishEvent])
+
+  useEffect(() => {
     // Map organizer DTOs to List Organizer Items
     const listItems = organizerDtos.map(convertToOrganizerListItem)
     setOrganizers(listItems.filter((item): item is OrganizerListItem => item !== null))
   }, [organizerDtos])
+
+  useEffect(() => {
+    // Map organizer DTOs to List Organizer Items for publish
+    const listItems = organizerForPublish.map(convertToOrganizerListItem)
+    setOrganizersItemForPublish(listItems.filter((item): item is OrganizerListItem => item !== null))
+  }, [organizerForPublish])
 
   // Load organizer detail
   const loadOrganizerDetail = useCallback(
@@ -246,6 +274,7 @@ export const useOrganizerViewModel = () => {
     // State
     imagePreview,
     organizers,
+    organizersItemForPublish,
     currentOrganizer,
     loading,
     error,

@@ -3,18 +3,45 @@ import { Lock } from "lucide-react"
 import { useOrganizerViewModel } from "../../viewmodels/Organizer/settings/organizer-view-model"
 
 interface OrganizerByCardProps {
-  organizerId?: number
+  organizerId?: number,
+  organizerName?: string,
   onOrganizerChange?: (organizerId: number) => void
   readOnly?: boolean
 }
 
-export function OrganizerByCard({ organizerId, onOrganizerChange, readOnly }: OrganizerByCardProps) {
+export function OrganizerByCard({ organizerId, organizerName, onOrganizerChange, readOnly }: OrganizerByCardProps) {
   const {
-    organizers,
+    organizersItemForPublish,
     loading: isLoading,
   } = useOrganizerViewModel()
 
-  const selectedOrganizer = organizers.find(org => org.id === organizerId) || null;
+  // Nếu read-only và có organizerName, hiển thị text thay vì select
+  if (readOnly && organizerName) {
+    return (
+      <div className="bg-card border rounded-lg p-6">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg font-bold text-foreground">
+            Organized by
+          </h3>
+          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground 
+                         bg-gray-100 border px-2 py-1 rounded-full">
+            <Lock className="h-3 w-3" />
+            Read only
+          </span>
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="w-full px-3 py-2 border rounded-md bg-gray-50 text-foreground">
+            {organizerName}
+          </div>
+          <p className="text-sm text-muted-foreground">
+            This event is organized by the selected organizer profile.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const selectedOrganizer = organizersItemForPublish.find(org => org.id === organizerId) || null;
 
   return (
     <div className="bg-card border rounded-lg p-6">
@@ -32,7 +59,7 @@ export function OrganizerByCard({ organizerId, onOrganizerChange, readOnly }: Or
       </div>
       <div className="flex flex-col gap-4">
         <Select
-          value={organizers.find(org => org.id === organizerId)?.id.toString()}
+          value={organizersItemForPublish.find(org => org.id === organizerId)?.id.toString()}
           onValueChange={value => onOrganizerChange?.(Number(value))}
           disabled={readOnly || isLoading}
         >
@@ -40,7 +67,7 @@ export function OrganizerByCard({ organizerId, onOrganizerChange, readOnly }: Or
             <SelectValue placeholder={isLoading ? "Loading organizers..." : "Select an organizer"} />
           </SelectTrigger>
           <SelectContent>
-            {organizers.map((org) => (
+            {organizersItemForPublish.map((org) => (
               <SelectItem key={org.id} value={org.id.toString()}>
                 <div className="flex items-center gap-2">
                   <span>{org.name}</span>

@@ -63,7 +63,7 @@ export default function EventManageOrdersPage({
   statusText,
   totalTicket,
   isOwner,
-  canViewOrders,
+  canViewOrder,
 }: EventOrderPageProps) {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -98,7 +98,7 @@ export default function EventManageOrdersPage({
         </p>
       </div>
 
-      {isOwner || canViewOrders ? (
+      {isOwner || canViewOrder ? (
         <div className="space-y-6">
           <div className="grid gap-4 md:grid-cols-3">
             <Card>

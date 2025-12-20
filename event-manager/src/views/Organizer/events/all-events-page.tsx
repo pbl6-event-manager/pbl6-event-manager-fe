@@ -23,6 +23,7 @@ export default function AllEventsPage() {
     handleNavigateToEditEvent,
     handleViewEvent,
     handleTabChange,
+    handleDeleteEvent,
   } = useEventViewModel()
 
   const itemsPerPage = 5;
@@ -227,10 +228,10 @@ export default function AllEventsPage() {
                           </DropdownMenuItem>
                           {/* Only show Delete for My Events */}
                           <DropdownMenuItem
-                            // onClick={(e) => {
-                            //   e.stopPropagation()
-                            //   handleDeleteEvent(event.id)
-                            // }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeleteEvent(event.id)
+                            }}
                             className="text-red-600 cursor-pointer"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />

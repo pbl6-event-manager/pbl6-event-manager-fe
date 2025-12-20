@@ -4,6 +4,8 @@ export const getOrgOfAnUserApi = (id: any) => apiClient.get(`/organizers/admin/u
 
 export const getMyOrganizers = () => apiClient.get("/organizers/my/organizers");
 
+export const getOrganizerOfAnEventForPublicApi = (eventId: number) => apiClient.get(`/organizers/publish/${eventId}`);
+
 export const getOrganizerByIdApi = (id: number) => apiClient.get(`/organizers/${id}`);
 
 export const getOrganizerByIdAdminSiteApi = (id: number) => apiClient.get(`/organizers/admin/${id}`);
