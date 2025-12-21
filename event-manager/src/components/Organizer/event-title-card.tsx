@@ -32,7 +32,7 @@ export const EventTitleCard = forwardRef<EventTitleCardHandle, EventTitleCardPro
     const isTitleValid = eventData.title.trim().length >= 5 && eventData.title.length <= 100 
     const isSummaryValid = eventData.summary.trim().length >= 50 && eventData.summary.length <= 140
     const isFormValid = isTitleValid && isSummaryValid
-    const hasPermission = isOwner && canEditEvent
+    const hasPermission = isOwner || canEditEvent
 
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({

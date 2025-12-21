@@ -25,7 +25,7 @@ export const OverviewCard = forwardRef<OverviewCardHandle, OverviewCardProps>(
     const [isValid, setIsValid] = useState(false)
     const [localDescription, setLocalDescription] = useState(description)
     const cardRef = useRef<HTMLDivElement>(null)
-    const hasPermission = isOwner && canEditEvent
+    const hasPermission = isOwner || canEditEvent
 
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({

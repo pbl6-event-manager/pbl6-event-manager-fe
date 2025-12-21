@@ -53,9 +53,10 @@ export const convertToTicketFormData = (dto: TicketDto): TicketFormData => {
     return {
         name: dto.name,
         type: dto.type === "PAID" ? "paid" : "free",
-        price: dto.price,
+        // represent numeric fields as strings for the form to allow empty editing
+        price: String(dto.price ?? ""),
         currency: "USD",
-        availableQuantity: dto.quantity,
+        availableQuantity: String(dto.quantity ?? ""),
         salesStart: saleStartDate.toISOString().split("T")[0],
         salesStartTime: saleStartDate.toTimeString().slice(0, 5),
         salesEnd: saleEndDate.toISOString().split("T")[0],
@@ -82,8 +83,8 @@ export const convertFormDataToCreateRequest = (
         eventId: eventId.toString(),
         name: formData.name,
         type: formData.type === "paid" ? "PAID" : "FREE",
-        price: formData.type === "paid" ? formData.price : 0,
-        quantity: formData.availableQuantity,
+        price: formData.type === "paid" ? Number(formData.price) || 0 : 0,
+        quantity: Number(formData.availableQuantity) || 0,
         description: formData.description || "",
         saleStartDate: saleStartDateTime,
         saleEndDate: saleEndDateTime,

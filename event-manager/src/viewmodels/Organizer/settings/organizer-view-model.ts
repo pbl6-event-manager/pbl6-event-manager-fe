@@ -242,7 +242,7 @@ export const useOrganizerViewModel = () => {
       "Are you sure you want to go back? Unsaved changes will be lost.",
     )
     if (confirmed) {
-      navigate("/organizer/settings")
+      navigate("/organizer/settings?tab=organizer-profile")
     }
   }
 

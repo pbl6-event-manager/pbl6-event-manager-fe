@@ -15,17 +15,15 @@ import { convertFormDataToCreateRequest, convertToTicketListItem, convertToTicke
 import { usePermission } from "../../../hooks/usePermission";
 import { usePermissionCheck } from "../../../hooks/usePermissionCheck";
 import { PERMISSIONS } from "../../../constants/permission";
-import { set } from "react-hook-form";
 import type { TicketDto } from "../../../dtos/ticket-dto";
 
 export const useTicketViewModel = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate()
     const { eventId } = useParams<{ eventId: string }>();
-    const { tickets: ticketsDto, currentTicket: currentTicketDto, isLoading, error } = useSelector(
+    const { tickets: ticketsDto, isLoading, error } = useSelector(
         (state: RootState) => state.ticketReducer
     );
-    // const currentStep = 2
     const [showTicketForm, setShowTicketForm] = useState(false)
     const [showTicketTypeSelection, setShowTicketTypeSelection] = useState(false)
     const [selectedTicketType, setSelectedTicketType] = useState<"paid" | "free" | null>(null)
@@ -50,9 +48,10 @@ export const useTicketViewModel = () => {
     const [ticketFormData, setTicketFormData] = useState<TicketFormData>({
         name: "",
         type: "paid",
-        price: 0,
+        // use empty strings so inputs show placeholder/empty instead of 0
+        price: "",
         currency: "USD",
-        availableQuantity: 0,
+        availableQuantity: "",
         salesStart: new Date().toISOString().split("T")[0],
         salesStartTime: "12:00 AM",
         salesEnd: "",
@@ -111,7 +110,7 @@ export const useTicketViewModel = () => {
         setTicketFormData({
             ...ticketFormData,
             type,
-            price: type === "free" ? 0 : ticketFormData.price,
+            price: type === "free" ? "0" : ticketFormData.price,
         })
 
         // Show currency dialog for paid tickets on first ticket creation
@@ -156,7 +155,12 @@ export const useTicketViewModel = () => {
             if (ticketData) {
                 // Convert ticket DTO to form data
                 const formData = convertToTicketFormData(ticketData);
-                setTicketFormData(formData);
+                // ensure numeric fields are represented as strings for inputs
+                setTicketFormData({
+                    ...formData,
+                    price: String((formData as any).price ?? ""),
+                    availableQuantity: String((formData as any).availableQuantity ?? ""),
+                } as unknown as TicketFormData);
                 setSelectedTicketType(formData.type);
                 setEditingTicketId(Number(ticketId));
                 setShowTicketForm(true);
@@ -183,7 +187,7 @@ export const useTicketViewModel = () => {
             return;
         }
 
-        if (ticketFormData.availableQuantity <= 0) {
+        if (!ticketFormData.availableQuantity || Number(ticketFormData.availableQuantity) <= 0) {
             showErrorAlert("Please enter valid quantity");
             return;
         }
@@ -196,7 +200,13 @@ export const useTicketViewModel = () => {
         try {
             showLoadingAlert("Updating ticket...");
 
-            const requestData = convertFormDataToCreateRequest(Number(eventId), ticketFormData);
+            const normalized = {
+                ...ticketFormData,
+                price: Number(ticketFormData.price) || 0,
+                availableQuantity: Number(ticketFormData.availableQuantity) || 0,
+            } as unknown as TicketFormData;
+
+            const requestData = convertFormDataToCreateRequest(Number(eventId), normalized);
 
             await dispatch(updateTicketByIdAction(Number(eventId), editingTicketId, requestData));
 
@@ -210,9 +220,9 @@ export const useTicketViewModel = () => {
             setTicketFormData({
                 name: "",
                 type: "paid",
-                price: 0,
+                price: "",
                 currency: "USD",
-                availableQuantity: 0,
+                availableQuantity: "",
                 salesStart: new Date().toISOString().split("T")[0],
                 salesStartTime: "12:00",
                 salesEnd: "",
@@ -285,7 +295,7 @@ export const useTicketViewModel = () => {
                 return;
             }
 
-            if (ticketFormData.availableQuantity <= 0) {
+            if (!ticketFormData.availableQuantity || Number(ticketFormData.availableQuantity) <= 0) {
                 showErrorAlert("Please enter valid quantity");
                 return;
             }
@@ -298,7 +308,13 @@ export const useTicketViewModel = () => {
             try {
                 showLoadingAlert("Creating ticket...");
 
-                const requestData = convertFormDataToCreateRequest(Number(eventId), ticketFormData);
+                const normalized = {
+                    ...ticketFormData,
+                    price: Number(ticketFormData.price) || 0,
+                    availableQuantity: Number(ticketFormData.availableQuantity) || 0,
+                } as unknown as TicketFormData;
+
+                const requestData = convertFormDataToCreateRequest(Number(eventId), normalized);
 
                 await dispatch(createANewTicketAction(Number(eventId), requestData));
 
@@ -312,9 +328,9 @@ export const useTicketViewModel = () => {
                 setTicketFormData({
                     name: "",
                     type: "paid",
-                    price: 0,
+                    price: "",
                     currency: "USD",
-                    availableQuantity: 0,
+                    availableQuantity: "",
                     salesStart: new Date().toISOString().split("T")[0],
                     salesStartTime: "12:00",
                     salesEnd: "",
@@ -345,9 +361,9 @@ export const useTicketViewModel = () => {
         setTicketFormData({
             name: "",
             type: "paid",
-            price: 0,
+            price: "",
             currency: "USD",
-            availableQuantity: 0,
+            availableQuantity: "",
             salesStart: new Date().toISOString().split("T")[0],
             salesStartTime: "12:00",
             salesEnd: "",
