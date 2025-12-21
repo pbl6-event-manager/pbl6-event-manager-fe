@@ -21,5 +21,5 @@ export interface CreateVoucherDto {
     usagePerUser: number | undefined,
     validFrom: string | undefined,
     validTo: string | undefined,
-    eventId: string | undefined
+    eventId?: string | undefined
 }

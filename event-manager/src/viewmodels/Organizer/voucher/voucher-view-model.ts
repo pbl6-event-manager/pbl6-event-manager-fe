@@ -180,7 +180,7 @@ export const useVoucherViewModel = () => {
             return;
         }
 
-        const newVoucher: CreateVoucherDto = {
+        const newVoucher : CreateVoucherDto = {
             code: voucherCode,
             name: formName,
             description: formDesc,
@@ -191,8 +191,11 @@ export const useVoucherViewModel = () => {
             totalUsageLimit: formTotalUsageLimit,
             usagePerUser: formUsagePerUser,
             validFrom: validFromISO,
-            validTo: validToISO,
-            eventId: formEventId
+            validTo: validToISO
+        }
+
+        if (formEventId !== "all") {
+            newVoucher.eventId = formEventId
         }
 
         try {
