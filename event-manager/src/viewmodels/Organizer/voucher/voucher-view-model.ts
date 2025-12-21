@@ -9,7 +9,6 @@ import { createNewVoucher, deleteVoucher, duplicateVoucher, getAllVoucher, getVo
 import { convertToISODateTime } from "../../../utils/Organizer/date-format";
 import type { CreateVoucherDto } from "../../../dtos/voucher-dto";
 import type { VoucherModel } from "../../../models/bean/voucher-models";
-import { set } from "react-hook-form";
 
 export const useVoucherViewModel = () => {
     const { eventId } = useParams<{ eventId: string }>();
