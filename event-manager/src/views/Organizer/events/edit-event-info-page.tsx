@@ -33,7 +33,7 @@ export default function EditEventInfoPage({
   canViewEvent = true,
   canEditEvent = true,
 }: EditEventInfoPageProps) {
-
+  console.log("canEditEvent:", canEditEvent);
   return (
     <div>
       {canViewEvent ? (

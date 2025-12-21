@@ -1,8 +1,6 @@
-"use client"
-
 import { useOrganizerViewModel } from "../../../viewmodels/Organizer/settings/organizer-view-model"
 import { Button } from "../../../components/ui/button"
-import { MoreVertical, Pencil, Trash2, Eye } from "lucide-react"
+import { MoreVertical, Pencil, Trash2 } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -88,12 +86,6 @@ export default function OrganizerListPage() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-40">
-                    <DropdownMenuItem
-                    //onClick={() => }
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      View
-                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => navigateToEditOrganizer(organizer.id)}
                     >

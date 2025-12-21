@@ -24,8 +24,8 @@ export const MediaUploadCard = forwardRef<MediaUploadCardHandle, MediaUploadCard
     const cardRef = useRef<HTMLDivElement>(null)
     const imageInputRef = useRef<HTMLInputElement>(null)
     const videoInputRef = useRef<HTMLInputElement>(null)
-    const hasPermission = isOwner && canEditEvent
-
+    const hasPermission = isOwner || canEditEvent
+    
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({
       expand: () => {

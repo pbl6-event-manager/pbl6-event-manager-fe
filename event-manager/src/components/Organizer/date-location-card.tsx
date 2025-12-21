@@ -48,7 +48,7 @@ export const DateLocationCard = forwardRef<DateLocationCardHandle, DateLocationC
       setIsValidating,
       handleCardClick,
     } = useDateLocationViewModel(eventData, onUpdate)
-    const hasPermission = isOwner && canEditEvent
+    const hasPermission = isOwner || canEditEvent
 
     // Expose expand method to parent
     useImperativeHandle(ref, () => ({

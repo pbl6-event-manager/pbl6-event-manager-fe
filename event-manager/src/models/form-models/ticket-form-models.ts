@@ -2,9 +2,9 @@
 export interface TicketFormData {
   name: string
   type: "paid" | "free"
-  price: number
+  price: string
   currency: string
-  availableQuantity: number
+  availableQuantity: string
   salesStart: string
   salesStartTime: string
   salesEnd: string

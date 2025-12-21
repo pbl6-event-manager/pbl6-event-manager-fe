@@ -299,7 +299,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
 
                         {/* Form Fields */}
                         <div className="space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto pr-2">
-                          <div>
+                          <div className="space-y-2">
                             <Label htmlFor="name">Name *</Label>
                             <Input
                               id="name"
@@ -311,7 +311,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                             <p className="text-xs text-muted-foreground mt-1">{ticketFormData.name.length}/50</p>
                           </div>
 
-                          <div>
+                          <div className="space-y-2">
                             <Label htmlFor="quantity">Available quantity *</Label>
                             <Input
                               id="quantity"
@@ -320,7 +320,8 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                               onChange={(e) =>
                                 setTicketFormData({
                                   ...ticketFormData,
-                                  availableQuantity: Number.parseInt(e.target.value) || 0,
+                                  // allow empty string while typing
+                                  availableQuantity: e.target.value,
                                 })
                               }
                               disabled={isLoading}
@@ -328,7 +329,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                           </div>
 
                           {selectedTicketType === "paid" && (
-                            <div>
+                            <div className="space-y-2">
                               <Label htmlFor="price">Price *</Label>
                               <div className="flex items-center gap-2">
                                 <span className="text-muted-foreground">$</span>
@@ -340,7 +341,8 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                                   onChange={(e) =>
                                     setTicketFormData({
                                       ...ticketFormData,
-                                      price: Number.parseFloat(e.target.value) || 0,
+                                      // keep as string while editing
+                                      price: e.target.value,
                                     })
                                   }
                                   disabled={isLoading}
@@ -350,14 +352,14 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                           )}
 
                           {selectedTicketType === "free" && (
-                            <div>
+                            <div className="space-y-2">
                               <Label>Price *</Label>
                               <div className="text-muted-foreground">Free</div>
                             </div>
                           )}
 
                           <div className="grid grid-cols-2 gap-4">
-                            <div>
+                            <div className="space-y-2">
                               <Label htmlFor="salesStart">Sales start *</Label>
                               <Input
                                 id="salesStart"
@@ -367,7 +369,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                                 disabled={isLoading}
                               />
                             </div>
-                            <div>
+                            <div className="space-y-2">
                               <Label htmlFor="salesStartTime">Start time</Label>
                               <Input
                                 id="salesStartTime"
@@ -380,7 +382,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
-                            <div>
+                            <div className="space-y-2">
                               <Label htmlFor="salesEnd">Sales end *</Label>
                               <Input
                                 id="salesEnd"
@@ -390,7 +392,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                                 disabled={isLoading}
                               />
                             </div>
-                            <div>
+                            <div className="space-y-2">
                               <Label htmlFor="salesEndTime">End time</Label>
                               <Input
                                 id="salesEndTime"
@@ -402,14 +404,8 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                             </div>
                           </div>
 
-                          {/* Advanced Settings */}
-                          <details className="border-t pt-4">
-                            <summary className="cursor-pointer font-medium flex items-center justify-between">
-                              Advanced settings
-                              <ChevronRight className="h-4 w-4" />
-                            </summary>
-                            <div className="mt-4 space-y-4">
-                              <div>
+                          <div className="mt-4 space-y-4">
+                            <div>
                                 <Label htmlFor="description" className="pb-2">Description</Label>
                                 <Textarea
                                   id="description"
@@ -422,8 +418,7 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                                   {ticketFormData.description?.length || 0}/2500
                                 </p>
                               </div>
-                            </div>
-                          </details>
+                          </div>
                         </div>
                       </div>
 
@@ -440,7 +435,9 @@ export default function CreateTicketsPage({ onNext, isOwner = true, canViewEvent
                         <Button
                           className="flex-1 bg-[#f05537] hover:bg-[#d63c1f] text-white cursor-pointer"
                           onClick={() => handleSaveTicket(isOwner, canCreateTickets, canUpdateTickets)}
-                          disabled={isLoading || !ticketFormData.name || !ticketFormData.availableQuantity}
+                          disabled={
+                            isLoading || !ticketFormData.name || !ticketFormData.availableQuantity || Number(ticketFormData.availableQuantity) <= 0
+                          }
                         >
                           {isLoading ? (
                             <>

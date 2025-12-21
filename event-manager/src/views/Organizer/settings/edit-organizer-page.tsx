@@ -30,11 +30,6 @@ export default function EditOrganizerPage() {
         }
     }, [organizerId, loadOrganizerForEdit])
 
-    // const handleSubmit = async () => {
-    //     if (organizerId) {
-    //         await handleUpdateOrganizer(Number(organizerId))
-    //     }
-    // }
 
     return (
         <div className="min-h-screen bg-gray-50">
