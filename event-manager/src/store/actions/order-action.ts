@@ -167,12 +167,25 @@ export const getAttendee = (eventId: number) => async (dispatch: any) => {
             return null;
         }
 
+        const attendeeList = response
+            .map((attendee: any) => attendee.qrCode === response ? { ...attendee, isCheckin: "true" } : attendee)
+            .sort((a: any, b: any) => {
+                if (a.orderId !== b.orderId) return a.orderId - b.orderId;
+                const nameA = (a.name || "").toString();
+                const nameB = (b.name || "").toString();
+                const nameCompare = nameA.localeCompare(nameB);
+                if (nameCompare !== 0) return nameCompare;
+                const qrA = (a.qrCode || "").toString();
+                const qrB = (b.qrCode || "").toString();
+                return qrA.localeCompare(qrB);
+            });
+
         dispatch({
             type: GET_ATTENDEE_SUCCESS,
-            payload: response
+            payload: attendeeList
         })
 
-        return response.sort((a: any, b: any) => a.name - b.name);
+        return attendeeList;
     } catch (error: any) {
         dispatch({
             type: GET_ATTENDEE_FAILURE,
@@ -200,7 +213,18 @@ export const checkIn = (qrCode: string, eventId: number) => async (dispatch: any
         }
 
         const attendeeList = store.getState().orderReducer.attenddeeList;
-        const updatedAttendeeList = attendeeList.map((attendee) => attendee.qrCode === response ? { ...attendee, isCheckin: "true"} : attendee);
+        const updatedAttendeeList = attendeeList
+            .map((attendee) => attendee.qrCode === response ? { ...attendee, isCheckin: "true" } : attendee)
+            .sort((a: any, b: any) => {
+                if (a.orderId !== b.orderId) return a.orderId - b.orderId;
+                const nameA = (a.name || "").toString();
+                const nameB = (b.name || "").toString();
+                const nameCompare = nameA.localeCompare(nameB);
+                if (nameCompare !== 0) return nameCompare;
+                const qrA = (a.qrCode || "").toString();
+                const qrB = (b.qrCode || "").toString();
+                return qrA.localeCompare(qrB);
+            });
 
         dispatch({
             type: CHECK_IN_SUCCESS,
