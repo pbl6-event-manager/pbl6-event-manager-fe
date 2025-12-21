@@ -17,7 +17,6 @@ const OrganizerDetailInfo: React.FC<OrganizerDetailInfoProps> = ({ organizer }) 
             </div>
           )}
 
-          <p><strong>ID:</strong> {organizer.id}</p>
           <p><strong>Name:</strong> {organizer.name}</p>
           {organizer.contactEmail && <p><strong>Email:</strong> {organizer.contactEmail}</p>}
           {organizer.contactPhone && <p><strong>Phone:</strong> {organizer.contactPhone}</p>}
