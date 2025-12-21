@@ -1,5 +1,5 @@
 import type { OrderSearchParamsDto } from "../../dtos/order-dto";
-import { checkInService, getAttendeeService, getOrdersByCustomerIdService, getOrdersService } from "../../service/order-service";
+import { checkInService, getAllOrdersByEventIdService, getAttendeeService, getOrdersByCustomerIdService, getOrdersService } from "../../service/order-service";
 import { store } from "../store";
 
 export const GET_ORDER_BY_CUSTOMER_ID_REQUEST = "GET_ORDER_BY_CUSTOMER_ID_REQUEST";
@@ -114,6 +114,43 @@ export const getOrders = (orderSearchParams: OrderSearchParamsDto, isAdminSite: 
     }
 }
 
+export const getAllOrdersByEventId = (eventId: number, isAdminSite: boolean) => async (dispatch: any) => {
+    try {
+        dispatch({
+            type: GET_ORDERS_REQUEST
+        })
+
+        const response = await getAllOrdersByEventIdService(eventId, isAdminSite);
+        if (response === null) {
+            dispatch({
+                type: GET_ORDERS_FAILURE,
+                payload: "Get order failed",
+            });
+            return null;
+        }
+
+        const orderModelList = response.orderModelList;
+        const orderListDtoList = response.orderListDtoList;
+
+        dispatch({
+            type: GET_ORDERS_SUCCESS,
+            payload: {
+                orderModelList,
+                orderListDtoList
+            }
+        })
+
+        return orderListDtoList;
+    } catch (error: any) {
+        dispatch({
+            type: GET_ORDERS_FAILURE,
+            payload:
+                error.response?.data?.message || error.message || "Get order failed",
+        });
+        throw error;
+    }
+}
+
 export const getAttendee = (eventId: number) => async (dispatch: any) => {
     try {
         dispatch({
@@ -135,7 +172,7 @@ export const getAttendee = (eventId: number) => async (dispatch: any) => {
             payload: response
         })
 
-        return response;
+        return response.sort((a: any, b: any) => a.name - b.name);
     } catch (error: any) {
         dispatch({
             type: GET_ATTENDEE_FAILURE,

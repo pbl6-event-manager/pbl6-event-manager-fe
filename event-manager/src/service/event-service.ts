@@ -86,6 +86,23 @@ export const getEventDetailsByIdService = async (eventId: number) => {
   }
 }
 
+export const getEventDetailsByIdAdminService = async (eventId: number) => {
+  try {
+    const response = await getAllEventsAdminApi();
+    if (response.data.message === "success") {
+      const eventResponse = response.data.data.filter((e: any) => e.id === eventId);
+      const eventDetails = eventMapper.mapResponseToEventDetailsDto(eventResponse[0]);
+      return eventDetails;
+    }
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Server error");
+    } else {
+      throw new Error(error.message || "Unexpected error occurred");
+    }
+  }
+}
+
 export const updateEventService = async (eventId: number, formData: EventFormDto) => {
   try {
     const multipartFormData = new FormData()

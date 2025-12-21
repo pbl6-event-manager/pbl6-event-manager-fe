@@ -20,7 +20,7 @@ export const getAllVoucherService = async () => {
                     eventTitle: event?.title || "Unknown Event"
                 };
             }
-            return {
+            return {    
                 ...voucher,
                 eventTitle: "All Events"
             };
@@ -38,6 +38,7 @@ export const getAllVoucherService = async () => {
 
 export const createNewVoucherService = async (createVoucherDto: CreateVoucherDto) => {
     try {
+        console.log(createVoucherDto);
         const response = await createVoucherApi(createVoucherDto);
         if (response.data.message === "success") {
             const voucherModel = mapResponseToVoucherModel(response.data.data);

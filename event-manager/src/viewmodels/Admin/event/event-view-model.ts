@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { approveRejectEvent, clearEvents, getAllEventsAdmin, getEventDetailsById, getEventsByOrganizerIds } from "../../../store/actions/event-action";
+import { approveRejectEvent, clearEvents, getAllEventsAdmin, getEventDetailsByIdAdmin, getEventsByOrganizerIds } from "../../../store/actions/event-action";
 import type { RootState } from "../../../store/store";
 import { closeLoadingAlert, showErrorAlert, showLoadingAlert, showSuccessAlert } from "../../../helpers/alert-helpers";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -88,7 +88,7 @@ export const useEventViewModel = () => {
     if (!id) return;
     const getEventDetails = async (eventId: number) => {
       showLoadingAlert();
-      const response = await dispatch<any>(getEventDetailsById(eventId));
+      const response = await dispatch<any>(getEventDetailsByIdAdmin(eventId));
       await dispatch<any>(fetchEventStaffsAdmin(eventId));
       setEventDetails(response);
       closeLoadingAlert();

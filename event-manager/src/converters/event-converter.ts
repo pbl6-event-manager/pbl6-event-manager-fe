@@ -2,7 +2,7 @@ import type { EventModel } from "../models/bean/event-models"
 import type { CreateEventRequestDto, EventDetailsDto, EventFormDto, EventListDto } from "../dtos/event-dto"
 import type { EventFormData, MediaFileModel, StaffEventsListItem } from "../models/form-models/event-form-models"
 import type { OrganizerEventsListItem } from "../models/form-models/event-form-models"
-import { convertToISODateTime, splitTimezone } from "../utils/Organizer/date-format"
+import { convertToISODateTime, splitTimezone, formatToGMT } from "../utils/Organizer/date-format"
 import { getCoordinates } from "../utils/Organizer/geocode"
 import { convertTicketDtoToTicketType } from "./ticket-converter"
 const DESCRIPTION_SEPARATOR = "|||DESCRIPTION|||";
@@ -168,7 +168,7 @@ export const eventConverter = {
       ticketType: eventDetail.ticket ? eventDetail.ticket.map(convertTicketDtoToTicketType) : [],
       capacity: eventDetail.ticket && eventDetail.ticket.length > 0 ? eventDetail.ticket.reduce((sum, ticket) => sum + Number(ticket.quantity || 0), 0) : 0,
       category: eventDetail.categories ? eventDetail.categories.map(category => category.id) : [],
-      timezone: "GMT+" + eventDetail.eventInfo?.timezone || "UTC",
+      timezone: formatToGMT(eventDetail.eventInfo?.timezone || "GMT+00:00"),
       language: eventInfo.language || "en",
       organizerId: eventInfo.organizerId,
     }

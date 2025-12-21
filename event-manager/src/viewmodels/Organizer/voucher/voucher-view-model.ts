@@ -325,6 +325,7 @@ export const useVoucherViewModel = () => {
                     showLoadingAlert();
                     await dispatch<any>(deleteVoucher(voucherId));
                     await showSuccessAlert("Delete voucher successfully");
+                    await dispatch<any>(getVouchersByEventId(Number.parseInt(eventId as string)));
                 } catch (error: any) {
                     showErrorAlert(error?.message || "Failed to update this voucher");
                 }
