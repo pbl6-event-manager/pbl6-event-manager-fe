@@ -47,7 +47,7 @@ export const DELETE_EVENT_FAILURE = "DELETE_EVENT_FAILURE";
 import type { EventFormDto, EventListDto, EventSelectionDto } from "../../dtos/event-dto";
 import { EVENT_STATUS } from "../../dtos/event-dto";
 import type { EventFormData, GoodToKnowData, LineUpItem, AgendaSection } from "../../models/form-models/event-form-models";
-import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService, publishEventService, getEventsByStaffService, deleteEventService } from "../../service/event-service";
+import { approveRejectEventService, createEventService, getAllEventsAdminService, getEventDetailsByIdService, updateEventService, getEventsByOrganizerIdsService, getEventsByOwnerService, publishEventService, getEventsByStaffService, deleteEventService, getEventDetailsByIdAdminService } from "../../service/event-service";
 import { store } from "../store";
 
 export const getAllEventsAdmin = () => async (dispatch: any) => {
@@ -151,6 +151,30 @@ export const getEventDetailsById = (eventId: number) => async (dispatch: any) =>
     })
 
     const response = await getEventDetailsByIdService(eventId);
+
+    dispatch({
+      type: GET_EVENT_DETAILS_SUCCESS,
+      payload: response
+    })
+
+    return response;
+  } catch (error: any) {
+    dispatch({
+      type: GET_EVENT_DETAILS_FAILURE,
+      payload:
+        error.response?.data?.message || error.message || "Failed to get detailed informations of event",
+    });
+    throw error;
+  }
+}
+
+export const getEventDetailsByIdAdmin = (eventId: number) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: GET_EVENT_DETAILS_REQUEST,
+    })
+
+    const response = await getEventDetailsByIdAdminService(eventId);
 
     dispatch({
       type: GET_EVENT_DETAILS_SUCCESS,

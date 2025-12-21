@@ -1,4 +1,4 @@
-import { checkInApi, getAttendeeApi, getOrderByCustomerIdApi, getOrdersApi } from "../api/order-api";
+import { checkInApi, getAllOrderByEventIdApi, getAttendeeApi, getOrderByCustomerIdApi, getOrdersApi } from "../api/order-api";
 import { convertResponseToAttendeeListDto } from "../converters/attendee-converter";
 import { converOrderModelToOrderListDto, convertOrderModelToOrderListAdminDto } from "../converters/order-converter";
 import type { OrderSearchParamsDto } from "../dtos/order-dto";
@@ -45,6 +45,43 @@ export const getOrdersByCustomerIdService = async (customerId: any) => {
 export const getOrdersService = async (orderSearchParams: OrderSearchParamsDto, isAdminSite: boolean) => {
     try {
         const response = await getOrdersApi(orderSearchParams);
+        if (response.data.message === "success") {
+            const orderModelList = response.data.data.map(mapResponseToOrderModel);
+            const orderListDtoList = orderModelList.map(isAdminSite ? convertOrderModelToOrderListAdminDto : converOrderModelToOrderListDto).sort((a: any, b: any) => a.id - b.id);
+            const eventListDto = isAdminSite ? (await getAllEventsAdminService()).eventListDtoList : (await getEventsByOwnerService()).eventListDto;
+
+            const eventMap = new Map<string, any>(
+                eventListDto.map((e: any) => [String(e.id), e])
+            );
+
+            const orderListDtoListWithTitle = orderListDtoList.map((o: any) => {
+                const ev = eventMap.get(String(o.eventId));
+                const eventTitle = ev.title;
+                return {
+                    ...o,
+                    eventTitle,
+                };
+            });
+
+            return {
+                orderModelList,
+                orderListDtoList: orderListDtoListWithTitle,
+            };
+        } else {
+            return null;
+        }
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(error.response.data?.message || "Server error");
+        } else {
+            throw new Error(error.message || "Unexpected error occurred");
+        }
+    }
+}
+
+export const getAllOrdersByEventIdService = async (eventId: number, isAdminSite: boolean) => {
+    try {
+        const response = await getAllOrderByEventIdApi(eventId);
         if (response.data.message === "success") {
             const orderModelList = response.data.data.map(mapResponseToOrderModel);
             const orderListDtoList = orderModelList.map(isAdminSite ? convertOrderModelToOrderListAdminDto : converOrderModelToOrderListDto).sort((a: any, b: any) => a.id - b.id);

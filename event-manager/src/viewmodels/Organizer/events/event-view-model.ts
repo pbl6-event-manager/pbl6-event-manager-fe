@@ -1,4 +1,3 @@
-"use client"
 import { getTicketsByEventIdAction } from "../../../store/actions/ticket-action"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState, AppDispatch } from "../../../store/store"
@@ -36,7 +35,7 @@ import type { MediaUploadCardHandle } from "../../../components/Organizer/media-
 import { toast } from "sonner"
 import { convertTicketListToDashboardTicketInfo } from "../../../converters/ticket-converter"
 import type { DashboardTicketInfoDto } from "../../../dtos/ticket-dto"
-import { checkIn, getAttendee, getOrders } from "../../../store/actions/order-action"
+import { checkIn, getAllOrdersByEventId, getAttendee, getOrders } from "../../../store/actions/order-action"
 import type { DashboardOrderStatsDto, OrderListDto, OrderSearchParamsDto } from "../../../dtos/order-dto"
 import { convertOrderListToDashboardOrderInfoDto } from "../../../converters/order-converter"
 import type { AttendeeListDto } from "../../../dtos/attendee-dto"
@@ -636,7 +635,7 @@ export const useEventViewModel = () => {
       params.eventId = typeof eid === "number" ? eid : eventId
       try {
         showLoadingAlert("Loading orders")
-        const response: OrderListDto[] = await dispatch<any>(getOrders(params as OrderSearchParamsDto, false))
+        const response: OrderListDto[] = await dispatch<any>(getAllOrdersByEventId(eventId, false))
         setFilteredOrders(response)
         setTotalCount(response.length)
         const converted = convertOrderListToDashboardOrderInfoDto(response)
@@ -663,23 +662,32 @@ export const useEventViewModel = () => {
   const [checkedInCount, setCheckedInCount] = useState<number>()
 
   useEffect(() => {
-    let filtered = attendees
+    // defensive copy to avoid mutating original attendees array
+    const base = Array.isArray(attendees) ? [...attendees] : [];
 
-    if (searchTerm) {
-      filtered = filtered?.filter(
-        (a) =>
-          a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          a.ticketName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          a.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          a.orderId.toString().toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+    // apply search filter (case-insensitive)
+    const q = (searchTerm || "").trim().toLowerCase();
+    let filtered = q
+      ? base.filter((a) =>
+          (a.name || "").toLowerCase().includes(q) ||
+          (a.ticketName || "").toLowerCase().includes(q) ||
+          (a.email || "").toLowerCase().includes(q) ||
+          String(a.orderId || "").toLowerCase().includes(q),
+        )
+      : base;
+
+    // apply check-in filter (support "all", "true"/"checked", "false"/"unchecked")
+    if (filterCheckIn && String(filterCheckIn).toLowerCase() !== "all") {
+      const wantChecked = ["true", "checked"].includes(String(filterCheckIn).toLowerCase());
+      filtered = filtered.filter((a) => String(a.isCheckin).toLowerCase() === String(wantChecked));
     }
 
-    if (filterCheckIn !== "all") {
-      filtered = filtered?.filter((a) => a.isCheckin === filterCheckIn)
-    }
+    // sort by name (localeCompare) without mutating original
+    const sorted = filtered.sort((a, b) =>
+      String(a.name || "").localeCompare(String(b.name || ""), undefined, { sensitivity: "base" }),
+    );
 
-    setFilteredAttendees(filtered)
+    setFilteredAttendees(sorted);
   }, [searchTerm, filterCheckIn, attendees])
 
   const handleCheckIn = async (qrCode: string) => {

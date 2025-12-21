@@ -93,7 +93,7 @@ const VoucherListPage: React.FC = () => {
             className="grid gap-4 px-6 py-3 border-b text-sm font-semibold text-gray-700 bg-white sticky top-0 z-10"
             style={{
               gridTemplateColumns:
-                "1fr 1.2fr 0.8fr 0.8fr 0.8fr 1.5fr 1fr 0.8fr 0.6fr",
+                "1fr 1.2fr 0.8fr 0.8fr 0.8fr 1.5fr 0.8fr 0.6fr",
             }}
           >
             <div>Code</div>
@@ -101,8 +101,7 @@ const VoucherListPage: React.FC = () => {
             <div>Event</div>
             <div className="text-center">Amount</div>
             <div className="text-center">Uses</div>
-            <div>Expiry</div>
-            <div>GMT</div>
+            <div className="text-center">Expiry</div>
             <div>Status</div>
             <div className="pr-10">Actions</div>
           </div>
@@ -121,7 +120,7 @@ const VoucherListPage: React.FC = () => {
                     className="grid gap-4 px-6 py-4 border-b items-center cursor-pointer hover:bg-gray-50"
                     style={{
                       gridTemplateColumns:
-                        "1fr 1.2fr 0.8fr 0.8fr 0.8fr 1.5fr 1fr 0.8fr 0.6fr",
+                        "1fr 1.2fr 0.8fr 0.8fr 0.8fr 1.5fr 0.8fr 0.6fr",
                     }}
                   >
                     <div className="font-medium truncate" title={v.code}>
@@ -135,9 +134,8 @@ const VoucherListPage: React.FC = () => {
                       {v.type === "PERCENTAGE" ? `${v.amount}%` : `${v.amount}`}
                     </div>
                     <div className="text-center">{v.uses ?? 0}</div>
-                    <div className="truncate">{local}</div>
-                    <div className="text-sm text-gray-600 truncate">{gmt}</div>
-                    <div className="text-center">
+                    <div className="truncate text-center">{local}</div>
+                    <div>
                       {(() => {
                         const status = (v.status || "").toString().toUpperCase();
                         const map: Record<string, { label: string; bg: string; text: string }> = {

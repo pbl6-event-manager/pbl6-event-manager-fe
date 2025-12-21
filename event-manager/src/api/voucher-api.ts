@@ -1,7 +1,7 @@
 import type { CreateVoucherDto } from "../dtos/voucher-dto";
 import apiClient from "./api-config";
 
-export const getAllVoucherApi = () => apiClient.get(`/vouchers`);
+export const getAllVoucherApi = () => apiClient.get(`/vouchers/my-vouchers`);
 
 export const createVoucherApi = (createVoucherDto: CreateVoucherDto) => apiClient.post(`/vouchers`, createVoucherDto);
 
