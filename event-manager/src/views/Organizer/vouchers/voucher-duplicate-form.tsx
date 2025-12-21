@@ -20,6 +20,7 @@ const VoucherDuplicateForm: React.FC<VoucherDuplicateFormProps> = ({
           <Input
             id="voucher-code"
             className="lg:col-span-3"
+            required
             placeholder="Enter voucher code"
             value={voucherCode}
             onChange={(e) => setVoucherCode(String(e.target.value).toUpperCase())}
