@@ -53,6 +53,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
             <Input
               id="voucher-code"
               className="lg:col-span-3"
+              required
               placeholder="Enter voucher code"
               value={voucherCode}
               onChange={(e) =>
@@ -72,6 +73,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
           <Label htmlFor="voucher-name">Voucher Name *</Label>
           <Input
             id="voucher-name"
+            required
             placeholder="Name of the voucher"
             value={formName}
             onChange={(e) => setFormName(String(e.target.value))}
@@ -82,6 +84,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
           <Label htmlFor="voucher-description">Description *</Label>
           <Textarea
             id="voucher-description"
+            required
             placeholder="Description of the voucher"
             value={formDesc}
             onChange={(e) => setFormDesc(String(e.target.value))}
@@ -92,6 +95,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
           <Label htmlFor="apply-event">Apply to event</Label>
           <div className="w-full">
             <Select
+              required
               value={formEventId}
               onValueChange={(v: any) => setFormEventId(v)}
             >
@@ -114,6 +118,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
           <div className="space-y-3">
             <Label htmlFor="discount-type">Discount Type *</Label>
             <Select
+              required
               value={formDiscountType}
               onValueChange={(v: any) => setFormDiscountType(v)}
             >
@@ -136,6 +141,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
               value={
                 formDiscountValue === undefined ? "" : String(formDiscountValue)
               }
+              required
               onChange={(e) =>
                 setFormDiscountValue(Number(e.target.value || 0))
               }
@@ -150,6 +156,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
               id="min-order-amount"
               type="number"
               value={formMinOrderAmount ?? ""}
+              required
               onChange={(e) =>
                 setFormMinOrderAmount(
                   e.target.value ? Number(e.target.value) : undefined
@@ -164,6 +171,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
                 id="max-discount-amount"
                 type="number"
                 value={formMaxDiscountAmount ?? ""}
+                required
                 onChange={(e) =>
                   setFormMaxDiscountAmount(
                     e.target.value ? Number(e.target.value) : undefined
@@ -181,6 +189,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
               id="total-usage-limit"
               type="number"
               value={formTotalUsageLimit ?? ""}
+              required
               onChange={(e) =>
                 setFormTotalUsageLimit(
                   Number.parseInt(e.target.value) || undefined
@@ -194,6 +203,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
               id="usage-per-user"
               type="number"
               value={formUsagePerUser ?? ""}
+              required
               onChange={(e) =>
                 setFormUsagePerUser(
                   Number.parseInt(e.target.value) || undefined
@@ -210,6 +220,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
               id="startDate"
               type="datetime-local"
               value={formValidFrom ?? ""}
+              required
               onChange={(e) => setFormValidFrom(e.target.value || undefined)}
             />
           </div>
@@ -219,6 +230,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
               id="endDate"
               type="datetime-local"
               value={formValidTo ?? ""}
+              required
               onChange={(e) => setFormValidTo(e.target.value || undefined)}
             />
           </div>
@@ -228,6 +240,7 @@ const VoucherForm: React.FC<VoucherFormProps> = ({
           <Label htmlFor="timezone">Time zone</Label>
           <div className="w-full">
             <Select
+              required
               value={selectedTimezone}
               onValueChange={(v: any) => setSelectedTimezone(v)}
             >

@@ -195,11 +195,12 @@ export const updateVoucher = (voucherId: number, updateVoucherDto: CreateVoucher
             (v): v is VoucherListDto => v !== undefined && v !== null
         );
 
-        const evtId = (response as any).eventId ?? (response as any).event;
-        const event = evtId != null ? eventListSelectionDto.find((e) => e.id === Number(evtId)) : undefined;
+        const evtId = (response as any).eventId;
+        const event = evtId !== null ? eventListSelectionDto.find((e) => e.id === Number(evtId)) : undefined;
+        console.log(event);
         const updatedItem = {
             ...response,
-            eventTitle: event?.title ?? (evtId == null ? "All Events" : "Unknown Event")
+            eventTitle: event?.title ?? (evtId === undefined ? "All Events" : "Unknown Event")
         } as VoucherListDto;
 
         const updatedVoucherList = normalizedList.map((v) =>

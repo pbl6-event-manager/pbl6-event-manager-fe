@@ -58,6 +58,7 @@ export const getVoucherByIdService = async (voucherId: number) => {
     try {
         const response = await getVoucherByIdApi(voucherId);
         if (response.data.message === "success") {
+            console.log(response.data.data);
             const voucherModel = mapResponseToVoucherModel(response.data.data);
             return voucherModel;
         }

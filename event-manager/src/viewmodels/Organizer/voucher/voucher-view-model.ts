@@ -9,6 +9,7 @@ import { createNewVoucher, deleteVoucher, duplicateVoucher, getAllVoucher, getVo
 import { convertToISODateTime } from "../../../utils/Organizer/date-format";
 import type { CreateVoucherDto } from "../../../dtos/voucher-dto";
 import type { VoucherModel } from "../../../models/bean/voucher-models";
+import { set } from "react-hook-form";
 
 export const useVoucherViewModel = () => {
     const { eventId } = useParams<{ eventId: string }>();
@@ -144,11 +145,10 @@ export const useVoucherViewModel = () => {
         try {
             showLoadingAlert();
             await dispatch<any>(getEventsByOwner());
-        } catch (err: any) {
-            showErrorAlert(err?.message || "An error occurs when getting your events");
-        } finally {
             setIsCreate(false);
             closeLoadingAlert();
+        } catch (err: any) {
+            await showErrorAlert(err?.message || "An error occurs when getting your events");
         }
     };
 
@@ -160,6 +160,11 @@ export const useVoucherViewModel = () => {
     const handleCreateFromModal = async () => {
         if (!voucherCode.trim()) {
             showWarningAlert("Code is required");
+            return;
+        }
+
+        if(!formMinOrderAmount || !formUsagePerUser || (formDiscountType === "PERCENTAGE" && !formMaxDiscountAmount)) {
+            showWarningAlert("Please fill all required fields");
             return;
         }
 
@@ -202,10 +207,10 @@ export const useVoucherViewModel = () => {
             showLoadingAlert();
             await dispatch<any>(createNewVoucher(newVoucher));
             await showSuccessAlert("Create new voucher successfully");
+            closeLoadingAlert();
         } catch (error: any) {
             showErrorAlert(error?.message || "Failed to create new voucher");
         }
-        closeLoadingAlert();
         closeCreateModal();
     };
 
@@ -263,7 +268,11 @@ export const useVoucherViewModel = () => {
             setFormUsagePerUser(voucherModel.usagePerUser);
             setFromValidTo(toDateTimeLocal(voucherModel.validTo));
             setFormValidFrom(toDateTimeLocal(voucherModel.validFrom));
-            setFormEventId(voucherModel.eventId.toString());
+            if(voucherModel.eventId) {
+                setFormEventId(voucherModel.eventId.toString());
+            } else {
+                setFormEventId("all");
+            }
             setSelectedTimezone(timeZone);
         } catch (error: any) {
             showErrorAlert(error?.message || "Failed to open edit form of this voucher");
@@ -305,7 +314,10 @@ export const useVoucherViewModel = () => {
             usagePerUser: formUsagePerUser,
             validFrom: validFromISO,
             validTo: validToISO,
-            eventId: formEventId
+        }
+
+        if (formEventId !== "all") {
+            _updateVoucher.eventId = formEventId
         }
 
         try {
