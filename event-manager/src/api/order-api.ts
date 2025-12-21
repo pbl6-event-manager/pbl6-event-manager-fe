@@ -6,6 +6,6 @@ export const getOrdersApi = (orderSearchParams: any) => apiClient.get(`/orders`,
 
 export const getAttendeeApi = (eventId: number) => apiClient.get(`/orders/attendees/${eventId}`);
 
-export const checkInApi = (qrCode: string) => apiClient.get(`/orders/get-info/${qrCode}`);
+export const checkInApi = (qrCode: string, eventId: number) => apiClient.get(`/orders/get-info-with-event/${qrCode}/${eventId}`);
 
 export const getAllOrderByEventIdApi = (eventId: number) => apiClient.get(`/orders/event/${eventId}`);
