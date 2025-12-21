@@ -2,12 +2,34 @@ import { useEventViewModel } from "../../../../viewmodels/Admin/event/event-view
 import { fmt } from "../../../../utils/Organizer/date-format";
 import { KeyRow } from "../../../../components/Admin/key-row";
 import { InfoRowPair } from "../../../../components/Admin/infor-row-pair";
+import { splitSummaryDescription } from "../../../../utils/Admin/string-utils";
 export const EventInfoSection: React.FC = () => {
   const { eventDetails } = useEventViewModel();
 
   if (!eventDetails?.eventInfo) {
     return <div className="p-6 bg-white rounded shadow">No event data.</div>;
   }
+
+  const { summary, description } = splitSummaryDescription(eventDetails?.eventInfo?.summary);
+
+  const WORDS_PER_LINE = 13;
+  const wrapWords = (text?: string, perLine = WORDS_PER_LINE) => {
+    if (!text) return [];
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    const chunks: string[] = [];
+    for (let i = 0; i < words.length; i += perLine) {
+      chunks.push(words.slice(i, i + perLine).join(" "));
+    }
+    return chunks;
+  };
+
+  const renderWrapped = (text?: string) =>
+    wrapWords(text).map((line, i) => (
+      <span key={i}>
+        {line}
+        {i < wrapWords(text).length - 1 && <br />}
+      </span>
+    ));
 
   return (
     <div className="space-y-6">
@@ -26,11 +48,29 @@ export const EventInfoSection: React.FC = () => {
           </div>
 
           <div className="flex-1">
-            <h2 className="text-2xl font-semibold mb-2">
+            <h2 className="text-2xl font-semibold mb-2 break-words whitespace-normal">
               {eventDetails?.eventInfo?.title}
             </h2>
-            <p className="text-sm text-gray-700 mb-4">
-              {eventDetails?.eventInfo?.summary ?? "—"}
+            <p className="text-sm text-gray-700 mb-1 break-words break-all whitespace-normal">
+              {summary ? (
+                <>
+                  <strong className="mr-1">Summary:</strong>
+                  {renderWrapped(summary.replace(";", ""))}
+                </>
+              ) : (
+                "—"
+              )}
+            </p>
+
+            <p className="text-sm text-gray-600 mb-4 break-words break-all whitespace-normal">
+              {description ? (
+                <>
+                  <strong className="mr-1">Description:</strong>
+                  {renderWrapped(description)}
+                </>
+              ) : (
+                <span className="text-gray-500">No description</span>
+              )}
             </p>
 
             <div className="rounded divide-y divide-gray-200 overflow-hidden">
