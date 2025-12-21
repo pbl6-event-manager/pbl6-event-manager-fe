@@ -19,7 +19,6 @@ const ListOrderPage: React.FC = () => {
     statusColor,
     statusText,
     onLoadClick,
-    loaded,
     closeModal,
     handleView,
     selectedOrder,
@@ -136,18 +135,7 @@ const ListOrderPage: React.FC = () => {
 
         <section className="min-h-[320px]">
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
-            {!loaded ? (
-              <div className="px-6 py-12 text-center text-gray-500">
-                <div className="text-lg font-medium mb-2">
-                  Please select filters and click "Load all orders" to view
-                  orders matching your criteria.
-                </div>
-                <div className="text-sm">
-                  For faster results, try applying filters if you have a large
-                  number of events. This helps avoid loading delays.
-                </div>
-              </div>
-            ) : orders.length === 0 ? (
+            {orders.length === 0 ? (
               <div className="px-6 py-12 text-center text-gray-500">
                 No orders found
               </div>

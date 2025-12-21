@@ -61,18 +61,21 @@ export const useOrderViewModel = () => {
     };
 
     useEffect(() => {
-        const loadEventByOwner = async () => {
+        const loadInfomation = async () => {
             try {
                 showLoadingAlert();
                 await dispatch<any>(getEventsByOwner());
+                const params: Partial<OrderSearchParamsDto> = {};
+                params.searchTime = "LAST_24_HOURS";
+                const response = await dispatch<any>(getOrders(params as OrderSearchParamsDto, false));
+                setOrders(response);
                 closeLoadingAlert();
             } catch (err: any) {
-                closeLoadingAlert();
                 showErrorAlert(err?.message || "An error occurs when getting your events");
             }
         };
 
-        loadEventByOwner();
+        loadInfomation();
     }, [dispatch]);
 
     const handleLoadOrder = async () => {

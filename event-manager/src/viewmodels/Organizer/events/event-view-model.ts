@@ -695,7 +695,7 @@ export const useEventViewModel = () => {
       const confirmed = await showConfirmAlert("Are you sure you want to check in this attendee?")
       if (confirmed) {
         showLoadingAlert()
-        const response = await dispatch<any>(checkIn(qrCode))
+        const response = await dispatch<any>(checkIn(qrCode, eventId))
         await showSuccessAlert("Checkin successfully")
         setFilteredAttendees(response)
         const attendeeInfo = convertResponseToAttendeeInfoDto(response)
