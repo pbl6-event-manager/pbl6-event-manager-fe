@@ -9,24 +9,36 @@ import {
 } from "../../../components/ui/dropdown-menu"
 import InviteUserModal from "../../../components/Organizer/invite-user-modal";
 import { useStaffViewModel } from "../../../viewmodels/Organizer/settings/staff-view-model";
+import { useRoleViewModel } from "../../../viewmodels/Organizer/settings/role-staff-view-model";
 
-export default function StaffsListPage() {    
+export default function StaffsListPage() {
     const {
-        email, 
+        email,
         setEmail,
         selectedRole,
         setSelectedRole,
-        organizerStaffs, 
-        isLoading, 
-        error, 
+        organizerStaffs,
+        isLoading,
+        error,
         searchTerm,
         showInviteModal,
-        setShowInviteModal,
+        modalMode,
         setSearchTerm,
-        handleRemoveStaffOfOwner, 
+        handleRemoveStaffOfOwner,
         handleInviteStaffToOwner,
+        handleOpenInviteModal,
+        handleOpenEditModal,
+        handleCloseModal,
     } = useStaffViewModel();
-    
+
+    const { roles } = useRoleViewModel();
+
+    // Helper function to get role ID from role name
+    const getRoleIdByName = (roleName: string): string => {
+        const role = roles.find(r => r.name === roleName);
+        return role ? role.id.toString() : "";
+    };
+
     if (isLoading) {
         return <div className="flex items-center justify-center py-8">Loading...</div>
     }
@@ -41,19 +53,21 @@ export default function StaffsListPage() {
                     </p>
                 </div>
                 <Button
-                    onClick={() => setShowInviteModal(true)}
+                    onClick={handleOpenInviteModal}
                     className="mt-2 bg-orange-600 hover:bg-orange-700 text-white px-8 py-4 rounded-lg font-semibold text-lg"
                 >
                     Invite Users
                 </Button>
-                {showInviteModal && (<InviteUserModal 
-                    onClose={() => setShowInviteModal(false)}
-                    email={email}
-                    setEmail={setEmail}
-                    selectedRole={selectedRole}
-                    setSelectedRole={setSelectedRole}
-                    handleInviteStaffToOwner={handleInviteStaffToOwner}
-                />) }
+                {showInviteModal && (
+                    <InviteUserModal
+                        mode={modalMode}
+                        onClose={() => handleCloseModal()}
+                        email={email}
+                        setEmail={setEmail}
+                        selectedRole={selectedRole}
+                        setSelectedRole={setSelectedRole}
+                        handleInviteStaffToOwner={handleInviteStaffToOwner}
+                    />)}
             </div>
         )
     }
@@ -71,19 +85,24 @@ export default function StaffsListPage() {
                 >
                 </Input>
                 <Button
-                    onClick={() => setShowInviteModal(true)}
+                    onClick={handleOpenInviteModal}
                     className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium"
                 >
                     Invite users
                 </Button>
-                {showInviteModal && (<InviteUserModal 
-                    onClose={() => setShowInviteModal(false)}
-                    email={email}
-                    setEmail={setEmail}
-                    selectedRole={selectedRole}
-                    setSelectedRole={setSelectedRole}
-                    handleInviteStaffToOwner={handleInviteStaffToOwner}
-                />)}
+                {/* Modal */}
+                {showInviteModal && (
+                    <InviteUserModal
+                        mode={modalMode}
+                        onClose={handleCloseModal}
+                        email={email}
+                        setEmail={setEmail}
+                        selectedRole={selectedRole}
+                        setSelectedRole={setSelectedRole}
+                        handleInviteStaffToOwner={handleInviteStaffToOwner}
+                        isSubmitting={isLoading}
+                    />
+                )}
             </div>
             {/* Error message */}
             {error && <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{error}</div>}
@@ -126,7 +145,11 @@ export default function StaffsListPage() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-40">
                                             <DropdownMenuItem
-                                                //onClick={() => handleNavigateToUpdateRole(role.id)}
+                                                onClick={() => {
+                                                    handleOpenEditModal(member);
+                                                    // Set selectedRole based on current role
+                                                    setSelectedRole(getRoleIdByName(member.role));
+                                                }}
                                             >
                                                 <Pencil className="h-4 w-4 mr-2" />
                                                 Edit

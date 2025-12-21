@@ -7,6 +7,7 @@ import {
     removeStaffOfOwner,
 } from "../../../store/actions/staff-action";
 import { useCallback, useEffect, useState } from "react";
+import type { OwnerStaffListItem } from "../../../models/form-models/staff-form-models";
 
 export const useStaffViewModel = () => {
     // const { eventId } = useParams<{ eventId: string }>()
@@ -14,7 +15,9 @@ export const useStaffViewModel = () => {
     const [email, setEmail] = useState("");
     const [selectedRole, setSelectedRole] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
-    const [showInviteModal, setShowInviteModal] = useState(false);
+    const [showInviteModal, setShowInviteModal] = useState(false); 4
+    const [modalMode, setModalMode] = useState<"invite" | "edit">("invite");
+    const [editingStaff, setEditingStaff] = useState<OwnerStaffListItem | null>(null);
     const { organizerStaffs, organizerStaffsForAssignment, isLoading, error } = useSelector((state: RootState) => state.staffReducer);
     const [selectedMember, setSelectedMember] = useState<number | null>(null);
 
@@ -68,7 +71,7 @@ export const useStaffViewModel = () => {
         }
 
         try {
-            showLoadingAlert("Inviting staff...");
+            showLoadingAlert(modalMode === 'edit' ? "Updating staff..." : "Inviting staff...");
             const result = await dispatch<any>(inviteStaffToOwner(email, roleStaffId));
             closeLoadingAlert();
 
@@ -79,9 +82,7 @@ export const useStaffViewModel = () => {
             }
 
             // Reset form and close modal
-            setEmail("");
-            setSelectedRole("");
-            setShowInviteModal(false);
+            handleCloseModal();
 
             // Refresh staff list
             await handleFetchOwnerStaff();
@@ -91,8 +92,28 @@ export const useStaffViewModel = () => {
         }
     }, [dispatch, handleFetchOwnerStaff]);
 
-    const handleNavigateToUpdateStaffOfOwner = useCallback(() => {
+    const handleOpenInviteModal = useCallback(() => {
+        setModalMode('invite');
+        setEditingStaff(null);
+        setEmail("");
+        setSelectedRole("");
+        setShowInviteModal(true);
+    }, []);
 
+    const handleOpenEditModal = useCallback((staff: OwnerStaffListItem) => {
+        setModalMode('edit');
+        setEditingStaff(staff);
+        setEmail(staff.email);
+        setSelectedRole("");
+        setShowInviteModal(true);
+    }, []);
+
+    const handleCloseModal = useCallback(() => {
+        setShowInviteModal(false);
+        setModalMode('invite');
+        setEditingStaff(null);
+        setEmail("");
+        setSelectedRole("");
     }, []);
 
     const handleRemoveStaffOfOwner = useCallback(async (staffEmail: string) => {
@@ -131,6 +152,8 @@ export const useStaffViewModel = () => {
         error,
         searchTerm,
         showInviteModal,
+        modalMode,
+        editingStaff,
         selectedMember,
 
         setEmail,
@@ -142,6 +165,8 @@ export const useStaffViewModel = () => {
         handleInviteStaffToOwner,
         handleRemoveStaffOfOwner,
         handleFetchOwnerStaff,
-        handleNavigateToUpdateStaffOfOwner
+        handleOpenInviteModal,
+        handleOpenEditModal,
+        handleCloseModal,
     };
 }
