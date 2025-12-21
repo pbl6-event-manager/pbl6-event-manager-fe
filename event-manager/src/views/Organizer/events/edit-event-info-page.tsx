@@ -83,7 +83,7 @@ export default function EditEventInfoPage({
               Cancel
             </Button>
 
-            {(!isOwner || !canEditEvent) ? (
+            {(!isOwner && !canEditEvent) ? (
               <Button
                 size="sm"
                 onClick={handleUpdateEvent}
