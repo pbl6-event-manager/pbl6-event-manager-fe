@@ -183,13 +183,13 @@ export const getAttendee = (eventId: number) => async (dispatch: any) => {
     }
 }
 
-export const checkIn = (qrCode: string) => async (dispatch: any) => {
+export const checkIn = (qrCode: string, eventId: number) => async (dispatch: any) => {
     try {
         dispatch({
             type: CHECK_IN_REQUEST
         })
 
-        const response = await checkInService(qrCode);
+        const response = await checkInService(qrCode, eventId);
 
         if (response === null) {
             dispatch({

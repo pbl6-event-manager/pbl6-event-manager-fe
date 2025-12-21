@@ -133,9 +133,9 @@ export const getAttendeeService = async (eventId: number) => {
     }
 }
 
-export const checkInService = async (qrCode: string) => {
+export const checkInService = async (qrCode: string, eventId: number) => {
     try {
-        const response = await checkInApi(qrCode);
+        const response = await checkInApi(qrCode, eventId);
         if (response.data.message === "success") {
             return qrCode;
         }
